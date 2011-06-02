@@ -1,14 +1,20 @@
-tokens = require('narcissus').definitions.tokens
-parser = require('narcissus').parser
-_      = require('underscore')
+if typeof module == 'undefined'
+  narcissus = this.Narcissus
+else
+  narcissus = require('./narcissus_packed')
+  _         = require('underscore')
 
+tokens = narcissus.definitions.tokens
+parser = narcissus.parser
+
+# Some helpers for Narcissus nodes
 parser.Node.prototype.left  = -> @children[0]
 parser.Node.prototype.right = -> @children[1]
 
 # Returns the typename in lowercase. (eg, 'function')
 parser.Node.prototype.typeName = -> Types[@type]
 
-# Build a given thing
+# Build a given item
 build = (item, opts={}) ->
   out = (Tokens[item.typeName()] or Tokens.other).apply(item, [opts])
   if item.parenthesized? then "(#{out})" else out
@@ -190,7 +196,7 @@ Tokens =
     c.add 'try'
     c.scope body(@tryBlock)
 
-    _.each @catchClauses, (clause) =>
+    _.each @catchClauses, (clause) ->
       c.add build(clause)
 
     if @finallyBlock?
@@ -359,6 +365,11 @@ p = (str) ->
   console.log str
   ''
 
-module.exports =
+exports =
   build: (str) ->
     trim(build(parser.parse(str)))
+
+if typeof module == 'undefined'
+  this.Js2coffee = exports
+else
+  module.exports = exports
