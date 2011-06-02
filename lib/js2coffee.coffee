@@ -10,7 +10,8 @@ parser.Node.prototype.typeName = -> Types[@type]
 
 # Build a given thing
 build = (item, opts={}) ->
-  (Tokens[item.typeName()] or Tokens.other).apply(item, [opts])
+  out = (Tokens[item.typeName()] or Tokens.other).apply(item, [opts])
+  if item.parenthesized? then "(#{out})" else out
 
 # Builds a body
 body = (item, opts={}) ->
@@ -45,7 +46,6 @@ Tokens =
   'script': ->
     c = new Code
 
-    _.each(@varDecls, (decl) -> c.add build(decl))  if @varDecls?
     _.each(@children, (decl) -> c.add build(decl))  if @children?
 
     c.toString()
@@ -177,8 +177,7 @@ Tokens =
     "delete #{ids}\n"
 
   'binary_operator': (sign) ->
-    str = "#{build @left()} #{sign} #{build @right()}"
-    if @parenthesized? then "(#{str})" else str
+    "#{build @left()} #{sign} #{build @right()}"
 
   '.': ->
     if @left().typeName() == 'this'
@@ -325,7 +324,13 @@ Tokens =
     c.scope body(@body)
     c
 
-  'other': -> "/* #{@typeName()} */"
+  'var': ->
+    list = _.map @children, (item) ->
+      "#{item.value} = #{build(item.initializer)}"  if item.initializer?
+
+    _.compact(list).join "\n"
+
+  'other': -> "/* #{@typeName()}? */"
   'getter': -> throw Unsupported("getter syntax not supported; use __defineGetter__")
   'setter': -> throw Unsupported("setter syntax not supported; use __defineSetter__")
 

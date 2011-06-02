@@ -50,5 +50,7 @@ tryit "/* hi */"
 tryit "foo({ x: 2, y: function() { x + x; } })"
 tryit "foo({ x: 2 })"
 tryit "y = { x: 2 }"
+tryit "var x, y = 2, z = 4;"
+tryit '(function($) { $.fn.init(); })(jQuery);'
 
 #console.log build('var x = 2234; var y = function (a,b) { return x; }')
