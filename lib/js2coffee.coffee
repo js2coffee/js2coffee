@@ -1,5 +1,6 @@
 if typeof module == 'undefined'
   narcissus = this.Narcissus
+  _         = this._
 else
   narcissus = require('./narcissus_packed')
   _         = require('underscore')
@@ -334,7 +335,7 @@ Tokens =
     list = _.map @children, (item) ->
       "#{item.value} = #{build(item.initializer)}"  if item.initializer?
 
-    _.compact(list).join "\n"
+    _.compact(list).join "\n" + "\n"
 
   'other': -> "/* #{@typeName()}? */"
   'getter': -> throw Unsupported("getter syntax not supported; use __defineGetter__")

@@ -1,2 +1,3 @@
 *.txt
 node_modules
+dist/*.js
