@@ -335,7 +335,7 @@ Tokens =
     list = _.map @children, (item) ->
       "#{item.value} = #{build(item.initializer)}"  if item.initializer?
 
-    _.compact(list).join "\n" + "\n"
+    _.compact(list).join("\n") + "\n"
 
   'other': -> "/* #{@typeName()}? */"
   'getter': -> throw Unsupported("getter syntax not supported; use __defineGetter__")
