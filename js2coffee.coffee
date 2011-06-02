@@ -9,12 +9,12 @@ parser.Node.prototype.right = -> @children[1]
 parser.Node.prototype.typeName = -> Types[@type]
 
 # Build a given thing
-build = (item) ->
-  (Tokens[item.typeName()] or Tokens.other).apply(item)
+build = (item, opts={}) ->
+  (Tokens[item.typeName()] or Tokens.other).apply(item, [opts])
 
 # Builds a body
-body = (item) ->
-  str = build(item).trim()
+body = (item, opts={}) ->
+  str = trim(build(item, opts))
   if str.length > 0 then str else "true"
 
 # Returns the list of tokens as an array.
@@ -28,6 +28,13 @@ getTokens = ->
 # Reroute to another token handler
 re = (type, str, args...) ->
   Tokens[type].apply str, args
+
+trim = (str) ->
+  str.replace(/^\s*|\s*$/g, '')
+
+strEscape = (str) ->
+  str = str.replace(/"/g, '\"')
+  "\"#{str}\""
 
 Types = getTokens()
 
@@ -50,7 +57,19 @@ Tokens =
     "#{@value}"
 
   'id': ->
-    @
+    # Account for reserved keywords
+    if @toString() in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
+      # TODO: issue a warning
+      "#{@}_"
+    else
+      @
+
+  # Function parameters
+  'id_param': ->
+    if @toString() in ['undefined']
+      "#{@}_"
+    else
+      re 'id', @
 
   'return': ->
     if @value?
@@ -78,6 +97,10 @@ Tokens =
   'null':  -> 'null'
   'true':  -> 'true'
   'false': -> 'false'
+  'void':  -> 'undefined'
+
+  'break':    -> "break\n"
+  'continue': -> "continue\n"
 
   '++':     -> "#{build @left()}++"
   '--':     -> "#{build @left()}--"
@@ -85,6 +108,7 @@ Tokens =
   '~':      -> "~#{build @left()}"
   'typeof': -> "typeof #{build @left()}"
   'index':  -> "#{build @left()}[#{build @right()}]"
+  'throw':  -> "throw #{build @exception}"
 
   '+':   -> re('binary_operator', @, '+')
   '-':   -> re('binary_operator', @, '-')
@@ -110,11 +134,23 @@ Tokens =
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
 
-  'string': ->
-    str = @value
-    str = str.replace(/"/g, '\"')
+  'regexp': ->
+    m     = @value.toString().match(/^\/(.*)\/([a-z]?)/)
+    value = m[1]
+    flag  = m[2]
 
-    "\"#{@value}\""
+    begins_with = value[0]
+
+    if begins_with in [' ', '=']
+      if flag.length > 0
+        "RegExp(#{strEscape value}, '#{flag}')"
+      else
+        "RegExp(#{strEscape value})"
+    else
+      "/#{value}/#{flag}"
+
+  'string': ->
+    strEscape @value
 
   'call': ->
     # Often (id, list)
@@ -202,6 +238,20 @@ Tokens =
     c.scope body(@body)
     c
 
+  'while': ->
+    c = new Code
+
+    c.add "while #{build @condition}"
+    c.scope body(@body)
+    c
+
+  'do': ->
+    c = new Code
+
+    c.add "while true"
+    c.scope body(@body)
+    c
+
   'if': ->
     c = new Code
 
@@ -217,6 +267,44 @@ Tokens =
 
     c
 
+  'switch': ->
+    c = new Code
+
+    obj = build(@discriminant)
+    first = true
+
+    _.each @cases, (item) ->
+
+      if item.value == 'default'
+        c.add 'else'  unless first
+      else
+        c.add "else "  unless first
+        c.add "if #{obj} == #{build item.caseLabel}\n"
+
+      c.scope body(item.statements, noBreak: true)
+
+      first = false
+
+    c
+
+  'array_init': ->
+    list = re('list', @)
+    "[ #{list} ]"
+
+  'object_init': ->
+    if @children.length == 0
+      "{}"
+    else if @children.length == 1
+      item = @children[0]
+      "#{build item.left()}: #{build item.right()}"
+    else
+      list = _.map @children, (item) ->
+        "#{build item.left()}: #{build item.right()}"
+
+      c = new Code
+      c.scope list.join("\n")
+      c
+
   'block': ->
     statements = _.map(@children, (item) -> build(item))
     statements.join("")
@@ -224,7 +312,7 @@ Tokens =
   'function': ->
     c = new Code
 
-    params = _.map(@params, (str) -> re('id', str))
+    params = _.map(@params, (str) -> re('id_param', str))
 
     if @name
       c.add "#{@name} = "
@@ -237,8 +325,9 @@ Tokens =
     c.scope body(@body)
     c
 
-  'other': ->
-    "/* #{@typeName()} */"
+  'other': -> "/* #{@typeName()} */"
+  'getter': -> throw Unsupported("getter syntax not supported; use __defineGetter__")
+  'setter': -> throw Unsupported("setter syntax not supported; use __defineSetter__")
 
 #
 # Code snippet helper
@@ -253,12 +342,11 @@ class Code
 
   scope: (str) ->
     @code  = @code.replace(/\s*$/, '') + "\n"
-    @code += "  " + str.toString().trim().replace(/\n/g, "\n  ") + "\n"
+    @code += "  " + trim(str).replace(/\n/g, "\n  ") + "\n"
     @
 
   toString: ->
     @code
-
 
 # Debugging tool
 p = (str) ->
@@ -268,4 +356,4 @@ p = (str) ->
 
 module.exports =
   build: (str) ->
-    build(parser.parse(str)).trim()
+    trim(build(parser.parse(str)))

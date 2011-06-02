@@ -33,5 +33,22 @@ tryit 'for (a = 2; a < 10; a++) { console.log(a); }'
 tryit 'for (;; a++) { console.log(forever); }'
 tryit 'for (a in b) { b(); }'
 tryit '2 / (2 + 4)'
+tryit '2 + undefined'
+tryit 'function x(a, undefined) { }'
+tryit 'x = void 0;'
+tryit 'x = / euoeu/g'
+tryit 'x = / euoeu/'
+tryit 'x = /euoeu/'
+tryit 'while (true) { break; }'
+tryit 'do { x } while (true);'
+tryit "switch (foo) { case X: true; break; case Y: 234; break; default: 234; }"
+tryit "switch (foo) { default: 2; }"
+tryit "[2, 4]"
+tryit "hash = { x: 2, y: 4 }"
+tryit "throw x;"
+tryit "/* hi */"
+tryit "foo({ x: 2, y: function() { x + x; } })"
+tryit "foo({ x: 2 })"
+tryit "y = { x: 2 }"
 
 #console.log build('var x = 2234; var y = function (a,b) { return x; }')
