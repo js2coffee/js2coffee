@@ -1,0 +1,9 @@
+{
+    "name": "js2coffee"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+    "narcissus": ">= 0.0.1",
+    "underscore": ">= 0.0.1"
+  }
+}
