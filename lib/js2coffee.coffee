@@ -37,6 +37,9 @@ getTokens = ->
 
   dict
 
+strRepeat = (str, times) ->
+  (str for i in [0...times]).join('')
+
 # Reroute to another token handler
 re = (type, str, args...) ->
   Tokens[type].apply str, args
@@ -280,18 +283,16 @@ Tokens =
   'switch': ->
     c = new Code
 
-    obj = build(@discriminant)
-    first = true
+    c.add "switch #{build @discriminant}\n"
 
     _.each @cases, (item) ->
 
       if item.value == 'default'
-        c.add 'else'  unless first
+        c.scope "else"
       else
-        c.add "else "  unless first
-        c.add "if #{obj} == #{build item.caseLabel}\n"
+        c.scope "when #{build item.caseLabel}\n"
 
-      c.scope body(item.statements, noBreak: true)
+      c.scope body(item.statements, noBreak: true), 2
 
       first = false
 
@@ -367,9 +368,10 @@ class Code
     @code += str.toString()
     @
 
-  scope: (str) ->
+  scope: (str, level=1) ->
+    indent = strRepeat("  ", level)
     @code  = @code.replace(/\s*$/, '') + "\n"
-    @code += "  " + trim(str).replace(/\n/g, "\n  ") + "\n"
+    @code += indent + trim(str).replace(/\n/g, "\n#{indent}") + "\n"
     @
 
   toString: ->

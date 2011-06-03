@@ -1,4 +1,4 @@
-js2c = require('./js2coffee')
+js2c = require('../lib/js2coffee')
 build = js2c.build
 
 tryit = (str) ->
