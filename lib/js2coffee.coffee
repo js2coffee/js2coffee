@@ -384,6 +384,8 @@ class UnsupportedError
     @line    = src.lineno
     @source  = src.tokenizer.source
 
+  toString: -> @message
+
 #
 # Code snippet helper
 #
