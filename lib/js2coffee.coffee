@@ -30,7 +30,7 @@ build = (item, opts={}) ->
 # Builds a body
 body = (item, opts={}) ->
   str = trim(build(item, opts))
-  if str.length > 0 then str else "true"
+  if str.length > 0 then str else ""
 
 # Returns the list of tokens as an array.
 getTokens = ->
@@ -48,13 +48,21 @@ re = (type, str, args...) ->
   Tokens[type].apply str, args
 
 trim = (str) ->
-  str.replace(/^\s*|\s*$/g, '')
+  "#{str}".replace(/^\s*|\s*$/g, '')
 
 strEscape = (str) ->
-  str = str.replace(/"/g, '\"')
+  str = "#{str}".replace(/"/g, '\"')
   "\"#{str}\""
 
 Types = getTokens()
+
+
+# Picks the next best thing for a reserved keyword
+unreserve = (str) ->
+  if "#{str}" in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
+    "#{str}_"
+  else
+    "#{str}"
 
 # The builders
 # Each of these functions are apply'd to a Node, and is expected to return
@@ -80,18 +88,13 @@ Tokens =
     c.toString()
 
   'identifier': ->
-    @value
+    unreserve @value
 
   'number': ->
     "#{@value}"
 
   'id': ->
-    # Account for reserved keywords
-    if @toString() in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
-      # TODO: issue a warning
-      "#{@}_"
-    else
-      @
+    unreserve @
 
   # Function parameters
   'id_param': ->
@@ -109,10 +112,14 @@ Tokens =
       "return #{build(@value)}"  # id
 
   ';': ->
+    # This can be reached by blank ;'s
+    if not @expression?
+      ""
+
     # Optimize: "alert(2)" should be "alert 2" and omit extra
     # parentheses. Only do this if it's the main statement in
     # the line.
-    if @expression.typeName() == 'call'
+    else if @expression.typeName() == 'call'
       re('call_statement', @expression) + "\n"
 
     else
@@ -133,6 +140,7 @@ Tokens =
   'break':    -> "break\n"
   'continue': -> "continue\n"
 
+  '!':      -> "not #{build @left()}"
   '++':     -> "#{build @left()}++"
   '--':     -> "#{build @left()}--"
   '=':      -> "#{build @left()} = #{build @right()}"
@@ -164,6 +172,10 @@ Tokens =
   '!==': -> re('binary_operator', @, 'isnt')
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
+
+  ',': ->
+    list = _.map @children, (item) -> build(item) + "\n"
+    list.join('')
 
   'regexp': ->
     m     = @value.toString().match(/^\/(.*)\/([a-z]?)/)
@@ -241,7 +253,7 @@ Tokens =
     c
 
   '?': ->
-    "if #{build @left()} then #{build @children[1]} else #{build @children[2]}"
+    "(if #{build @left()} then #{build @children[1]} else #{build @children[2]})"
 
   'label': ->
     throw "Not supported yo"
