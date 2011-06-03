@@ -57,9 +57,21 @@ Types = getTokens()
 # Each of these functions are apply'd to a Node, and is expected to return
 # a string representation of it CoffeeScript counterpart.
 Tokens =
-  'script': ->
+  'script': (opts={}) ->
     c = new Code
 
+    len = @children.length
+
+    if len > 0
+      # Omit returns if not needed
+      if opts.returnable?
+        @children[len-1].last = true
+
+      # No breaks for switches
+      if opts.noBreak? and @children[len-1].typeName() == 'break'
+        delete @children[len-1]
+
+    # Build functions first (TODO)
     _.each(@children, (decl) -> c.add build(decl))  if @children?
 
     c.toString()
@@ -86,10 +98,12 @@ Tokens =
       re 'id', @
 
   'return': ->
-    if @value?
-      "return #{build(@value)}"  # id
-    else
+    if not @value?
       "return"
+    else if @last?
+      build(@value)
+    else
+      "return #{build(@value)}"  # id
 
   ';': ->
     # Optimize: "alert(2)" should be "alert 2" and omit extra
@@ -319,10 +333,6 @@ Tokens =
       c.scope list.join("\n")
       c
 
-  'block': ->
-    statements = _.map(@children, (item) -> build(item))
-    statements.join("")
-
   'function': ->
     c = new Code
 
@@ -331,12 +341,12 @@ Tokens =
     if @name
       c.add "#{@name} = "
 
-    if @params
+    if @params.length > 0
       c.add "(#{params.join ', '}) ->"
     else
       c.add "->"
 
-    c.scope body(@body)
+    c.scope body(@body, returnable: true)
     c
 
   'var': ->
@@ -349,6 +359,8 @@ Tokens =
   'getter': -> throw new UnsupportedError("getter syntax is not supported; use __defineGetter__", @)
   'setter': -> throw new UnsupportedError("setter syntax is not supported; use __defineSetter__", @)
   'const':  -> throw new UnsupportedError("consts are not supported by CoffeeScript", @)
+
+Tokens.block = Tokens.script
 
 class UnsupportedError
   constructor: (str, src) ->
