@@ -18,7 +18,7 @@ Install dependencies:
 
 Run tests:
 
-    $ coffee test/
+    $ make test
 
 Build the browser version:
 

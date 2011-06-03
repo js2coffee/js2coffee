@@ -1,6 +1,9 @@
 all: dist/js2coffee.min.js
 
-.PHONY:
+.PHONY: test
+
+test:
+	coffee test/test.coffee
 
 dist/js2coffee.js: lib/*
 	mkdir -p dist

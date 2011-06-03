@@ -82,8 +82,12 @@ Tokens =
       if opts.noBreak? and @children[len-1].typeName() == 'break'
         delete @children[len-1]
 
-    # Build functions first (TODO)
-    _.each(@children, (decl) -> c.add build(decl))  if @children?
+    # Build functions first
+    if @children?
+      _.each @children, (item) ->
+        c.add build(item)  if item.typeName() == 'function'
+      _.each @children, (item) ->
+        c.add build(item)  if item.typeName() != 'function'
 
     c.toString()
 
@@ -186,7 +190,7 @@ Tokens =
 
     if begins_with in [' ', '=']
       if flag.length > 0
-        "RegExp(#{strEscape value}, '#{flag}')"
+        "RegExp(#{strEscape value}, \"#{flag}\")"
       else
         "RegExp(#{strEscape value})"
     else
@@ -292,6 +296,8 @@ Tokens =
 
     c.add "while true"
     c.scope body(@body)
+    c.scope "break unless #{build @condition}"  if @condition?
+
     c
 
   'if': ->
