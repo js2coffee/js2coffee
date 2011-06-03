@@ -1,8 +1,26 @@
 {
-    "name": "js2coffee"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-    "underscore": ">= 0.0.1"
+  "name": "js2coffee",
+  "description": "JavaScript to CoffeeScript compiler",
+  "keywords": ["javascript", "coffeescript", "language", "compiler"],
+  "author": "Rico Sta. Cruz",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "main": "./lib/jsj2coffee",
+  "bin": {
+    "js2coffee": "./bin/js2coffee"
+  },
+  "homepage": "http://ricostacruz.com/js2coffee",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rstacruz/js2coffee.git"
+  },
+  "dependencies": {
+    "underscore": ">= 0.0.1",
+    "coffee-script": ">= 1.1.0"
   }
 }
