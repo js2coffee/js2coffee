@@ -257,9 +257,6 @@ Tokens =
   '?': ->
     "(if #{build @left()} then #{build @children[1]} else #{build @children[2]})"
 
-  'label': ->
-    throw "Not supported yo"
-
   'for': ->
     c = new Code
 
@@ -377,6 +374,7 @@ Tokens =
   'other':  -> @unsupported "#{@typeName()} is not supported yet"
   'getter': -> @unsupported "getter syntax is not supported; use __defineGetter__"
   'setter': -> @unsupported "setter syntax is not supported; use __defineSetter__"
+  'label':  -> @unsupported "labels are not supported by CoffeeScript"
   'const':  -> @unsupported "consts are not supported by CoffeeScript"
 
 Tokens.block = Tokens.script
