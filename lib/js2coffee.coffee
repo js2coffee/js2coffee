@@ -12,6 +12,9 @@ parser = narcissus.parser
 parser.Node.prototype.left  = -> @children[0]
 parser.Node.prototype.right = -> @children[1]
 
+parser.Node.prototype.unsupported = (msg) ->
+  throw new UnsupportedError("Unsupported: #{msg}", @)
+
 # Returns the typename in lowercase. (eg, 'function')
 parser.Node.prototype.typeName = -> Types[@type]
 
@@ -355,10 +358,10 @@ Tokens =
 
     _.compact(list).join("\n") + "\n"
 
-  'other': -> "/* #{@typeName()}? */"
-  'getter': -> throw new UnsupportedError("getter syntax is not supported; use __defineGetter__", @)
-  'setter': -> throw new UnsupportedError("setter syntax is not supported; use __defineSetter__", @)
-  'const':  -> throw new UnsupportedError("consts are not supported by CoffeeScript", @)
+  'other':  -> @unsupported "#{@typeName()} is not supported yet"
+  'getter': -> @unsupported "getter syntax is not supported; use __defineGetter__"
+  'setter': -> @unsupported "setter syntax is not supported; use __defineSetter__"
+  'const':  -> @unsupported "consts are not supported by CoffeeScript"
 
 Tokens.block = Tokens.script
 
