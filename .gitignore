@@ -1,3 +1,4 @@
 *.txt
 node_modules
 dist/*.js
+demo/*.js

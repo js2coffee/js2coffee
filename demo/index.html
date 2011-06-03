@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type='text/javascript' charset='utf-8' src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'></script>
+    <script type='text/javascript' charset='utf-8' src='http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.5/underscore-min.js'></script>
+    <script type='text/javascript' charset='utf-8' src="js2coffee.min.js"></script>
+    <script type='text/javascript' charset='utf-8' src="ace.js"></script>
+    <script type='text/javascript' charset='utf-8' src="theme-twilight.js"></script>
+    <script type='text/javascript' charset='utf-8' src="mode-javascript.js"></script>
+    <script type='text/javascript' charset='utf-8' src="mode-coffee.js"></script>
+    <style type="text/css">
+      form, html, body { margin: 0; padding: 0; }
+      body { background: #444; }
+      #editor { position: absolute; top: 30px; left: 0; bottom: 0; right: 52%; }
+      #to     { position: absolute; top: 30px; left: 52%; bottom: 0; right: 0; }
+      form    { position: relative; margin: 0 auto; width: 900px; height: 600px; }
+      #error  { width: 900px; padding: 10px; background: rgba(100, 30, 30, 0.4); position: absolute; top: 0; left: 0; color: #ddd; z-index: 10; display: none; }
+    </style>
+  </head>
+  <body>
+    <form>
+      <div id="error"></div>
+      <pre id="editor"></pre>
+      <pre id="to"></pre>
+      </pre>
+    </form>
+    <script>
+      var defaultText =
+        "(function($) {\n" +
+        "  $.fn.init({ start: 200, end: 400 });\n" +
+        "})();"
+
+      function doEditor(id, syntax) {
+        var editor = ace.edit(id);
+        editor.setTheme("ace/theme/twilight");
+        
+        var JavaScriptMode = require("ace/mode/"+syntax).Mode;
+        var session = editor.getSession();
+        
+        session.setMode(new JavaScriptMode());
+
+        return session;
+      }
+
+      var editor = doEditor('editor', 'javascript');
+      var output = doEditor('to', 'coffee');
+
+      editor.setValue(defaultText);
+      editor.on('change', onChange);
+      
+      function onChange() {
+        window.setTimeout(function() {
+          var input = editor.getValue();
+          try {
+            var out   = Js2coffee.build(input);
+            $("#error").hide();
+            output.setValue(out);
+          } catch (e) {
+            $("#error").html(e.toString());;
+            $("#error").show();
+            console.log(e);
+          }
+        }, 50);
+      };
+
+      onChange();
+    </script>
+  </body>
+</html>
