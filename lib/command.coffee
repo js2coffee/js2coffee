@@ -19,6 +19,8 @@ module.exports =
       work '/dev/stdin'
 
     catch e
+      throw e  if e.constructor == SyntaxError
+
       if files.length == 0
         console.warn "Usage:"
         console.warn "  #{cmd} file.js"
