@@ -51,11 +51,9 @@ trim = (str) ->
   "#{str}".replace(/^\s*|\s*$/g, '')
 
 strEscape = (str) ->
-  str = "#{str}".replace(/"/g, '\"')
-  "\"#{str}\""
+  JSON.stringify "#{str}"
 
 Types = getTokens()
-
 
 # Picks the next best thing for a reserved keyword
 unreserve = (str) ->
