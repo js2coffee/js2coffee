@@ -1,4 +1,5 @@
 *.txt
+*.log
 node_modules
 dist/*.js
 demo/*.js
