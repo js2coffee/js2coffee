@@ -1,18 +1,32 @@
 # JS2Coffee
 #### A JavaScript to CoffeeScript compiler.
 
+    $ npm install js2coffee
+
+Usage:
+
+    $ js2coffee input_file.js
+    $ js2coffee input_file.js > output.js
+    $ cat input.js | js2coffee
+
+### Development
+
 Install dependencies:
 
     $ npm install
+    $ npm install glob
 
 Run tests:
 
     $ coffee test/
 
-Make the browser version:
+Build the browser version:
 
+    # Uses ruby and the JSMin gem for now;
+    # Run this then check dist/js2coffee.min.js
+
+    $ gem install jsmin
     $ make
-    # Then check dist/js2coffee.min.js
 
 ### Acknowledgements
 
