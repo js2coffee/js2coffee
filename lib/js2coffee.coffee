@@ -17,7 +17,11 @@ parser.Node.prototype.typeName = -> Types[@type]
 
 # Build a given item
 build = (item, opts={}) ->
-  out = (Tokens[item.typeName()] or Tokens.other).apply(item, [opts])
+  name = 'other'
+  name = item.typeName()  if item != undefined and item.typeName
+
+  out = (Tokens[name] or Tokens.other).apply(item, [opts])
+
   if item.parenthesized? then "(#{out})" else out
 
 # Builds a body
@@ -297,15 +301,18 @@ Tokens =
     list = re('list', @)
     "[ #{list} ]"
 
+  'property_init': ->
+    "#{build @left()}: #{build @right()}"
+
   'object_init': ->
     if @children.length == 0
       "{}"
+
     else if @children.length == 1
-      item = @children[0]
-      "#{build item.left()}: #{build item.right()}"
+      build @children[0]
+
     else
-      list = _.map @children, (item) ->
-        "#{build item.left()}: #{build item.right()}"
+      list = _.map @children, (item) -> build item
 
       c = new Code
       c.scope list.join("\n")
@@ -338,8 +345,16 @@ Tokens =
     _.compact(list).join("\n") + "\n"
 
   'other': -> "/* #{@typeName()}? */"
-  'getter': -> throw Unsupported("getter syntax not supported; use __defineGetter__")
-  'setter': -> throw Unsupported("setter syntax not supported; use __defineSetter__")
+  'getter': -> throw new UnsupportedError("getter syntax is not supported; use __defineGetter__", @)
+  'setter': -> throw new UnsupportedError("setter syntax is not supported; use __defineSetter__", @)
+  'const':  -> throw new UnsupportedError("consts are not supported by CoffeeScript", @)
+
+class UnsupportedError
+  constructor: (str, src) ->
+    @message = str
+    @cursor  = src.start
+    @line    = src.lineno
+    @source  = src.tokenizer.source
 
 #
 # Code snippet helper
@@ -369,6 +384,7 @@ p = (str) ->
 exports =
   build: (str) ->
     trim(build(parser.parse(str)))
+  UnsupportedError: UnsupportedError
 
 if typeof module == 'undefined'
   this.Js2coffee = exports
