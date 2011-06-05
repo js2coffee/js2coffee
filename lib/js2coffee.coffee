@@ -143,8 +143,8 @@ Tokens =
   'continue': -> "continue\n"
 
   '!':      -> "not #{build @left()}"
-  '++':     -> "#{build @left()}++"
-  '--':     -> "#{build @left()}--"
+  '--':     -> re('increment_decrement', @, '--')
+  '++':     -> re('increment_decrement', @, '++')
   '~':      -> "~#{build @left()}"
   'typeof': -> "typeof #{build @left()}"
   'index':  -> "#{build @left()}[#{build @right()}]"
@@ -173,6 +173,12 @@ Tokens =
   '!==': -> re('binary_operator', @, 'isnt')
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
+
+  'increment_decrement': (sign) ->
+    if @postfix
+      "#{build @left()}#{sign}"
+    else
+      "#{sign}#{build @left()}"
 
   '=': ->
     sign = if @assignOp?
