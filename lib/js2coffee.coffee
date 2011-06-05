@@ -133,7 +133,7 @@ Tokens =
   'unary_plus':  -> "+#{build @left()}"
   'unary_minus': -> "-#{build @left()}"
 
-  'this':  -> '@'
+  'this':  -> 'this'
   'null':  -> 'null'
   'true':  -> 'true'
   'false': -> 'false'
