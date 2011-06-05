@@ -22,10 +22,7 @@ Run tests:
 
 Build the browser version:
 
-    # Uses ruby and the JSMin gem for now;
-    # Run this then check dist/js2coffee.min.js
-
-    $ gem install jsmin
+    $ npm install packer
     $ cake build
 
 ### Acknowledgements

@@ -5,9 +5,17 @@ task 'test', 'Run tests', ->
   run 'coffee test/test.coffee'
 
 task 'build', 'Builds the browser version', ->
+  {pack} = require('packer')
+  {readFileSync, writeFileSync} = require('fs')
+
   run 'mkdir -p dist'
-  run '( cat lib/narcissus_packed.js; coffee -p lib/js2coffee.coffee ) >dist/js2coffee.js'
-  run "cd dist && ruby -e \"require 'jsmin'; File.open('js2coffee.min.js','w') { |f| f.write JSMin.minify(File.read('js2coffee.js')) }\""
+  run '( cat lib/narcissus_packed.js; coffee -p lib/js2coffee.coffee ) >dist/js2coffee.js', {}, quiet: true
+  console.log '* dist/js2coffee.js'
+
+  input = readFileSync('dist/js2coffee.js')
+  writeFileSync 'dist/js2coffee.min.js', input
+
+  console.log '* dist/js2coffee.min.js'
 
 # Helpers
 run = (cmd, callback, options={}) ->
