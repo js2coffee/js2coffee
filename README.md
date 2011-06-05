@@ -18,7 +18,7 @@ Install dependencies:
 
 Run tests:
 
-    $ make test
+    $ cake test
 
 Build the browser version:
 
@@ -26,7 +26,7 @@ Build the browser version:
     # Run this then check dist/js2coffee.min.js
 
     $ gem install jsmin
-    $ make
+    $ cake build
 
 ### Acknowledgements
 

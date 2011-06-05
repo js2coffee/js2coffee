@@ -430,7 +430,7 @@ p = (str) ->
   ''
 
 exports =
-  version: '0.0.2'
+  version: '0.0.3'
   build: (str) ->
     trim(build(parser.parse(str)))
   UnsupportedError: UnsupportedError

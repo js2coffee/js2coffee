@@ -1,3 +1,14 @@
+v0.0.3 - Jun 05, 2011
+---------------------
+
+### Fixed:
+  * Narcissus to not go into an infinite loop in the browser.
+  * Use `this` instead of `@` for better readability. (#10)
+
+### Changed:
+  * Implement += and friends. (#9)
+  * Use 'cake' instead of 'make'.
+
 v0.0.2 - June 4, 2011
 ---------------------
 
