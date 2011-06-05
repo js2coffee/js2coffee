@@ -297,16 +297,24 @@ Tokens =
 
   'if': ->
     c = new Code
-
-    c.add "if #{build @condition}"
-    c.scope body(@thenPart)
-
+    condition = build @condition
+    thenPart = build @thenPart
     if @elsePart?
+      c.add "if #{condition}"
+      c.scope thenPart
+
       if @elsePart.typeName() == 'if'
         c.add "else #{build(@elsePart).toString()}"
       else
         c.add "else\n"
         c.scope body(@elsePart)
+
+    else
+      if thenPart.match(/\n/g).length == 1
+        c.add "#{thenPart.replace('\n','')} if #{condition}"
+      else
+        c.add "if #{condition}"
+        c.scope thenPart
 
     c
 
