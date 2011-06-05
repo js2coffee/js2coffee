@@ -5,16 +5,23 @@ task 'test', 'Run tests', ->
   run 'coffee test/test.coffee'
 
 task 'build', 'Builds the browser version', ->
-  {pack} = require('packer')
   {readFileSync, writeFileSync} = require('fs')
+  {compile} = require('coffee-script')
 
   run 'mkdir -p dist'
-  run '( cat lib/narcissus_packed.js; coffee -p lib/js2coffee.coffee ) >dist/js2coffee.js', {}, quiet: true
+
+  output = [
+    readFileSync('lib/narcissus_packed.js', 'utf-8'),
+    compile(readFileSync('lib/js2coffee.coffee', 'utf-8'))
+  ]
+
+  combined   = output.join("\n")
+  compressed = pack(combined)
+
+  writeFileSync 'dist/js2coffee.js', combined
+  writeFileSync 'dist/js2coffee.min.js', compressed
+
   console.log '* dist/js2coffee.js'
-
-  input = readFileSync('dist/js2coffee.js')
-  writeFileSync 'dist/js2coffee.min.js', input
-
   console.log '* dist/js2coffee.min.js'
 
 # Helpers
@@ -26,3 +33,16 @@ run = (cmd, callback, options={}) ->
     console.warn stderr  if stderr
     console.log stdout   if stdout
 
+# Compress JS with simple regexes. (Because common packers
+# seem to munge Narcissus badly)
+pack = (str) ->
+  spaces        = new RegExp(' *(\n *)+', 'g')
+  comments      = /\/\*(\n|.)*?\*\//g
+  line_comments = /\/\/.*\n/g
+
+  compressed = str
+  compressed = compressed.replace(comments, " ")
+  compressed = compressed.replace(line_comments, "\n")
+  compressed = compressed.replace(spaces, "\n")
+
+  compressed

@@ -22,7 +22,6 @@ Run tests:
 
 Build the browser version:
 
-    $ npm install packer
     $ cake build
 
 ### Acknowledgements
