@@ -1,6 +1,6 @@
-if typeof module == 'undefined'
-  narcissus = this.Narcissus
-  _         = this._
+if window?
+  narcissus = window.Narcissus
+  _         = window._
 else
   narcissus = require('./narcissus_packed')
   _         = require('underscore')
@@ -432,10 +432,11 @@ p = (str) ->
 exports =
   version: '0.0.3'
   build: (str) ->
-    trim(build(parser.parse(str)))
+    trim(build(parser.parse("#{str}\n")))
   UnsupportedError: UnsupportedError
 
-if typeof module == 'undefined'
-  this.Js2coffee = exports
-else
+if window?
+  window.Js2coffee = exports
+
+if module?
   module.exports = exports
