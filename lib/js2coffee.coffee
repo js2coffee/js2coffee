@@ -145,7 +145,6 @@ Tokens =
   '!':      -> "not #{build @left()}"
   '++':     -> "#{build @left()}++"
   '--':     -> "#{build @left()}--"
-  '=':      -> "#{build @left()} = #{build @right()}"
   '~':      -> "~#{build @left()}"
   'typeof': -> "typeof #{build @left()}"
   'index':  -> "#{build @left()}[#{build @right()}]"
@@ -174,6 +173,14 @@ Tokens =
   '!==': -> re('binary_operator', @, 'isnt')
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
+
+  '=': ->
+    sign = if @assignOp?
+      Types[@assignOp] + '='
+    else
+      '='
+
+    "#{build @left()} #{sign} #{build @right()}"
 
   ',': ->
     list = _.map @children, (item) -> build(item) + "\n"

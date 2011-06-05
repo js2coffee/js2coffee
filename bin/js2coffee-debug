@@ -1,0 +1,50 @@
+#!/usr/bin/env coffee
+
+path = require('path')
+fs   = require('fs')
+_    = require('underscore')
+lib  = path.join(path.dirname(fs.realpathSync(__filename)), '../lib')
+narc = require(lib + '/narcissus_packed')
+cmd  = require(lib + '/command')
+build= require(lib + '/js2coffee').build
+
+# Redefine the command's 'work' function.
+work = (fname) ->
+  contents = fs.readFileSync(fname, 'utf-8')
+
+  built  = build(contents)
+
+  output = narc.parser.parse(contents)
+  output = cleanup output
+  output = JSON.stringify(output, null, '  ')
+
+  console.log output
+  console.log built
+
+# Makes the given 'obj' suitable for printing by removing
+# extraneous attributes.
+cleanup = (obj) ->
+  _clean = (obj) ->
+    return obj  unless obj?
+
+    if typeof obj == 'object'
+      delete obj.tokenizer
+      delete obj.lineno
+      delete obj.start
+      delete obj.end
+
+      obj.type = obj.typeName()  if obj.typeName
+
+    # Recurse to each of the children.
+    if typeof obj == 'object' or typeof obj == 'array'
+      for i of obj
+        continue  if i in ['filename', 'length']
+
+        if typeof obj[i] in ['object']
+          obj[i] = _clean(obj[i])
+
+    obj
+
+  _clean obj
+
+cmd.run work
