@@ -8,13 +8,14 @@ UnsupportedError = js2coffee.UnsupportedError
 basename = path.basename
 cmd      = basename(process.argv[1])
 
-work = (fname) ->
+build_and_show = (fname) ->
   contents = fs.readFileSync(fname, 'utf-8')
   output   = js2coffee.build(contents)
   console.log output
 
-runFiles = ->
+runFiles = (proc) ->
   files = process.argv.slice(2)
+  work  = proc or build_and_show
 
   try
     work '/dev/stdin'
@@ -32,9 +33,9 @@ runFiles = ->
     _.each files, (fname) -> work fname
 
 module.exports =
-  run: ->
+  run: (args...) ->
     try
-      runFiles()
+      runFiles.apply this, args
 
     catch e
       throw e  unless e.constructor in [UnsupportedError, SyntaxError]
