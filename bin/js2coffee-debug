@@ -18,8 +18,8 @@ work = (fname) ->
   output = cleanup output
   output = JSON.stringify(output, null, '  ')
 
-  console.log output
-  console.log built
+  console.log "%s", output
+  console.log "%s", built
 
 # Makes the given 'obj' suitable for printing by removing
 # extraneous attributes.

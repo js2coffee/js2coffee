@@ -11,7 +11,7 @@ cmd      = basename(process.argv[1])
 build_and_show = (fname) ->
   contents = fs.readFileSync(fname, 'utf-8')
   output   = js2coffee.build(contents)
-  console.log output
+  console.log "%s", output
 
 runFiles = (proc) ->
   files = process.argv.slice(2)
