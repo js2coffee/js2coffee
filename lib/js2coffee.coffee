@@ -25,7 +25,7 @@ build = (item, opts={}) ->
 
   out = (Tokens[name] or Tokens.other).apply(item, [opts])
 
-  if item.parenthesized? then "(#{out})" else out
+  if item.parenthesized? then paren(out) else out
 
 # Builds a body
 body = (item, opts={}) ->
@@ -218,11 +218,16 @@ Tokens =
       "#{build @left()}(#{build @right()})"
 
   'call_statement': ->
-    # Often (id, list)
+    left = build @left()
+
+    # When calling in this way: `function () { .. }()`,
+    # ensure that there are parenthesis around the anon function.
+    left = paren(left)  if @left().typeName() == 'function'
+
     if @right().children.length == 0
-      "#{build @left()}()"
+      "#{left}()"
     else
-      "#{build @left()} #{build @right()}"
+      "#{left} #{build @right()}"
 
   'list': ->
     list = _.map(@children, (item) -> build(item))
@@ -420,6 +425,14 @@ class Code
 
   toString: ->
     @code
+
+# Wraps a given string in parentheses.
+paren = (string) ->
+  str = string.toString()
+  if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
+    str
+  else
+    "(#{str})"
 
 # Debugging tool
 p = (str) ->
