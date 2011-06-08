@@ -8,8 +8,7 @@ else
 tokens = narcissus.definitions.tokens
 parser = narcissus.parser
 
-# ----------------------------------------------------------------------------
-# ## Narcissus node helpers
+### Narcissus node helpers
 
 parser.Node.prototype.left  = -> @children[0]
 parser.Node.prototype.right = -> @children[1]
@@ -20,8 +19,7 @@ parser.Node.prototype.unsupported = (msg) ->
 # Returns the typename in lowercase. (eg, 'function')
 parser.Node.prototype.typeName = -> Types[@type]
 
-# ----------------------------------------------------------------------------
-## Main functions
+### Main functions
 
 # Build a given item
 build = (item, opts={}) ->
@@ -34,7 +32,10 @@ build = (item, opts={}) ->
 
 # Builds a body
 body = (item, opts={}) ->
-  str = rtrim(build(item, opts))
+  str = build(item, opts)
+  str = blockTrim(str)
+  str = unshift(str)
+
   if str.length > 0 then str else ""
 
 # Reroute to another token handler
@@ -59,7 +60,7 @@ unreserve = (str) ->
     "#{str}"
 
 # ----------------------------------------------------------------------------
-# ## The builders
+### The builders
 # Each of these functions are apply'd to a Node, and is expected to return
 # a string representation of it CoffeeScript counterpart.
 
@@ -415,9 +416,9 @@ class UnsupportedError
 
   toString: -> @message
 
-#
-# Code snippet helper
-#
+# ----------------------------------------------------------------------------
+### Code snippet helper
+
 class Code
   constructor: ->
     @code = ''
@@ -428,17 +429,17 @@ class Code
 
   scope: (str, level=1) ->
     indent = strRepeat("  ", level)
-    @code  = @code.replace(/\s*$/, '') + "\n"
-    @code += indent + trim(str).replace(/\n/g, "\n#{indent}") + "\n"
+    @code  = rtrim(@code) + "\n"
+    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "\n"
     @
 
   toString: ->
     @code
 
 # ----------------------------------------------------------------------------
-# ## Helpers
+### Helpers
 
-# ### paren()
+#### paren()
 # Wraps a given string in parentheses.
 # (`paren 'hi'`   => `"(hi)"`)
 # (`paren '(hi)'` => `"(hi)"`)
@@ -449,7 +450,7 @@ paren = (string) ->
   else
     "(#{str})"
 
-# ### strRepeat()
+#### strRepeat()
 # Repeats a string a certain number of times.
 # (`strRepeat('.', 3)` => `"..."`)
 strRepeat = (str, times) ->
@@ -461,21 +462,39 @@ ltrim = (str) ->
 rtrim = (str) ->
   "#{str}".replace(/\s*$/g, '')
 
+blockTrim = (str) ->
+  "#{str}".replace(/^\s*\n|\s*$/g, '')
+
 trim = (str) ->
   "#{str}".replace(/^\s*|\s*$/g, '')
+
+#### unshift()
+unshift = (str) ->
+  str = "#{str}"
+
+  while true
+    m1 = str.match(/^/gm)
+    m2 = str.match(/^ /gm)
+
+    return str  if !m1 or !m2 or m1.length != m2.length
+    str = str.replace(/^ /gm, '')
 
 strEscape = (str) ->
   JSON.stringify "#{str}"
 
-# ### p()
+#### p()
 # Debugging tool
 p = (str) ->
-  delete str.tokenizer  if str.tokenizer?
-  console.log str
+  if typeof str == 'object'
+    delete str.tokenizer  if str.tokenizer?
+    console.log str
+  else if str.constructor == String
+    console.log JSON.stringify(str)
+  else
+    console.log str
   ''
 
-# ----------------------------------------------------------------------------
-# ## Exports
+### Exports
 
 exports =
   version: '0.0.3'
