@@ -151,7 +151,7 @@ Builders =
     # *In object literals like `{ '#foo click': b }`, ensure that the key is
     # quoted if need be.*
 
-    if str.match(/^([_\$a-z][a-z0-9_]*)$/i) or str.match(/^[0-9]+$/i)
+    if str.match(/^([_\$a-z][_\$a-z0-9]*)$/i) or str.match(/^[0-9]+$/i)
       str
     else
       strEscape str
