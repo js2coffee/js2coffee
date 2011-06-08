@@ -7,30 +7,66 @@ else
 
 tokens = narcissus.definitions.tokens
 parser = narcissus.parser
+Node   = parser.Node
 
-### Narcissus node helpers
+# ## Main entry point
+# This is the main entry point for the program; this function is called via
+# `require('js2coffee').build()`. It takes a JavaScript source string as an
+# argument, and it returns the CoffeeScript version.
+#
+# 1. Ask Narcissus to break it down into Nodes (`parser.parse`). This
+#    returns a `Node` object of type `script`.
+#
+# 2. This node is now passed onto `build()`.
 
-parser.Node.prototype.left  = -> @children[0]
-parser.Node.prototype.right = -> @children[1]
+buildCoffee = (str) ->
+  scriptNode = parser.parse("#{str}\n")
 
-parser.Node.prototype.unsupported = (msg) ->
+  trim build(scriptNode)
+
+# ## Narcissus node helpers
+# Some extensions to the Node class to make things easier later on.
+
+# `left() / right()`  
+# These are aliases for the first and last child.
+# Often helpful for things like binary operators.
+Node.prototype.left  = -> @children[0]
+Node.prototype.right = -> @children[1]
+
+# `unsupported()`  
+# Throws an unsupported error.
+Node.prototype.unsupported = (msg) ->
   throw new UnsupportedError("Unsupported: #{msg}", @)
 
+# `typeName()`  
 # Returns the typename in lowercase. (eg, 'function')
-parser.Node.prototype.typeName = -> Types[@type]
+Node.prototype.typeName = -> Types[@type]
 
-### Main functions
+# ## Main functions
 
-# Build a given item
-build = (item, opts={}) ->
+# `build()`  
+# This finds the appropriate builder function for `node` based on it's type,
+# the passes the node onto that function.
+#
+# For instance, for a `function` node, it calls `Builders.function(node)`.
+# It defaults to `Builders.other` if it can't find a function for it.
+build = (node, opts={}) ->
   name = 'other'
-  name = item.typeName()  if item != undefined and item.typeName
+  name = node.typeName()  if node != undefined and node.typeName
 
-  out = (Tokens[name] or Tokens.other).apply(item, [opts])
+  out = (Builders[name] or Builders.other).apply(node, [opts])
 
-  if item.parenthesized? then paren(out) else out
+  if node.parenthesized? then paren(out) else out
 
-# Builds a body
+# `re()`  
+# Works like `build()`, except it explicitly states which function should
+# handle it. (essentially, *re*routing it to another builder)
+re = (type, str, args...) ->
+  Builders[type].apply str, args
+
+# `body()`
+# Works like `build()`, and is used for code blocks. It cleans up the returned
+# code block by removing any extraneous spaces and such.
 body = (item, opts={}) ->
   str = build(item, opts)
   str = blockTrim(str)
@@ -38,33 +74,36 @@ body = (item, opts={}) ->
 
   if str.length > 0 then str else ""
 
-# Reroute to another token handler
-re = (type, str, args...) ->
-  Tokens[type].apply str, args
+# ## Types
+# The `Types` global object contains a map of Narcissus type numbers to type
+# names. It probably looks like:
+#
+#     Types = { ...
+#       '42': 'script',
+#       '43': 'block',
+#       '44': 'label',
+#       '45': 'for_in',
+#       ...
+#     }
 
-# Returns the list of tokens as an array.
-getTokens = ->
+Types = (->
   dict = {}
   for i of tokens
     dict[tokens[i]] = i.toLowerCase()  if typeof tokens[i] == 'number'
 
   dict
+)()
 
-Types = getTokens()
-
-# Picks the next best thing for a reserved keyword
-unreserve = (str) ->
-  if "#{str}" in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
-    "#{str}_"
-  else
-    "#{str}"
-
-# ----------------------------------------------------------------------------
-### The builders
+# ## The builders
+#
 # Each of these functions are apply'd to a Node, and is expected to return
 # a string representation of it CoffeeScript counterpart.
+#
+# These are invoked using `build()`.
 
-Tokens =
+Builders =
+  # `script`  
+  # This is the main entry point.
   'script': (opts={}) ->
     c = new Code
 
@@ -88,10 +127,16 @@ Tokens =
 
     c.toString()
 
+  # `identifier`  
+  # Any object identifier like a variable name.
+
   'identifier': ->
-    # In object literals like { '#foo click': b }, ensure that the key is
-    # quoted if need be.
     str = @value.toString()
+
+    # **Caveat:**
+    # *In object literals like `{ '#foo click': b }`, ensure that the key is
+    # quoted if need be.*
+
     if str.match(/^([_\$a-z][a-z0-9_]*)$/i) or str.match(/^[0-9]+/i)
       unreserve str
     else
@@ -103,42 +148,63 @@ Tokens =
   'id': ->
     unreserve @
 
-  # Function parameters
+  # `id_param`  
+  # Function parameters. Belongs to `list`.
   'id_param': ->
     if @toString() in ['undefined']
       "#{@}_"
     else
       re 'id', @
 
+  # `return`  
+  # A return statement. Has `@value` of type `id`.
+
   'return': ->
+    # **Caveat 1:**
+    # *Empty returns need to always be `return`, regardless if it's the last
+    # statement in the block or not.*
     if not @value?
       "return"
 
+    # **Caveat 2:**
+    # *If it's the last statement in the block, we can omit the 'return' keyword.*
     else if @last?
       build(@value)
 
     else
-      "return #{build(@value)}"  # id
+      "return #{build(@value)}"
+
+  # `;` (aka, statement)  
+  # A single statement.
 
   ';': ->
-    # This can be reached by blank ;'s
+    # **Caveat:**
+    # Some statements can be blank as some people are silly enough to use `;;`
+    # sometimes. They should be ignored.
     if not @expression?
       ""
 
-    # Optimize: "alert(2)" should be "alert 2" and omit extra
-    # parentheses. Only do this if it's the main statement in
-    # the line.
+    # **Caveat 2:**
+    # *If the statement only has one function call (eg, `alert(2);`), the
+    # parentheses should be omitted (eg, `alert 2`).*
     else if @expression.typeName() == 'call'
       re('call_statement', @expression) + "\n"
 
     else
       build(@expression) + "\n"
 
+  # `new` + `new_with_args`  
+  # For `new X` and `new X(y)` respctively.
+
   'new':           -> "new #{build @left()}"
   'new_with_args': -> "new #{build @left()}(#{build @right()})"
 
+  # ### Unary operators
+
   'unary_plus':  -> "+#{build @left()}"
   'unary_minus': -> "-#{build @left()}"
+
+  # ### Keywords
 
   'this':  -> 'this'
   'null':  -> 'null'
@@ -149,13 +215,16 @@ Tokens =
   'break':    -> "break\n"
   'continue': -> "continue\n"
 
+  # ### Some simple operators
+
   '!':      -> "not #{build @left()}"
-  '--':     -> re('increment_decrement', @, '--')
-  '++':     -> re('increment_decrement', @, '++')
   '~':      -> "~#{build @left()}"
   'typeof': -> "typeof #{build @left()}"
   'index':  -> "#{build @left()}[#{build @right()}]"
   'throw':  -> "throw #{build @exception}"
+
+  # ### Binary operators
+  # All of these are rerouted to the `binary_operator` builder.
 
   '+':   -> re('binary_operator', @, '+')
   '-':   -> re('binary_operator', @, '-')
@@ -181,11 +250,23 @@ Tokens =
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
 
+  'binary_operator': (sign) ->
+    "#{build @left()} #{sign} #{build @right()}"
+
+  # ### Increments and decrements
+  # For `a++` and `--b`.
+
+  '--':     -> re('increment_decrement', @, '--')
+  '++':     -> re('increment_decrement', @, '++')
+
   'increment_decrement': (sign) ->
     if @postfix
       "#{build @left()}#{sign}"
     else
       "#{sign}#{build @left()}"
+
+  # `=` (aka, assignment)  
+  # For `a = b` (but not `var a = b`: that's `var`).
 
   '=': ->
     sign = if @assignOp?
@@ -195,14 +276,24 @@ Tokens =
 
     "#{build @left()} #{sign} #{build @right()}"
 
+  # `,` (aka, comma)  
+  # For `a = 1, b = 2'
+
   ',': ->
     list = _.map @children, (item) -> build(item) + "\n"
     list.join('')
 
+  # `regexp`  
+  # Regular expressions.
+  #
   'regexp': ->
     m     = @value.toString().match(/^\/(.*)\/([a-z]?)/)
     value = m[1]
     flag  = m[2]
+
+    # **Caveat:**
+    # *If it begins with `=` or a space, the CoffeeScript parser will choke if
+    # it's written as `/=/`. Hence, they are written as `new RegExp('=')`.*
 
     begins_with = value[0]
 
@@ -217,24 +308,36 @@ Tokens =
   'string': ->
     strEscape @value
 
+  # `call`  
+  # A Function call.
+  # `@left` is an `id`, and `@right` is a `list`.
+
   'call': ->
-    # Often (id, list)
     if @right().children.length == 0
       "#{build @left()}()"
     else
       "#{build @left()}(#{build @right()})"
 
+  # `call_statement`  
+  # A `call` that's on it's own line.
+
   'call_statement': ->
     left = build @left()
 
-    # When calling in this way: `function () { .. }()`,
-    # ensure that there are parenthesis around the anon function.
+    # **Caveat:**
+    # *When calling in this way: `function () { ... }()`,
+    # ensure that there are parenthesis around the anon function
+    # (eg, `(-> ...)()`).*
+
     left = paren(left)  if @left().typeName() == 'function'
 
     if @right().children.length == 0
       "#{left}()"
     else
       "#{left} #{build @right()}"
+
+  # `list`  
+  # A parameter list.
 
   'list': ->
     list = _.map(@children, (item) -> build(item))
@@ -246,10 +349,13 @@ Tokens =
     ids = ids.join(', ')
     "delete #{ids}\n"
 
-  'binary_operator': (sign) ->
-    "#{build @left()} #{sign} #{build @right()}"
+  # `.` (scope resolution?)  
+  # For instances such as `object.value`.
 
   '.': ->
+    # **Caveat:**
+    # *If called as `this.xxx`, it should use the at sign (`@xxx`).*
+
     if @left().typeName() == 'this'
       "@#{build @right()}"
     else
@@ -279,6 +385,9 @@ Tokens =
     c.scope body(@block)
     c
 
+  # `?` (ternary operator)  
+  # For `a ? b : c`. Note that these will always be parenthesized, as (I
+  # believe) the order of operations in JS is different in CS.
   '?': ->
     "(if #{build @left()} then #{build @children[1]} else #{build @children[2]})"
 
@@ -354,16 +463,24 @@ Tokens =
     c
 
   'array_init': ->
-    list = re('list', @)
-    "[ #{list} ]"
+    if @children.length == 0
+      "[]"
+    else
+      list = re('list', @)
+      "[ #{list} ]"
+
+  # `property_init`  
+  # Belongs to `object_init`;
+  # left is a `identifier`, right can be anything.
 
   'property_init': ->
-    # Belongs to `object_init`
-    # left is a `identifier`
     "#{build @left()}: #{build @right()}"
 
+  # `object_init`  
+  # An object initializer.
+  # Has many `property_init`.
+
   'object_init': ->
-    # Has many `property_init`
     if @children.length == 0
       "{}"
 
@@ -376,6 +493,10 @@ Tokens =
       c = new Code
       c.scope list.join("\n")
       c
+
+  # `function`  
+  # A function. Can be an anonymous function (`function () { .. }`), or a named
+  # function (`function name() { .. }`).
 
   'function': ->
     c = new Code
@@ -399,13 +520,23 @@ Tokens =
 
     _.compact(list).join("\n") + "\n"
 
+  # ### Unsupported things
+  #
+  # Due to CoffeeScript limitations, the following things are not supported:
+  #
+  #  * New getter/setter syntax (`x.prototype = { get name() { ... } };`)
+  #  * Break labels (`my_label: ...`)
+  #  * Constants
+
   'other':  -> @unsupported "#{@typeName()} is not supported yet"
   'getter': -> @unsupported "getter syntax is not supported; use __defineGetter__"
   'setter': -> @unsupported "setter syntax is not supported; use __defineSetter__"
   'label':  -> @unsupported "labels are not supported by CoffeeScript"
   'const':  -> @unsupported "consts are not supported by CoffeeScript"
 
-Tokens.block = Tokens.script
+Builders.block = Builders.script
+
+# ## Unsupported Error exception
 
 class UnsupportedError
   constructor: (str, src) ->
@@ -416,8 +547,8 @@ class UnsupportedError
 
   toString: -> @message
 
-# ----------------------------------------------------------------------------
-### Code snippet helper
+# ## Code snippet helper
+# A helper class to deal with building code.
 
 class Code
   constructor: ->
@@ -436,13 +567,16 @@ class Code
   toString: ->
     @code
 
-# ----------------------------------------------------------------------------
-### Helpers
+# ## String helpers
+# These are functions that deal with strings.
 
-#### paren()
+# ### paren()
 # Wraps a given string in parentheses.
-# (`paren 'hi'`   => `"(hi)"`)
-# (`paren '(hi)'` => `"(hi)"`)
+# Examples:
+#
+#     paren 'hi'   => "(hi)"
+#     paren '(hi)' => "(hi)"
+#
 paren = (string) ->
   str = string.toString()
   if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
@@ -450,11 +584,17 @@ paren = (string) ->
   else
     "(#{str})"
 
-#### strRepeat()
+# ### strRepeat()
 # Repeats a string a certain number of times.
-# (`strRepeat('.', 3)` => `"..."`)
+# Example:
+#
+#     strRepeat('.', 3) => "..."
+#
 strRepeat = (str, times) ->
   (str for i in [0...times]).join('')
+
+# ### trim() and friends
+# String trimming functions.
 
 ltrim = (str) ->
   "#{str}".replace(/^\s*/g, '')
@@ -468,7 +608,8 @@ blockTrim = (str) ->
 trim = (str) ->
   "#{str}".replace(/^\s*|\s*$/g, '')
 
-#### unshift()
+# ### unshift()
+# Removes any unneccesary indentation from a code block string.
 unshift = (str) ->
   str = "#{str}"
 
@@ -479,11 +620,17 @@ unshift = (str) ->
     return str  if !m1 or !m2 or m1.length != m2.length
     str = str.replace(/^ /gm, '')
 
+# ### strEscape()
+# Escapes a string.
+# Example:
+#
+#   * `hello "there"` turns to `"hello \"there\""`
+#
 strEscape = (str) ->
   JSON.stringify "#{str}"
 
-#### p()
-# Debugging tool
+# ### p()
+# Debugging tool. Prints an object to the console.
 p = (str) ->
   if typeof str == 'object'
     delete str.tokenizer  if str.tokenizer?
@@ -494,12 +641,25 @@ p = (str) ->
     console.log str
   ''
 
-### Exports
+# ### unreserve()
+# Picks the next best thing for a reserved keyword.
+# Example:
+#
+#     "in"    => "in_"
+#     "hello" => "hello"
+#     "off"   => "off"
+#
+unreserve = (str) ->
+  if "#{str}" in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
+    "#{str}_"
+  else
+    "#{str}"
+
+# ## Exports
 
 exports =
   version: '0.0.3'
-  build: (str) ->
-    trim(build(parser.parse("#{str}\n")))
+  build: buildCoffee
   UnsupportedError: UnsupportedError
 
 if window?

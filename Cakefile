@@ -46,3 +46,6 @@ pack = (str) ->
   compressed = compressed.replace(spaces, "\n")
 
   compressed
+
+task 'doc', 'Builds docs', ->
+  run "docco lib/js2coffee.coffee && open docs/js2coffee.html"
