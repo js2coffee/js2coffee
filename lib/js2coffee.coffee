@@ -235,6 +235,7 @@ Builders =
   'false': -> 'false'
   'void':  -> 'undefined'
 
+  'debugger': -> "debugger\n"
   'break':    -> "break\n"
   'continue': -> "continue\n"
 
