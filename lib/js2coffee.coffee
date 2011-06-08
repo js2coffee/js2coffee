@@ -1,3 +1,18 @@
+# The JavaScript to CoffeeScript compiler.
+# Common usage:
+#
+#
+#     var src = "var square = function(n) { return n * n };"
+#
+#     js2coffee = require('js2coffee');
+#     js2coffee.build(src);
+#     //=> "square = (n) -> n * n"
+
+# ## Requires
+#
+# Js2coffee relies on Narcissus's parser. (Narcissus is Mozilla's JavaScript
+# engine written in JavaScript).
+
 if window?
   narcissus = window.Narcissus
   _         = window._
@@ -10,9 +25,8 @@ parser = narcissus.parser
 Node   = parser.Node
 
 # ## Main entry point
-# This is the main entry point for the program; this function is called via
-# `require('js2coffee').build()`. It takes a JavaScript source string as an
-# argument, and it returns the CoffeeScript version.
+# This is `require('js2coffee').build()`. It takes a JavaScript source
+# string as an argument, and it returns the CoffeeScript version.
 #
 # 1. Ask Narcissus to break it down into Nodes (`parser.parse`). This
 #    returns a `Node` object of type `script`.
@@ -110,15 +124,15 @@ Builders =
     len = @children.length
 
     if len > 0
-      # Omit returns if not needed
+      # *Omit returns if not needed.*
       if opts.returnable?
         @children[len-1].last = true
 
-      # No breaks for switches
+      # *CoffeeScript does not need `break` statements on `switch` blocks.*
       if opts.noBreak? and @children[len-1].typeName() == 'break'
         delete @children[len-1]
 
-    # Build functions first
+    # *Functions must always be declared first in a block.*
     if @children?
       _.each @children, (item) ->
         c.add build(item)  if item.typeName() == 'function'
@@ -570,7 +584,7 @@ class Code
 # ## String helpers
 # These are functions that deal with strings.
 
-# ### paren()
+# `paren()`  
 # Wraps a given string in parentheses.
 # Examples:
 #
@@ -584,7 +598,7 @@ paren = (string) ->
   else
     "(#{str})"
 
-# ### strRepeat()
+# `strRepeat()`  
 # Repeats a string a certain number of times.
 # Example:
 #
@@ -593,7 +607,7 @@ paren = (string) ->
 strRepeat = (str, times) ->
   (str for i in [0...times]).join('')
 
-# ### trim() and friends
+# `trim()` *and friends*  
 # String trimming functions.
 
 ltrim = (str) ->
@@ -608,7 +622,7 @@ blockTrim = (str) ->
 trim = (str) ->
   "#{str}".replace(/^\s*|\s*$/g, '')
 
-# ### unshift()
+# `unshift()`  
 # Removes any unneccesary indentation from a code block string.
 unshift = (str) ->
   str = "#{str}"
@@ -620,7 +634,7 @@ unshift = (str) ->
     return str  if !m1 or !m2 or m1.length != m2.length
     str = str.replace(/^ /gm, '')
 
-# ### strEscape()
+# `strEscape()`  
 # Escapes a string.
 # Example:
 #
@@ -629,8 +643,9 @@ unshift = (str) ->
 strEscape = (str) ->
   JSON.stringify "#{str}"
 
-# ### p()
+# `p()`  
 # Debugging tool. Prints an object to the console.
+# Not actually used, but here for convenience.
 p = (str) ->
   if typeof str == 'object'
     delete str.tokenizer  if str.tokenizer?
@@ -641,7 +656,7 @@ p = (str) ->
     console.log str
   ''
 
-# ### unreserve()
+# `unreserve()`  
 # Picks the next best thing for a reserved keyword.
 # Example:
 #
