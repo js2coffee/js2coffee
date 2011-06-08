@@ -3,7 +3,7 @@
   "description": "JavaScript to CoffeeScript compiler",
   "keywords": ["javascript", "coffeescript", "language", "compiler"],
   "author": "Rico Sta. Cruz",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "node": ">=0.4.0"
   },
