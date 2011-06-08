@@ -8,7 +8,9 @@ else
 tokens = narcissus.definitions.tokens
 parser = narcissus.parser
 
-# Some helpers for Narcissus nodes
+# ----------------------------------------------------------------------------
+# ## Narcissus node helpers
+
 parser.Node.prototype.left  = -> @children[0]
 parser.Node.prototype.right = -> @children[1]
 
@@ -17,6 +19,9 @@ parser.Node.prototype.unsupported = (msg) ->
 
 # Returns the typename in lowercase. (eg, 'function')
 parser.Node.prototype.typeName = -> Types[@type]
+
+# ----------------------------------------------------------------------------
+## Main functions
 
 # Build a given item
 build = (item, opts={}) ->
@@ -29,8 +34,12 @@ build = (item, opts={}) ->
 
 # Builds a body
 body = (item, opts={}) ->
-  str = trim(build(item, opts))
+  str = rtrim(build(item, opts))
   if str.length > 0 then str else ""
+
+# Reroute to another token handler
+re = (type, str, args...) ->
+  Tokens[type].apply str, args
 
 # Returns the list of tokens as an array.
 getTokens = ->
@@ -39,19 +48,6 @@ getTokens = ->
     dict[tokens[i]] = i.toLowerCase()  if typeof tokens[i] == 'number'
 
   dict
-
-strRepeat = (str, times) ->
-  (str for i in [0...times]).join('')
-
-# Reroute to another token handler
-re = (type, str, args...) ->
-  Tokens[type].apply str, args
-
-trim = (str) ->
-  "#{str}".replace(/^\s*|\s*$/g, '')
-
-strEscape = (str) ->
-  JSON.stringify "#{str}"
 
 Types = getTokens()
 
@@ -62,9 +58,11 @@ unreserve = (str) ->
   else
     "#{str}"
 
-# The builders
+# ----------------------------------------------------------------------------
+# ## The builders
 # Each of these functions are apply'd to a Node, and is expected to return
 # a string representation of it CoffeeScript counterpart.
+
 Tokens =
   'script': (opts={}) ->
     c = new Code
@@ -114,8 +112,10 @@ Tokens =
   'return': ->
     if not @value?
       "return"
+
     else if @last?
       build(@value)
+
     else
       "return #{build(@value)}"  # id
 
@@ -435,7 +435,13 @@ class Code
   toString: ->
     @code
 
+# ----------------------------------------------------------------------------
+# ## Helpers
+
+# ### paren()
 # Wraps a given string in parentheses.
+# (`paren 'hi'`   => `"(hi)"`)
+# (`paren '(hi)'` => `"(hi)"`)
 paren = (string) ->
   str = string.toString()
   if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
@@ -443,11 +449,33 @@ paren = (string) ->
   else
     "(#{str})"
 
+# ### strRepeat()
+# Repeats a string a certain number of times.
+# (`strRepeat('.', 3)` => `"..."`)
+strRepeat = (str, times) ->
+  (str for i in [0...times]).join('')
+
+ltrim = (str) ->
+  "#{str}".replace(/^\s*/g, '')
+
+rtrim = (str) ->
+  "#{str}".replace(/\s*$/g, '')
+
+trim = (str) ->
+  "#{str}".replace(/^\s*|\s*$/g, '')
+
+strEscape = (str) ->
+  JSON.stringify "#{str}"
+
+# ### p()
 # Debugging tool
 p = (str) ->
   delete str.tokenizer  if str.tokenizer?
   console.log str
   ''
+
+# ----------------------------------------------------------------------------
+# ## Exports
 
 exports =
   version: '0.0.3'
