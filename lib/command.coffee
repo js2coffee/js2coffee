@@ -11,9 +11,11 @@ cmd      = basename(process.argv[1])
 build_and_show = (fname) ->
   contents = fs.readFileSync(fname, 'utf-8')
   output   = js2coffee.build(contents)
-  console.log "%s", output
+  #console.log "%s", output
 
 runFiles = (proc) ->
+  # slice returns new array
+  # slice(2) starting index 2 (array index starts from 0)
   files = process.argv.slice(2)
   work  = proc or build_and_show
 
@@ -30,7 +32,9 @@ runFiles = (proc) ->
       console.warn "  cat file.js | #{cmd}"
       process.exit 1
 
-    _.each files, (fname) -> work fname
+    _.each files, (fname) -> 
+      output = work fname
+      fs.writeFile(fname + ".coffee",output,"utf-8")
 
 module.exports =
   run: (args...) ->
