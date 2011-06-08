@@ -525,7 +525,11 @@ Builders =
   'function': ->
     c = new Code
 
-    params = _.map(@params, (str) -> re('id_param', str))
+    params = _.map @params, (str) ->
+      if str.constructor == String
+        re('id_param', str)
+      else
+        build str
 
     if @name
       c.add "#{@name} = "
