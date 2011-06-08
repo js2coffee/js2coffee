@@ -141,10 +141,10 @@ Builders =
 
     c.toString()
 
-  # `identifier`  
-  # Any object identifier like a variable name.
+  # `property_identifier`  
+  # A key in an object literal.
 
-  'identifier': ->
+  'property_identifier': ->
     str = @value.toString()
 
     # **Caveat:**
@@ -152,9 +152,15 @@ Builders =
     # quoted if need be.*
 
     if str.match(/^([_\$a-z][a-z0-9_]*)$/i) or str.match(/^[0-9]+/i)
-      unreserve str
+      str
     else
       strEscape str
+
+  # `identifier`  
+  # Any object identifier like a variable name.
+
+  'identifier': ->
+    unreserve @value.toString()
 
   'number': ->
     "#{@value}"
@@ -488,7 +494,7 @@ Builders =
   # left is a `identifier`, right can be anything.
 
   'property_init': ->
-    "#{build @left()}: #{build @right()}"
+    "#{re 'property_identifier', @left()}: #{build @right()}"
 
   # `object_init`  
   # An object initializer.
