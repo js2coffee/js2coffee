@@ -38,4 +38,4 @@ _.each tests, (test, name) ->
 
   catch e
     console.log "[ERR ] #{name}"
-    console.log e
+    console.log e.message

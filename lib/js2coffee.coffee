@@ -379,8 +379,18 @@ Builders =
     # **Caveat:**
     # *If called as `this.xxx`, it should use the at sign (`@xxx`).*
 
-    if @left().typeName() == 'this'
+    # **Caveat:**
+    # *If called as `x.prototype`, it should use double colons (`x::`).*
+
+    isThis = (@left().typeName() == 'this')
+    isPrototype = (@right().typeName() == 'identifier' and @right().value == 'prototype')
+
+    if isThis and isPrototype
+      "@::"
+    else if isThis
       "@#{build @right()}"
+    else if isPrototype
+      "#{build @left()}::"
     else
       "#{build @left()}.#{build @right()}"
 
