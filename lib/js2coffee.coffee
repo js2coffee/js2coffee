@@ -210,6 +210,9 @@ Builders =
     else if @expression.typeName() == 'call'
       re('call_statement', @expression) + "\n"
 
+    else if @expression.typeName() == 'object_init'
+      paren(re('object_init', @expression, brackets: true)) + "\n"
+
     else
       build(@expression) + "\n"
 
@@ -500,7 +503,7 @@ Builders =
   # An object initializer.
   # Has many `property_init`.
 
-  'object_init': ->
+  'object_init': (options={}) ->
     if @children.length == 0
       "{}"
 
@@ -512,6 +515,7 @@ Builders =
 
       c = new Code
       c.scope list.join("\n")
+      c = "{#{c}}"  if options.brackets?
       c
 
   # `function`  
