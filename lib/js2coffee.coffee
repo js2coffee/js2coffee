@@ -90,7 +90,13 @@ Tokens =
     c.toString()
 
   'identifier': ->
-    unreserve @value
+    # In object literals like { '#foo click': b }, ensure that the key is
+    # quoted if need be.
+    str = @value.toString()
+    if str.match(/^([_\$a-z][a-z0-9_]*)$/i) or str.match(/^[0-9]+/i)
+      unreserve str
+    else
+      strEscape str
 
   'number': ->
     "#{@value}"
@@ -351,9 +357,12 @@ Tokens =
     "[ #{list} ]"
 
   'property_init': ->
+    # Belongs to `object_init`
+    # left is a `identifier`
     "#{build @left()}: #{build @right()}"
 
   'object_init': ->
+    # Has many `property_init`
     if @children.length == 0
       "{}"
 
