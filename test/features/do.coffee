@@ -1,5 +1,5 @@
 i = 0
-while true
+loop
   console.log i
   i++
   break unless i < 14

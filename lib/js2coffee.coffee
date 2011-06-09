@@ -434,7 +434,7 @@ Builders =
     if @condition?
       c.add "while #{build @condition}\n"
     else
-      c.add "while true"
+      c.add "loop"
 
     c.scope body(@body)
     c.scope body(@update)  if @update?
@@ -457,7 +457,7 @@ Builders =
   'do': ->
     c = new Code
 
-    c.add "while true"
+    c.add "loop"
     c.scope body(@body)
     c.scope "break unless #{build @condition}"  if @condition?
 
