@@ -272,18 +272,12 @@ Builders =
   '>>':  -> re('binary_operator', @, '>>')
   '>=':  -> re('binary_operator', @, '>=')
   '!=':  -> re('binary_operator', @, '!=')
-
-  '===':  ->
-    useExistential @, else: =>
-      re('binary_operator', @, '==')
+  '===': -> re('binary_operator', @, '==')
+  '!==': -> re('binary_operator', @, '!=')
 
   '==':  ->
     useExistential @, else: =>
       re('binary_operator', @, '==') # CHANGEME: Yes, this is wrong
-
-  '!==':  ->
-    useExistential @, else: =>
-      re('binary_operator', @, '!=')
 
   '!=':  ->
     useExistential @, else: =>
@@ -703,12 +697,8 @@ useExistential = (cond, options={}) ->
   left  = cond.left()
   right = cond.right()
 
-  if cond.isA('==', '===', '!=', '!==')
+  if cond.isA('==', '!=')
     negative = if (cond.isA('!=', '!==')) then '!' else ''
-
-    # **Caveat:** *`typeof x == 'undefined'` should compile to `x?`.*
-    if left.isA('typeof') and right.isA('string') and right.value == 'undefined'
-      return "#{negative}#{build left.left()}?"
 
     # **Caveat:** *`x == null` and `x == void` should compile to `x?`.*
     if right.isA('null', 'void')

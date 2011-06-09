@@ -6,17 +6,17 @@ ifChecks = ->
 ifNullChecks = ->
   if x?
     alert "x == null"
-  if x?
+  if x == null
     alert "x === null"
 voidChecks = ->
   if x?
     alert "x == void 0"
-  if x?
+  if x == undefined
     alert "x === void 0"
   if x?
     alert "x == void 1"
 undefinedChecks = ->
-  if x?
+  if typeof x == "undefined"
     alert "typeof x == 'undefined'"
 edgeCase = ->
   if not x == y
@@ -24,14 +24,14 @@ edgeCase = ->
 unlessChecks = ->
   unless x?
     alert "x != null"
-  unless x?
+  if x != null
     alert "x !== null"
-  unless x?
+  if typeof x != "undefined"
     alert "typeof x != 'undefined'"
 whileAndFor = ->
   while x?
     alert
-  while x?
+  while x == null
     alert
   a
   while x?
