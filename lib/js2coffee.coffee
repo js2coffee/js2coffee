@@ -44,17 +44,21 @@ buildCoffee = (str) ->
 # `left() / right()`  
 # These are aliases for the first and last child.
 # Often helpful for things like binary operators.
-Node.prototype.left  = -> @children[0]
-Node.prototype.right = -> @children[1]
+Node::left  = -> @children[0]
+Node::right = -> @children[1]
 
 # `unsupported()`  
 # Throws an unsupported error.
-Node.prototype.unsupported = (msg) ->
+Node::unsupported = (msg) ->
   throw new UnsupportedError("Unsupported: #{msg}", @)
 
 # `typeName()`  
 # Returns the typename in lowercase. (eg, 'function')
-Node.prototype.typeName = -> Types[@type]
+Node::typeName = -> Types[@type]
+
+# `isA()`  
+# Typename check.
+Node::isA = (what...) -> Types[@type] in what
 
 # ## Main functions
 
@@ -263,14 +267,20 @@ Builders =
   '&&':  -> re('binary_operator', @, 'and')
   '||':  -> re('binary_operator', @, 'or')
   'in':  -> re('binary_operator', @, 'in')
-  '==':  -> re('binary_operator', @, '==')
   '<<':  -> re('binary_operator', @, '<<')
   '<=':  -> re('binary_operator', @, '<=')
   '>>':  -> re('binary_operator', @, '>>')
   '>=':  -> re('binary_operator', @, '>=')
   '!=':  -> re('binary_operator', @, '!=')
-  '===': -> re('binary_operator', @, 'is')
   '!==': -> re('binary_operator', @, 'isnt')
+
+  '===':  ->
+    useExistential @, else: =>
+      re('binary_operator', @, '==')
+
+  '==':  ->
+    useExistential @, else: =>
+      re('binary_operator', @, '==') # CHANGEME: Yes, this is wrong
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
 
@@ -677,6 +687,21 @@ inversible = (condition, normal, reverse) ->
     reverse.replace "%s", build(condition.left())
   else
     normal.replace "%s", build(condition)
+
+useExistential = (cond, options={}) ->
+  left  = cond.left()
+  right = cond.right()
+
+  if cond.typeName() in ['==', '===']
+    # **Caveat:** *`typeof x == 'undefined'` should compile to `x?`.*
+    if left.isA('typeof') and right.isA('string') and right.value == 'undefined'
+      return "#{build left.left()}?"
+
+    # **Caveat:** *`x == null` and `x == void` should compile to `x?`.*
+    if right.isA('null', 'void')
+      return "#{build left}?"
+
+  options.else()  if options.else?
 
 # `p()`  
 # Debugging tool. Prints an object to the console.
