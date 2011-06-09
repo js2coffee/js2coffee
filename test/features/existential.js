@@ -9,6 +9,9 @@ if (x===void 1) { y }
 if (typeof x == 'undefined') { y }
 if (!x == y) { y }
 
+if (x!=null) { y }
+if (x!==null) { y }
+
 while (x==null) { y }
 while (x===null) { y }
 
