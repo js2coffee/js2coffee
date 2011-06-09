@@ -16,9 +16,8 @@ reporting issues and suggesting numerous improvements.
   * Use `unless` and `until` as the inverse of `if` and `while` respectively. (#35)
 
 ### Fixed:
-  * `{ $$: a }` is now no longer quoted.
-  * Keys in object literals now get quoted if needed. This fixes the erroneous compilation
-    of objects such as `{ 'click #button': function() { ... } }`.
+  * Keys in object literals now get quoted if needed. This fixes the erroneous
+    compilation of objects such as `{ 'click #button': function() { ... } }`.
 
 v0.0.4 - Jun 09, 2011
 ---------------------
