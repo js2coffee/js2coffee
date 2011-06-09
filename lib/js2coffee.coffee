@@ -690,7 +690,11 @@ strEscape = (str) ->
 # Used for *if/unless* and *while/until*.
 #
 inversible = (condition, normal, reverse) ->
-  if condition.typeName() == '!'
+  existential = useExistential(condition)
+
+  if existential? and existential.substr(0,1) == '!' # Hacky, meh
+    reverse.replace "%s", existential.substr(1)
+  else if condition.typeName() == '!'
     reverse.replace "%s", build(condition.left())
   else
     normal.replace "%s", build(condition)
