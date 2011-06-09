@@ -1,3 +1,25 @@
+v0.0.5 - Jun 10, 2011
+---------------------
+
+Special thanks to [Michael Ficarra](http://github.com/michaelficarra) for agressively
+reporting issues and suggesting numerous improvements.
+
+### Added:
+  * Account for negative existentialist checks (`if !x?`). (#19)
+    * Compile `if (x != null)` to `unless x?`
+    * Compile `if (x === null)` to `if x?`
+  * Ensure object literals with more than one property get surrounded by `({ .. })`. (#8)
+  * Support `debugger`. (#27)
+  * Support destructuring in functions. (#17)
+  * Use `loop` instead of `while true` in while and for loops. (#35)
+  * Use the `::` prototype operator. (#24)
+  * Use `unless` and `until` as the inverse of `if` and `while` respectively. (#35)
+
+### Fixed:
+  * `{ $$: a }` is now no longer quoted.
+  * Keys in object literals now get quoted if needed. This fixes the erroneous compilation
+    of objects such as `{ 'click #button': function() { ... } }`.
+
 v0.0.4 - Jun 09, 2011
 ---------------------
 
