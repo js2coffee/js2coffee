@@ -450,7 +450,7 @@ Builders =
   'while': ->
     c = new Code
 
-    c.add "while #{build @condition}"
+    c.add inversible(@condition, "while %s", "until %s")
     c.scope body(@body)
     c
 
@@ -466,7 +466,7 @@ Builders =
   'if': ->
     c = new Code
 
-    c.add "if #{build @condition}"
+    c.add inversible(@condition, "if %s", "unless %s")
     c.scope body(@thenPart)
 
     if @elsePart?
@@ -667,6 +667,16 @@ unshift = (str) ->
 #
 strEscape = (str) ->
   JSON.stringify "#{str}"
+
+# `inversible()`  
+# Returns *reverse* if the given condition is reversible, else returns *normal*.
+# Used for *if/unless* and *while/until*.
+#
+inversible = (condition, normal, reverse) ->
+  if condition.typeName() == '!'
+    reverse.replace "%s", build(condition.left())
+  else
+    normal.replace "%s", build(condition)
 
 # `p()`  
 # Debugging tool. Prints an object to the console.
