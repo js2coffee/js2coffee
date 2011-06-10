@@ -5,7 +5,7 @@ Special thanks to [Michael Ficarra](http://github.com/michaelficarra) for agress
 reporting issues and suggesting numerous improvements.
 
 ### Added:
-  * Account for negative existentialist checks (`if !x?`). (#19)
+  * Account for negative existence checks (`if !x?`). (#19)
     * Compile `if (x != null)` to `unless x?`
     * Compile `if (x === null)` to `if x?`
   * Ensure object literals with more than one property get surrounded by `({ .. })`. (#8)

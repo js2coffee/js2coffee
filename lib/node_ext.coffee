@@ -106,7 +106,7 @@ Types = do ->
 
   # Now extend it with a few more
   dict[++last] = 'call_statement'
-  dict[++last] = 'existential'
+  dict[++last] = 'existence_check'
 
   dict
 

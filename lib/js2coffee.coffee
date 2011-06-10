@@ -474,7 +474,7 @@ Builders =
 
     c
 
-  'existential': ->
+  'existence_check': ->
     "#{build @left()}?"
 
   'array_init': ->
@@ -644,11 +644,11 @@ Transformers =
   '!=': ->
     if @right().isA('null', 'void')
       @type     = Typenames['!']
-      @children = [@clone(type: Typenames['existential'], children: [@left()])]
+      @children = [@clone(type: Typenames['existence_check'], children: [@left()])]
 
   '==': ->
     if @right().isA('null', 'void')
-      @type     = Typenames['existential']
+      @type     = Typenames['existence_check']
       @children = [@left()]
 
 # ## Unsupported Error exception
