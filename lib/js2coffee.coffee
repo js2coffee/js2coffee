@@ -48,6 +48,23 @@ Node::left  = -> @children[0]
 Node::right = -> @children[1]
 Node::last  = -> @children[@children.length-1]
 
+# `walk()`  
+# Traverses down a node and it's children.
+Node::walk  = (options, fn, parent=null) ->
+  fn parent, @  if parent
+
+  if options.last
+    @last().walk options, fn, @  if @last()?
+
+  @thenPart.walk options, fn, @  if @thenPart?
+  @elsePart.walk options, fn, @  if @elsePart?
+
+  if @cases
+    _.each @cases, (item) ->
+      item.statements.walk options, fn, item
+
+# `clone()`  
+# Clones a given node.
 Node::clone = (hash) ->
   for i of @
     continue  if i in ['tokenizer', 'length', 'filename']
@@ -55,7 +72,7 @@ Node::clone = (hash) ->
 
   new Node(@tokenizer, hash)
 
-# `inspect()`  
+# `toHash()` + `inspect()`  
 # For debugging
 Node::toHash = ->
   hash = {}
@@ -676,21 +693,8 @@ Transformers =
         @expression.type = Typenames['call_statement']
 
   'function': ->
-    walk = (node, fn, parent=null) ->
-      return  unless node
-
-      fn parent, node  if parent
-
-      walk node.last(), fn, node
-      walk node.thenPart, fn, node
-      walk node.elsePart, fn, node
-
-      if node.cases
-        _.each node.cases, (item) ->
-          walk item.statements, fn, item
-
     # *Unwrap the `return`s.*
-    walk @body, (parent, node) ->
+    @body.walk last: true, (parent, node) ->
       if node.isA('return') and node.value
         parent.children[parent.children.length-1] = node.value
 
