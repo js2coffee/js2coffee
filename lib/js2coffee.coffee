@@ -230,15 +230,15 @@ Builders =
     # *Empty returns need to always be `return`, regardless if it's the last
     # statement in the block or not.*
     if not @value?
-      "return"
+      "return\n"
 
     # **Caveat 2:**
     # *If it's the last statement in the block, we can omit the 'return' keyword.*
-    else if @last?
-      build(@value)
+    else if @isLast
+      build(@value) + "\n"
 
     else
-      "return #{build(@value)}"
+      "return #{build(@value)}\n"
 
   # `;` (aka, statement)  
   # A single statement.
@@ -685,7 +685,7 @@ Transformers =
 
   'function': ->
     # *Implicit returns.*
-    @body.last()?.last = true  # This should trickle down
+    @body.last()?.isLast = true  # This should trickle down
 
   'switch': ->
     _.each @cases, (item) =>
