@@ -13,6 +13,7 @@ task 'build', 'Builds the browser version', ->
   output = [
     readFileSync('lib/narcissus_packed.js', 'utf-8'),
     compile(readFileSync('lib/node_ext.coffee', 'utf-8'))
+    compile(readFileSync('lib/helpers.coffee', 'utf-8'))
     compile(readFileSync('lib/js2coffee.coffee', 'utf-8'))
   ]
 

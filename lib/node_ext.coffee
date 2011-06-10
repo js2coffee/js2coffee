@@ -1,8 +1,5 @@
-_require = (file, name) ->
-  @[name] or require(file)
-
-narcissus = _require('./narcissus_packed', 'Narcissus')
-_         = _require('underscore', '_')
+narcissus = @Narcissus or require('./narcissus_packed')
+_         = @_ or require('underscore')
 
 tokens = narcissus.definitions.tokens
 parser = narcissus.parser
@@ -121,7 +118,5 @@ Typenames = do ->
 
   dict
 
-exports = {Types, Typenames, Node}
-
-@NodeExt = exports
+@NodeExt = exports = {Types, Typenames, Node}
 module.exports = exports  if module?
