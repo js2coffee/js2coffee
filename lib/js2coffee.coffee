@@ -316,7 +316,7 @@ Builders =
     # ensure that there are parenthesis around the anon function
     # (eg, `(-> ...)()`).*
 
-    left = paren(left)  if @left().typeName() == 'function'
+    left = paren(left)  if @left().isA('function')
 
     if @right().children.length == 0
       "#{left}()"
@@ -531,7 +531,8 @@ Builders =
     else
       c.add "->"
 
-    c.scope body(@body)
+    body_ = body(@body)
+    c.scope body_  if trim(body_).length > 0
     c
 
   'var': ->
