@@ -532,7 +532,10 @@ Builders =
       c.add "->"
 
     body_ = body(@body)
-    c.scope body_  if trim(body_).length > 0
+    if trim(body_).length > 0
+      c.scope body_
+    else
+      c.add "\n"
     c
 
   'var': ->
