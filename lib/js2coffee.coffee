@@ -35,6 +35,7 @@ Node   = parser.Node
 
 buildCoffee = (str) ->
   scriptNode = parser.parse("#{str}\n")
+  transform(scriptNode)
 
   trim build(scriptNode)
 
@@ -46,6 +47,39 @@ buildCoffee = (str) ->
 # Often helpful for things like binary operators.
 Node::left  = -> @children[0]
 Node::right = -> @children[1]
+Node::last  = -> @children[@children.length-1]
+
+# `inspect()`  
+# For debugging
+Node::toHash = ->
+  hash = {}
+
+  toHash = (what) ->
+    return null  unless what
+    if what.toHash then what.toHash() else what
+
+  hash.type = @typeName()
+  hash.src  = @src()
+
+  for i of @
+    continue  if i in ['filename', 'length', 'type', 'start', 'end', 'tokenizer', 'lineno']
+    continue  if typeof @[i] == 'function'
+    continue  unless @[i]
+
+    if @[i].constructor == Array
+      hash[i] = _.map(@[i], (item) -> toHash(item))
+
+    else
+      hash[i] = toHash(@[i])
+
+  hash
+
+Node::inspect = ->
+  JSON.stringify @toHash(), null, '  '
+
+# `src()`  
+# Returns the source for the node.
+Node::src   = -> @tokenizer.source.substr(@start, @end-@start)
 
 # `unsupported()`  
 # Throws an unsupported error.
@@ -72,9 +106,10 @@ build = (node, opts={}) ->
   name = 'other'
   name = node.typeName()  if node != undefined and node.typeName
 
+  transform node
   out = (Builders[name] or Builders.other).apply(node, [opts])
 
-  if node.parenthesized? then paren(out) else out
+  if node.parenthesized then paren(out) else out
 
 # `re()`  
 # Works like `build()`, except it explicitly states which function should
@@ -104,13 +139,26 @@ body = (item, opts={}) ->
 #       ...
 #     }
 
-Types = (->
+Types = do ->
   dict = {}
+  last = 0
   for i of tokens
-    dict[tokens[i]] = i.toLowerCase()  if typeof tokens[i] == 'number'
+    if typeof tokens[i] == 'number'
+      dict[tokens[i]] = i.toLowerCase()
+      last = tokens[i]
+
+  # Now extend it with a few more
+  dict[++last] = 'call_statement'
 
   dict
-)()
+
+# Inverse of Types
+Typenames = do ->
+  dict = {}
+  for i of Types
+    dict[Types[i]] = i
+
+  dict
 
 # ## The builders
 #
@@ -125,23 +173,9 @@ Builders =
   'script': (opts={}) ->
     c = new Code
 
-    len = @children.length
-
-    if len > 0
-      # *Omit returns if not needed.*
-      if opts.returnable?
-        @children[len-1].last = true
-
-      # *CoffeeScript does not need `break` statements on `switch` blocks.*
-      if opts.noBreak? and @children[len-1].typeName() == 'break'
-        delete @children[len-1]
-
     # *Functions must always be declared first in a block.*
-    if @children?
-      _.each @children, (item) ->
-        c.add build(item)  if item.typeName() == 'function'
-      _.each @children, (item) ->
-        c.add build(item)  if item.typeName() != 'function'
+    _.each @functions,    (item) -> c.add build(item)
+    _.each @nonfunctions, (item) -> c.add build(item)
 
     c.toString()
 
@@ -205,17 +239,16 @@ Builders =
     # **Caveat:**
     # Some statements can be blank as some people are silly enough to use `;;`
     # sometimes. They should be ignored.
-    if not @expression?
+    unless @expression?
       ""
 
-    # **Caveat 2:**
-    # *If the statement only has one function call (eg, `alert(2);`), the
-    # parentheses should be omitted (eg, `alert 2`).*
-    else if @expression.typeName() == 'call'
-      re('call_statement', @expression) + "\n"
-
-    else if @expression.typeName() == 'object_init'
-      paren(re('object_init', @expression, brackets: true)) + "\n"
+    else if @expression.typeName() == 'object_init'  # TODO: remove this
+      src = re('object_init', @expression)
+      if @parenthesized
+        src
+      else
+        src = unshift(blockTrim(src))
+        "#{src}\n"
 
     else
       build(@expression) + "\n"
@@ -394,17 +427,19 @@ Builders =
     # **Caveat:**
     # *If called as `x.prototype`, it should use double colons (`x::`).*
 
-    isThis = (@left().typeName() == 'this')
-    isPrototype = (@right().typeName() == 'identifier' and @right().value == 'prototype')
+    left  = build @left()
+    right = build @right()
 
-    if isThis and isPrototype
+    if @isThis and @isPrototype
       "@::"
-    else if isThis
-      "@#{build @right()}"
-    else if isPrototype
-      "#{build @left()}::"
+    else if @isThis
+      "@#{right}"
+    else if @isPrototype
+      "#{left}::"
+    else if @left().isPrototype
+      "#{left}#{right}"
     else
-      "#{build @left()}.#{build @right()}"
+      "#{left}.#{right}"
 
   'try': ->
     c = new Code
@@ -501,7 +536,7 @@ Builders =
       else
         c.scope "when #{build item.caseLabel}\n"
 
-      c.scope body(item.statements, noBreak: true), 2
+      c.scope body(item.statements), 2
 
       first = false
 
@@ -561,7 +596,7 @@ Builders =
     else
       c.add "->"
 
-    c.scope body(@body, returnable: true)
+    c.scope body(@body)
     c
 
   'var': ->
@@ -585,6 +620,70 @@ Builders =
   'const':  -> @unsupported "consts are not supported by CoffeeScript"
 
 Builders.block = Builders.script
+
+transform = (node, args...) ->
+  type = node.typeName()
+  fn   = Transformers[type]
+
+  fn.apply(node, args)  if fn
+
+# ## AST manipulation
+# Manipulation of the abstract syntax tree happens here. All these are done on
+# the `build()` step, done just before a node is passed onto `Builders`.
+
+Transformers =
+  'script': ->
+    @functions    = []
+    @nonfunctions = []
+
+    _.each @children, (item) =>
+      if item.isA('function')
+        @functions.push item
+      else
+        @nonfunctions.push item
+
+    last = null
+
+    # *Statements don't need parens, unless they are consecutive object
+    # literals.*
+    _.each @nonfunctions, (item) =>
+      if item.expression?
+        expr = item.expression
+
+        if last?.isA('object_init') and expr.isA('object_init')
+          item.parenthesized = true
+        else
+          item.parenthesized = false
+
+        last = expr
+
+  '.': ->
+    @isThis      = @left().isA('this')
+    @isPrototype = (@right().isA('identifier') and @right().value == 'prototype')
+
+  ';': ->
+    if @expression?
+      # *Statements don't need parens.*
+      @expression.parenthesized = false
+
+      # *If the statement only has one function call (eg, `alert(2);`), the
+      # parentheses should be omitted (eg, `alert 2`).*
+      if @expression.isA('call')
+        @expression.type = Typenames['call_statement']
+
+  'function': ->
+    # *Implicit returns.*
+    @body.last()?.last = true  # This should trickle down
+
+  'switch': ->
+    _.each @cases, (item) =>
+      block = item.statements
+      ch    = block.children
+
+      # *CoffeeScript does not need `break` statements on `switch` blocks.*
+      delete ch[ch.length-1]  if block.last().isA('break')
+
+Transformers.block = Transformers.script
 
 # ## Unsupported Error exception
 
@@ -658,6 +757,9 @@ blockTrim = (str) ->
 trim = (str) ->
   "#{str}".replace(/^\s*|\s*$/g, '')
 
+isSingleLine = (str) ->
+  "\n" in trim(str)
+
 # `unshift()`  
 # Removes any unneccesary indentation from a code block string.
 unshift = (str) ->
@@ -710,10 +812,7 @@ useExistential = (cond, options={}) ->
 # Debugging tool. Prints an object to the console.
 # Not actually used, but here for convenience.
 p = (str) ->
-  if typeof str == 'object'
-    delete str.tokenizer  if str.tokenizer?
-    console.log str
-  else if str.constructor == String
+  if str.constructor == String
     console.log JSON.stringify(str)
   else
     console.log str
