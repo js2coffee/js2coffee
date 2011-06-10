@@ -232,11 +232,6 @@ Builders =
     if not @value?
       "return\n"
 
-    # **Caveat 2:**
-    # *If it's the last statement in the block, we can omit the 'return' keyword.*
-    else if @isLast
-      build(@value) + "\n"
-
     else
       "return #{build(@value)}\n"
 
@@ -684,8 +679,19 @@ Transformers =
         @expression.type = Typenames['call_statement']
 
   'function': ->
-    # *Implicit returns.*
-    @body.last()?.isLast = true  # This should trickle down
+    walk = (parent, node, fn) ->
+      return  unless node
+
+      fn parent, node  if parent
+
+      walk node, node.last(), fn
+      walk node, node.thenPart, fn
+      walk node, node.elsePart, fn
+
+    # *Unwrap the `return`s.*
+    walk null, @body, (parent, node) ->
+      if parent and node and node.isA('return')
+        parent.children[parent.children.length-1] = node.value  if node.value
 
   'switch': ->
     _.each @cases, (item) =>
