@@ -226,9 +226,6 @@ Builders =
   # A return statement. Has `@value` of type `id`.
 
   'return': ->
-    # **Caveat 1:**
-    # *Empty returns need to always be `return`, regardless if it's the last
-    # statement in the block or not.*
     if not @value?
       "return\n"
 
@@ -690,8 +687,8 @@ Transformers =
 
     # *Unwrap the `return`s.*
     walk null, @body, (parent, node) ->
-      if parent and node and node.isA('return')
-        parent.children[parent.children.length-1] = node.value  if node.value
+      if node.isA('return') and node.value
+        parent.children[parent.children.length-1] = node.value
 
   'switch': ->
     _.each @cases, (item) =>
