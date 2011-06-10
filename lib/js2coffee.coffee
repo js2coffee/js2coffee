@@ -676,17 +676,21 @@ Transformers =
         @expression.type = Typenames['call_statement']
 
   'function': ->
-    walk = (parent, node, fn) ->
+    walk = (node, fn, parent=null) ->
       return  unless node
 
       fn parent, node  if parent
 
-      walk node, node.last(), fn
-      walk node, node.thenPart, fn
-      walk node, node.elsePart, fn
+      walk node.last(), fn, node
+      walk node.thenPart, fn, node
+      walk node.elsePart, fn, node
+
+      if node.cases
+        _.each node.cases, (item) ->
+          walk item.statements, fn, item
 
     # *Unwrap the `return`s.*
-    walk null, @body, (parent, node) ->
+    walk @body, (parent, node) ->
       if node.isA('return') and node.value
         parent.children[parent.children.length-1] = node.value
 
