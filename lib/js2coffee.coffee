@@ -46,6 +46,7 @@ buildCoffee = (str) ->
 #
 # For instance, for a `function` node, it calls `Builders.function(node)`.
 # It defaults to `Builders.other` if it can't find a function for it.
+
 build = (node, opts={}) ->
   transform node
 
@@ -59,18 +60,30 @@ build = (node, opts={}) ->
 # `re()`  
 # Works like `build()`, except it explicitly states which function should
 # handle it. (essentially, *re*routing it to another builder)
+
 re = (type, str, args...) ->
   Builders[type].apply str, args
 
 # `body()`
 # Works like `build()`, and is used for code blocks. It cleans up the returned
 # code block by removing any extraneous spaces and such.
+
 body = (item, opts={}) ->
   str = build(item, opts)
   str = blockTrim(str)
   str = unshift(str)
 
   if str.length > 0 then str else ""
+
+# `transform()`  
+# Perform a transformation on the node, if a transformation function is
+# available.
+
+transform = (node, args...) ->
+  type = node.typeName()
+  fn   = Transformers[type]
+
+  fn.apply(node, args)  if fn
 
 # ## The builders
 #
@@ -82,6 +95,7 @@ body = (item, opts={}) ->
 Builders =
   # `script`  
   # This is the main entry point.
+
   'script': (opts={}) ->
     c = new Code
 
@@ -120,6 +134,7 @@ Builders =
 
   # `id_param`  
   # Function parameters. Belongs to `list`.
+
   'id_param': ->
     if @toString() in ['undefined']
       "#{@}_"
@@ -143,16 +158,16 @@ Builders =
     # **Caveat:**
     # Some statements can be blank as some people are silly enough to use `;;`
     # sometimes. They should be ignored.
+
     unless @expression?
       ""
 
-    else if @expression.typeName() == 'object_init'  # TODO: remove this
+    else if @expression.typeName() == 'object_init'
       src = re('object_init', @expression)
       if @parenthesized
         src
       else
-        src = unshift(blockTrim(src))
-        "#{src}\n"
+        "#{unshift(blockTrim(src))}\n"
 
     else
       build(@expression) + "\n"
@@ -255,7 +270,7 @@ Builders =
 
   # `regexp`  
   # Regular expressions.
-  #
+
   'regexp': ->
     m     = @value.toString().match(/^\/(.*)\/([a-z]?)/)
     value = m[1]
@@ -370,6 +385,7 @@ Builders =
   # `?` (ternary operator)  
   # For `a ? b : c`. Note that these will always be parenthesized, as (I
   # believe) the order of operations in JS is different in CS.
+
   '?': ->
     "(if #{build @left()} then #{build @children[1]} else #{build @children[2]})"
 
@@ -533,12 +549,6 @@ Builders =
   'const':  -> @unsupported "consts are not supported by CoffeeScript"
 
 Builders.block = Builders.script
-
-transform = (node, args...) ->
-  type = node.typeName()
-  fn   = Transformers[type]
-
-  fn.apply(node, args)  if fn
 
 # ## AST manipulation
 # Manipulation of the abstract syntax tree happens here. All these are done on
