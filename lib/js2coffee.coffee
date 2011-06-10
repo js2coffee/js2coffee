@@ -228,10 +228,12 @@ Builders =
   '!==': -> re('binary_operator', @, '!=')
 
   '==':  ->
-    re('binary_operator', @, '==') # CHANGEME: Yes, this is wrong
+    # TODO: throw warning
+    re('binary_operator', @, '==')
 
   '!=':  ->
-    re('binary_operator', @, '!=') # CHANGEME: Yes, this is wrong
+    # TODO: throw warning
+    re('binary_operator', @, '!=')
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
 
@@ -373,7 +375,11 @@ Builders =
     c
 
   'catch': ->
+    body_ = body(@block)
+    return '' if trim(body_).length == 0
+
     c = new Code
+
     if @varName?
       c.add "catch #{@varName}"
     else
