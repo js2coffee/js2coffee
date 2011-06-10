@@ -26,7 +26,7 @@ unlessChecks = ->
     alert "x != null"
   if x != null
     alert "x !== null"
-  if typeof x != "undefined"
+  unless typeof x == "undefined"
     alert "typeof x != 'undefined'"
 whileAndFor = ->
   while x?

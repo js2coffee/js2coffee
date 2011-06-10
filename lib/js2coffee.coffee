@@ -35,7 +35,6 @@ Node   = parser.Node
 
 buildCoffee = (str) ->
   scriptNode = parser.parse("#{str}\n")
-  transform(scriptNode)
 
   trim build(scriptNode)
 
@@ -48,6 +47,13 @@ buildCoffee = (str) ->
 Node::left  = -> @children[0]
 Node::right = -> @children[1]
 Node::last  = -> @children[@children.length-1]
+
+Node::clone = (hash) ->
+  for i of @
+    continue  if i in ['tokenizer', 'length', 'filename']
+    hash[i] ?= @[i]
+
+  new Node(@tokenizer, hash)
 
 # `inspect()`  
 # For debugging
@@ -103,10 +109,11 @@ Node::isA = (what...) -> Types[@type] in what
 # For instance, for a `function` node, it calls `Builders.function(node)`.
 # It defaults to `Builders.other` if it can't find a function for it.
 build = (node, opts={}) ->
+  transform node
+
   name = 'other'
   name = node.typeName()  if node != undefined and node.typeName
 
-  transform node
   out = (Builders[name] or Builders.other).apply(node, [opts])
 
   if node.parenthesized then paren(out) else out
@@ -149,6 +156,7 @@ Types = do ->
 
   # Now extend it with a few more
   dict[++last] = 'call_statement'
+  dict[++last] = 'existential'
 
   dict
 
@@ -309,12 +317,10 @@ Builders =
   '!==': -> re('binary_operator', @, '!=')
 
   '==':  ->
-    useExistential @, else: =>
-      re('binary_operator', @, '==') # CHANGEME: Yes, this is wrong
+    re('binary_operator', @, '==') # CHANGEME: Yes, this is wrong
 
   '!=':  ->
-    useExistential @, else: =>
-      re('binary_operator', @, '!=') # CHANGEME: Yes, this is wrong
+    re('binary_operator', @, '!=') # CHANGEME: Yes, this is wrong
 
   'instanceof': -> re('binary_operator', @, 'instanceof')
 
@@ -496,7 +502,8 @@ Builders =
   'while': ->
     c = new Code
 
-    c.add inversible(@condition, "while %s", "until %s")
+    keyword = if @positive then "while" else "until"
+    c.add "#{keyword} #{build @condition}"
     c.scope body(@body)
     c
 
@@ -512,7 +519,9 @@ Builders =
   'if': ->
     c = new Code
 
-    c.add inversible(@condition, "if %s", "unless %s")
+    keyword = if @positive then "if" else "unless"
+
+    c.add "#{keyword} #{build @condition}"
     c.scope body(@thenPart)
 
     if @elsePart?
@@ -541,6 +550,9 @@ Builders =
       first = false
 
     c
+
+  'existential': ->
+    "#{build @left()}?"
 
   'array_init': ->
     if @children.length == 0
@@ -683,7 +695,38 @@ Transformers =
       # *CoffeeScript does not need `break` statements on `switch` blocks.*
       delete ch[ch.length-1]  if block.last().isA('break')
 
-Transformers.block = Transformers.script
+  'block': ->
+    Transformers.script.apply(@)
+
+  'if': ->
+    Transformers.inversible.apply(@)
+
+  'while': ->
+    Transformers.inversible.apply(@)
+
+  'inversible': ->
+    # *Invert a '!='. (`if (x != y)` => `unless x is y`)*
+    if @condition.isA('!=')
+      @condition.type = Typenames['==']
+      @positive = false
+
+    # *Invert a '!'. (`if (!x)` => `unless x`)*
+    else if @condition.isA('!')
+      @condition = @condition.left()
+      @positive = false
+
+    else
+      @positive = true
+
+  '!=': ->
+    if @right().isA('null', 'void')
+      @type     = Typenames['!']
+      @children = [@clone(type: Typenames['existential'], children: [@left()])]
+
+  '==': ->
+    if @right().isA('null', 'void')
+      @type     = Typenames['existential']
+      @children = [@left()]
 
 # ## Unsupported Error exception
 
@@ -780,33 +823,6 @@ unshift = (str) ->
 #
 strEscape = (str) ->
   JSON.stringify "#{str}"
-
-# `inversible()`  
-# Returns *reverse* if the given condition is reversible, else returns *normal*.
-# Used for *if/unless* and *while/until*.
-#
-inversible = (condition, normal, reverse) ->
-  existential = useExistential(condition)
-
-  if existential? and existential.substr(0,1) == '!' # Hacky, meh
-    reverse.replace "%s", existential.substr(1)
-  else if condition.typeName() == '!'
-    reverse.replace "%s", build(condition.left())
-  else
-    normal.replace "%s", build(condition)
-
-useExistential = (cond, options={}) ->
-  left  = cond.left()
-  right = cond.right()
-
-  if cond.isA('==', '!=')
-    negative = if (cond.isA('!=', '!==')) then '!' else ''
-
-    # **Caveat:** *`x == null` and `x == void` should compile to `x?`.*
-    if right.isA('null', 'void')
-      return "#{negative}#{build left}?"
-
-  options.else()  if options.else?
 
 # `p()`  
 # Debugging tool. Prints an object to the console.
