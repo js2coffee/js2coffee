@@ -1,32 +1,32 @@
 function ifChecks() {
-    if (x) { alert("if x") }
-    if (!x) { alert("if !x") }
+    if (x) { yes }
+    if (!x) { yes }
 }
 function ifNullChecks() {
-    if (x==null) { alert("x == null") }
-    if (x===null) { alert("x === null") }
+    if (x==null) { yes }
+    if (x===null) { nah }
 }
 function voidChecks() {
-    if (x==void 0) { alert("x == void 0") }
-    if (x===void 0) { alert("x === void 0") }
-    if (x==void 1) { alert("x == void 1") }
+    if (x==void 0) { yes }
+    if (x===void 0) { nah }
+    if (x==void 1) { yes }
 }
 function undefinedChecks() {
-    if (typeof x == 'undefined') { alert("typeof x == 'undefined'") }
+    if (typeof x == 'undefined') { nah }
 }
 function edgeCase() {
-    if (!x == y) { alert("!x == y") }
+    if (!x == y) { nah }
 }
 
 function unlessChecks() {
-    if (x!=null) { alert("x != null") }
-    if (x!==null) { alert("x !== null") }
-    if (typeof x != 'undefined') { alert("typeof x != 'undefined'") }
+    if (x!=null) { yes }
+    if (x!==null) { nah }
+    if (typeof x != 'undefined') { wat }
 }
 
 function whileAndFor() {
-    while (x==null) { alert }
-    while (x===null) { alert }
+    while (x==null) { yes }
+    while (x===null) { yes }
 
-    for (a;x==null;2) { alert }
+    for (a;x==null;2) { yes }
 }

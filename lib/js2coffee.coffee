@@ -416,16 +416,21 @@ Builders =
     c = new Code
 
     keyword = if @positive then "if" else "unless"
+    body_   = body(@thenPart)
 
-    c.add "#{keyword} #{build @condition}"
-    c.scope body(@thenPart)
+    if isSingleLine(body_) and !@elsePart?
+      c.add "#{trim body_}  #{keyword} #{build @condition}\n"
 
-    if @elsePart?
-      if @elsePart.typeName() == 'if'
-        c.add "else #{build(@elsePart).toString()}"
-      else
-        c.add "else\n"
-        c.scope body(@elsePart)
+    else
+      c.add "#{keyword} #{build @condition}"
+      c.scope body(@thenPart)
+
+      if @elsePart?
+        if @elsePart.typeName() == 'if'
+          c.add "else #{build(@elsePart).toString()}"
+        else
+          c.add "else\n"
+          c.scope body(@elsePart)
 
     c
 

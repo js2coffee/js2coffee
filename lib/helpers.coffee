@@ -60,7 +60,7 @@ trim = (str) ->
   "#{str}".replace(/^\s*|\s*$/g, '')
 
 isSingleLine = (str) ->
-  "\n" in trim(str)
+  trim(str).indexOf("\n") == -1
 
 # `unshift()`  
 # Removes any unneccesary indentation from a code block string.
