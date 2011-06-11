@@ -127,7 +127,7 @@ Builders =
     unreserve @value.toString()
 
   'number': ->
-    "#{@value}"
+    "#{@src()}"
 
   'id': ->
     unreserve @
@@ -474,7 +474,7 @@ Builders =
 
     c
 
-  'existence_check': ->
+  'existential': ->
     "#{build @left()}?"
 
   'array_init': ->
