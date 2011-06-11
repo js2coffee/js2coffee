@@ -118,5 +118,17 @@ Typenames = do ->
 
   dict
 
-@NodeExt = exports = {Types, Typenames, Node}
+# ## Unsupported Error exception
+
+class UnsupportedError
+  constructor: (str, src) ->
+    @message = str
+    @cursor  = src.start
+    @line    = src.lineno
+    @source  = src.tokenizer.source
+
+  toString: -> @message
+
+@NodeExt = exports = {Types, Typenames, Node, UnsupportedError}
 module.exports = exports  if module?
+

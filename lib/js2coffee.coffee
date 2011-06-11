@@ -17,7 +17,7 @@
 
 _ = @_ or require('underscore')
 
-{Types, Typenames, Node} = @NodeExt or require('./node_ext')
+{Types, Typenames, Node, UnsupportedError} = @NodeExt or require('./node_ext')
 
 {Code, p, strEscape, unreserve,
 unshift, isSingleLine,
@@ -474,7 +474,7 @@ Builders =
 
     c
 
-  'existential': ->
+  'existence_check': ->
     "#{build @left()}?"
 
   'array_init': ->
@@ -650,17 +650,6 @@ Transformers =
     if @right().isA('null', 'void')
       @type     = Typenames['existence_check']
       @children = [@left()]
-
-# ## Unsupported Error exception
-
-class UnsupportedError
-  constructor: (str, src) ->
-    @message = str
-    @cursor  = src.start
-    @line    = src.lineno
-    @source  = src.tokenizer.source
-
-  toString: -> @message
 
 # ## Exports
 
