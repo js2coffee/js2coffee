@@ -218,7 +218,7 @@ Builders =
   '^':   -> re('binary_operator', @, '^')
   '&&':  -> re('binary_operator', @, 'and')
   '||':  -> re('binary_operator', @, 'or')
-  'in':  -> re('binary_operator', @, 'in')
+  'in':  -> re('binary_operator', @, 'of')
   '<<':  -> re('binary_operator', @, '<<')
   '<=':  -> re('binary_operator', @, '<=')
   '>>':  -> re('binary_operator', @, '>>')
