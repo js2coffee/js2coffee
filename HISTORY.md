@@ -1,3 +1,29 @@
+v0.1.0 - Jun 13, 2011
+---------------------
+
+Lots of refactoring and new improvements.
+
+### Added:
+  * Single line ifs. `if (x) continue;` will now compile to `continue if x`.
+  * Hide empty catches. (#32).
+    * `try { .. } catch (f) {}` now becomes `try ..` without a catch.
+  * Omit returns more agressively. (#42)
+  * Omit many unneeded parentheses in certain cases. (#31)
+
+### Fixed:
+  * Fix `x.prototype.y` to be `x::y` instead of `x::.y` (#24)
+  * The `in` operator now compiles to `of`. (#46)
+    * `a in b` now compiles to `a of b`.
+  * Fix floating point numbers. (#45)
+  * Fix a problem with returning object literals. (#47)
+
+### Refactoring:
+  * Lots and lots of refactoring.
+  * `Builder` is now a class (to support warnings in the future, and more).
+  * Implement a new `Transformer` class to do AST transformations before building the compiled source.
+  * Recursive functions now use `Node::walk()`.
+  * Move stuff into `js2coffee/helpers.coffee` and `js2coffee/node_ext.coffee`.
+
 v0.0.5 - Jun 10, 2011
 ---------------------
 
