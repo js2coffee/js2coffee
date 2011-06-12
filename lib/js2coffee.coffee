@@ -533,11 +533,12 @@ class Builder
     else
       c.add "->"
 
-    body_ = @body(n.body)
-    if trim(body_).length > 0
-      c.scope body_
+    body = @body(n.body)
+    if trim(body).length > 0
+      c.scope body
     else
       c.add "\n"
+
     c
 
   'var': (n) ->
@@ -616,7 +617,9 @@ class Transformer
     # *Unwrap the `return`s.*
     n.body.walk last: true, (parent, node) ->
       if node.isA('return') and node.value
-        parent.children[parent.children.length-1] = node.value
+        lastNode = parent.children[parent.children.length-1]
+        lastNode.type = Typenames[';']
+        lastNode.expression = lastNode.value
 
   'switch': (n) ->
     _.each n.cases, (item) =>
