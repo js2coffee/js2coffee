@@ -17,7 +17,7 @@
 
 _ = @_ or require('underscore')
 
-{Types, Typenames, Node, UnsupportedError} = @NodeExt or require('./node_ext')
+{Types, Typenames, Node} = @NodeExt or require('./node_ext')
 
 {Code, p, strEscape, unreserve,
 unshift, isSingleLine,
@@ -31,85 +31,89 @@ rtrim, strRepeat, paren} = @Js2coffeeHelpers or require('./helpers')
 # 1. Ask Narcissus to break it down into Nodes (`parser.parse`). This
 #    returns a `Node` object of type `script`.
 #
-# 2. This node is now passed onto `build()`.
+# 2. This node is now passed onto `Builder#build()`.
 
 buildCoffee = (str) ->
+  builder = new Builder
   scriptNode = parser.parse("#{str}\n")
 
-  trim build(scriptNode)
+  trim builder.build(scriptNode)
 
-# ## Main functions
+# ## Builder class
+# This is the main class that proccesses the AST and spits out streng.
+# See the `buildCoffee()` function above for info on how this is used.
 
-# `build()`  
-# This finds the appropriate builder function for `node` based on it's type,
-# the passes the node onto that function.
-#
-# For instance, for a `function` node, it calls `Builders.function(node)`.
-# It defaults to `Builders.other` if it can't find a function for it.
+class Builder
+  constructor: ->
+    @transformer = new Transformer
 
-build = (node, opts={}) ->
-  transform node
+  # `build()`  
+  # The main entry point.
 
-  name = 'other'
-  name = node.typeName()  if node != undefined and node.typeName
+  # This finds the appropriate @builder function for `node` based on it's type,
+  # the passes the node onto that function.
+  #
+  # For instance, for a `function` node, it calls `@builders.function(node)`.
+  # It defaults to `@builders.other` if it can't find a function for it.
 
-  out = (Builders[name] or Builders.other).apply(node, [opts])
+  build: (args...) ->
+    node = args[0]
+    @transform node
 
-  if node.parenthesized then paren(out) else out
+    name = 'other'
+    name = node.typeName()  if node != undefined and node.typeName
 
-# `re()`  
-# Works like `build()`, except it explicitly states which function should
-# handle it. (essentially, *re*routing it to another builder)
+    fn  = (@[name] or @other)
+    out = fn.apply(this, args)
 
-re = (type, str, args...) ->
-  Builders[type].apply str, args
+    if node.parenthesized then paren(out) else out
 
-# `body()`
-# Works like `build()`, and is used for code blocks. It cleans up the returned
-# code block by removing any extraneous spaces and such.
+  # `transform()`  
+  # Perform a transformation on the node, if a transformation function is
+  # available.
 
-body = (item, opts={}) ->
-  str = build(item, opts)
-  str = blockTrim(str)
-  str = unshift(str)
+  transform: (args...) ->
+    node = args[0]
+    type = node.typeName()
+    fn = @transformer[type]
 
-  if str.length > 0 then str else ""
+    fn.apply(@transformer, args)  if fn
 
-# `transform()`  
-# Perform a transformation on the node, if a transformation function is
-# available.
+  # `body()`
+  # Works like `@build()`, and is used for code blocks. It cleans up the returned
+  # code block by removing any extraneous spaces and such.
+  
+  body: (node, opts={}) ->
+    str = @build(node, opts)
+    str = blockTrim(str)
+    str = unshift(str)
+  
+    if str.length > 0 then str else ""
 
-transform = (node, args...) ->
-  type = node.typeName()
-  fn   = Transformers[type]
+  # ## The builders
+  #
+  # Each of these method are passed a Node, and is expected to return
+  # a string representation of it CoffeeScript counterpart.
+  #
+  # These are invoked using the main entry point, `Builder#build()`.
 
-  fn.apply(node, args)  if fn
-
-# ## The builders
-#
-# Each of these functions are apply'd to a Node, and is expected to return
-# a string representation of it CoffeeScript counterpart.
-#
-# These are invoked using `build()`.
-
-Builders =
   # `script`  
   # This is the main entry point.
 
-  'script': (opts={}) ->
+  'script': (n, opts={}) ->
     c = new Code
 
     # *Functions must always be declared first in a block.*
-    _.each @functions,    (item) -> c.add build(item)
-    _.each @nonfunctions, (item) -> c.add build(item)
+    _.each n.functions,    (item) => c.add @build(item)
+    _.each n.nonfunctions, (item) => c.add @build(item)
 
     c.toString()
 
   # `property_identifier`  
   # A key in an object literal.
 
-  'property_identifier': ->
-    str = @value.toString()
+  'property_identifier': (n) ->
+    str = n.value.toString()
 
     # **Caveat:**
     # *In object literals like `{ '#foo click': b }`, ensure that the key is
@@ -123,158 +127,158 @@ Builders =
   # `identifier`  
   # Any object identifier like a variable name.
 
-  'identifier': ->
-    unreserve @value.toString()
+  'identifier': (n) ->
+    unreserve n.value.toString()
 
-  'number': ->
-    "#{@src()}"
+  'number': (n) ->
+    "#{n.src()}"
 
-  'id': ->
-    unreserve @
+  'id': (n) ->
+    unreserve n
 
   # `id_param`  
   # Function parameters. Belongs to `list`.
 
-  'id_param': ->
-    if @toString() in ['undefined']
-      "#{@}_"
+  'id_param': (n) ->
+    if n.toString() in ['undefined']
+      "#{n}_"
     else
-      re 'id', @
+      @id n
 
   # `return`  
-  # A return statement. Has `@value` of type `id`.
+  # A return statement. Has `n.value` of type `id`.
 
-  'return': ->
-    if not @value?
+  'return': (n) ->
+    if not n.value?
       "return\n"
 
     else
-      "return #{build(@value)}\n"
+      "return #{@build(n.value)}\n"
 
   # `;` (aka, statement)  
   # A single statement.
 
-  ';': ->
+  ';': (n) ->
     # **Caveat:**
     # Some statements can be blank as some people are silly enough to use `;;`
     # sometimes. They should be ignored.
 
-    unless @expression?
+    unless n.expression?
       ""
 
-    else if @expression.typeName() == 'object_init'
-      src = re('object_init', @expression)
-      if @parenthesized
+    else if n.expression.typeName() == 'object_init'
+      src = @object_init(n.expression)
+      if n.parenthesized
         src
       else
         "#{unshift(blockTrim(src))}\n"
 
     else
-      build(@expression) + "\n"
+      @build(n.expression) + "\n"
 
   # `new` + `new_with_args`  
   # For `new X` and `new X(y)` respctively.
 
-  'new':           -> "new #{build @left()}"
-  'new_with_args': -> "new #{build @left()}(#{build @right()})"
+  'new': (n) -> "new #{@build n.left()}"
+  'new_with_args': (n) -> "new #{@build n.left()}(#{@build n.right()})"
 
   # ### Unary operators
 
-  'unary_plus':  -> "+#{build @left()}"
-  'unary_minus': -> "-#{build @left()}"
+  'unary_plus': (n) -> "+#{@build n.left()}"
+  'unary_minus': (n) -> "-#{@build n.left()}"
 
   # ### Keywords
 
-  'this':  -> 'this'
-  'null':  -> 'null'
-  'true':  -> 'true'
-  'false': -> 'false'
-  'void':  -> 'undefined'
+  'this': (n) -> 'this'
+  'null': (n) -> 'null'
+  'true': (n) -> 'true'
+  'false': (n) -> 'false'
+  'void': (n) -> 'undefined'
 
-  'debugger': -> "debugger\n"
-  'break':    -> "break\n"
-  'continue': -> "continue\n"
+  'debugger': (n) -> "debugger\n"
+  'break': (n) -> "break\n"
+  'continue': (n) -> "continue\n"
 
   # ### Some simple operators
 
-  '!':      -> "not #{build @left()}"
-  '~':      -> "~#{build @left()}"
-  'typeof': -> "typeof #{build @left()}"
-  'index':  -> "#{build @left()}[#{build @right()}]"
-  'throw':  -> "throw #{build @exception}"
+  '!': (n) -> "not #{@build n.left()}"
+  '~': (n) -> "~#{@build n.left()}"
+  'typeof': (n) -> "typeof #{@build n.left()}"
+  'index': (n) -> "#{@build n.left()}[#{@build n.right()}]"
+  'throw': (n) -> "throw #{@build n.exception}"
 
   # ### Binary operators
-  # All of these are rerouted to the `binary_operator` builder.
+  # All of these are rerouted to the `binary_operator` @builder.
 
-  '+':   -> re('binary_operator', @, '+')
-  '-':   -> re('binary_operator', @, '-')
-  '*':   -> re('binary_operator', @, '*')
-  '/':   -> re('binary_operator', @, '/')
-  '%':   -> re('binary_operator', @, '%')
-  '>':   -> re('binary_operator', @, '>')
-  '<':   -> re('binary_operator', @, '<')
-  '&':   -> re('binary_operator', @, '&')
-  '|':   -> re('binary_operator', @, '|')
-  '^':   -> re('binary_operator', @, '^')
-  '&&':  -> re('binary_operator', @, 'and')
-  '||':  -> re('binary_operator', @, 'or')
-  'in':  -> re('binary_operator', @, 'of')
-  '<<':  -> re('binary_operator', @, '<<')
-  '<=':  -> re('binary_operator', @, '<=')
-  '>>':  -> re('binary_operator', @, '>>')
-  '>=':  -> re('binary_operator', @, '>=')
-  '!=':  -> re('binary_operator', @, '!=')
-  '===': -> re('binary_operator', @, '==')
-  '!==': -> re('binary_operator', @, '!=')
+  '+': (n) ->   @binary_operator n, '+'
+  '-': (n) ->   @binary_operator n, '-'
+  '*': (n) ->   @binary_operator n, '*'
+  '/': (n) ->   @binary_operator n, '/'
+  '%': (n) ->   @binary_operator n, '%'
+  '>': (n) ->   @binary_operator n, '>'
+  '<': (n) ->   @binary_operator n, '<'
+  '&': (n) ->   @binary_operator n, '&'
+  '|': (n) ->   @binary_operator n, '|'
+  '^': (n) ->   @binary_operator n, '^'
+  '&&': (n) ->  @binary_operator n, 'and'
+  '||': (n) ->  @binary_operator n, 'or'
+  'in': (n) ->  @binary_operator n, 'of'
+  '<<': (n) ->  @binary_operator n, '<<'
+  '<=': (n) ->  @binary_operator n, '<='
+  '>>': (n) ->  @binary_operator n, '>>'
+  '>=': (n) ->  @binary_operator n, '>='
+  '!=': (n) ->  @binary_operator n, '!='
+  '===': (n) -> @binary_operator n, '=='
+  '!==': (n) -> @binary_operator n, '!='
 
-  '==':  ->
+  '==': (n) ->
     # TODO: throw warning
-    re('binary_operator', @, '==')
+    @binary_operator n, '=='
 
-  '!=':  ->
+  '!=': (n) ->
     # TODO: throw warning
-    re('binary_operator', @, '!=')
+    @binary_operator n, '!='
 
-  'instanceof': -> re('binary_operator', @, 'instanceof')
+  'instanceof': (n) -> @binary_operator n, 'instanceof'
 
-  'binary_operator': (sign) ->
-    "#{build @left()} #{sign} #{build @right()}"
+  'binary_operator': (n, sign) ->
+    "#{@build n.left()} #{sign} #{@build n.right()}"
 
   # ### Increments and decrements
   # For `a++` and `--b`.
 
-  '--':     -> re('increment_decrement', @, '--')
-  '++':     -> re('increment_decrement', @, '++')
+  '--': (n) -> @increment_decrement n, '--'
+  '++': (n) -> @increment_decrement n, '++'
 
-  'increment_decrement': (sign) ->
-    if @postfix
-      "#{build @left()}#{sign}"
+  'increment_decrement': (n, sign) ->
+    if n.postfix
+      "#{@build n.left()}#{sign}"
     else
-      "#{sign}#{build @left()}"
+      "#{sign}#{@build n.left()}"
 
   # `=` (aka, assignment)  
   # For `a = b` (but not `var a = b`: that's `var`).
 
-  '=': ->
-    sign = if @assignOp?
-      Types[@assignOp] + '='
+  '=': (n) ->
+    sign = if n.assignOp?
+      Types[n.assignOp] + '='
     else
       '='
 
-    "#{build @left()} #{sign} #{build @right()}"
+    "#{@build n.left()} #{sign} #{@build n.right()}"
 
   # `,` (aka, comma)  
   # For `a = 1, b = 2'
 
-  ',': ->
-    list = _.map @children, (item) -> build(item) + "\n"
+  ',': (n) ->
+    list = _.map n.children, (item) => @build(item) + "\n"
     list.join('')
 
   # `regexp`  
   # Regular expressions.
 
-  'regexp': ->
-    m     = @value.toString().match(/^\/(.*)\/([a-z]?)/)
+  'regexp': (n) ->
+    m     = n.value.toString().match(/^\/(.*)\/([a-z]?)/)
     value = m[1]
     flag  = m[2]
 
@@ -292,218 +296,216 @@ Builders =
     else
       "/#{value}/#{flag}"
 
-  'string': ->
-    strEscape @value
+  'string': (n) ->
+    strEscape n.value
 
   # `call`  
   # A Function call.
-  # `@left` is an `id`, and `@right` is a `list`.
+  # `n.left` is an `id`, and `n.right` is a `list`.
 
-  'call': ->
-    if @right().children.length == 0
-      "#{build @left()}()"
+  'call': (n) ->
+    if n.right().children.length == 0
+      "#{@build n.left()}()"
     else
-      "#{build @left()}(#{build @right()})"
+      "#{@build n.left()}(#{@build n.right()})"
 
   # `call_statement`  
   # A `call` that's on it's own line.
 
-  'call_statement': ->
-    left = build @left()
+  'call_statement': (n) ->
+    left = @build n.left()
 
     # **Caveat:**
     # *When calling in this way: `function () { ... }()`,
     # ensure that there are parenthesis around the anon function
     # (eg, `(-> ...)()`).*
 
-    left = paren(left)  if @left().isA('function')
+    left = paren(left)  if n.left().isA('function')
 
-    if @right().children.length == 0
+    if n.right().children.length == 0
       "#{left}()"
     else
-      "#{left} #{build @right()}"
+      "#{left} #{@build n.right()}"
 
   # `list`  
   # A parameter list.
 
-  'list': ->
-    list = _.map(@children, (item) -> build(item))
+  'list': (n) ->
+    list = _.map(n.children, (item) => @build(item))
 
     list.join(", ")
 
-  'delete': ->
-    ids = _.map(@children, (el) -> build(el))
+  'delete': (n) ->
+    ids = _.map(n.children, (el) => @build(el))
     ids = ids.join(', ')
     "delete #{ids}\n"
 
   # `.` (scope resolution?)  
   # For instances such as `object.value`.
 
-  '.': ->
+  '.': (n) ->
     # **Caveat:**
-    # *If called as `this.xxx`, it should use the at sign (`@xxx`).*
+    # *If called as `this.xxx`, it should use the at sign (`n.xxx`).*
 
     # **Caveat:**
     # *If called as `x.prototype`, it should use double colons (`x::`).*
 
-    left  = build @left()
-    right = build @right()
+    left  = @build n.left()
+    right = @build n.right()
 
-    if @isThis and @isPrototype
+    if n.isThis and n.isPrototype
       "@::"
-    else if @isThis
+    else if n.isThis
       "@#{right}"
-    else if @isPrototype
+    else if n.isPrototype
       "#{left}::"
-    else if @left().isPrototype
+    else if n.left().isPrototype
       "#{left}#{right}"
     else
       "#{left}.#{right}"
 
-  'try': ->
+  'try': (n) ->
     c = new Code
     c.add 'try'
-    c.scope body(@tryBlock)
+    c.scope @body(n.tryBlock)
 
-    _.each @catchClauses, (clause) ->
-      c.add build(clause)
+    _.each n.catchClauses, (clause) =>
+      c.add @build(clause)
 
-    if @finallyBlock?
+    if n.finallyBlock?
       c.add "finally"
-      c.scope body(@finallyBlock)
+      c.scope @body(n.finallyBlock)
 
     c
 
-  'catch': ->
-    body_ = body(@block)
+  'catch': (n) ->
+    body_ = @body(n.block)
     return '' if trim(body_).length == 0
 
     c = new Code
 
-    if @varName?
-      c.add "catch #{@varName}"
+    if n.varName?
+      c.add "catch #{n.varName}"
     else
       c.add 'catch'
 
-    c.scope body(@block)
+    c.scope @body(n.block)
     c
 
   # `?` (ternary operator)  
   # For `a ? b : c`. Note that these will always be parenthesized, as (I
   # believe) the order of operations in JS is different in CS.
 
-  '?': ->
-    "(if #{build @left()} then #{build @children[1]} else #{build @children[2]})"
+  '?': (n) ->
+    "(if #{@build n.left()} then #{@build n.children[1]} else #{@build n.children[2]})"
 
-  'for': ->
+  'for': (n) ->
     c = new Code
 
-    if @setup?
-      c.add "#{build @setup}\n"
+    if n.setup?
+      c.add "#{@build n.setup}\n"
 
-    if @condition?
-      c.add "while #{build @condition}\n"
+    if n.condition?
+      c.add "while #{@build n.condition}\n"
     else
       c.add "loop"
 
-    c.scope body(@body)
-    c.scope body(@update)  if @update?
+    c.scope @body(n.body)
+    c.scope @body(n.update)  if n.update?
     c
 
-  'for_in': ->
+  'for_in': (n) ->
     c = new Code
 
-    c.add "for #{build @iterator} of #{build @object}"
-    c.scope body(@body)
+    c.add "for #{@build n.iterator} of #{@build n.object}"
+    c.scope @body(n.body)
     c
 
-  'while': ->
+  'while': (n) ->
     c = new Code
 
-    keyword = if @positive then "while" else "until"
-    c.add "#{keyword} #{build @condition}"
-    c.scope body(@body)
+    keyword = if n.positive then "while" else "until"
+    c.add "#{keyword} #{@build n.condition}"
+    c.scope @body(n.body)
     c
 
-  'do': ->
+  'do': (n) ->
     c = new Code
 
     c.add "loop"
-    c.scope body(@body)
-    c.scope "break unless #{build @condition}"  if @condition?
+    c.scope @body(n.body)
+    c.scope "break unless #{@build n.condition}"  if n.condition?
 
     c
 
-  'if': ->
+  'if': (n) ->
     c = new Code
 
-    keyword = if @positive then "if" else "unless"
-    body_   = body(@thenPart)
+    keyword = if n.positive then "if" else "unless"
+    body_   = @body(n.thenPart)
 
-    if isSingleLine(body_) and !@elsePart?
-      c.add "#{trim body_}  #{keyword} #{build @condition}\n"
+    if isSingleLine(body_) and !n.elsePart?
+      c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
 
     else
-      c.add "#{keyword} #{build @condition}"
-      c.scope body(@thenPart)
+      c.add "#{keyword} #{@build n.condition}"
+      c.scope @body(n.thenPart)
 
-      if @elsePart?
-        if @elsePart.typeName() == 'if'
-          c.add "else #{build(@elsePart).toString()}"
+      if n.elsePart?
+        if n.elsePart.typeName() == 'if'
+          c.add "else #{@build(n.elsePart).toString()}"
         else
           c.add "else\n"
-          c.scope body(@elsePart)
+          c.scope @body(n.elsePart)
 
     c
 
-  'switch': ->
+  'switch': (n) ->
     c = new Code
 
-    c.add "switch #{build @discriminant}\n"
+    c.add "switch #{@build n.discriminant}\n"
 
-    _.each @cases, (item) ->
-
+    _.each n.cases, (item) =>
       if item.value == 'default'
         c.scope "else"
       else
-        c.scope "when #{build item.caseLabel}\n"
+        c.scope "when #{@build item.caseLabel}\n"
 
-      c.scope body(item.statements), 2
+      c.scope @body(item.statements), 2
 
       first = false
 
     c
 
-  'existence_check': ->
-    "#{build @left()}?"
+  'existence_check': (n) ->
+    "#{@build n.left()}?"
 
-  'array_init': ->
-    if @children.length == 0
+  'array_init': (n) ->
+    if n.children.length == 0
       "[]"
     else
-      list = re('list', @)
-      "[ #{list} ]"
+      "[ #{@list n} ]"
 
   # `property_init`  
   # Belongs to `object_init`;
   # left is a `identifier`, right can be anything.
 
-  'property_init': ->
-    "#{re 'property_identifier', @left()}: #{build @right()}"
+  'property_init': (n) ->
+    "#{@property_identifier n.left()}: #{@build n.right()}"
 
   # `object_init`  
   # An object initializer.
   # Has many `property_init`.
 
-  'object_init': (options={}) ->
-    if @children.length == 0
+  'object_init': (n, options={}) ->
+    if n.children.length == 0
       "{}"
 
-    else if @children.length == 1
-      build @children[0]
+    else if n.children.length == 1
+      @build n.children[0]
 
     else
-      list = _.map @children, (item) -> build item
+      list = _.map n.children, (item) => @build item
 
       c = new Code
       c.scope list.join("\n")
@@ -514,33 +516,33 @@ Builders =
   # A function. Can be an anonymous function (`function () { .. }`), or a named
   # function (`function name() { .. }`).
 
-  'function': ->
+  'function': (n) ->
     c = new Code
 
-    params = _.map @params, (str) ->
+    params = _.map n.params, (str) =>
       if str.constructor == String
-        re('id_param', str)
+        @id_param str
       else
-        build str
+        @build str
 
-    if @name
-      c.add "#{@name} = "
+    if n.name
+      c.add "#{n.name} = "
 
-    if @params.length > 0
+    if n.params.length > 0
       c.add "(#{params.join ', '}) ->"
     else
       c.add "->"
 
-    body_ = body(@body)
+    body_ = @body(n.body)
     if trim(body_).length > 0
       c.scope body_
     else
       c.add "\n"
     c
 
-  'var': ->
-    list = _.map @children, (item) ->
-      "#{item.value} = #{build(item.initializer)}"  if item.initializer?
+  'var': (n) ->
+    list = _.map n.children, (item) =>
+      "#{item.value} = #{@build(item.initializer)}"  if item.initializer?
 
     _.compact(list).join("\n") + "\n"
 
@@ -552,34 +554,40 @@ Builders =
   #  * Break labels (`my_label: ...`)
   #  * Constants
 
-  'other':  -> @unsupported "#{@typeName()} is not supported yet"
-  'getter': -> @unsupported "getter syntax is not supported; use __defineGetter__"
-  'setter': -> @unsupported "setter syntax is not supported; use __defineSetter__"
-  'label':  -> @unsupported "labels are not supported by CoffeeScript"
-  'const':  -> @unsupported "consts are not supported by CoffeeScript"
+  'other': (n) ->   @unsupported n, "#{n.typeName()} is not supported yet"
+  'getter': (n) ->  @unsupported n, "getter syntax is not supported; use __defineGetter__"
+  'setter': (n) ->  @unsupported n, "setter syntax is not supported; use __defineSetter__"
+  'label': (n) ->   @unsupported n, "labels are not supported by CoffeeScript"
+  'const': (n) ->   @unsupported n, "consts are not supported by CoffeeScript"
 
-Builders.block = Builders.script
+  'block': (args...) ->
+    @script.apply @, args
+
+  # `unsupported()`  
+  # Throws an unsupported error.
+  'unsupported': (node, message) ->
+    throw new UnsupportedError("Unsupported: #{message}", node)
 
 # ## AST manipulation
 # Manipulation of the abstract syntax tree happens here. All these are done on
 # the `build()` step, done just before a node is passed onto `Builders`.
 
-Transformers =
-  'script': ->
-    @functions    = []
-    @nonfunctions = []
+class Transformer
+  'script': (n) ->
+    n.functions    = []
+    n.nonfunctions = []
 
-    _.each @children, (item) =>
+    _.each n.children, (item) =>
       if item.isA('function')
-        @functions.push item
+        n.functions.push item
       else
-        @nonfunctions.push item
+        n.nonfunctions.push item
 
     last = null
 
     # *Statements don't need parens, unless they are consecutive object
     # literals.*
-    _.each @nonfunctions, (item) =>
+    _.each n.nonfunctions, (item) =>
       if item.expression?
         expr = item.expression
 
@@ -590,66 +598,75 @@ Transformers =
 
         last = expr
 
-  '.': ->
-    @isThis      = @left().isA('this')
-    @isPrototype = (@right().isA('identifier') and @right().value == 'prototype')
+  '.': (n) ->
+    n.isThis      = n.left().isA('this')
+    n.isPrototype = (n.right().isA('identifier') and n.right().value == 'prototype')
 
-  ';': ->
-    if @expression?
+  ';': (n) ->
+    if n.expression?
       # *Statements don't need parens.*
-      @expression.parenthesized = false
+      n.expression.parenthesized = false
 
       # *If the statement only has one function call (eg, `alert(2);`), the
       # parentheses should be omitted (eg, `alert 2`).*
-      if @expression.isA('call')
-        @expression.type = Typenames['call_statement']
+      if n.expression.isA('call')
+        n.expression.type = Typenames['call_statement']
 
-  'function': ->
+  'function': (n) ->
     # *Unwrap the `return`s.*
-    @body.walk last: true, (parent, node) ->
+    n.body.walk last: true, (parent, node) ->
       if node.isA('return') and node.value
         parent.children[parent.children.length-1] = node.value
 
-  'switch': ->
-    _.each @cases, (item) =>
+  'switch': (n) ->
+    _.each n.cases, (item) =>
       block = item.statements
       ch    = block.children
 
       # *CoffeeScript does not need `break` statements on `switch` blocks.*
       delete ch[ch.length-1]  if block.last().isA('break')
 
-  'block': ->
-    Transformers.script.apply(@)
+  'block': (n) ->
+    @script n
 
-  'if': ->
-    Transformers.inversible.apply(@)
+  'if': (n) ->
+    @inversible n
 
-  'while': ->
-    Transformers.inversible.apply(@)
+  'while': (n) ->
+    @inversible n
 
-  'inversible': ->
+  'inversible': (n) ->
     # *Invert a '!='. (`if (x != y)` => `unless x is y`)*
-    if @condition.isA('!=')
-      @condition.type = Typenames['==']
-      @positive = false
+    if n.condition.isA('!=')
+      n.condition.type = Typenames['==']
+      n.positive = false
 
     # *Invert a '!'. (`if (!x)` => `unless x`)*
-    else if @condition.isA('!')
-      @condition = @condition.left()
-      @positive = false
+    else if n.condition.isA('!')
+      n.condition = n.condition.left()
+      n.positive = false
 
     else
-      @positive = true
+      n.positive = true
 
-  '!=': ->
-    if @right().isA('null', 'void')
-      @type     = Typenames['!']
-      @children = [@clone(type: Typenames['existence_check'], children: [@left()])]
+  '!=': (n) ->
+    if n.right().isA('null', 'void')
+      n.type     = Typenames['!']
+      n.children = [n.clone(type: Typenames['existence_check'], children: [n.left()])]
 
-  '==': ->
-    if @right().isA('null', 'void')
-      @type     = Typenames['existence_check']
-      @children = [@left()]
+  '==': (n) ->
+    if n.right().isA('null', 'void')
+      n.type     = Typenames['existence_check']
+      n.children = [n.left()]
+
+class UnsupportedError
+  constructor: (str, src) ->
+    @message = str
+    @cursor  = src.start
+    @line    = src.lineno
+    @source  = src.tokenizer.source
+
+  toString: -> @message
 
 # ## Exports
 

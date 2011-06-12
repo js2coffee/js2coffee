@@ -71,11 +71,6 @@ Node::inspect = ->
 # Returns the source for the node.
 Node::src   = -> @tokenizer.source.substr(@start, @end-@start)
 
-# `unsupported()`  
-# Throws an unsupported error.
-Node::unsupported = (msg) ->
-  throw new UnsupportedError("Unsupported: #{msg}", @)
-
 # `typeName()`  
 # Returns the typename in lowercase. (eg, 'function')
 Node::typeName = -> Types[@type]
@@ -120,15 +115,6 @@ Typenames = do ->
 
 # ## Unsupported Error exception
 
-class UnsupportedError
-  constructor: (str, src) ->
-    @message = str
-    @cursor  = src.start
-    @line    = src.lineno
-    @source  = src.tokenizer.source
-
-  toString: -> @message
-
-@NodeExt = exports = {Types, Typenames, Node, UnsupportedError}
+@NodeExt = exports = {Types, Typenames, Node}
 module.exports = exports  if module?
 
