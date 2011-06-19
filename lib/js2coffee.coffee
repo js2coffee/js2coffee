@@ -73,11 +73,7 @@ class Builder
   # available.
 
   transform: (args...) ->
-    node = args[0]
-    type = node.typeName()
-    fn = @transformer[type]
-
-    fn.apply(@transformer, args)  if fn
+    @transformer.transform.apply(@transformer, args)
 
   # `body()`
   # Works like `@build()`, and is used for code blocks. It cleans up the returned
@@ -574,6 +570,16 @@ class Builder
 # the `build()` step, done just before a node is passed onto `Builders`.
 
 class Transformer
+  transform: (args...) ->
+    node = args[0]
+    return  if node.transformed?
+    type = node.typeName()
+    fn = @[type]
+
+    if fn
+      fn.apply(this, args)
+      node.transformed = true
+
   'script': (n) ->
     n.functions    = []
     n.nonfunctions = []
@@ -639,6 +645,8 @@ class Transformer
     @inversible n
 
   'inversible': (n) ->
+    @transform n.condition
+
     # *Invert a '!='. (`if (x != y)` => `unless x is y`)*
     if n.condition.isA('!=')
       n.condition.type = Typenames['==']
