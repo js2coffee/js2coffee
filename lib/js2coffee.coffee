@@ -652,12 +652,12 @@ class Transformer
     else
       n.positive = true
 
-  '!=': (n) ->
+  '==': (n) ->
     if n.right().isA('null', 'void')
       n.type     = Typenames['!']
       n.children = [n.clone(type: Typenames['existence_check'], children: [n.left()])]
 
-  '==': (n) ->
+  '!=': (n) ->
     if n.right().isA('null', 'void')
       n.type     = Typenames['existence_check']
       n.children = [n.left()]
