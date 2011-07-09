@@ -618,6 +618,7 @@ class Transformer
       # parentheses should be omitted (eg, `alert 2`).*
       if n.expression.isA('call')
         n.expression.type = Typenames['call_statement']
+        @call_statement n
 
   'function': (n) ->
     # *Unwrap the `return`s.*
@@ -634,6 +635,12 @@ class Transformer
 
       # *CoffeeScript does not need `break` statements on `switch` blocks.*
       delete ch[ch.length-1]  if block.last().isA('break')
+
+  'call_statement': (n) ->
+    if n.children[1]
+      _.each n.children[1].children, (child, i) ->
+        if child.isA('function') and i != n.children[1].children.length-1
+         child.parenthesized = true
 
   'block': (n) ->
     @script n
