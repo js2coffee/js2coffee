@@ -642,6 +642,11 @@ class Transformer
         if child.isA('function') and i != n.children[1].children.length-1
          child.parenthesized = true
 
+  'return': (n) ->
+    # *Doing "return {x:2, y:3}" should parenthesize the return value.*
+    if n.value and n.value.isA('object_init') and n.value.children.length > 1
+      n.value.parenthesized = true
+
   'block': (n) ->
     @script n
 
