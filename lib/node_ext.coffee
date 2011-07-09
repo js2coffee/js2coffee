@@ -17,18 +17,18 @@ Node::last  = -> @children[@children.length-1]
 
 # `walk()`  
 # Traverses down a node and it's children.
-Node::walk  = (options, fn, parent=null) ->
-  fn parent, @  if parent
+Node::walk  = (options, fn, parent=null, list=null) ->
+  fn parent, @, list  if parent
 
   if options.last
     @last().walk options, fn, @  if @last()?
 
-  @thenPart.walk options, fn, @  if @thenPart?
-  @elsePart.walk options, fn, @  if @elsePart?
+  @thenPart.walk options, fn, @, 'thenPart'  if @thenPart?
+  @elsePart.walk options, fn, @, 'elsePart'  if @elsePart?
 
   if @cases
     _.each @cases, (item) ->
-      item.statements.walk options, fn, item
+      item.statements.walk options, fn, item, 'cases'
 
 # `clone()`  
 # Clones a given node.

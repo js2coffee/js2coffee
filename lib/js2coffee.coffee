@@ -622,11 +622,17 @@ class Transformer
 
   'function': (n) ->
     # *Unwrap the `return`s.*
-    n.body.walk last: true, (parent, node) ->
+    n.body.walk last: true, (parent, node, list) ->
       if node.isA('return') and node.value
-        lastNode = parent.children[parent.children.length-1]
-        lastNode.type = Typenames[';']
-        lastNode.expression = lastNode.value
+        # Hax
+        lastNode = if list
+          parent[list]
+        else
+          parent.children[parent.children.length-1]
+
+        if lastNode
+          lastNode.type = Typenames[';']
+          lastNode.expression = lastNode.value
 
   'switch': (n) ->
     _.each n.cases, (item) =>
