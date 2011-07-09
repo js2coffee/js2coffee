@@ -197,11 +197,16 @@ class Builder
 
   # ### Some simple operators
 
-  '!': (n) -> "not #{@build n.left()}"
   '~': (n) -> "~#{@build n.left()}"
   'typeof': (n) -> "typeof #{@build n.left()}"
   'index': (n) -> "#{@build n.left()}[#{@build n.right()}]"
   'throw': (n) -> "throw #{@build n.exception}"
+
+  '!': (n) ->
+    if n.bang
+      "!#{@build n.left()}"
+    else
+      "not #{@build n.left()}"
 
   # ### Binary operators
   # All of these are rerouted to the `binary_operator` @builder.
@@ -677,6 +682,11 @@ class Transformer
 
     else
       n.positive = true
+
+  '!': (n) ->
+    if n.left().isA('!')
+      n.bang = true
+      n.left().bang = true
 
   '==': (n) ->
     if n.right().isA('null', 'void')
