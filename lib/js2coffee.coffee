@@ -199,7 +199,12 @@ class Builder
 
   '~': (n) -> "~#{@build n.left()}"
   'typeof': (n) -> "typeof #{@build n.left()}"
-  'index': (n) -> "#{@build n.left()}[#{@build n.right()}]"
+  'index': (n) ->
+    right = @build n.right()
+    if _.any(n.children, (child) -> child.typeName() == 'object_init' and child.children.length > 1)
+      right = "{#{right}}"
+    "#{@build n.left()}[#{right}]"
+
   'throw': (n) -> "throw #{@build n.exception}"
 
   '!': (n) ->
