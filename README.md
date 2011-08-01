@@ -14,6 +14,7 @@ Usage:
 Install dependencies:
 
     $ npm install
+    $ npm install underscore
     $ npm install glob
 
 Run tests:
