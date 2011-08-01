@@ -34,4 +34,4 @@ Made possible thanks to the hard work of Js2coffee's dependency projects:
 
 And of course:
 
- * Jeremy Ashkenas's [CoffeeScript](jashkenas.github.com/coffee-script/)
+ * Jeremy Ashkenas's [CoffeeScript](http://jashkenas.github.com/coffee-script/)
