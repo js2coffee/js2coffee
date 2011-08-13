@@ -102,7 +102,7 @@ p = (str) ->
 #     "off"   => "off"
 #
 unreserve = (str) ->
-  if "#{str}" in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
+  if "#{str}" in ['then', 'unless', 'of', 'by', 'in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
     "#{str}_"
   else
     "#{str}"
