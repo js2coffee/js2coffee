@@ -471,20 +471,20 @@ class Builder
 
     c.add "switch #{@build n.discriminant}\n"
 
-    fallthrough = false
+    fall_through = false
     _.each n.cases, (item) =>
       if item.value == 'default'
         c.scope "else"
       else
-        if fallthrough == true
+        if fall_through == true
           c.add ", #{@build item.caseLabel}\n"
         else
           c.add "  when #{@build item.caseLabel}"
           
       if @body(item.statements).length == 0
-        fallthrough = true
+        fall_through = true
       else
-        fallthrough = false
+        fall_through = false
         c.add "\n"
         c.scope @body(item.statements), 2
 
