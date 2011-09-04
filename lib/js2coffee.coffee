@@ -658,7 +658,7 @@ class Transformer
       ch    = block.children
 
       # *CoffeeScript does not need `break` statements on `switch` blocks.*
-      delete ch[ch.length-1] if block.last()? and block.last().isA('break')
+      delete ch[ch.length-1] if block.last()?.isA('break')
 
   'call_statement': (n) ->
     if n.children[1]
