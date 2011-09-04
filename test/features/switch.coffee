@@ -6,8 +6,7 @@ switch x
   else
     x
 switch x
-  when 2
-  ,3
+  when 2, 3
     b
   else
     x

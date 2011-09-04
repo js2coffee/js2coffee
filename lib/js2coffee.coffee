@@ -477,14 +477,16 @@ class Builder
         c.scope "else"
       else
         if fall == false
-          c.scope "when #{@build item.caseLabel}\n"
-        else if fall == true
-          c.scope ",#{@build item.caseLabel}\n"
+          c.add "  when #{@build item.caseLabel}"
+        else
+          c.add ", #{@build item.caseLabel}\n"
           fall = false
           
-      c.scope @body(item.statements), 2
       if @body(item.statements).length == 0
         fall=true
+      else
+        c.add "\n"
+        c.scope @body(item.statements), 2
       first = false
 
     c
