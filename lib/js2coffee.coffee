@@ -471,14 +471,20 @@ class Builder
 
     c.add "switch #{@build n.discriminant}\n"
 
+    fall = false
     _.each n.cases, (item) =>
       if item.value == 'default'
         c.scope "else"
       else
-        c.scope "when #{@build item.caseLabel}\n"
-
+        if fall == false
+          c.scope "when #{@build item.caseLabel}\n"
+        else if fall == true
+          c.scope ",#{@build item.caseLabel}\n"
+          fall = false
+          
       c.scope @body(item.statements), 2
-
+      if @body(item.statements).length == 0
+        fall=true
       first = false
 
     c
@@ -650,7 +656,7 @@ class Transformer
       ch    = block.children
 
       # *CoffeeScript does not need `break` statements on `switch` blocks.*
-      delete ch[ch.length-1]  if block.last().isA('break')
+      delete ch[ch.length-1] if block.last()? and block.last().isA('break')
 
   'call_statement': (n) ->
     if n.children[1]
