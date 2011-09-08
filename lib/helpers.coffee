@@ -9,10 +9,11 @@ class Code
     @code += str.toString()
     @
 
-  scope: (str, level=1) ->
+  scope: (str, level=1, inline=false) ->
     indent = strRepeat("  ", level)
     @code  = rtrim(@code) + "\n"
-    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "\n"
+    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}")
+    @code += "\n" unless inline
     @
 
   toString: ->

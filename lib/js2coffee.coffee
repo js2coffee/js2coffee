@@ -497,7 +497,7 @@ class Builder
   # left is a `identifier`, right can be anything.
 
   'property_init': (n) ->
-    "#{@property_identifier n.left()}: #{@build n.right()}"
+    "#{@property_identifier n.left()}: #{@build n.right(), nested_object: true}"
 
   # `object_init`  
   # An object initializer.
@@ -508,7 +508,11 @@ class Builder
       "{}"
 
     else if n.children.length == 1
-      @build n.children[0]
+      r = @build n.children[0]
+      if options.nested_object
+        c = new Code
+        r = c.scope r, 1, true;
+      r
 
     else
       list = _.map n.children, (item) => @build item
