@@ -553,7 +553,7 @@ class Builder
 
   'var': (n) ->
     list = _.map n.children, (item) =>
-      "#{item.value} = #{@build(item.initializer)}"  if item.initializer?
+      "#{unreserve item.value} = #{@build(item.initializer)}"  if item.initializer?
 
     _.compact(list).join("\n") + "\n"
 
