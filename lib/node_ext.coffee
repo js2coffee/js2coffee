@@ -8,14 +8,14 @@ Node   = parser.Node
 # ## Narcissus node helpers
 # Some extensions to the Node class to make things easier later on.
 
-# `left() / right()`  
+# `left() / right()`
 # These are aliases for the first and last child.
 # Often helpful for things like binary operators.
 Node::left  = -> @children[0]
 Node::right = -> @children[1]
 Node::last  = -> @children[@children.length-1]
 
-# `walk()`  
+# `walk()`
 # Traverses down a node and it's children.
 Node::walk  = (options, fn, parent=null, list=null) ->
   fn parent, @, list  if parent
@@ -30,7 +30,7 @@ Node::walk  = (options, fn, parent=null, list=null) ->
     _.each @cases, (item) ->
       item.statements.walk options, fn, item, 'cases'
 
-# `clone()`  
+# `clone()`
 # Clones a given node.
 Node::clone = (hash) ->
   for i of @
@@ -39,7 +39,7 @@ Node::clone = (hash) ->
 
   new Node(@tokenizer, hash)
 
-# `toHash()` + `inspect()`  
+# `toHash()` + `inspect()`
 # For debugging
 Node::toHash = ->
   hash = {}
@@ -67,15 +67,15 @@ Node::toHash = ->
 Node::inspect = ->
   JSON.stringify @toHash(), null, '  '
 
-# `src()`  
+# `src()`
 # Returns the source for the node.
 Node::src   = -> @tokenizer.source.substr(@start, @end-@start)
 
-# `typeName()`  
+# `typeName()`
 # Returns the typename in lowercase. (eg, 'function')
 Node::typeName = -> Types[@type]
 
-# `isA()`  
+# `isA()`
 # Typename check.
 Node::isA = (what...) -> Types[@type] in what
 

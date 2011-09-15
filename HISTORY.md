@@ -3,7 +3,7 @@ v0.1.1 - Jul 09, 2011
 
 ### Fixed:
   * Invert the 'a == null' behavior. (#19, #51)
-  * Fix the problem where passing an anonymous function as a parameter can 
+  * Fix the problem where passing an anonymous function as a parameter can
 sometimes lead to syntax errors. (#55)
 
 v0.1.0 - Jun 13, 2011

@@ -21,7 +21,7 @@ class Code
 # ## String helpers
 # These are functions that deal with strings.
 
-# `paren()`  
+# `paren()`
 # Wraps a given string in parentheses.
 # Examples:
 #
@@ -35,7 +35,7 @@ paren = (string) ->
     else
       "(#{str})"
 
-# `strRepeat()`  
+# `strRepeat()`
 # Repeats a string a certain number of times.
 # Example:
 #
@@ -44,7 +44,7 @@ paren = (string) ->
 strRepeat = (str, times) ->
     (str for i in [0...times]).join('')
 
-# `trim()` *and friends*  
+# `trim()` *and friends*
 # String trimming functions.
 
 ltrim = (str) ->
@@ -62,7 +62,7 @@ trim = (str) ->
 isSingleLine = (str) ->
   trim(str).indexOf("\n") == -1
 
-# `unshift()`  
+# `unshift()`
 # Removes any unneccesary indentation from a code block string.
 unshift = (str) ->
   str = "#{str}"
@@ -74,7 +74,7 @@ unshift = (str) ->
     return str  if !m1 or !m2 or m1.length != m2.length
     str = str.replace(/^ /gm, '')
 
-# `strEscape()`  
+# `strEscape()`
 # Escapes a string.
 # Example:
 #
@@ -83,7 +83,7 @@ unshift = (str) ->
 strEscape = (str) ->
   JSON.stringify "#{str}"
 
-# `p()`  
+# `p()`
 # Debugging tool. Prints an object to the console.
 # Not actually used, but here for convenience.
 p = (str) ->
@@ -93,7 +93,7 @@ p = (str) ->
     console.log str
   ''
 
-# `unreserve()`  
+# `unreserve()`
 # Picks the next best thing for a reserved keyword.
 # Example:
 #
