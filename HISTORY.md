@@ -1,3 +1,9 @@
+unreleased
+----------
+
+### Fixed:
+  * Handle switch case statements with no break (#84)
+
 v0.1.1 - Jul 09, 2011
 ---------------------
 
