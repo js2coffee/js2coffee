@@ -12,11 +12,11 @@ z = ->
   switch foo
     when X
       return 1
-      2
+      return 2
     when Y
       return 3
-      4
+      return 4
     else
       return 5
-      6
+      return 6
 

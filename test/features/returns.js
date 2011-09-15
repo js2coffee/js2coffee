@@ -18,11 +18,14 @@ function z() {
     case X:
       return 1;
       return 2;
+      break;
     case Y:
       return 3;
       return 4;
+      break;
     default:
       return 5;
       return 6;
+      break;
   }
 }

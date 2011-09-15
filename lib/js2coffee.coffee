@@ -645,12 +645,29 @@ class Transformer
           lastNode.expression = lastNode.value
 
   'switch': (n) ->
-    _.each n.cases, (item) =>
+    last_child_is_a_break = (block) ->
+      last = block.last()
+      last? && last.isA('break')
+
+    _.each n.cases, (item, index) =>
       block = item.statements
       ch    = block.children
 
-      # *CoffeeScript does not need `break` statements on `switch` blocks.*
-      delete ch[ch.length-1]  if block.last().isA('break')
+      # When a `case` block doesn't use a `break`, the subsequent `case` blocks
+      # also need to run until a `break` is reached.
+      # Append the appropriate statements from the subsequent `case` blocks.*
+      unless last_child_is_a_break(block)
+        remaining_cases = n.cases[index + 1..-1]
+        _.each remaining_cases, (subsequent_case) ->
+          subsequent_block = subsequent_case.statements
+          _.each subsequent_block.children, (child) ->
+            ch.push(child)
+          if last_child_is_a_break(block)
+            # *We hit a break statement; stop now.*
+            return false
+
+      # *CoffeeScript does not use `break` statements on `switch` blocks.
+      delete ch[ch.length-1]  if last_child_is_a_break(block)
 
   'call_statement': (n) ->
     if n.children[1]
