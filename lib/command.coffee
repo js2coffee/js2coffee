@@ -9,8 +9,8 @@ basename = path.basename
 cmd      = basename(process.argv[1])
 
 build_and_show = (fname) ->
-  contents = fs.readFileSync(fname, 'utf-8')
-  output   = js2coffee.build(contents)
+  contents = (fs.readFileSync fname, 'utf-8').replace /\r\n/g, '\n'
+  output   = js2coffee.build contents
   console.log "%s", output
 
 runFiles = (proc) ->
