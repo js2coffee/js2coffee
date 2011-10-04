@@ -511,9 +511,6 @@ class Builder
     if n.children.length == 0
       "{}"
 
-    else if n.children.length == 1
-      @build n.children[0]
-
     else
       list = _.map n.children, (item) => @build item
 
