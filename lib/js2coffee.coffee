@@ -497,7 +497,10 @@ class Builder
   # left is a `identifier`, right can be anything.
 
   'property_init': (n) ->
-    "#{@property_identifier n.left()}: #{@build n.right()}"
+    left = n.left()
+    right = n.right()
+    right.is_property_value = true
+    "#{@property_identifier left}: #{@build right}"
 
   # `object_init`  
   # An object initializer.
@@ -506,6 +509,9 @@ class Builder
   'object_init': (n, options={}) ->
     if n.children.length == 0
       "{}"
+
+    else if n.children.length == 1 and not n.is_property_value
+      @build n.children[0]
 
     else
       list = _.map n.children, (item) => @build item
