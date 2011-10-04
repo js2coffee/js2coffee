@@ -124,13 +124,19 @@ class Builder
   # Any object identifier like a variable name.
 
   'identifier': (n) ->
-    unreserve n.value.toString()
+    if n.property_accessor
+      n.value.toString()
+    else
+      unreserve n.value.toString()
 
   'number': (n) ->
     "#{n.src()}"
 
   'id': (n) ->
-    unreserve n
+    if n.property_accessor
+      n
+    else
+      unreserve n
 
   # `id_param`  
   # Function parameters. Belongs to `list`.
@@ -357,7 +363,9 @@ class Builder
     # *If called as `x.prototype`, it should use double colons (`x::`).*
 
     left  = @build n.left()
-    right = @build n.right()
+    right_obj = n.right()
+    right_obj.property_accessor = true
+    right = @build right_obj
 
     if n.isThis and n.isPrototype
       "@::"
