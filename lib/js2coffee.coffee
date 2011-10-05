@@ -37,7 +37,8 @@ buildCoffee = (str) ->
   builder = new Builder
   scriptNode = parser.parse("#{str}\n")
 
-  trim builder.build(scriptNode)
+  output = trim builder.build(scriptNode)
+  (rtrim line for line in output.split('\n')).join('\n')
 
 # ## Builder class
 # This is the main class that proccesses the AST and spits out streng.
