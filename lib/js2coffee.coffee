@@ -209,13 +209,12 @@ class Builder
 
   '!': (n) ->
     target = n.left()
-    if target.isA '!'
-      negations = ('!' while (target = target.left()) and target.isA '!')
-      return "#{if negations.length & 1 then 'not ' else '!!'}#{@build target}"
-    if target.isA '==', '!=', '===', '!==', 'in', 'instanceof' # invertible binary operators
+    negations = 1
+    ++negations while (target.isA '!') and target = target.left()
+    if (negations & 1) and target.isA '==', '!=', '===', '!==', 'in', 'instanceof' # invertible binary operators
       target.negated = not target.negated
       return @build target
-    "not #{@build target}"
+    "#{if negations & 1 then 'not ' else '!!'}#{@build target}"
 
   # ### Binary operators
   # All of these are rerouted to the `binary_operator` @builder.
@@ -464,6 +463,7 @@ class Builder
 
     keyword = if n.positive then "if" else "unless"
     body_   = @body(n.thenPart)
+    n.condition.parenthesized = false
 
     if isSingleLine(body_) and !n.elsePart?
       c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
@@ -671,7 +671,7 @@ class Transformer
     if n.children[1]
       _.each n.children[1].children, (child, i) ->
         if child.isA('function') and i != n.children[1].children.length-1
-         child.parenthesized = true
+          child.parenthesized = true
 
   'return': (n) ->
     # *Doing "return {x:2, y:3}" should parenthesize the return value.*
