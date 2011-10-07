@@ -28,6 +28,8 @@ _.each files, (f) ->
       console.log quote(control)
       false
 
+num_errors = 0
+num_failures = 0
 _.each tests, (test, name) ->
   try
     result = test()
@@ -35,7 +37,14 @@ _.each tests, (test, name) ->
       console.log "[ OK ] #{name}"
     else
       console.log "[FAIL] #{name}"
+      num_failures++
 
   catch e
     console.log "[ERR ] #{name}"
     console.log e.message
+    num_errors++
+
+if num_errors + num_failures == 0
+  console.log "All tests OK"
+else
+  console.log "Tests failed with #{num_failures} failures and #{num_errors} errors."
