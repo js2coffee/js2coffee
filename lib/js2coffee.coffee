@@ -337,7 +337,10 @@ class Builder
   # A parameter list.
 
   'list': (n) ->
-    list = _.map(n.children, (item) => @build(item))
+    list = _.map(n.children, (item) =>
+      if n.children.length > 1
+        item.is_list_element = true
+      @build(item))
 
     list.join(", ")
 
@@ -510,7 +513,7 @@ class Builder
     if n.children.length == 0
       "{}"
 
-    else if n.children.length == 1 and not n.is_property_value
+    else if n.children.length == 1 and not (n.is_property_value or n.is_list_element)
       @build n.children[0]
 
     else
