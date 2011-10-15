@@ -1,6 +1,8 @@
 # ## Code snippet helper
 # A helper class to deal with building code.
 
+CoffeeScript = @CoffeeScript or require 'coffee-script'
+
 class Code
   constructor: ->
     @code = ''
@@ -96,7 +98,7 @@ p = (str) ->
 # `coffeescript_reserved`
 # Array of reserved words from coffeescript,
 # for use by `unreserve()`
-coffeescript_reserved = ( word for word in (require 'coffee-script').RESERVED when word != 'undefined' )
+coffeescript_reserved = ( word for word in CoffeeScript.RESERVED when word != 'undefined' )
 
 # `unreserve()`  
 # Picks the next best thing for a reserved keyword.
