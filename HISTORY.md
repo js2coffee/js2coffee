@@ -20,6 +20,9 @@ for the contributions.
 ### Changed:
   * Compile `!!` into `!!` instead of `not not`. (#30)
   * Implement CRLF support. Closes (#81, #88)
+  * `!!!x` now condenses to `not x`.
+  * `==` and `===` now become `is`. (#29)
+  * `!(a instanceof b)` now becomes `a not instanceof b`. (#29)
 
 ### Misc changes:
   * Fixed bad link in README. (#63)
