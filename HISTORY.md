@@ -19,8 +19,9 @@ contributions.
 
 ### Misc changes:
   * Fixed bad link in README. (#63)
-  * Running `cake test` now shows less output.
-  * Running `cake test` now exits with an error code when it fails.
+  * Make `npm test` run tests.
+  * Running tests now shows less output.
+  * Running tests now exits with an error code when it fails.
 
 v0.1.1 - Jul 09, 2011
 ---------------------

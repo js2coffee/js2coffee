@@ -11,14 +11,9 @@ Usage:
 
 ### Development
 
-Install dependencies:
-
-    $ npm install
-    $ npm install glob
-
 Run tests:
 
-    $ cake test
+    $ npm test
 
 Build the browser version:
 
