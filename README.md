@@ -1,3 +1,14 @@
+# Information about this fork
+
+Recurssively convert all the JavaScript files into Coffee-script inside
+a folder.
+
+js2coffee test/express_ex_mvc
+
+This will convert all .js files to .coffee file.
+
+
+
 # JS2Coffee
 #### A JavaScript to CoffeeScript compiler.
 
