@@ -1,27 +1,27 @@
 ifChecks = ->
-  yes  if x
-  yes  unless x
+  yep  if x
+  yep  unless x
 ifNullChecks = ->
-  yes  unless x?
+  yep  unless x?
   nah  if x == null
 voidChecks = ->
-  yes  unless x?
+  yep  unless x?
   nah  if x == undefined
-  yes  unless x?
+  yep  unless x?
 undefinedChecks = ->
   nah  if typeof x == "undefined"
 edgeCase = ->
   nah  if not x == y
 unlessChecks = ->
-  yes  if x?
+  yep  if x?
   nah  if x != null
   wat  unless typeof x == "undefined"
 whileAndFor = ->
   until x?
-    yes
+    yep
   while x == null
-    yes
+    yep
   a
   while not x?
-    yes
+    yep
     2

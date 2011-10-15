@@ -93,6 +93,11 @@ p = (str) ->
     console.log str
   ''
 
+# `coffeescript_reserved`
+# Array of reserved words from coffeescript,
+# for use by `unreserve()`
+coffeescript_reserved = ( word for word in (require 'coffee-script').RESERVED when word != 'undefined' )
+
 # `unreserve()`  
 # Picks the next best thing for a reserved keyword.
 # Example:
@@ -102,7 +107,7 @@ p = (str) ->
 #     "off"   => "off"
 #
 unreserve = (str) ->
-  if "#{str}" in ['in', 'loop', 'off', 'on', 'when', 'not', 'until', '__bind', '__indexOf']
+  if "#{str}" in coffeescript_reserved
     "#{str}_"
   else
     "#{str}"
