@@ -128,7 +128,9 @@ class Builder
   # Any object identifier like a variable name.
 
   'identifier': (n) ->
-    if n.property_accessor
+    if n.value is 'undefined'
+      '`undefined`'
+    else if n.property_accessor
       n.value.toString()
     else
       unreserve n.value.toString()
