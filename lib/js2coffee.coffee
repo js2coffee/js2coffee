@@ -341,7 +341,10 @@ class Builder
   # A parameter list.
 
   'list': (n) ->
-    list = _.map(n.children, (item) => @build(item))
+    list = _.map(n.children, (item) =>
+      if n.children.length > 1
+        item.is_list_element = true
+      @build(item))
 
     list.join(", ")
 
@@ -501,7 +504,10 @@ class Builder
   # left is a `identifier`, right can be anything.
 
   'property_init': (n) ->
-    "#{@property_identifier n.left()}: #{@build n.right()}"
+    left = n.left()
+    right = n.right()
+    right.is_property_value = true
+    "#{@property_identifier left}: #{@build right}"
 
   # `object_init`  
   # An object initializer.
@@ -511,7 +517,7 @@ class Builder
     if n.children.length == 0
       "{}"
 
-    else if n.children.length == 1
+    else if n.children.length == 1 and not (n.is_property_value or n.is_list_element)
       @build n.children[0]
 
     else
