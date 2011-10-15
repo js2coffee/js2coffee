@@ -1,5 +1,5 @@
 not x
 !!x
-!!!x
-!!!!x
-!!!!!x
+not x
+!!x
+not x
