@@ -1,8 +1,8 @@
 v0.1.2 (unreleased) - Oct 15, 2011
 ----------------------------------
 
-Thanks to @Wisdom, @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes 
-for the contributions.
+Thanks to @Wisdom, @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes,
+@eventualbuddha, @clkao for the contributions.
 
 ### Fixed:
   * Fix misspelling in package.json.
@@ -16,6 +16,8 @@ for the contributions.
   * Reserved words are now allowed as property accessors. Fixes
     `object.on(...)`. (#97, #95, #75)
   * Empty switch cases now get compiled correctly. (#70, #28)
+  * The value `undefined` now gets compiled properly. (#20, #85)
+  * Declaring `var x` will now translate to `x = undefined`. (#79)
 
 ### Changed:
   * Compile `!!` into `!!` instead of `not not`. (#30)
@@ -23,6 +25,8 @@ for the contributions.
   * `!!!x` now condenses to `not x`.
   * `==` and `===` now become `is`. (#29)
   * `!(a instanceof b)` now becomes `a not instanceof b`. (#29)
+  * Doing `var x = y` will now have different behavior for reserved keywords.
+    (#79)
 
 ### Misc changes:
   * Fixed bad link in README. (#63)
