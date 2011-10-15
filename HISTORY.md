@@ -1,5 +1,5 @@
-v0.1.2 (unreleased) - Oct 15, 2011
-----------------------------------
+v0.1.2 - Oct 15, 2011
+---------------------
 
 Thanks to @Wisdom, @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes,
 @eventualbuddha, @clkao for the contributions.
