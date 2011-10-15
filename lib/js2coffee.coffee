@@ -218,14 +218,23 @@ class Builder
   'throw': (n) -> "throw #{@build n.exception}"
 
   '!': (n) ->
-    if n.bang
-      "!#{@build n.left()}"
-    else
-      "not #{@build n.left()}"
+    target = n.left()
+    negations = 1
+    ++negations while (target.isA '!') and target = target.left()
+    if (negations & 1) and target.isA '==', '!=', '===', '!==', 'in', 'instanceof' # invertible binary operators
+      target.negated = not target.negated
+      return @build target
+    "#{if negations & 1 then 'not ' else '!!'}#{@build target}"
 
   # ### Binary operators
   # All of these are rerouted to the `binary_operator` @builder.
 
+  # TODO: make a function that generates these functions, invoked like so:
+  #   in: binop 'in', 'of'
+  #   '+': binop '+'
+  #   and so on...
+
+  in: (n) ->    @binary_operator n, 'of'
   '+': (n) ->   @binary_operator n, '+'
   '-': (n) ->   @binary_operator n, '-'
   '*': (n) ->   @binary_operator n, '*'
@@ -238,27 +247,32 @@ class Builder
   '^': (n) ->   @binary_operator n, '^'
   '&&': (n) ->  @binary_operator n, 'and'
   '||': (n) ->  @binary_operator n, 'or'
-  'in': (n) ->  @binary_operator n, 'of'
   '<<': (n) ->  @binary_operator n, '<<'
   '<=': (n) ->  @binary_operator n, '<='
   '>>': (n) ->  @binary_operator n, '>>'
   '>=': (n) ->  @binary_operator n, '>='
-  '!=': (n) ->  @binary_operator n, '!='
-  '===': (n) -> @binary_operator n, '=='
-  '!==': (n) -> @binary_operator n, '!='
+  '===': (n) -> @binary_operator n, 'is'
+  '!==': (n) -> @binary_operator n, 'isnt'
+  instanceof: (n) -> @binary_operator n, 'instanceof'
 
   '==': (n) ->
     # TODO: throw warning
-    @binary_operator n, '=='
+    @binary_operator n, 'is'
 
   '!=': (n) ->
     # TODO: throw warning
-    @binary_operator n, '!='
+    @binary_operator n, 'isnt'
 
-  'instanceof': (n) -> @binary_operator n, 'instanceof'
-
-  'binary_operator': (n, sign) ->
-    "#{@build n.left()} #{sign} #{@build n.right()}"
+  'binary_operator': do ->
+    INVERSIONS =
+      is: 'isnt'
+      in: 'not in'
+      of: 'not of'
+      instanceof: 'not instanceof'
+    INVERSIONS[v] = k for own k, v of INVERSIONS
+    (n, sign) ->
+      sign = INVERSIONS[sign] if n.negated
+      "#{@build n.left()} #{sign} #{@build n.right()}"
 
   # ### Increments and decrements
   # For `a++` and `--b`.
@@ -464,6 +478,7 @@ class Builder
 
     keyword = if n.positive then "if" else "unless"
     body_   = @body(n.thenPart)
+    n.condition.parenthesized = false
 
     if isSingleLine(body_) and !n.elsePart?
       c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
@@ -683,7 +698,7 @@ class Transformer
     if n.children[1]
       _.each n.children[1].children, (child, i) ->
         if child.isA('function') and i != n.children[1].children.length-1
-         child.parenthesized = true
+          child.parenthesized = true
 
   'return': (n) ->
     # *Doing "return {x:2, y:3}" should parenthesize the return value.*
@@ -714,11 +729,6 @@ class Transformer
 
     else
       n.positive = true
-
-  '!': (n) ->
-    if n.left().isA('!')
-      n.bang = true
-      n.left().bang = true
 
   '==': (n) ->
     if n.right().isA('null', 'void')
