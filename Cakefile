@@ -2,7 +2,7 @@
 
 # Tasks
 task 'test', 'Run tests', ->
-  run 'coffee test/test.coffee'
+  require 'test/test'
 
 task 'build', 'Builds the browser version', ->
   {readFileSync, writeFileSync} = require('fs')

@@ -48,3 +48,4 @@ if num_errors + num_failures == 0
   console.log "All tests OK"
 else
   console.log "Tests failed with #{num_failures} failures and #{num_errors} errors."
+  process.exit 1
