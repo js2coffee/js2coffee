@@ -13,6 +13,8 @@ contributions.
   * Returning object literals should now have the objects parenthesized
     properly.  ( `return {x:1, y:2}`) (#52)
   * Always new-line objects to support `{ a: { b: c } }`. (#96, #94)
+  * Reserved words are now allowed as property accessors. Fixes
+    `object.on(...)`. (#97, #95, #75)
 
 ### Changed:
   * Compile `!!` into `!!` instead of `not not`. (#30)
