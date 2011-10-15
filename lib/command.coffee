@@ -2,6 +2,7 @@ js2coffee = require('./js2coffee')
 _    = require('underscore')
 fs   = require('fs')
 path = require('path')
+tty  = require('tty')
 
 UnsupportedError = js2coffee.UnsupportedError
 
@@ -17,12 +18,8 @@ runFiles = (proc) ->
   files = process.argv.slice(2)
   work  = proc or build_and_show
 
-  try
-    work '/dev/stdin'
-
-  catch e
-    throw e unless e.code == 'EAGAIN'
-
+  if tty.isatty process.stdin
+    # Nothing on stdin.
     if files.length == 0
       console.warn "Usage:"
       console.warn "  #{cmd} file.js"
@@ -31,6 +28,10 @@ runFiles = (proc) ->
       process.exit 1
 
     _.each files, (fname) -> work fname
+
+  else
+    # Something was piped or redirected into stdin; use that instead of filenames.
+    work '/dev/stdin'
 
 module.exports =
   run: (args...) ->
