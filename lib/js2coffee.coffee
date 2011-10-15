@@ -34,8 +34,11 @@ rtrim, strRepeat, paren} = @Js2coffeeHelpers or require('./helpers')
 # 2. This node is now passed onto `Builder#build()`.
 
 buildCoffee = (str) ->
-  builder = new Builder
-  scriptNode = parser.parse("#{str}\n")
+  str  = str.replace /\r/g, ''
+  str += "\n"
+
+  builder    = new Builder
+  scriptNode = parser.parse str
 
   trim builder.build(scriptNode)
 

@@ -42,6 +42,7 @@ _.each tests, (test, name) ->
   catch e
     console.log "[ERR ] #{name}"
     console.log e.message
+    console.warn e.stack
     num_errors++
 
 if num_errors + num_failures == 0
