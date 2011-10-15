@@ -12,6 +12,7 @@ contributions.
       y;`)) (#50)
   * Returning object literals should now have the objects parenthesized
     properly.  ( `return {x:1, y:2}`) (#52)
+  * Always new-line objects to support `{ a: { b: c } }`. (#96, #94)
 
 ### Changed:
   * Compile `!!` into `!!` instead of `not not`. (#30)
