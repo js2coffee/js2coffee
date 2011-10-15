@@ -1,8 +1,8 @@
 v0.1.2 (unreleased) - Oct 15, 2011
 ----------------------------------
 
-Thanks to @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes for the 
-contributions.
+Thanks to @Wisdom, @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes 
+for the contributions.
 
 ### Fixed:
   * Fix misspelling in package.json.
@@ -15,6 +15,7 @@ contributions.
   * Always new-line objects to support `{ a: { b: c } }`. (#96, #94)
   * Reserved words are now allowed as property accessors. Fixes
     `object.on(...)`. (#97, #95, #75)
+  * Empty switch cases now get compiled correctly. (#70, #28)
 
 ### Changed:
   * Compile `!!` into `!!` instead of `not not`. (#30)
