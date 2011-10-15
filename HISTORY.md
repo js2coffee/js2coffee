@@ -1,3 +1,27 @@
+v0.1.2 (unreleased) - Oct 15, 2011
+----------------------------------
+
+Thanks to @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes for the 
+contributions.
+
+### Fixed:
+  * Fix misspelling in package.json.
+  * Object lookups using object literals (`o[{a:1, b:2}]`) are now supported.
+  * Fixed `js2coffee file.js` not working in Linux. (#90, #54)
+  * Returning from an if without curly braces are now supported. (`if (x) return 
+      y;`)) (#50)
+  * Returning object literals should now have the objects parenthesized
+    properly.  ( `return {x:1, y:2}`) (#52)
+
+### Changed:
+  * Compile `!!` into `!!` instead of `not not`. (#30)
+  * Implement CRLF support. Closes (#81, #88)
+
+### Misc changes:
+  * Fixed bad link in README. (#63)
+  * Running `cake test` now shows less output.
+  * Running `cake test` now exits with an error code when it fails.
+
 v0.1.1 - Jul 09, 2011
 ---------------------
 
