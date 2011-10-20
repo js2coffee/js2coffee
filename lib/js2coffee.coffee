@@ -19,10 +19,8 @@ _ = @_ or require('underscore')
 
 {Types, Typenames, Node} = @NodeExt or require('./node_ext')
 
-{Code, p, strEscape, unreserve,
-unshift, isSingleLine,
-trim, blockTrim, ltrim,
-rtrim, strRepeat, paren} = @Js2coffeeHelpers or require('./helpers')
+{Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim,
+  ltrim, rtrim, strRepeat, paren, truthy} = @Js2coffeeHelpers or require('./helpers')
 
 # ## Main entry point
 # This is `require('js2coffee').build()`. It takes a JavaScript source
@@ -462,13 +460,19 @@ class Builder
   'while': (n) ->
     c = new Code
 
-    keyword = if n.positive then "while" else "until"
-    body_   = @body(n.body)
+    keyword   = if n.positive then "while" else "until"
+    body_     = @body(n.body)
 
-    if isSingleLine(body_)
-      c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
+    # *Use `loop` whin something will go on forever (like `while (true)`).*
+    if truthy(n.condition)
+      statement = "loop"
     else
-      c.add "#{keyword} #{@build n.condition}"
+      statement = "#{keyword} #{@build n.condition}"
+
+    if isSingleLine(body_) and statement isnt "loop"
+      c.add "#{trim body_}  #{statement}\n"
+    else
+      c.add statement
       c.scope body_
     c
 

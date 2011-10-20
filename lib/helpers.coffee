@@ -76,6 +76,12 @@ unshift = (str) ->
     return str  if !m1 or !m2 or m1.length != m2.length
     str = str.replace(/^ /gm, '')
 
+# `truthy()`
+# Tests if the given node is constantly truthy. Currently only works with
+# `true` and non-zero numbers.
+truthy = (n) ->
+  n.isA('true') or (n.isA('number') and parseFloat(n.src()) isnt 0.0)
+
 # `strEscape()`  
 # Escapes a string.
 # Example:
@@ -116,6 +122,6 @@ unreserve = (str) ->
 
 @Js2coffeeHelpers = exports =
   {Code, p, strEscape, unreserve, unshift, isSingleLine, trim,
-  blockTrim, ltrim, rtrim, strRepeat, paren}
+  blockTrim, ltrim, rtrim, strRepeat, paren, truthy}
 
 module.exports = exports  if module?
