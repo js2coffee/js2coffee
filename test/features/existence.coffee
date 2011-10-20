@@ -17,10 +17,8 @@ unlessChecks = ->
   nah  if x isnt null
   wat  unless typeof x is "undefined"
 whileAndFor = ->
-  until x?
-    yep
-  while x is null
-    yep
+  yep  until x?
+  yep  while x is null
   a
   while not x?
     yep

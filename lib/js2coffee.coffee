@@ -463,8 +463,13 @@ class Builder
     c = new Code
 
     keyword = if n.positive then "while" else "until"
-    c.add "#{keyword} #{@build n.condition}"
-    c.scope @body(n.body)
+    body_   = @body(n.body)
+
+    if isSingleLine(body_)
+      c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
+    else
+      c.add "#{keyword} #{@build n.condition}"
+      c.scope body_
     c
 
   'do': (n) ->
@@ -483,7 +488,13 @@ class Builder
     body_   = @body(n.thenPart)
     n.condition.parenthesized = false
 
-    if isSingleLine(body_) and !n.elsePart?
+    # *Account for `if (xyz) {}`, which should be `xyz`. (#78)*
+    # *Note that `!xyz` still compiles to `xyz` because the `!` will not change anything.*
+    if n.thenPart.isA('block') and n.thenPart.children.length == 0 and !n.elsePart?
+      console.log n.thenPart
+      c.add "#{@build n.condition}\n"
+
+    else if isSingleLine(body_) and !n.elsePart?
       c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
 
     else
@@ -712,26 +723,38 @@ class Transformer
     @script n
 
   'if': (n) ->
+    # *Account for `if(x) {} else { something }` which should be `something unless x`.*
+    if n.thenPart.children.length == 0 and n.elsePart?.children.length > 0
+      n.positive = false
+      n.thenPart = n.elsePart
+      delete n.elsePart
+
     @inversible n
 
   'while': (n) ->
+    # *A while with a blank body (`while(x){}`) should be accounted for.*
+    # *You can't have empty blocks, so put a `continue` in there. (#78)*
+    if n.body.children.length is 0
+      n.body.children.push n.clone(type: Typenames['continue'], value: 'continue', children: [])
+
     @inversible n
 
   'inversible': (n) ->
     @transform n.condition
+    positive = if n.positive? then n.positive else true
 
     # *Invert a '!='. (`if (x != y)` => `unless x is y`)*
     if n.condition.isA('!=')
       n.condition.type = Typenames['==']
-      n.positive = false
+      n.positive = not positive
 
     # *Invert a '!'. (`if (!x)` => `unless x`)*
     else if n.condition.isA('!')
       n.condition = n.condition.left()
-      n.positive = false
+      n.positive = not positive
 
     else
-      n.positive = true
+      n.positive = positive
 
   '==': (n) ->
     if n.right().isA('null', 'void')
