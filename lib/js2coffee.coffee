@@ -255,6 +255,7 @@ class Builder
   '>=': (n) ->  @binary_operator n, '>='
   '===': (n) -> @binary_operator n, 'is'
   '!==': (n) -> @binary_operator n, 'isnt'
+  '>>>': (n) ->  @binary_operator n, '>>>'
   instanceof: (n) -> @binary_operator n, 'instanceof'
 
   '==': (n) ->
