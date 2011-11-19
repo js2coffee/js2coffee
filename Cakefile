@@ -2,7 +2,7 @@
 
 # Tasks
 task 'test', 'Run tests', ->
-  require 'test/test'
+  require __dirname + '/test/test'
 
 task 'build', 'Builds the browser version', ->
   {readFileSync, writeFileSync} = require('fs')
