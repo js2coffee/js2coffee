@@ -43,3 +43,4 @@ module.exports =
       throw e  unless e.constructor in [UnsupportedError, SyntaxError]
       console.warn "Error: #{e.message}"
       console.warn "Cursor position: #{e.cursor}"
+      process.exit 1
