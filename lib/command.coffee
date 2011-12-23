@@ -37,6 +37,7 @@ module.exports =
   run: (args...) ->
     try
       runFiles.apply this, args
+      process.exit 0
 
     catch e
       throw e  unless e.constructor in [UnsupportedError, SyntaxError]
