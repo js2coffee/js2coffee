@@ -1,4 +1,5 @@
 js2coffee = require('./js2coffee')
+codestyle = require('./codestyle')
 _    = require('underscore')
 fs   = require('fs')
 path = require('path')
@@ -10,6 +11,7 @@ basename = path.basename
 cmd      = basename(process.argv[1])
 
 build_and_show = (fname) ->
+  return if fname == '--pythonic'
   contents = fs.readFileSync(fname, 'utf-8')
   output   = js2coffee.build(contents)
   console.log "%s", output
@@ -23,6 +25,7 @@ runFiles = (proc) ->
     if files.length == 0
       console.warn "Usage:"
       console.warn "  #{cmd} file.js"
+      console.warn "  #{cmd} --pythonic file.js (will output more Pythonic code)"
       console.warn "  #{cmd} file.js > output.txt"
       console.warn "  cat file.js | #{cmd}"
       process.exit 1
@@ -36,6 +39,10 @@ runFiles = (proc) ->
 module.exports =
   run: (args...) ->
     try
+      #Determine if a Pythonic style should be used
+      if (''+process.argv).indexOf('--pythonic') isnt -1
+        codestyle.usePythonic()
+
       runFiles.apply this, args
 
     catch e
