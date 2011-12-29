@@ -735,7 +735,7 @@ class Transformer
 
   'if': (n) ->
     # *Account for `if(x) {} else { something }` which should be `something unless x`.*
-    if n.thenPart.children.length == 0 and n.elsePart?.children.length > 0
+    if n.thenPart.src() is '{' and n.thenPart.children.length == 0 and n.elsePart?.children.length > 0
       n.positive = false
       n.thenPart = n.elsePart
       delete n.elsePart
