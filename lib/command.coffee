@@ -23,7 +23,7 @@ runFiles = (proc) ->
     if files.length == 0
       console.warn "Usage:"
       console.warn "  #{cmd} file.js"
-      console.warn "  #{cmd} file.js > output.txt"
+      console.warn "  #{cmd} file.js > output.coffee"
       console.warn "  cat file.js | #{cmd}"
       process.exit 1
 

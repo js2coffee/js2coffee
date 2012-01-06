@@ -6,7 +6,7 @@
 Usage:
 
     $ js2coffee input_file.js
-    $ js2coffee input_file.js > output.js
+    $ js2coffee input_file.js > output.coffee
     $ cat input.js | js2coffee
 
 ### Development
