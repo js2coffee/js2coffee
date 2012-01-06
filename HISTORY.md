@@ -1,3 +1,12 @@
+v0.1.3 - Jan 6, 2012
+--------------------
+
+Small "emergency" bugfixes, thanks @tricknotes.
+
+### Fixed:
+ * Exit when compilation completes in Node 0.6. (#112)
+ * Fix typo in the help text when typing `js2coffee`. (#113)
+
 v0.1.2 - Oct 15, 2011
 ---------------------
 
