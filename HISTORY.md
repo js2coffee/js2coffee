@@ -18,6 +18,7 @@ Thanks to @Wisdom, @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes,
   * Empty switch cases now get compiled correctly. (#70, #28)
   * The value `undefined` now gets compiled properly. (#20, #85)
   * Declaring `var x` will now translate to `x = undefined`. (#79)
+  * Updated reserved keywords list. (#25, #67)
 
 ### Changed:
   * Compile `!!` into `!!` instead of `not not`. (#30)
