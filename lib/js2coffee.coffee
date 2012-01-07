@@ -454,7 +454,10 @@ class Builder
     c = new Code
 
     c.add "for #{@build n.iterator} of #{@build n.object}"
-    c.scope @body(n.body)
+    if n.body.children.length > 0
+      c.scope @body(n.body)
+    else
+      c.scope "continue"
     c
 
   'while': (n) ->
