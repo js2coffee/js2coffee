@@ -33,6 +33,24 @@ parseOptions = ->
     console.warn o.output
     return
 
+
+writeFile = (dir, currfile, coffee) ->
+  outputdir = opts.output || '.'
+  try
+    if (outputdir.search '/') == -1
+      outputdir = outputdir.concat '/'
+    newPath = outputdir + dir + '/'
+    try
+      fs.statSync(newPath).isDirectory()
+    catch e
+      file.mkdirsSync(newPath)
+    currfile = (currfile.split '.')[0] + '.coffee'
+    newFile = newPath + currfile
+    console.warn "writing %s ", newFile
+    fs.writeFileSync(newFile, coffee, encoding);
+  catch e
+    console.warn e
+
 batch = () ->
 
   callback = (dirPath, dirs, files) ->
@@ -43,8 +61,7 @@ batch = () ->
           console.warn "read file %s", readf
           contents = fs.readFileSync(readf, encoding);
           output = js2coffee.build(contents)
-          newFileName =  dirPath + '/' + (f.split '.')[0] + '.coffee'
-          fs.writeFileSync(newFileName, output, encoding)
+          writeFile(dirPath, f, output)
       catch e
         console.warn e
 
