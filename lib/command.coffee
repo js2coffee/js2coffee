@@ -14,7 +14,7 @@ cmd      = basename(process.argv[1])
 opts     = {}
 indirs   = []
 BANNER = '''
-    Usage: js2coffee [options] rootdir|file.js
+    Usage: js2coffee --batch [options] rootdir
          '''
 
 
@@ -22,7 +22,7 @@ SWITCHES = [
     ['-b', '--batch', 'batch mode to convert all .js files in directory']
     ['-o', '--output [OUTDIR]', 'set the output directory']
     ['-r', '--recursive', 'recurse on all subdirectories']
-    ['-p', '--preserve', 'preserve subdirectory structure in output folder']
+    ['-v', '--verbose', 'See detailed output']
     ['-h', '--help', 'If you need help']
   ]
 
@@ -30,7 +30,6 @@ parseOptions = ->
     optionParser  = new optparse.OptionParser SWITCHES, BANNER
     o = opts      = optionParser.parse process.argv.slice 2
     indirs        = o.arguments
-    console.warn o.output
     return
 
 
@@ -46,7 +45,7 @@ writeFile = (dir, currfile, coffee) ->
       file.mkdirsSync(newPath)
     currfile = (currfile.split '.')[0] + '.coffee'
     newFile = newPath + currfile
-    console.warn "writing %s ", newFile
+    (console.warn "writing %s ", newFile) if opts.verbose
     fs.writeFileSync(newFile, coffee, encoding);
   catch e
     console.warn e
@@ -58,7 +57,7 @@ batch = () ->
       try
         if ((f.split '.')[1] == 'js')
           readf = dirPath + '/' + f
-          console.warn "read file %s", readf
+          (console.warn "read file %s", readf) if opts.verbose
           contents = fs.readFileSync(readf, encoding);
           output = js2coffee.build(contents)
           writeFile(dirPath, f, output)
