@@ -1,5 +1,5 @@
 js2c  = require('../lib/js2coffee')
-glob  = require('glob').globSync
+glob  = require('glob').globSync or require('glob').sync 
 fs    = require('fs')
 _     = require('underscore')
 
