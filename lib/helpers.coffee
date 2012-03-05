@@ -1,42 +1,24 @@
-# ## Code snippet helper
+## Code snippet helper
 # A helper class to deal with building code.
 
 CoffeeScript = @CoffeeScript or require 'coffee-script'
 
 class Code
   constructor: ->
-    @code = ""
-    @src_lines = []
+    @code = ''
 
-  #add str to @code, collect src lineno's from n, if nl then append src lineno's
-  add: (str,n) ->
-    @remember(n)
-    str = str.toString()
-    if str.match("\n$")
-      str = str.substring(0,str.length-1) + "#{@nll()}\n"
-    @code += str
+  add: (str) ->
+    @code += str.toString()
+    @
 
-  scope: (str, level, n) ->
-    @remember(n)
+  scope: (str, level=1) ->
     indent = strRepeat("  ", level)
     @code  = rtrim(@code) + "\n"
-    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "#{@nll()}\n"
+    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "\n"
     @
 
   toString: ->
     @code
-
-  nll: ->
-    return "" if @src_lines.length == 0
-    res = " ##{@src_lines.join(',')}"
-    @src_lines = []
-    res
-
-  remember: (n) ->
-    if n
-      @src_lines.push(n.lineno) unless n.lineno in @src_lines
-
-
 
 # ## String helpers
 # These are functions that deal with strings.
@@ -49,11 +31,11 @@ class Code
 #     paren '(hi)' => "(hi)"
 #
 paren = (string) ->
-    str = string.toString()
-    if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
-      str
-    else
-      "(#{str})"
+  str = string.toString()
+  if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
+    str
+  else
+    "(#{str})"
 
 # `strRepeat()`  
 # Repeats a string a certain number of times.
@@ -62,7 +44,7 @@ paren = (string) ->
 #     strRepeat('.', 3) => "..."
 #
 strRepeat = (str, times) ->
-    (str for i in [0...times]).join('')
+  (str for i in [0...times]).join('')
 
 # `trim()` *and friends*  
 # String trimming functions.
