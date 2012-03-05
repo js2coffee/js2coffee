@@ -39,7 +39,39 @@ buildCoffee = (str) ->
   scriptNode = parser.parse str
 
   output = trim builder.build(scriptNode)
-  (rtrim line for line in output.split('\n')).join('\n')
+
+  #strip lineno comments
+  # this all is ugly but i want to get ready ...
+
+  res = []
+  for l in output.split("\n")
+    [text,linenos...] = l.split("#")
+    text = rtrim(text)
+    srclines = []
+
+    # get nice srclines from the garbled output ...
+    for l in linenos
+        for i in l.split(",")
+          i = parseInt(i)
+          srclines.push(i) unless i in srclines
+
+    if srclines.length > 0
+      minline = Math.min(srclines...)
+
+      precomments = builder.comments_not_done_to(minline)
+      if precomments
+        res.push precomments
+
+    if text
+      res.push rtrim(text + " "+ltrim(builder.line_comments(srclines)))
+
+  comments = builder.comments_not_done_to(1E10)
+  if comments
+    res.push comments
+
+  res.join("\n")
+
+  #(rtrim line for line in output.split('\n')).join('\n')
 
 
 # ## Builder class
@@ -62,6 +94,34 @@ class Builder
   # emit source line
   nl: (n) ->
     " ##{n.lineno}\n"
+
+  make_comment: (comment) ->
+  # return "#"+comment.value
+    ("##{line}" for line in comment.value.split("\n")).join("\n")
+
+  comments_not_done_to: (lineno) ->
+    res = []
+    while 1
+      break if @comments.length == 0
+      c = @comments[0]
+      if c.lineno < lineno
+        res.push(@make_comment c)
+        @comments.shift()
+        continue
+      break
+    res.join("\n")
+
+  line_comments: (linenos) ->
+    res = []
+    while 1
+      break if @comments.length == 0
+      c = @comments[0]
+      if c.lineno in linenos
+        res.push(@make_comment c)
+        @comments.shift()
+        continue
+      break
+    res.join("\n")
 
   build: (args...) ->
     node = args[0]
@@ -413,16 +473,16 @@ class Builder
       "#{left}.#{right}"
 
   'try': (n) ->
-    c = new Code
-    c.add 'try'
-    c.scope @body(n.tryBlock)
+    c = new Code @,n
+    c.add 'try',n
+    c.scope @body(n.tryBlock),1,n.tryBlock # TODO: write comments test
 
     _.each n.catchClauses, (clause) =>
       c.add @build(clause)
 
     if n.finallyBlock?
-      c.add "finally"
-      c.scope @body(n.finallyBlock)
+      c.add "finally",n.finallyBlock
+      c.scope @body(n.finallyBlock),1,n.finallyBlock
 
     c
 
@@ -433,11 +493,11 @@ class Builder
     c = new Code @,n
 
     if n.varName?
-      c.add "catch #{n.varName}"
+      c.add "catch #{n.varName}",n
     else
-      c.add 'catch'
+      c.add 'catch',n
 
-    c.scope @body(n.block)
+    c.scope @body(n.block),1,n.block
     c
 
   # `?` (ternary operator)  
@@ -451,15 +511,15 @@ class Builder
     c = new Code @,n
 
     if n.setup?
-      c.add "#{@build n.setup}#{@nl(n.setup)}"
+      c.add "#{@build n.setup}#{@nl(n.setup)}",n.setup
 
     if n.condition?
       c.add "while #{@build n.condition}#{@nl(n.condition)}"
     else
       c.add "loop"
 
-    c.scope @body(n.body)
-    c.scope @body(n.update)  if n.update?
+    c.scope @body(n.body),1,n.body
+    c.scope @body(n.update),1,n.update  if n.update?
     c
 
   'for_in': (n) ->
@@ -534,19 +594,19 @@ class Builder
     fall_through = false
     _.each n.cases, (item) =>
       if item.value == 'default'
-        c.scope "else"
+        c.scope "else",1,item
       else
         if fall_through == true
-          c.add ", #{@build item.caseLabel}\n" # TODO
+          c.add ", #{@build item.caseLabel}\n",item
         else
-          c.add "  when #{@build item.caseLabel}"
+          c.add "  when #{@build item.caseLabel}",item
           
       if @body(item.statements).length == 0
         fall_through = true
       else
         fall_through = false
-        c.add "\n" #TODO
-        c.scope @body(item.statements), 2
+        c.add "\n",item
+        c.scope @body(item.statements),2,item
 
       first = false
 
@@ -586,7 +646,7 @@ class Builder
       list = _.map n.children, (item) => @build item
 
       c = new Code @,n
-      c.scope list.join("\n") #TODO
+      c.scope list.join("\n"),1,n #TODO
       c = "{#{c}}"  if options.brackets?
       c
 
@@ -613,17 +673,18 @@ class Builder
 
     body = @body(n.body)
     if trim(body).length > 0
-      c.scope body
+      c.scope body,1,n
     else
-      c.add "\n" #TODO
+      c.add "\n",n #TODO
 
     c
 
   'var': (n) ->
+    # TODO: add correct source line numbers instead of n.lineno for all
     list = _.map n.children, (item) =>
       "#{unreserve item.value} = #{if item.initializer? then @build(item.initializer) else 'undefined'}"
 
-    _.compact(list).join("#{@nl(n)}") + "#{@nl(n)}" # TODO: check
+    _.compact(list).join("#{@nl(n)}") + "#{@nl(n)}\n" #
 
   # ### Unsupported things
   #

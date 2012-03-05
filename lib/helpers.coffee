@@ -4,24 +4,39 @@
 CoffeeScript = @CoffeeScript or require 'coffee-script'
 
 class Code
-  constructor: (@builder,@n) ->
-    @code = "#<#{@n.lineno}\n"
+  constructor: ->
+    @code = ""
+    @src_lines = []
 
-  add: (str) ->
-    @code += str.toString()
-    @
+  #add str to @code, collect src lineno's from n, if nl then append src lineno's
+  add: (str,n) ->
+    @remember(n)
+    str = str.toString()
+    if str.match("\n$")
+      str = str.substring(0,str.length-1) + "#{@nll()}\n"
+    @code += str
 
-  scope: (str, level=1) ->
+  scope: (str, level, n) ->
+    @remember(n)
     indent = strRepeat("  ", level)
-    @code  = rtrim(@code) + "#{@nl()}"
-    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "\n"
+    @code  = rtrim(@code) + "\n"
+    @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "#{@nll()}\n"
     @
 
   toString: ->
     @code
 
-  nl: ->
-    "#{@builder.nl(@n)}"
+  nll: ->
+    return "" if @src_lines.length == 0
+    res = " ##{@src_lines.join(',')}"
+    @src_lines = []
+    res
+
+  remember: (n) ->
+    if n
+      @src_lines.push(n.lineno) unless n.lineno in @src_lines
+
+
 
 # ## String helpers
 # These are functions that deal with strings.
