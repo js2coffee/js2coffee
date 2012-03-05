@@ -1,3 +1,12 @@
+This is a hacked version of JS2Coffee, which implements comment translation.
+
+Todo:
+ * add command line option to disable (enable?) comments and run test cases with comments off
+ * add test driver, which generates commented versions of test cases, compiles, strip comments, verifies
+ * write testcases
+ * keep empty lines (at least one or two)
+ * convert inline docs to ###
+
 # JS2Coffee
 #### A JavaScript to CoffeeScript compiler.
 
