@@ -112,16 +112,10 @@ class Builder
     res.join("\n")
 
   line_comments: (linenos) ->
-    res = []
-    while 1
-      break if @comments.length == 0
-      c = @comments[0]
-      if c.lineno in linenos
-        res.push(@make_comment c)
-        @comments.shift()
-        continue
-      break
-    res.join("\n")
+    # todo: is there a nicer way to do this ?
+    selection = (c for c in @comments when c.lineno in linenos)
+    @comments = _.difference(@comments,selection)
+    return (@make_comment c for c in selection).join("\n")
 
   build: (args...) ->
     node = args[0]
