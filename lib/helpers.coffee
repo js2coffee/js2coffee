@@ -4,8 +4,8 @@
 CoffeeScript = @CoffeeScript or require 'coffee-script'
 
 class Code
-  constructor: ->
-    @code = ''
+  constructor: (@builder,@n) ->
+    @code = "#<#{@n.lineno}\n"
 
   add: (str) ->
     @code += str.toString()
@@ -13,12 +13,15 @@ class Code
 
   scope: (str, level=1) ->
     indent = strRepeat("  ", level)
-    @code  = rtrim(@code) + "\n"
+    @code  = rtrim(@code) + "#{@nl()}"
     @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "\n"
     @
 
   toString: ->
     @code
+
+  nl: ->
+    "#{@builder.nl(@n)}"
 
 # ## String helpers
 # These are functions that deal with strings.

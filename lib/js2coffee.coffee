@@ -41,6 +41,7 @@ buildCoffee = (str) ->
   output = trim builder.build(scriptNode)
   (rtrim line for line in output.split('\n')).join('\n')
 
+
 # ## Builder class
 # This is the main class that proccesses the AST and spits out streng.
 # See the `buildCoffee()` function above for info on how this is used.
@@ -58,8 +59,18 @@ class Builder
   # For instance, for a `function` node, it calls `@builders.function(node)`.
   # It defaults to `@builders.other` if it can't find a function for it.
 
+  # emit source line
+  nl: (n) ->
+    " ##{n.lineno}\n"
+
   build: (args...) ->
     node = args[0]
+
+    # get comments from tokenizer
+    if not @comments?
+      @comments = node.tokenizer.comments
+
+    # apply ast transforms
     @transform node
 
     name = 'other'
@@ -99,7 +110,7 @@ class Builder
   # This is the main entry point.
 
   'script': (n, opts={}) ->
-    c = new Code
+    c = new Code @,n
 
     # *Functions must always be declared first in a block.*
     _.each n.functions,    (item) => c.add @build(item)
@@ -156,10 +167,10 @@ class Builder
 
   'return': (n) ->
     if not n.value?
-      "return\n"
+      "return#{@nl(n)}"
 
     else
-      "return #{@build(n.value)}\n"
+      "return #{@build(n.value)}#{@nl(n)}"
 
   # `;` (aka, statement)  
   # A single statement.
@@ -173,14 +184,15 @@ class Builder
       ""
 
     else if n.expression.typeName() == 'object_init'
+
       src = @object_init(n.expression)
       if n.parenthesized
         src
       else
-        "#{unshift(blockTrim(src))}\n"
+        "#{unshift(blockTrim(src))}#{@line_comment(n.lineno)}#{@nl(n)}"
 
     else
-      @build(n.expression) + "\n"
+      @build(n.expression) + "#{@nl(n)}"
 
   # `new` + `new_with_args`  
   # For `new X` and `new X(y)` respctively.
@@ -201,9 +213,9 @@ class Builder
   'false': (n) -> 'false'
   'void': (n) -> 'undefined'
 
-  'debugger': (n) -> "debugger\n"
-  'break': (n) -> "break\n"
-  'continue': (n) -> "continue\n"
+  'debugger': (n) -> "debugger#{@nl(n)}"
+  'break': (n) -> "break#{@nl(n)}"
+  'continue': (n) -> "continue#{@nl(n)}"
 
   # ### Some simple operators
 
@@ -302,7 +314,7 @@ class Builder
   # For `a = 1, b = 2'
 
   ',': (n) ->
-    list = _.map n.children, (item) => @build(item) + "\n"
+    list = _.map n.children, (item) => @build(item) + "#{@nl(n)}"
     list.join('')
 
   # `regexp`  
@@ -372,7 +384,7 @@ class Builder
   'delete': (n) ->
     ids = _.map(n.children, (el) => @build(el))
     ids = ids.join(', ')
-    "delete #{ids}\n"
+    "delete #{ids}#{@nl(n)}"
 
   # `.` (scope resolution?)  
   # For instances such as `object.value`.
@@ -418,7 +430,7 @@ class Builder
     body_ = @body(n.block)
     return '' if trim(body_).length == 0
 
-    c = new Code
+    c = new Code @,n
 
     if n.varName?
       c.add "catch #{n.varName}"
@@ -436,13 +448,13 @@ class Builder
     "(if #{@build n.left()} then #{@build n.children[1]} else #{@build n.children[2]})"
 
   'for': (n) ->
-    c = new Code
+    c = new Code @,n
 
     if n.setup?
-      c.add "#{@build n.setup}\n"
+      c.add "#{@build n.setup}#{@nl(n.setup)}"
 
     if n.condition?
-      c.add "while #{@build n.condition}\n"
+      c.add "while #{@build n.condition}#{@nl(n.condition)}"
     else
       c.add "loop"
 
@@ -451,14 +463,14 @@ class Builder
     c
 
   'for_in': (n) ->
-    c = new Code
+    c = new Code @,n
 
     c.add "for #{@build n.iterator} of #{@build n.object}"
     c.scope @body(n.body)
     c
 
   'while': (n) ->
-    c = new Code
+    c = new Code @,n
 
     keyword   = if n.positive then "while" else "until"
     body_     = @body(n.body)
@@ -477,7 +489,7 @@ class Builder
     c
 
   'do': (n) ->
-    c = new Code
+    c = new Code @,n
 
     c.add "loop"
     c.scope @body(n.body)
@@ -486,7 +498,7 @@ class Builder
     c
 
   'if': (n) ->
-    c = new Code
+    c = new Code @,n
 
     keyword = if n.positive then "if" else "unless"
     body_   = @body(n.thenPart)
@@ -496,10 +508,10 @@ class Builder
     # *Note that `!xyz` still compiles to `xyz` because the `!` will not change anything.*
     if n.thenPart.isA('block') and n.thenPart.children.length == 0 and !n.elsePart?
       console.log n.thenPart
-      c.add "#{@build n.condition}\n"
+      c.add "#{@build n.condition}#{@nl(n.condition)}"
 
     else if isSingleLine(body_) and !n.elsePart?
-      c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
+      c.add "#{trim body_}  #{keyword} #{@build n.condition}#{@nl(n.condition)}"
 
     else
       c.add "#{keyword} #{@build n.condition}"
@@ -509,15 +521,15 @@ class Builder
         if n.elsePart.typeName() == 'if'
           c.add "else #{@build(n.elsePart).toString()}"
         else
-          c.add "else\n"
+          c.add "else#{@nl(n.elsePart)}"
           c.scope @body(n.elsePart)
 
     c
 
   'switch': (n) ->
-    c = new Code
+    c = new Code @,n
 
-    c.add "switch #{@build n.discriminant}\n"
+    c.add "switch #{@build n.discriminant}#{@nl(n.discriminant)}"
 
     fall_through = false
     _.each n.cases, (item) =>
@@ -525,7 +537,7 @@ class Builder
         c.scope "else"
       else
         if fall_through == true
-          c.add ", #{@build item.caseLabel}\n"
+          c.add ", #{@build item.caseLabel}\n" # TODO
         else
           c.add "  when #{@build item.caseLabel}"
           
@@ -533,7 +545,7 @@ class Builder
         fall_through = true
       else
         fall_through = false
-        c.add "\n"
+        c.add "\n" #TODO
         c.scope @body(item.statements), 2
 
       first = false
@@ -573,8 +585,8 @@ class Builder
     else
       list = _.map n.children, (item) => @build item
 
-      c = new Code
-      c.scope list.join("\n")
+      c = new Code @,n
+      c.scope list.join("\n") #TODO
       c = "{#{c}}"  if options.brackets?
       c
 
@@ -583,7 +595,7 @@ class Builder
   # function (`function name() { .. }`).
 
   'function': (n) ->
-    c = new Code
+    c = new Code @,n
 
     params = _.map n.params, (str) =>
       if str.constructor == String
@@ -603,7 +615,7 @@ class Builder
     if trim(body).length > 0
       c.scope body
     else
-      c.add "\n"
+      c.add "\n" #TODO
 
     c
 
@@ -611,7 +623,7 @@ class Builder
     list = _.map n.children, (item) =>
       "#{unreserve item.value} = #{if item.initializer? then @build(item.initializer) else 'undefined'}"
 
-    _.compact(list).join("\n") + "\n"
+    _.compact(list).join("#{@nl(n)}") + "#{@nl(n)}" # TODO: check
 
   # ### Unsupported things
   #
