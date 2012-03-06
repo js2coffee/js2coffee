@@ -1,10 +1,3 @@
-This is a hacked version of JS2Coffee, which implements comment translation.
-
-Todo:
- * write testcases
- * keep empty lines (at least one or two)
- * convert inline docs to ###
-
 # JS2Coffee
 #### A JavaScript to CoffeeScript compiler.
 
