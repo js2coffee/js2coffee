@@ -94,8 +94,7 @@ batch = () ->
 build_and_show = (fname) ->
   contents = fs.readFileSync(fname, encoding)
   output   = js2coffee.build(contents,opts)
-  console.log opts
-  console.log "#### ---- #{fname} ---- ####"
+  console.log "#### ---- #{fname} translated by #{cmd} ---- ####"
   console.log output
 
 runFiles = (proc) ->
