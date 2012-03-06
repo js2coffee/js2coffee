@@ -31,6 +31,7 @@ SWITCHES = [
     ['-b', '--batch', 'batch mode to convert all .js files in directory']
     ['-o', '--output [OUTDIR]', 'set the output directory']
     ['-r', '--recursive', 'recurse on all subdirectories']
+    ['-X', '--no_comments', 'do not translate comments']
     ['-v', '--verbose', 'See detailed output']
     ['-h', '--help', 'If you need help']
     ['-l', '--show_src_lineno', 'show src lineno\'s as comments']

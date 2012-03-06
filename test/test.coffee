@@ -17,7 +17,7 @@ quote = (str) ->
 _.each files, (f) ->
   tests[f] = ->
     input   = fs.readFileSync(f).toString().trim()
-    output  = build(input).trim()
+    output  = build(input,no_comments:true).trim()
     control = fs.readFileSync(f.replace('.js', '.coffee')).toString().trim()
 
     if output == control

@@ -44,46 +44,44 @@ buildCoffee = (str, opts = {}) ->
 
   output = trim builder.build(scriptNode)
 
-  #strip lineno comments
-  # this all is ugly but i want to get ready ...
+  if opts.no_comments
+    (rtrim line for line in output.split('\n')).join('\n')
 
-  keep_line_numbers = opts.show_src_lineno
+  else
+    keep_line_numbers = opts.show_src_lineno
 
-  res = []
-  for l in output.split("\n")
+    res = []
+    for l in output.split("\n")
 
-    srclines = []
-    text = l.replace /\uFEFE([0-9]+)\uFEFE/g,(m,g) ->
-        srclines.push parseInt(g)
-        ""
+      srclines = []
+      text = l.replace /\uFEFE([0-9]+)\uFEFE/g,(m,g) ->
+          srclines.push parseInt(g)
+          ""
 
-    srclines = _.sortBy(_.uniq(srclines), (i) -> i)
+      srclines = _.sortBy(_.uniq(srclines), (i) -> i)
 
-    text = rtrim(text)
-    indent = text.match /^\s*/
+      text = rtrim(text)
+      indent = text.match /^\s*/
 
-    if srclines.length > 0
-      minline = _.last(srclines)
+      if srclines.length > 0
+        minline = _.last(srclines)
 
-      precomments = builder.comments_not_done_to(minline)
-      if precomments
-        res.push indent_lines indent,precomments
+        precomments = builder.comments_not_done_to(minline)
+        if precomments
+          res.push indent_lines indent,precomments
 
-    if text
-      if keep_line_numbers
-          text = text + "#" +srclines.join(",") + "#  "
-      res.push rtrim(text + " "+ltrim(builder.line_comments(srclines)))
-    else
-      res.push ""
+      if text
+        if keep_line_numbers
+            text = text + "#" +srclines.join(",") + "#  "
+        res.push rtrim(text + " "+ltrim(builder.line_comments(srclines)))
+      else
+        res.push ""
 
-  comments = builder.comments_not_done_to(1E10)
-  if comments
-    res.push comments
+    comments = builder.comments_not_done_to(1E10)
+    if comments
+      res.push comments
 
-  res.join("\n")
-
-  #(rtrim line for line in output.split('\n')).join('\n')
-
+    res.join("\n")
 
 # ## Builder class
 # This is the main class that proccesses the AST and spits out streng.
@@ -108,6 +106,8 @@ class Builder
   l: (n) ->
     # todo: this could be configurable debug helper
     # console.log n if n.lineno in [1]
+    if @options.no_comments
+      return ''
     if n and n.lineno
        "\uFEFE#{n.lineno}\uFEFE"
     else
