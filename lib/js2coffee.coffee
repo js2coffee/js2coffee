@@ -31,11 +31,12 @@ _ = @_ or require('underscore')
 #
 # 2. This node is now passed onto `Builder#build()`.
 
-buildCoffee = (str) ->
+buildCoffee = (str, opts = {}) ->
+
   str  = str.replace /\r/g, ''
   str += "\n"
 
-  builder    = new Builder
+  builder    = new Builder opts
   scriptNode = parser.parse str
 
   output = trim builder.build(scriptNode)
@@ -43,7 +44,7 @@ buildCoffee = (str) ->
   #strip lineno comments
   # this all is ugly but i want to get ready ...
 
-  keep_line_numbers = false
+  keep_line_numbers = opts.show_src_lineno
 
   res = []
   for l in output.split("\n")
@@ -83,8 +84,10 @@ buildCoffee = (str) ->
 # See the `buildCoffee()` function above for info on how this is used.
 
 class Builder
-  constructor: ->
+  constructor: (@options={}) ->
+
     @transformer = new Transformer
+    #@options = options
 
   # `build()`  
   # The main entry point.
@@ -102,8 +105,11 @@ class Builder
     "\uFEFE#{n.lineno}\uFEFE"
 
   make_comment: (comment) ->
-  # return "#"+comment.value
-    ("##{line}" for line in comment.value.split("\n")).join("\n")
+    c = ("##{line}" for line in comment.value.split("\n")).join("\n")
+    if @options.show_src_lineno
+      '#'+comment.lineno+" "+c
+    else
+      c
 
   comments_not_done_to: (lineno) ->
     res = []

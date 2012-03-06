@@ -12,11 +12,20 @@ UnsupportedError = js2coffee.UnsupportedError
 basename = path.basename
 cmd      = basename(process.argv[1])
 opts     = {}
-indirs   = []
-BANNER = '''
-    Usage: js2coffee --batch [options] rootdir
-         '''
+sources  = []
 
+BANNER =
+   """
+   Usage: #{cmd} [options] filename
+   """
+
+EXAMPLES =
+   """
+   Examples:
+     #{cmd} file.js
+     #{cmd} file.js > output.coffee
+     cat file.js | #{cmd}
+   """
 
 SWITCHES = [
     ['-b', '--batch', 'batch mode to convert all .js files in directory']
@@ -24,12 +33,13 @@ SWITCHES = [
     ['-r', '--recursive', 'recurse on all subdirectories']
     ['-v', '--verbose', 'See detailed output']
     ['-h', '--help', 'If you need help']
+    ['-l', '--show_src_lineno', 'show src lineno\'s as comments']
   ]
 
 parseOptions = ->
     optionParser  = new optparse.OptionParser SWITCHES, BANNER
     o = opts      = optionParser.parse process.argv.slice 2
-    indirs        = o.arguments
+    sources       = o.arguments
     return
 
 
@@ -59,12 +69,12 @@ batch = () ->
           readf = dirPath + '/' + f
           (console.warn "read file %s", readf) if opts.verbose
           contents = fs.readFileSync(readf, encoding);
-          output = js2coffee.build(contents)
+          output = js2coffee.build(contents,opts)
           writeFile(dirPath, f, output)
       catch e
         console.warn e
 
-  for i in indirs
+  for i in sources
     try
       if fs.statSync(i).isDirectory()
         if opts.recursive
@@ -82,20 +92,19 @@ batch = () ->
 
 build_and_show = (fname) ->
   contents = fs.readFileSync(fname, encoding)
-  output   = js2coffee.build(contents)
-  console.log "%s", output
+  output   = js2coffee.build(contents,opts)
+  console.log opts
+  console.log "#### ---- #{fname} ---- ####"
+  console.log output
 
 runFiles = (proc) ->
-  files = process.argv.slice(2)
+  files = sources
   work  = proc or build_and_show
 
   if tty.isatty process.stdin
     # Nothing on stdin.
     if files.length == 0
-      console.warn "Usage:"
-      console.warn "  #{cmd} file.js"
-      console.warn "  #{cmd} file.js > output.coffee"
-      console.warn "  cat file.js | #{cmd}"
+      usage()
       process.exit 1
 
     _.each files, (fname) -> work fname
@@ -104,9 +113,15 @@ runFiles = (proc) ->
     # Something was piped or redirected into stdin; use that instead of filenames.
     work '/dev/stdin'
 
+
+usage = ->
+  console.warn (new optparse.OptionParser SWITCHES, BANNER).help()
+  console.warn EXAMPLES
+
 module.exports =
   run: (args...) ->
     parseOptions()
+    return usage() if opts.help
     try
       if opts.batch
         batch.apply this
