@@ -516,7 +516,7 @@ class Builder
     else
       c.add 'catch'
 
-    c.scope @body(n.block),1,n.block
+    c.scope @body(n.block)
     @l(n)+c
 
   # `?` (ternary operator)  
@@ -563,8 +563,8 @@ class Builder
     if isSingleLine(body_) and statement isnt "loop"
       c.add "#{trim body_}  #{statement}\n"
     else
-      c.add statement,n
-      c.scope body_,n.body
+      c.add statement
+      c.scope body_
     @l(n)+c
 
   'do': (n) ->
@@ -699,7 +699,6 @@ class Builder
     @l(n)+c
 
   'var': (n) ->
-    # TODO: add correct source line numbers instead of n.lineno for all
     list = _.map n.children, (item) =>
       "#{unreserve item.value} = #{if item.initializer? then @build(item.initializer) else 'undefined'}"
 
@@ -713,11 +712,11 @@ class Builder
   #  * Break labels (`my_label: ...`)
   #  * Constants
 
-  'other': (n) ->   @l(n)+@unsupported n, "#{n.typeName()} is not supported yet"
-  'getter': (n) ->  @l(n)+@unsupported n, "getter syntax is not supported; use __defineGetter__"
-  'setter': (n) ->  @l(n)+@unsupported n, "setter syntax is not supported; use __defineSetter__"
-  'label': (n) ->   @l(n)+@unsupported n, "labels are not supported by CoffeeScript"
-  'const': (n) ->   @l(n)+@unsupported n, "consts are not supported by CoffeeScript"
+  'other': (n) ->   @unsupported n, "#{n.typeName()} is not supported yet"
+  'getter': (n) ->  @unsupported n, "getter syntax is not supported; use __defineGetter__"
+  'setter': (n) ->  @unsupported n, "setter syntax is not supported; use __defineSetter__"
+  'label': (n) ->   @unsupported n, "labels are not supported by CoffeeScript"
+  'const': (n) ->   @unsupported n, "consts are not supported by CoffeeScript"
 
   'block': (args...) ->
     @script.apply @, args
