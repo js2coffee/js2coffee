@@ -194,14 +194,14 @@ class Builder
     _.each n.functions,    (item) => c.add @build(item)
     _.each n.nonfunctions, (item) => c.add @build(item)
 
-    c.toString()+@l(n)
+    c.toString()
 
 
   # `property_identifier`  
   # A key in an object literal.
 
   'property_identifier': (n) ->
-    str = n.value.toString()+@l(n)
+    str = n.value.toString()
 
     # **Caveat:**
     # *In object literals like `{ '#foo click': b }`, ensure that the key is
