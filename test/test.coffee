@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 js2c  = require('../lib/js2coffee')
 glob  = require('glob').globSync or require('glob').sync 
 fs    = require('fs')
