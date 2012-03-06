@@ -31,6 +31,9 @@ _ = @_ or require('underscore')
 #
 # 2. This node is now passed onto `Builder#build()`.
 
+indent_lines = (indent,lines) ->
+  indent + lines.replace(/\n/g,"\n"+indent)
+
 buildCoffee = (str, opts = {}) ->
 
   str  = str.replace /\r/g, ''
@@ -54,21 +57,24 @@ buildCoffee = (str, opts = {}) ->
         srclines.push parseInt(g)
         ""
 
-    srclines = _.uniq srclines.sort(),true
+    srclines = _.sortBy(_.uniq(srclines), (i) -> i)
 
     text = rtrim(text)
+    indent = text.match /^\s*/
 
     if srclines.length > 0
-      minline = Math.min(srclines...)
+      minline = _.last(srclines)
 
       precomments = builder.comments_not_done_to(minline)
       if precomments
-        res.push precomments
+        res.push indent_lines indent,precomments
 
     if text
       if keep_line_numbers
-          text = text + "#" + srclines.join(",") + "  "
+          text = text + "#" +srclines.join(",") + "#  "
       res.push rtrim(text + " "+ltrim(builder.line_comments(srclines)))
+    else
+      res.push ""
 
   comments = builder.comments_not_done_to(1E10)
   if comments
@@ -102,7 +108,10 @@ class Builder
   l: (n) ->
     # todo: this could be configurable debug helper
     # console.log n if n.lineno in [1]
-    "\uFEFE#{n.lineno}\uFEFE"
+    if n and n.lineno
+       "\uFEFE#{n.lineno}\uFEFE"
+    else
+      ""
 
   make_comment: (comment) ->
     c = ("##{line}" for line in comment.value.split("\n")).join("\n")
@@ -113,10 +122,12 @@ class Builder
 
   comments_not_done_to: (lineno) ->
     res = []
-    while 1
+    loop
       break if @comments.length == 0
       c = @comments[0]
-      if c.lineno < lineno
+      # console.log "test comment #{c.lineno}<#{lineno} #{c.lineno < lineno} #{i.lineno for i in @comments}"
+      if (c.lineno < lineno)
+        # console.log "took",c
         res.push(@make_comment c)
         @comments.shift()
         continue
@@ -134,7 +145,8 @@ class Builder
 
     # get comments from tokenizer
     if not @comments?
-      @comments = node.tokenizer.comments
+      @comments = _.sortBy node.tokenizer.comments, (n) ->
+        n.start
 
     # apply ast transforms
     @transform node
@@ -248,7 +260,7 @@ class Builder
     # sometimes. They should be ignored.
 
     unless n.expression?
-      @l(n)+""
+      ""
 
     else if n.expression.typeName() == 'object_init'
 
@@ -256,7 +268,7 @@ class Builder
       if n.parenthesized
         @l(n)+src
       else
-        @l(n)+"#{unshift(blockTrim(src))}#{@line_comment(n.lineno)}\n"
+        @l(n)+"#{unshift(blockTrim(src))}\n"
 
     else
       @l(n)+@build(n.expression) + "\n"
@@ -407,7 +419,7 @@ class Builder
       @l(n)+"/#{value}/#{flag}"
 
   'string': (n) ->
-    @l(n)+strEscape n.value
+    @l(n)+ strEscape n.value
 
   # `call`  
   # A Function call.
@@ -489,7 +501,7 @@ class Builder
 
     if n.finallyBlock?
       c.add "finally"
-      c.scope @body(n.finallyBlock),1,n.finallyBlock
+      c.scope @body(n.finallyBlock)
 
     @l(n)+c
 
@@ -565,7 +577,7 @@ class Builder
     @l(n)+c
 
   'if': (n) ->
-    c = new Code @,n
+    c = new Code
 
     keyword = if n.positive then "if" else "unless"
     body_   = @body(n.thenPart)
@@ -594,7 +606,7 @@ class Builder
     @l(n)+c
 
   'switch': (n) ->
-    c = new Code @,n
+    c = new Code
 
     c.add "switch #{@build n.discriminant}\n"
 
@@ -653,7 +665,7 @@ class Builder
       list = _.map n.children, (item) => @build item
 
       c = new Code @,n
-      c.scope list.join("\n"),1,n #TODO
+      c.scope list.join("\n")
       c = "{#{c}}"  if options.brackets?
       @l(n)+c
 
@@ -689,9 +701,9 @@ class Builder
   'var': (n) ->
     # TODO: add correct source line numbers instead of n.lineno for all
     list = _.map n.children, (item) =>
-      "#{unreserve item.value} = #{if item.initializer? then @build(item.initializer) else @l(item)+'undefined'}"
+      "#{unreserve item.value} = #{if item.initializer? then @build(item.initializer) else 'undefined'}"
 
-    @l(n)+_.compact(list).join("\n") + "\n\n"
+    @l(n)+_.compact(list).join("\n") + "\n"
 
   # ### Unsupported things
   #
