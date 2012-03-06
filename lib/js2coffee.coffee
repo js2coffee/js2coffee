@@ -42,7 +42,11 @@ buildCoffee = (str, opts = {}) ->
   builder    = new Builder opts
   scriptNode = parser.parse str
 
+  # DEBUG console.log scriptNode
+
   output = trim builder.build(scriptNode)
+
+  # DEBUG console.log output
 
   if opts.no_comments
     (rtrim line for line in output.split('\n')).join('\n')
@@ -54,7 +58,7 @@ buildCoffee = (str, opts = {}) ->
     for l in output.split("\n")
 
       srclines = []
-      text = l.replace /\uFEFE([0-9]+)\uFEFE/g,(m,g) ->
+      text = l.replace /\uFEFE([0-9]+).*?\uFEFE/g,(m,g) ->
           srclines.push parseInt(g)
           ""
 
@@ -109,6 +113,7 @@ class Builder
     if @options.no_comments
       return ''
     if n and n.lineno
+       # for DEBUG use this: "\uFEFE#{n.lineno},#{n.typeName()}\uFEFE"
        "\uFEFE#{n.lineno}\uFEFE"
     else
       ""
@@ -148,7 +153,6 @@ class Builder
       @comments = _.sortBy node.tokenizer.comments, (n) ->
         n.start
 
-    # apply ast transforms
     @transform node
 
     name = 'other'
@@ -266,12 +270,12 @@ class Builder
 
       src = @object_init(n.expression)
       if n.parenthesized
-        @l(n)+src
+        src
       else
-        @l(n)+"#{unshift(blockTrim(src))}\n"
+        "#{unshift(blockTrim(src))}\n"
 
     else
-      @l(n)+@build(n.expression) + "\n"
+      @build(n.expression) + "\n"
 
   # `new` + `new_with_args`  
   # For `new X` and `new X(y)` respctively.
@@ -648,7 +652,7 @@ class Builder
     left = n.left()
     right = n.right()
     right.is_property_value = true
-    @l(n)+"#{@property_identifier left}: #{@build right}"
+    "#{@property_identifier left}: #{@build right}"
 
   # `object_init`  
   # An object initializer.
@@ -659,7 +663,7 @@ class Builder
       @l(n)+"{}"
 
     else if n.children.length == 1 and not (n.is_property_value or n.is_list_element)
-      @l(n)+@build n.children[0]
+      @build n.children[0]
 
     else
       list = _.map n.children, (item) => @build item
@@ -667,7 +671,7 @@ class Builder
       c = new Code @,n
       c.scope list.join("\n")
       c = "{#{c}}"  if options.brackets?
-      @l(n)+c
+      c
 
   # `function`  
   # A function. Can be an anonymous function (`function () { .. }`), or a named
