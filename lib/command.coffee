@@ -1,51 +1,55 @@
-js2coffee = require('./js2coffee')
-_    = require('underscore')
-fs   = require('fs')
-path = require('path')
-tty  = require('tty')
-file = require('file')
-optparse = require './optparse'
-encoding = 'utf-8'
+# The `js2coffee` utility.
+# Handles command-line compilation of JavaScript into various forms:
+# saved into `.coffee` files or printed to stdout
 
-UnsupportedError = js2coffee.UnsupportedError
+# External dependencies.
+js2coffee = require './js2coffee'
+_         = require 'underscore'
+fs        = require 'fs'
+path      = require 'path'
+tty       = require 'tty'
+file      = require 'file'
+optparse  = require './optparse'
 
-basename = path.basename
-cmd      = basename(process.argv[1])
-opts     = {}
+# The help banner that is printed when `js2coffee` is called without arguments.
+BANNER =  """
+     Usage: js2coffee [options] path/to/script.js
+
+       js2coffee file.js
+       js2coffee file.js > output.coffee
+       cat file.js | js2coffee
+"""
+
+# The list of all the valid option flags that `js2coffee` knows how to handle.
+SWITCHES = [
+  # ['-b', '--batch', 'batch mode to convert all .js files in directory']
+  # ['-o', '--output [OUTDIR]', 'set the output directory']
+  # ['-r', '--recursive', 'recurse on all subdirectories']
+  ['-v', '--version', 'Show js2coffee version']
+  ['-V', '--verbose', 'Be verbose']
+  ['-X', '--no_comments', 'Do not translate comments']
+  ['-l', '--show_src_lineno', 'Show src lineno\'s as comments']
+  ['-h', '--help', 'If you need help']
+]
+
+# Top-level objects shared by all the functions.
+options  = {}
 sources  = []
 
-BANNER =
-   """
-   Usage: #{cmd} [options] filename
-   """
+# TODO: woud be nice to get rid of that alll
+encoding  = 'utf-8'
+UnsupportedError = js2coffee.UnsupportedError
+basename = path.basename
+cmd      = basename(process.argv[1])
 
-EXAMPLES =
-   """
-   Examples:
-     #{cmd} file.js
-     #{cmd} file.js > output.coffee
-     cat file.js | #{cmd}
-   """
-
-SWITCHES = [
-    ['-b', '--batch', 'batch mode to convert all .js files in directory']
-    ['-o', '--output [OUTDIR]', 'set the output directory']
-    ['-r', '--recursive', 'recurse on all subdirectories']
-    ['-X', '--no_comments', 'do not translate comments']
-    ['-v', '--verbose', 'See detailed output']
-    ['-h', '--help', 'If you need help']
-    ['-l', '--show_src_lineno', 'show src lineno\'s as comments']
-  ]
 
 parseOptions = ->
     optionParser  = new optparse.OptionParser SWITCHES, BANNER
-    o = opts      = optionParser.parse process.argv.slice 2
-    sources       = o.arguments
-    return
-
+    options       = optionParser.parse process.argv.slice 2
+    sources       = options.arguments
 
 writeFile = (dir, currfile, coffee) ->
-  outputdir = opts.output || '.'
+  outputdir = options.output || '.'
   try
     if (outputdir.search '/') == -1
       outputdir = outputdir.concat '/'
@@ -56,7 +60,7 @@ writeFile = (dir, currfile, coffee) ->
       file.mkdirsSync(newPath)
     currfile = (currfile.split '.')[0] + '.coffee'
     newFile = newPath + currfile
-    (console.warn "writing %s ", newFile) if opts.verbose
+    (console.warn "writing %s ", newFile) if options.verbose
     fs.writeFileSync(newFile, coffee, encoding);
   catch e
     console.warn e
@@ -68,9 +72,9 @@ batch = () ->
       try
         if ((f.split '.')[1] == 'js')
           readf = dirPath + '/' + f
-          (console.warn "read file %s", readf) if opts.verbose
+          (console.warn "read file %s", readf) if options.verbose
           contents = fs.readFileSync(readf, encoding);
-          output = js2coffee.build(contents,opts)
+          output = js2coffee.build(contents,options)
           writeFile(dirPath, f, output)
       catch e
         console.warn e
@@ -78,7 +82,7 @@ batch = () ->
   for i in sources
     try
       if fs.statSync(i).isDirectory()
-        if opts.recursive
+        if options.recursive
           file.walkSync(i, callback)
         else
           list = []
@@ -89,48 +93,73 @@ batch = () ->
     catch e
       #console.warn e
 
+# Compile a path, which could be a script or a directory. If a directory
+# is passed, recursively compile all '.js' extension source files in it
+# and all subdirectories.
+compilePath = (source, topLevel, base) ->
+  fs.stat source, (err, stats) ->
+    throw err if err and err.code isnt 'ENOENT'
+    if err?.code is 'ENOENT' # file does not exist
+      if topLevel and source[-3..] isnt '.js'
+        #retry with extension '.js' added
+        source = "#{source}.coffee"
+        return compilePath source, topLevel, base
+      if topLevel
+        console.error "File not found: #{source}"
+        process.exit 1
+      return
 
+    if stats.isDirectory()
+      # watchDir source, base if opts.watch
+      fs.readdir source, (err, files) ->
+        throw err if err and err.code isnt 'ENOENT'
+        return if err?.code is 'ENOENT'
+        # index = sources.indexOf source
+        # sources[index..index] = (path.join source, file for file in files)
+        # sourceCode[index..index] = files.map -> null
+        for file in files when not hidden file
+          compilePath (path.join source, file), no, base
+    else if topLevel or path.extname(source) is '.js'
+      compileScript source
 
-build_and_show = (fname) ->
-  contents = fs.readFileSync(fname, encoding)
-  output   = js2coffee.build(contents,opts)
-  console.log "#### ---- #{fname} translated by #{cmd} ---- ####"
+# Test if file is hidden (starts with a dot)
+hidden = (file) -> /^\.|~$/.test file
+
+# Compile a single source script, containing the given code, according to the
+# requested options and write it on output (currently stdout)
+compileScript = ( fname ) ->
+  try
+    console.log "#### ---- #{fname}" if options.verbose
+    code = fs.readFileSync fname
+    compiled_code = js2coffee.build(code.toString(),options)
+    console.log compiled_code
+  catch err
+    console.warn err instanceof Error and err.stack or "ERROR: #{err} while compiling #{file}"
+    exit 1 if options.stop_on_error
+
+compile_from_stdin = ->
+  contents = fs.readFileSync( "/dev/stdin" , encoding) # TODO: is this cross-plattform ?
+  output   = js2coffee.build(contents,options)
   console.log output
-
-runFiles = (proc) ->
-  files = sources
-  work  = proc or build_and_show
-
-  if tty.isatty process.stdin
-    # Nothing on stdin.
-    if files.length == 0
-      usage()
-      process.exit 1
-
-    _.each files, (fname) -> work fname
-
-  else
-    # Something was piped or redirected into stdin; use that instead of filenames.
-    work '/dev/stdin'
-
 
 usage = ->
   console.warn (new optparse.OptionParser SWITCHES, BANNER).help()
-  console.warn EXAMPLES
 
-module.exports =
-  run: (args...) ->
+version = ->
+  "js2coffee version #{js2coffee.VERSION}"
+
+# Run `js2coffee` by parsing passed options and determining what action to take.
+exports.run = ->
     parseOptions()
-    return usage() if opts.help
-    try
-      if opts.batch
-        batch.apply this
-      else
-        runFiles.apply this, args
-      process.exit 0
 
-    catch e
-      throw e  unless e.constructor in [UnsupportedError, SyntaxError]
-      console.warn "Error: #{e.message}"
-      console.warn "Cursor position: #{e.cursor}"
-      process.exit 1
+    return usage()                if options.help
+    return console.log version()  if options.version
+    console.log "#### "+version() if options.verbose
+
+    if sources.length > 0
+      for s in sources
+        compilePath s
+    else
+      return compile_from_stdin '/dev/stdin' if not tty.isatty process.stdin
+      # if we come here there was nothing else to do
+      return usage()
