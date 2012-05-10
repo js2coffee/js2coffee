@@ -700,8 +700,8 @@ class Builder
     else
       c.add "\n"
 
-    #@l(n)+c
-    c
+    @l(n)+c
+
 
   'var': (n) ->
     list = _.map n.children, (item) =>
