@@ -12,12 +12,11 @@ build= require(lib + '/js2coffee').build
 work = (fname) ->
   contents = fs.readFileSync(fname, 'utf-8')
 
-  built  = build(contents)
-
   output = narc.parser.parse(contents)
   output = output.inspect()
-
   console.log "%s", output
+
+  built  = build(contents)
   console.log "%s", built
 
 cmd.run work
