@@ -119,16 +119,28 @@ class Builder
       ""
 
   make_comment: (comment) ->
-    c = ("##{line}" for line in comment.value.split("\n")).join("\n")
+    if comment.type == "BLOCK_COMMENT"
+      c = comment.value.split("\n")
 
-    if @options.show_src_lineno
-      c = '#'+comment.lineno+" "+c
+      if c.length>0 and c[0].length>0 and c[0][0]=="*" # docstring ?
+        c = ( line.replace(/^[\s\*]*/,'') for line in c )
+        c = ( line.replace(/[\s]*$/,'') for line in c )
+        #remove empty lines
+        while c.length > 0 and c[0].length==0
+          c.shift()
+        while c.length > 0 and c[c.length-1].length==0
+          c.pop()
+        c.unshift('###')
+        c.push('###')
+      else
+        c = ("##{line}" for line in c)
+    else
+        c = [ '#'+comment.value]
 
     if comment.nlcount>0
-      c = "\n"+c
+      c.unshift ''
 
-    c
-
+    c.join('\n')
 
   comments_not_done_to: (lineno) ->
     res = []
