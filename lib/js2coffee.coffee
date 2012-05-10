@@ -120,10 +120,15 @@ class Builder
 
   make_comment: (comment) ->
     c = ("##{line}" for line in comment.value.split("\n")).join("\n")
+
     if @options.show_src_lineno
-      '#'+comment.lineno+" "+c
-    else
-      c
+      c = '#'+comment.lineno+" "+c
+
+    if comment.nlcount>0
+      c = "\n"+c
+
+    c
+
 
   comments_not_done_to: (lineno) ->
     res = []
