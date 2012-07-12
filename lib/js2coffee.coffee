@@ -547,7 +547,7 @@ class Builder
     if n.children.length == 0
       "[]"
     else
-      "[ #{@list n} ]"
+      "[#{@list n}]"
 
   # `property_init`  
   # Belongs to `object_init`;
