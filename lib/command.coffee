@@ -143,6 +143,7 @@ compile_from_stdin = ->
 
 usage = ->
   console.warn (new optparse.OptionParser SWITCHES, BANNER).help()
+  process.exit 0
 
 version = ->
   "js2coffee version #{js2coffee.VERSION}"
