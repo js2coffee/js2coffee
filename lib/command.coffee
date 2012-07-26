@@ -42,11 +42,10 @@ UnsupportedError = js2coffee.UnsupportedError
 basename = path.basename
 cmd      = basename(process.argv[1])
 
-
 parseOptions = ->
-    optionParser  = new optparse.OptionParser SWITCHES, BANNER
-    options       = optionParser.parse process.argv.slice 2
-    sources       = options.arguments
+  optionParser  = new optparse.OptionParser SWITCHES, BANNER
+  options       = optionParser.parse process.argv.slice 2
+  sources       = options.arguments
 
 writeFile = (dir, currfile, coffee) ->
   outputdir = options.output || '.'
@@ -73,7 +72,7 @@ batch = () ->
         if ((f.split '.')[1] == 'js')
           readf = dirPath + '/' + f
           (console.warn "read file %s", readf) if options.verbose
-          contents = fs.readFileSync(readf, encoding);
+          contents = fs.readFileSync(readf, encoding)
           output = js2coffee.build(contents,options)
           writeFile(dirPath, f, output)
       catch e
