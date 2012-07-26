@@ -891,7 +891,7 @@ class UnsupportedError
 # ## Exports
 
 @Js2coffee = exports =
-  VERSION: '0.1.3'
+  VERSION: '0.2.0'
   build: buildCoffee
   UnsupportedError: UnsupportedError
 

@@ -1,3 +1,20 @@
+v0.2.0 - Jul 26, 2012
+---------------------
+
+### Fixed:
+  * Eliminated spaces after brackets (`[ ... ]`) in arrays.
+    Solves incorrect transpiling of arrays which may cause coffee code to not
+    compile in some circumstances.
+
+### Added:
+  * __Comment translation.__ Comments are now kept during translations. (`-X` to disable)
+  * New `js2coffee -l` command line option to display src line numbers.
+  * New `js2coffee -V` verbose option for detailed output.
+
+### Misc:
+  * Updated 'file' package dependency.
+  * New command.coffee based on coffee-script's command.coffee
+
 v0.1.3 - Jan 6, 2012
 --------------------
 
