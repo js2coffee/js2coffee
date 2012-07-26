@@ -1,4 +1,4 @@
-# ## Code snippet helper
+## Code snippet helper
 # A helper class to deal with building code.
 
 CoffeeScript = @CoffeeScript or require 'coffee-script'
@@ -31,11 +31,11 @@ class Code
 #     paren '(hi)' => "(hi)"
 #
 paren = (string) ->
-    str = string.toString()
-    if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
-      str
-    else
-      "(#{str})"
+  str = string.toString()
+  if str.substr(0, 1) == '(' and str.substr(-1, 1) == ')'
+    str
+  else
+    "(#{str})"
 
 # `strRepeat()`  
 # Repeats a string a certain number of times.
@@ -44,7 +44,7 @@ paren = (string) ->
 #     strRepeat('.', 3) => "..."
 #
 strRepeat = (str, times) ->
-    (str for i in [0...times]).join('')
+  (str for i in [0...times]).join('')
 
 # `trim()` *and friends*  
 # String trimming functions.

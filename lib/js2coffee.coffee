@@ -31,25 +31,122 @@ _ = @_ or require('underscore')
 #
 # 2. This node is now passed onto `Builder#build()`.
 
-buildCoffee = (str) ->
+indent_lines = (indent, lines) ->
+  indent + lines.replace(/\n/g, "\n"+indent)
+
+buildCoffee = (str, opts = {}) ->
   str  = str.replace /\r/g, ''
   str += "\n"
 
-  builder    = new Builder
+  builder    = new Builder opts
   scriptNode = parser.parse str
 
   output = trim builder.build(scriptNode)
-  (rtrim line for line in output.split('\n')).join('\n')
+
+  if opts.no_comments
+    (rtrim line for line in output.split('\n')).join('\n')
+
+  else
+    keep_line_numbers = opts.show_src_lineno
+
+    res = []
+    for l in output.split("\n")
+
+      srclines = []
+      text = l.replace /\uFEFE([0-9]+).*?\uFEFE/g,(m,g) ->
+          srclines.push parseInt(g)
+          ""
+
+      srclines = _.sortBy(_.uniq(srclines), (i) -> i)
+
+      text = rtrim(text)
+      indent = text.match /^\s*/
+
+      if srclines.length > 0
+        minline = _.last(srclines)
+
+        precomments = builder.comments_not_done_to(minline)
+        if precomments
+          res.push indent_lines indent,precomments
+
+      if text
+        if keep_line_numbers
+            text = text + "#" +srclines.join(",") + "#  "
+        res.push rtrim(text + " "+ltrim(builder.line_comments(srclines)))
+      else
+        res.push ""
+
+    comments = builder.comments_not_done_to(1e10)
+    if comments
+      res.push comments
+
+    res.join("\n")
 
 # ## Builder class
 # This is the main class that proccesses the AST and spits out streng.
 # See the `buildCoffee()` function above for info on how this is used.
 
 class Builder
-  constructor: ->
+  constructor: (@options={}) ->
     @transformer = new Transformer
 
-  # `build()`  
+  # `l()`  
+  # Inject the source line as a hidden element to be stripped out later.
+
+  l: (n) ->
+    # todo: this could be configurable debug helper
+    # console.log n if n.lineno in [1]
+    if @options.no_comments
+      return ''
+    if n and n.lineno
+       # for DEBUG use this: "\uFEFE#{n.lineno},#{n.typeName()}\uFEFE"
+       "\uFEFE#{n.lineno}\uFEFE"
+    else
+      ""
+
+  make_comment: (comment) ->
+    if comment.type == "BLOCK_COMMENT"
+      c = comment.value.split("\n")
+
+      if c.length>0 and c[0].length>0 and c[0][0]=="*" # docstring ?
+        c = ( line.replace(/^[\s\*]*/,'') for line in c )
+        c = ( line.replace(/[\s]*$/,'') for line in c )
+        #remove empty lines
+        while c.length > 0 and c[0].length==0
+          c.shift()
+        while c.length > 0 and c[c.length-1].length==0
+          c.pop()
+        c.unshift('###')
+        c.push('###')
+      else
+        c = ("##{line}" for line in c)
+    else
+        c = [ '#'+comment.value]
+
+    if comment.nlcount>0
+      c.unshift ''
+
+    c.join('\n')
+
+  comments_not_done_to: (lineno) ->
+    res = []
+    loop
+      break if @comments.length == 0
+      c = @comments[0]
+      if (c.lineno < lineno)
+        res.push(@make_comment c)
+        @comments.shift()
+        continue
+      break
+    res.join("\n")
+
+  line_comments: (linenos) ->
+    # TODO: is there a nicer way to do this ?
+    selection = (c for c in @comments when c.lineno in linenos)
+    @comments = _.difference(@comments,selection)
+    return (@make_comment c for c in selection).join("\n")
+
+  # `build()`
   # The main entry point.
 
   # This finds the appropriate @builder function for `node` based on it's type,
@@ -60,6 +157,12 @@ class Builder
 
   build: (args...) ->
     node = args[0]
+
+    # get comments from tokenizer
+    if not @comments?
+      @comments = _.sortBy node.tokenizer.comments, (n) ->
+        n.start
+
     @transform node
 
     name = 'other'
@@ -70,7 +173,7 @@ class Builder
 
     if node.parenthesized then paren(out) else out
 
-  # `transform()`  
+  # `transform()`
   # Perform a transformation on the node, if a transformation function is
   # available.
 
@@ -80,12 +183,12 @@ class Builder
   # `body()`
   # Works like `@build()`, and is used for code blocks. It cleans up the returned
   # code block by removing any extraneous spaces and such.
-  
+
   body: (node, opts={}) ->
     str = @build(node, opts)
     str = blockTrim(str)
     str = unshift(str)
-  
+
     if str.length > 0 then str else ""
 
   # ## The builders
@@ -95,7 +198,7 @@ class Builder
   #
   # These are invoked using the main entry point, `Builder#build()`.
 
-  # `script`  
+  # `script`
   # This is the main entry point.
 
   'script': (n, opts={}) ->
@@ -107,7 +210,8 @@ class Builder
 
     c.toString()
 
-  # `property_identifier`  
+
+  # `property_identifier`
   # A key in an object literal.
 
   'property_identifier': (n) ->
@@ -118,50 +222,50 @@ class Builder
     # quoted if need be.*
 
     if str.match(/^([_\$a-z][_\$a-z0-9]*)$/i) or str.match(/^[0-9]+$/i)
-      str
+      @l(n)+str
     else
-      strEscape str
+      @l(n)+strEscape str
 
-  # `identifier`  
+  # `identifier`
   # Any object identifier like a variable name.
 
   'identifier': (n) ->
     if n.value is 'undefined'
-      '`undefined`'
+      @l(n)+'`undefined`'
     else if n.property_accessor
-      n.value.toString()
+      @l(n)+n.value.toString()
     else
-      unreserve n.value.toString()
+      @l(n)+unreserve n.value.toString()
 
   'number': (n) ->
-    "#{n.src()}"
+    @l(n)+"#{n.src()}"
 
   'id': (n) ->
     if n.property_accessor
-      n
+      @l(n)+n
     else
-      unreserve n
+      @l(n)+unreserve n
 
-  # `id_param`  
+  # `id_param`
   # Function parameters. Belongs to `list`.
 
   'id_param': (n) ->
     if n.toString() in ['undefined']
-      "#{n}_"
+      @l(n)+"#{n}_"
     else
-      @id n
+      @l(n)+@id n
 
-  # `return`  
+  # `return`
   # A return statement. Has `n.value` of type `id`.
 
   'return': (n) ->
     if not n.value?
-      "return\n"
+      @l(n)+"return\n"
 
     else
-      "return #{@build(n.value)}\n"
+      @l(n)+"return #{@build(n.value)}\n"
 
-  # `;` (aka, statement)  
+  # `;` (aka, statement)
   # A single statement.
 
   ';': (n) ->
@@ -173,6 +277,7 @@ class Builder
       ""
 
     else if n.expression.typeName() == 'object_init'
+
       src = @object_init(n.expression)
       if n.parenthesized
         src
@@ -185,8 +290,8 @@ class Builder
   # `new` + `new_with_args`  
   # For `new X` and `new X(y)` respctively.
 
-  'new': (n) -> "new #{@build n.left()}"
-  'new_with_args': (n) -> "new #{@build n.left()}(#{@build n.right()})"
+  'new': (n) -> @l(n)+"new #{@build n.left()}"
+  'new_with_args': (n) -> @l(n)+"new #{@build n.left()}(#{@build n.right()})"
 
   # ### Unary operators
 
@@ -195,27 +300,32 @@ class Builder
 
   # ### Keywords
 
-  'this': (n) -> 'this'
-  'null': (n) -> 'null'
-  'true': (n) -> 'true'
-  'false': (n) -> 'false'
-  'void': (n) -> 'undefined'
+  'this': (n) -> @l(n)+'this'
+  'null': (n) -> @l(n)+'null'
+  'true': (n) -> @l(n)+'true'
+  'false': (n) -> @l(n)+'false'
+  'void': (n) -> @l(n)+'undefined'
 
-  'debugger': (n) -> "debugger\n"
-  'break': (n) -> "break\n"
-  'continue': (n) -> "continue\n"
+  'debugger': (n) -> @l(n)+"debugger\n"
+  'break': (n) -> @l(n)+"break\n"
+  'continue': (n) -> @l(n)+"continue\n"
 
   # ### Some simple operators
 
-  '~': (n) -> "~#{@build n.left()}"
-  'typeof': (n) -> "typeof #{@build n.left()}"
+  '~': (n) ->
+    "~#{@build n.left()}"
+
+  'typeof': (n) ->
+    @l(n)+"typeof #{@build n.left()}"
+
   'index': (n) ->
     right = @build n.right()
     if _.any(n.children, (child) -> child.typeName() == 'object_init' and child.children.length > 1)
       right = "{#{right}}"
-    "#{@build n.left()}[#{right}]"
+    @l(n)+"#{@build n.left()}[#{right}]"
 
-  'throw': (n) -> "throw #{@build n.exception}"
+  'throw': (n) ->
+    @l(n)+"throw #{@build n.exception}"
 
   '!': (n) ->
     target = n.left()
@@ -224,7 +334,7 @@ class Builder
     if (negations & 1) and target.isA '==', '!=', '===', '!==', 'in', 'instanceof' # invertible binary operators
       target.negated = not target.negated
       return @build target
-    "#{if negations & 1 then 'not ' else '!!'}#{@build target}"
+    @l(n)+"#{if negations & 1 then 'not ' else '!!'}#{@build target}"
 
   # ### Binary operators
   # All of these are rerouted to the `binary_operator` @builder.
@@ -273,7 +383,7 @@ class Builder
     INVERSIONS[v] = k for own k, v of INVERSIONS
     (n, sign) ->
       sign = INVERSIONS[sign] if n.negated
-      "#{@build n.left()} #{sign} #{@build n.right()}"
+      @l(n)+"#{@build n.left()} #{sign} #{@build n.right()}"
 
   # ### Increments and decrements
   # For `a++` and `--b`.
@@ -283,11 +393,11 @@ class Builder
 
   'increment_decrement': (n, sign) ->
     if n.postfix
-      "#{@build n.left()}#{sign}"
+      @l(n)+"#{@build n.left()}#{sign}"
     else
-      "#{sign}#{@build n.left()}"
+      @l(n)+"#{sign}#{@build n.left()}"
 
-  # `=` (aka, assignment)  
+  # `=` (aka, assignment)
   # For `a = b` (but not `var a = b`: that's `var`).
 
   '=': (n) ->
@@ -296,13 +406,13 @@ class Builder
     else
       '='
 
-    "#{@build n.left()} #{sign} #{@build n.right()}"
+    @l(n)+"#{@build n.left()} #{sign} #{@build n.right()}"
 
-  # `,` (aka, comma)  
+  # `,` (aka, comma)
   # For `a = 1, b = 2'
 
   ',': (n) ->
-    list = _.map n.children, (item) => @build(item) + "\n"
+    list = _.map n.children, (item) => @l(item)+@build(item) + "\n"
     list.join('')
 
   # `regexp`  
@@ -321,14 +431,14 @@ class Builder
 
     if begins_with in [' ', '=']
       if flag.length > 0
-        "RegExp(#{strEscape value}, \"#{flag}\")"
+        @l(n)+"RegExp(#{strEscape value}, \"#{flag}\")"
       else
-        "RegExp(#{strEscape value})"
+        @l(n)+"RegExp(#{strEscape value})"
     else
-      "/#{value}/#{flag}"
+      @l(n)+"/#{value}/#{flag}"
 
   'string': (n) ->
-    strEscape n.value
+    @l(n)+ strEscape n.value
 
   # `call`  
   # A Function call.
@@ -336,9 +446,9 @@ class Builder
 
   'call': (n) ->
     if n.right().children.length == 0
-      "#{@build n.left()}()"
+      "#{@build n.left()}()"+@l(n)
     else
-      "#{@build n.left()}(#{@build n.right()})"
+      "#{@build n.left()}(#{@build n.right()})"+@l(n)
 
   # `call_statement`  
   # A `call` that's on it's own line.
@@ -354,11 +464,11 @@ class Builder
     left = paren(left)  if n.left().isA('function')
 
     if n.right().children.length == 0
-      "#{left}()"
+      "#{left}()"+@l(n)
     else
-      "#{left} #{@build n.right()}"
+      "#{left} #{@build n.right()}"+@l(n)
 
-  # `list`  
+  # `list`
   # A parameter list.
 
   'list': (n) ->
@@ -367,14 +477,14 @@ class Builder
         item.is_list_element = true
       @build(item))
 
-    list.join(", ")
+    @l(n)+list.join(", ")
 
   'delete': (n) ->
     ids = _.map(n.children, (el) => @build(el))
     ids = ids.join(', ')
-    "delete #{ids}\n"
+    @l(n)+"delete #{ids}\n"
 
-  # `.` (scope resolution?)  
+  # `.` (scope resolution?)
   # For instances such as `object.value`.
 
   '.': (n) ->
@@ -390,15 +500,15 @@ class Builder
     right = @build right_obj
 
     if n.isThis and n.isPrototype
-      "@::"
+      @l(n)+"@::"
     else if n.isThis
-      "@#{right}"
+      @l(n)+"@#{right}"
     else if n.isPrototype
-      "#{left}::"
+      @l(n)+"#{left}::"
     else if n.left().isPrototype
-      "#{left}#{right}"
+      @l(n)+"#{left}#{right}"
     else
-      "#{left}.#{right}"
+      @l(n)+"#{left}.#{right}"
 
   'try': (n) ->
     c = new Code
@@ -412,7 +522,7 @@ class Builder
       c.add "finally"
       c.scope @body(n.finallyBlock)
 
-    c
+    @l(n)+c
 
   'catch': (n) ->
     body_ = @body(n.block)
@@ -426,14 +536,14 @@ class Builder
       c.add 'catch'
 
     c.scope @body(n.block)
-    c
+    @l(n)+c
 
   # `?` (ternary operator)  
   # For `a ? b : c`. Note that these will always be parenthesized, as (I
   # believe) the order of operations in JS is different in CS.
 
   '?': (n) ->
-    "(if #{@build n.left()} then #{@build n.children[1]} else #{@build n.children[2]})"
+    @l(n)+"(if #{@build n.left()} then #{@build n.children[1]} else #{@build n.children[2]})"
 
   'for': (n) ->
     c = new Code
@@ -448,14 +558,14 @@ class Builder
 
     c.scope @body(n.body)
     c.scope @body(n.update)  if n.update?
-    c
+    @l(n)+c
 
   'for_in': (n) ->
     c = new Code
 
     c.add "for #{@build n.iterator} of #{@build n.object}"
     c.scope @body(n.body)
-    c
+    @l(n)+c
 
   'while': (n) ->
     c = new Code
@@ -474,7 +584,7 @@ class Builder
     else
       c.add statement
       c.scope body_
-    c
+    @l(n)+c
 
   'do': (n) ->
     c = new Code
@@ -483,7 +593,7 @@ class Builder
     c.scope @body(n.body)
     c.scope "break unless #{@build n.condition}"  if n.condition?
 
-    c
+    @l(n)+c
 
   'if': (n) ->
     c = new Code
@@ -509,10 +619,10 @@ class Builder
         if n.elsePart.typeName() == 'if'
           c.add "else #{@build(n.elsePart).toString()}"
         else
-          c.add "else\n"
+          c.add @l(n.elsePart)+"else\n"
           c.scope @body(n.elsePart)
 
-    c
+    @l(n)+c
 
   'switch': (n) ->
     c = new Code
@@ -522,13 +632,13 @@ class Builder
     fall_through = false
     _.each n.cases, (item) =>
       if item.value == 'default'
-        c.scope "else"
+        c.scope @l(item)+"else"
       else
         if fall_through == true
-          c.add ", #{@build item.caseLabel}\n"
+          c.add @l(item)+", #{@build item.caseLabel}\n"
         else
-          c.add "  when #{@build item.caseLabel}"
-          
+          c.add @l(item)+"  when #{@build item.caseLabel}"
+
       if @body(item.statements).length == 0
         fall_through = true
       else
@@ -538,16 +648,16 @@ class Builder
 
       first = false
 
-    c
+    @l(n)+c
 
   'existence_check': (n) ->
-    "#{@build n.left()}?"
+    @l(n)+"#{@build n.left()}?"
 
   'array_init': (n) ->
     if n.children.length == 0
-      "[]"
+      @l(n)+"[]"
     else
-      "[#{@list n}]"
+      @l(n)+"[#{@list n}]"
 
   # `property_init`  
   # Belongs to `object_init`;
@@ -565,7 +675,7 @@ class Builder
 
   'object_init': (n, options={}) ->
     if n.children.length == 0
-      "{}"
+      @l(n)+"{}"
 
     else if n.children.length == 1 and not (n.is_property_value or n.is_list_element)
       @build n.children[0]
@@ -573,7 +683,7 @@ class Builder
     else
       list = _.map n.children, (item) => @build item
 
-      c = new Code
+      c = new Code @, n
       c.scope list.join("\n")
       c = "{#{c}}"  if options.brackets?
       c
@@ -605,13 +715,13 @@ class Builder
     else
       c.add "\n"
 
-    c
+    @l(n)+c
 
   'var': (n) ->
     list = _.map n.children, (item) =>
       "#{unreserve item.value} = #{if item.initializer? then @build(item.initializer) else 'undefined'}"
 
-    _.compact(list).join("\n") + "\n"
+    @l(n)+_.compact(list).join("\n") + "\n"
 
   # ### Unsupported things
   #
@@ -782,7 +892,7 @@ class UnsupportedError
 # ## Exports
 
 @Js2coffee = exports =
-  version: '0.1.3'
+  VERSION: '0.1.3'
   build: buildCoffee
   UnsupportedError: UnsupportedError
 

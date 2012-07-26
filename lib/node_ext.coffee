@@ -41,18 +41,27 @@ Node::clone = (hash) ->
 
 # `toHash()` + `inspect()`  
 # For debugging
-Node::toHash = ->
+
+
+Node::toHash = (done=[])->
   hash = {}
 
   toHash = (what) ->
+
     return null  unless what
-    if what.toHash then what.toHash() else what
+    if what.toHash
+      if what in done
+        return "--recursive #{what.id}--"
+      what.id = done.push(what)
+      what.toHash(done)
+    else
+      what
 
   hash.type = @typeName()
   hash.src  = @src()
 
   for i of @
-    continue  if i in ['filename', 'length', 'type', 'start', 'end', 'tokenizer', 'lineno']
+    continue  if i in ['filename', 'length', 'type', 'start', 'end', 'tokenizer' ]
     continue  if typeof @[i] == 'function'
     continue  unless @[i]
 
