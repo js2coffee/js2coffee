@@ -36,8 +36,7 @@ SWITCHES = [
 options  = {}
 sources  = []
 
-# TODO: woud be nice to get rid of that alll
-encoding  = 'utf-8'
+encoding = 'utf-8'
 UnsupportedError = js2coffee.UnsupportedError
 basename = path.basename
 cmd      = basename(process.argv[1])
@@ -60,12 +59,11 @@ writeFile = (dir, currfile, coffee) ->
     currfile = (currfile.split '.')[0] + '.coffee'
     newFile = newPath + currfile
     (console.warn "writing %s ", newFile) if options.verbose
-    fs.writeFileSync(newFile, coffee, encoding);
+    fs.writeFileSync(newFile, coffee, encoding)
   catch e
     console.warn e
 
 batch = () ->
-
   callback = (dirPath, dirs, files) ->
     for f in files
       try
@@ -100,7 +98,7 @@ compilePath = (source, topLevel, base) ->
     throw err if err and err.code isnt 'ENOENT'
     if err?.code is 'ENOENT' # file does not exist
       if topLevel and source[-3..] isnt '.js'
-        #retry with extension '.js' added
+        # retry with extension '.js' added
         source = "#{source}.coffee"
         return compilePath source, topLevel, base
       if topLevel
@@ -136,8 +134,8 @@ compileScript = ( fname ) ->
     console.warn err instanceof Error and err.stack or "ERROR: #{err} while compiling #{file}"
     exit 1 if options.stop_on_error
 
-compile_from_stdin = ->
-  contents = fs.readFileSync( "/dev/stdin" , encoding) # TODO: is this cross-plattform ?
+compileFromStdin = ->
+  contents = fs.readFileSync("/dev/stdin", encoding) # TODO: is this cross-platform?
   output   = js2coffee.build(contents,options)
   console.log output
 
@@ -150,16 +148,16 @@ version = ->
 
 # Run `js2coffee` by parsing passed options and determining what action to take.
 exports.run = ->
-    parseOptions()
+  parseOptions()
 
-    return usage()                if options.help
-    return console.log version()  if options.version
-    console.log "#### "+version() if options.verbose
+  return usage()                if options.help
+  return console.log version()  if options.version
+  console.log "#### "+version() if options.verbose
 
-    if sources.length > 0
-      for s in sources
-        compilePath s
-    else
-      return compile_from_stdin '/dev/stdin' if not tty.isatty process.stdin
-      # if we come here there was nothing else to do
-      return usage()
+  if sources.length > 0
+    for s in sources
+      compilePath s
+  else
+    return compileFromStdin '/dev/stdin' if not tty.isatty process.stdin
+    # if we come here there was nothing else to do
+    return usage()
