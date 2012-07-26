@@ -120,8 +120,13 @@ unreserve = (str) ->
   else
     "#{str}"
 
+# `indentLines()`  
+# Indents given `lines` string with spaces string given in `indent`.
+indentLines = (indent, lines) ->
+  indent + lines.replace(/\n/g, "\n"+indent)
+
 @Js2coffeeHelpers = exports =
   {Code, p, strEscape, unreserve, unshift, isSingleLine, trim,
-  blockTrim, ltrim, rtrim, strRepeat, paren, truthy}
+  blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines}
 
 module.exports = exports  if module?

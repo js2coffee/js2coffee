@@ -1,6 +1,6 @@
 # The JavaScript to CoffeeScript compiler.
-# Common usage:
 #
+# Common usage:
 #
 #     var src = "var square = function(n) { return n * n };"
 #
@@ -20,7 +20,7 @@ _ = @_ or require('underscore')
 {Types, Typenames, Node} = @NodeExt or require('./node_ext')
 
 {Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim,
-  ltrim, rtrim, strRepeat, paren, truthy} = @Js2coffeeHelpers or require('./helpers')
+  ltrim, rtrim, strRepeat, paren, truthy, indentLines} = @Js2coffeeHelpers or require('./helpers')
 
 # ## Main entry point
 # This is `require('js2coffee').build()`. It takes a JavaScript source
@@ -30,9 +30,6 @@ _ = @_ or require('underscore')
 #    returns a `Node` object of type `script`.
 #
 # 2. This node is now passed onto `Builder#build()`.
-
-indent_lines = (indent, lines) ->
-  indent + lines.replace(/\n/g, "\n"+indent)
 
 buildCoffee = (str, opts = {}) ->
   str  = str.replace /\r/g, ''
@@ -47,7 +44,7 @@ buildCoffee = (str, opts = {}) ->
     (rtrim line for line in output.split('\n')).join('\n')
 
   else
-    keep_line_numbers = opts.show_src_lineno
+    keepLineNumbers = opts.show_src_lineno
 
     res = []
     for l in output.split("\n")
@@ -65,18 +62,18 @@ buildCoffee = (str, opts = {}) ->
       if srclines.length > 0
         minline = _.last(srclines)
 
-        precomments = builder.comments_not_done_to(minline)
+        precomments = builder.commentsNotDoneTo(minline)
         if precomments
-          res.push indent_lines indent,precomments
+          res.push indentLines indent,precomments
 
       if text
-        if keep_line_numbers
+        if keepLineNumbers
             text = text + "#" +srclines.join(",") + "#  "
-        res.push rtrim(text + " "+ltrim(builder.line_comments(srclines)))
+        res.push rtrim(text + " "+ltrim(builder.lineComments(srclines)))
       else
         res.push ""
 
-    comments = builder.comments_not_done_to(1e10)
+    comments = builder.commentsNotDoneTo(1e10)
     if comments
       res.push comments
 
@@ -104,8 +101,8 @@ class Builder
     else
       ""
 
-  make_comment: (comment) ->
-    if comment.type == "BLOCK_COMMENT"
+  makeComment: (comment) ->
+    if comment.type is "BLOCK_COMMENT"
       c = comment.value.split("\n")
 
       if c.length>0 and c[0].length>0 and c[0][0]=="*" # docstring ?
@@ -128,23 +125,25 @@ class Builder
 
     c.join('\n')
 
-  comments_not_done_to: (lineno) ->
+  commentsNotDoneTo: (lineno) ->
     res = []
     loop
-      break if @comments.length == 0
+      break if @comments.length is 0
       c = @comments[0]
-      if (c.lineno < lineno)
-        res.push(@make_comment c)
+
+      if c.lineno < lineno
+        res.push(@makeComment c)
         @comments.shift()
         continue
       break
+
     res.join("\n")
 
-  line_comments: (linenos) ->
-    # TODO: is there a nicer way to do this ?
+  lineComments: (linenos) ->
+    # TODO: is there a nicer way to do this?
     selection = (c for c in @comments when c.lineno in linenos)
-    @comments = _.difference(@comments,selection)
-    return (@make_comment c for c in selection).join("\n")
+    @comments = _.difference(@comments, selection)
+    return (@makeComment c for c in selection).join("\n")
 
   # `build()`
   # The main entry point.
