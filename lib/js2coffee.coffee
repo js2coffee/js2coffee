@@ -776,7 +776,6 @@ class Transformer
     _.each n.nonfunctions, (item) =>
       if item.expression?
         expr = item.expression
-
         if last?.isA('object_init') and expr.isA('object_init')
           item.parenthesized = true
         else
@@ -785,6 +784,9 @@ class Transformer
         last = expr
 
   '.': (n) ->
+    if n.left().isA('function')
+      n.left().parenthesized = true
+
     n.isThis      = n.left().isA('this')
     n.isPrototype = (n.right().isA('identifier') and n.right().value == 'prototype')
 
