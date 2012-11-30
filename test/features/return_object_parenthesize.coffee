@@ -4,9 +4,11 @@ parenthesized = ->
     b: 2
   )
   a()
+  return
 not_parenthesized = ->
   return a: 1
   a()
+  return
 parenthesized_b = ->
   if something()
     a: 1
@@ -18,3 +20,4 @@ parenthesized_c = ->
       b: 2
     )
   a()
+  return

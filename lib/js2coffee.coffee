@@ -800,18 +800,38 @@ class Transformer
         @call_statement n
 
   'function': (n) ->
+
+    nonreturns = 0
+    transform_switch = @switch  # we may need this in the walk block below
+
     # *Unwrap the `return`s.*
     n.body.walk last: true, (parent, node, list) ->
-      if node.isA('return') and node.value
-        # Hax
-        lastNode = if list
-          parent[list]
-        else
-          parent.children[parent.children.length-1]
 
-        if lastNode
+      # if the last node is a break, we want the one before that
+      transform_switch node if node.isA('switch')
+
+      # Hax
+      lastNode = if list
+        parent[list]
+      else
+        parent.children[parent.children.length-1]
+
+      if node.value and lastNode
+        if node.isA('return')
           lastNode.type = Typenames[';']
           lastNode.expression = lastNode.value
+        else if lastNode.isA('if', 'switch', 'block')
+          #console.log "disregarding nonreturn: #{node.value} and #{lastNode.typeName()}:#{lastNode.value}"
+        else
+          #console.log "nonreturn: #{node.value} and #{lastNode.typeName()}:#{lastNode.value}"
+          nonreturns += 1
+
+    # *Add formerly implicit `return`s*
+    if nonreturns > 0
+      n.body.children.push
+        type: 'return'
+        typeName: -> @type
+        isA: (t) -> t == @type
 
   'switch': (n) ->
     _.each n.cases, (item) =>
