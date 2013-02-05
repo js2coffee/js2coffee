@@ -135,7 +135,12 @@ compileScript = ( fname ) ->
     exit 1 if options.stop_on_error
 
 compileFromStdin = ->
-  contents = fs.readFileSync("/dev/stdin", encoding) # TODO: is this cross-platform?
+  contents = ''
+  size = fs.fstatSync(process.stdin.fd).size
+  if size > 0
+    buffer = new Buffer(size)
+    fs.readSync(process.stdin.fd,buffer,0,size)
+    contents = buffer.toString(encoding)
   output   = js2coffee.build(contents,options)
   console.log output
 
