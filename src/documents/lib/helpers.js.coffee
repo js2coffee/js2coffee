@@ -92,7 +92,11 @@ truthy = (n) ->
 #   * `hello "there"` turns to `"hello \"there\""`
 #
 strEscape = (str) ->
-  JSON.stringify "#{str}"
+  str = JSON.stringify "#{str}"
+  # JavaScript doesn't have string interpolation and so may contain strings
+  # that in CoffeeScript would compile as string interpolations,
+  # e.g. "hey #{jude}". We need to escape them here.
+  str.replace /#\{/g, '\\#{'
 
 # `p()`
 # Debugging tool. Prints an object to the console.
