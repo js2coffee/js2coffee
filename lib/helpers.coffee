@@ -2,6 +2,7 @@
 # A helper class to deal with building code.
 
 CoffeeScript = @CoffeeScript or require 'coffee-script'
+{ RESERVED } = require 'coffee-script/lib/coffee-script/lexer'
 
 class Code
   constructor: ->
@@ -104,7 +105,7 @@ p = (str) ->
 # `coffeescript_reserved`
 # Array of reserved words from coffeescript,
 # for use by `unreserve()`
-coffeescript_reserved = ( word for word in CoffeeScript.RESERVED when word != 'undefined' )
+coffeescript_reserved = ( word for word in RESERVED when word not in ['undefined', 'arguments'] )
 
 # `unreserve()`  
 # Picks the next best thing for a reserved keyword.
