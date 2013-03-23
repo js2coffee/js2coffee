@@ -3,6 +3,9 @@
 
 CoffeeScript = @CoffeeScript or require 'coffee-script'
 
+unless CoffeeScript.RESERVED then CoffeeScript.RESERVED =
+  require('coffee-script/lib/coffee-script/lexer.js').RESERVED
+
 class Code
   constructor: ->
     @code = ''
