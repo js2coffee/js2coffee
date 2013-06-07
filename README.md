@@ -34,7 +34,7 @@ Watch, compile, bundle, and test the project
 
 
 ## License
-<br/>Copyright © 2011+ [Rico Sta. Cruz](http://ricostacruz.com) <hi@ricostacruz.com>
+Copyright © 2011+ [Rico Sta. Cruz](http://ricostacruz.com) <hi@ricostacruz.com>
 
 
 ## Thanks
