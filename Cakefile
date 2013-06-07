@@ -1,53 +1,133 @@
-{spawn, exec} = require 'child_process'
+# This file was originally created by Benjamin Lupton <b@lupton.cc> (http://balupton.com)
+# and is currently licensed under the Creative Commons Zero (http://creativecommons.org/publicdomain/zero/1.0/)
+# making it public domain so you can do whatever you wish with it without worry (you can even remove this notice!)
+#
+# If you change something here, be sure to reflect the changes in:
+# - the scripts section of the package.json file
+# - the .travis.yml file
 
-# Tasks
-task 'test', 'Run tests', ->
-  require __dirname + '/test/test'
 
-task 'build', 'Builds the browser version', ->
-  {readFileSync, writeFileSync} = require('fs')
-  {compile} = require('coffee-script')
+# -----------------
+# Variables
 
-  run 'mkdir -p dist'
+WINDOWS = process.platform.indexOf('win') is 0
+NODE    = process.execPath
+NPM     = if WINDOWS then process.execPath.replace('node.exe','npm.cmd') else 'npm'
+EXT     = (if WINDOWS then '.cmd' else '')
+APP     = process.cwd()
+BIN     = "#{APP}/node_modules/.bin"
+CAKE    = "#{BIN}/cake#{EXT}"
+COFFEE  = "#{BIN}/coffee#{EXT}"
+DOCPAD  = "#{BIN}/docpad#{EXT}"
+OUT     = "#{APP}/out"
+SRC     = "#{APP}/src"
 
-  output = [
-    readFileSync('lib/narcissus_packed.js', 'utf-8')
-    compile(readFileSync('lib/node_ext.coffee', 'utf-8'))
-    compile(readFileSync('lib/helpers.coffee', 'utf-8'))
-    compile(readFileSync('lib/js2coffee.coffee', 'utf-8'))
+
+# -----------------
+# Requires
+
+pathUtil = require('path')
+{exec,spawn} = require('child_process')
+safe = (next,fn) ->
+  return (err) ->
+    return next(err)  if err
+    return fn()
+
+
+# -----------------
+# Actions
+
+bench = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  spawn(NODE, ["#{OUT}/test/benchmark.js"], {stdio:'inherit',cwd:APP}).on('exit',next)
+
+clean = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  args = [
+    '-Rf'
+    OUT
+    pathUtil.join(APP,'node_modules')
+    pathUtil.join(APP,'*out')
+    pathUtil.join(APP,'*log')
   ]
+  spawn('rm', args, {stdio:'inherit',cwd:APP}).on('exit',next)
 
-  combined   = output.join("\n")
-  compressed = pack(combined)
+compile = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  spawn(DOCPAD, ['generate'], {stdio:'inherit',cwd:APP}).on('exit',next)
 
-  writeFileSync 'dist/js2coffee.js', combined
-  writeFileSync 'dist/js2coffee.min.js', compressed
+watch = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  spawn(DOCPAD, ['watch'], {stdio:'inherit',cwd:APP}).on('exit',next)
 
-  console.log '* dist/js2coffee.js'
-  console.log '* dist/js2coffee.min.js'
+install = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  spawn(NPM, ['install'], {stdio:'inherit',cwd:APP}).on('exit',next)
 
-# Helpers
-run = (cmd, callback, options={}) ->
-  console.warn "$ #{cmd}"  unless options.quiet?
+reset = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  clean opts, safe next, -> install opts, safe next, -> compile opts, next
 
-  exec cmd, (err, stdout, stderr) ->
-    callback()  if typeof callback == 'function'
-    console.warn stderr  if stderr
-    console.log stdout   if stdout
+setup = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  install opts, safe next, ->
+    compile opts, next
 
-# Compress JS with simple regexes. (Because common packers
-# seem to munge Narcissus badly)
-pack = (str) ->
-  spaces        = new RegExp(' *(\n *)+', 'g')
-  comments      = /\/\*(\n|.)*?\*\//g
-  line_comments = /\/\/.*\n/g
+test = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  args = []
+  args.push("--debug-brk")  if opts.debug
+  args.push("#{OUT}/test/everything.js")
+  args.push("--joe-reporter=list")
+  spawn(NODE, args, {stdio:'inherit',cwd:APP}, next)
 
-  compressed = str
-  compressed = compressed.replace(comments, " ")
-  compressed = compressed.replace(line_comments, "\n")
-  compressed = compressed.replace(spaces, "\n")
+finish = (err) ->
+  throw err  if err
+  console.log('OK')
 
-  compressed
 
-task 'doc', 'Builds docs', ->
-  run "docco lib/js2coffee.coffee"
+# -----------------
+# Commands
+
+# bench
+task 'bench', 'benchmark our project', ->
+  bench finish
+
+# clean
+task 'clean', 'clean up instance', ->
+  clean finish
+
+# compile
+task 'compile', 'compile our files', ->
+  compile finish
+
+# dev/watch
+task 'dev', 'watch and recompile our files', ->
+  watch finish
+task 'watch', 'watch and recompile our files', ->
+  watch finish
+
+# install
+task 'install', 'install dependencies', ->
+  install finish
+
+# reset
+task 'reset', 'reset instance', ->
+  reset finish
+
+# setup
+task 'setup', 'setup for development', ->
+  setup finish
+
+# test
+task 'test', 'run our tests', ->
+  test finish
+
+# test-debug
+task 'test-debug', 'run our tests in debug mode', ->
+  test {debug:true}, finish
+
+# test-prepare
+task 'test-prepare', 'prepare out tests', ->
+  setup finish
+

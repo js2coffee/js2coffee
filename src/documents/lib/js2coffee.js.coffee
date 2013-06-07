@@ -13,14 +13,14 @@
 # Js2coffee relies on Narcissus's parser. (Narcissus is Mozilla's JavaScript
 # engine written in JavaScript).
 
-{parser} = @Narcissus or require('./narcissus_packed')
+{parser} = require('./narcissus_packed')
 
-_ = @_ or require('underscore')
+_ = require('underscore')
 
-{Types, Typenames, Node} = @NodeExt or require('./node_ext')
+{Types, Typenames, Node} = require('./node_ext')
 
 {Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim,
-  ltrim, rtrim, strRepeat, paren, truthy, indentLines} = @Js2coffeeHelpers or require('./helpers')
+  ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
 
 # ## Main entry point
 # This is `require('js2coffee').build()`. It takes a JavaScript source
@@ -87,7 +87,7 @@ class Builder
   constructor: (@options={}) ->
     @transformer = new Transformer
 
-  # `l()`  
+  # `l()`
   # Inject the source line as a hidden element to be stripped out later.
 
   l: (n) ->
@@ -286,7 +286,7 @@ class Builder
     else
       @build(n.expression) + "\n"
 
-  # `new` + `new_with_args`  
+  # `new` + `new_with_args`
   # For `new X` and `new X(y)` respctively.
 
   'new': (n) -> @l(n)+"new #{@build n.left()}"
@@ -414,7 +414,7 @@ class Builder
     list = _.map n.children, (item) => @l(item)+@build(item) + "\n"
     list.join('')
 
-  # `regexp`  
+  # `regexp`
   # Regular expressions.
 
   'regexp': (n) ->
@@ -439,7 +439,7 @@ class Builder
   'string': (n) ->
     @l(n)+ strEscape n.value
 
-  # `call`  
+  # `call`
   # A Function call.
   # `n.left` is an `id`, and `n.right` is a `list`.
 
@@ -449,7 +449,7 @@ class Builder
     else
       "#{@build n.left()}(#{@build n.right()})"+@l(n)
 
-  # `call_statement`  
+  # `call_statement`
   # A `call` that's on it's own line.
 
   'call_statement': (n) ->
@@ -537,7 +537,7 @@ class Builder
     c.scope @body(n.block)
     @l(n)+c
 
-  # `?` (ternary operator)  
+  # `?` (ternary operator)
   # For `a ? b : c`. Note that these will always be parenthesized, as (I
   # believe) the order of operations in JS is different in CS.
 
@@ -658,7 +658,7 @@ class Builder
     else
       @l(n)+"[#{@list n}]"
 
-  # `property_init`  
+  # `property_init`
   # Belongs to `object_init`;
   # left is a `identifier`, right can be anything.
 
@@ -668,7 +668,7 @@ class Builder
     right.is_property_value = true
     "#{@property_identifier left}: #{@build right}"
 
-  # `object_init`  
+  # `object_init`
   # An object initializer.
   # Has many `property_init`.
 
@@ -687,7 +687,7 @@ class Builder
       c = "{#{c}}"  if options.brackets?
       c
 
-  # `function`  
+  # `function`
   # A function. Can be an anonymous function (`function () { .. }`), or a named
   # function (`function name() { .. }`).
 
@@ -739,7 +739,7 @@ class Builder
   'block': (args...) ->
     @script.apply @, args
 
-  # `unsupported()`  
+  # `unsupported()`
   # Throws an unsupported error.
   'unsupported': (node, message) ->
     throw new UnsupportedError("Unsupported: #{message}", node)

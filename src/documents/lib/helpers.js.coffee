@@ -1,10 +1,8 @@
 ## Code snippet helper
 # A helper class to deal with building code.
 
-CoffeeScript = @CoffeeScript or require 'coffee-script'
-
-unless CoffeeScript.RESERVED then CoffeeScript.RESERVED =
-  require('coffee-script/lib/coffee-script/lexer.js').RESERVED
+CoffeeScript = require 'coffee-script'
+CoffeeScript.RESERVED ?= require('coffee-script/lib/coffee-script/lexer.js').RESERVED
 
 class Code
   constructor: ->
@@ -26,7 +24,7 @@ class Code
 # ## String helpers
 # These are functions that deal with strings.
 
-# `paren()`  
+# `paren()`
 # Wraps a given string in parentheses.
 # Examples:
 #
@@ -40,7 +38,7 @@ paren = (string) ->
   else
     "(#{str})"
 
-# `strRepeat()`  
+# `strRepeat()`
 # Repeats a string a certain number of times.
 # Example:
 #
@@ -49,7 +47,7 @@ paren = (string) ->
 strRepeat = (str, times) ->
   (str for i in [0...times]).join('')
 
-# `trim()` *and friends*  
+# `trim()` *and friends*
 # String trimming functions.
 
 ltrim = (str) ->
@@ -67,7 +65,7 @@ trim = (str) ->
 isSingleLine = (str) ->
   trim(str).indexOf("\n") == -1
 
-# `unshift()`  
+# `unshift()`
 # Removes any unneccesary indentation from a code block string.
 unshift = (str) ->
   str = "#{str}"
@@ -85,7 +83,7 @@ unshift = (str) ->
 truthy = (n) ->
   n.isA('true') or (n.isA('number') and parseFloat(n.src()) isnt 0.0)
 
-# `strEscape()`  
+# `strEscape()`
 # Escapes a string.
 # Example:
 #
@@ -94,7 +92,7 @@ truthy = (n) ->
 strEscape = (str) ->
   JSON.stringify "#{str}"
 
-# `p()`  
+# `p()`
 # Debugging tool. Prints an object to the console.
 # Not actually used, but here for convenience.
 p = (str) ->
@@ -109,7 +107,7 @@ p = (str) ->
 # for use by `unreserve()`
 coffeescript_reserved = ( word for word in CoffeeScript.RESERVED when word != 'undefined' )
 
-# `unreserve()`  
+# `unreserve()`
 # Picks the next best thing for a reserved keyword.
 # Example:
 #
@@ -123,7 +121,7 @@ unreserve = (str) ->
   else
     "#{str}"
 
-# `indentLines()`  
+# `indentLines()`
 # Indents given `lines` string with spaces string given in `indent`.
 indentLines = (indent, lines) ->
   indent + lines.replace(/\n/g, "\n"+indent)
