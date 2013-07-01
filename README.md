@@ -30,7 +30,7 @@ Watch, compile, bundle, and test the project
 
 
 ## History
-[You can discover the history inside the `History.md` file](https://github.com/rstacruz/js2coffee/blob/master/History.md#files)
+[You can discover the history inside the `HISTORY.md` file](https://github.com/rstacruz/js2coffee/blob/master/HISTORY.md#files)
 
 
 ## License
