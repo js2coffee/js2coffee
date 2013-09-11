@@ -5,6 +5,8 @@ CoffeeScript = require 'coffee-script'
 CoffeeScript.RESERVED ?= require('coffee-script/lib/coffee-script/lexer.js').RESERVED
 
 class Code
+  Code.INDENT = "  "
+
   constructor: ->
     @code = ''
 
@@ -13,7 +15,7 @@ class Code
     @
 
   scope: (str, level=1) ->
-    indent = strRepeat("  ", level)
+    indent = strRepeat(Code.INDENT, level)
     @code  = rtrim(@code) + "\n"
     @code += indent + rtrim(str).replace(/\n/g, "\n#{indent}") + "\n"
     @

@@ -579,7 +579,7 @@ class Builder
       statement = "#{keyword} #{@build n.condition}"
 
     if isSingleLine(body_) and statement isnt "loop"
-      c.add "#{trim body_}  #{statement}\n"
+      c.add "#{trim body_}#{Code.INDENT}#{statement}\n"
     else
       c.add statement
       c.scope body_
@@ -608,7 +608,7 @@ class Builder
       c.add "#{@build n.condition}\n"
 
     else if isSingleLine(body_) and !n.elsePart?
-      c.add "#{trim body_}  #{keyword} #{@build n.condition}\n"
+      c.add "#{trim body_}#{Code.INDENT}#{keyword} #{@build n.condition}\n"
 
     else
       c.add "#{keyword} #{@build n.condition}"
