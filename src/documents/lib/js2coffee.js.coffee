@@ -470,13 +470,29 @@ class Builder
   # `list`
   # A parameter list.
 
-  'list': (n) ->
-    list = _.map(n.children, (item) =>
+  'list': (n, options = {}) ->
+    list = _.map n.children, (item) =>
       if n.children.length > 1
         item.is_list_element = true
-      @build(item))
+      #return @build item # original
 
-    @l(n)+list.join(", ")
+      if options.array is true and n.children.length > 0
+        raw = @[item.typeName()](item)
+        c = new Code @, item
+        c.scope raw
+        c = trim c + Code.INDENT
+        if item.typeName() is 'object_init'
+          c = "{\n#{Code.INDENT}#{Code.INDENT}#{c}\n#{Code.INDENT}}"
+
+        return c
+      else
+        return @build item
+
+    #return @l(n)+list.join(", ") # original
+    if options.array is true and n.children.length > 0
+      return @l(n) + "\n#{Code.INDENT}#{list.join('\n'+Code.INDENT)}"
+    else
+      return @l(n)+list.join(", ")
 
   'delete': (n) ->
     ids = _.map(n.children, (el) => @build(el))
@@ -653,8 +669,11 @@ class Builder
     @l(n)+"#{@build n.left()}?"
 
   'array_init': (n) ->
+    options = {array:true}
     if n.children.length == 0
       @l(n)+"[]"
+    else if n.children.length > 1
+      @l(n)+"[#{@list n, options}\n]"
     else
       @l(n)+"[#{@list n}]"
 
