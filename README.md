@@ -20,28 +20,15 @@ A JavaScript to [CoffeeScript](http://coffeescript.org/) compiler
 
 ## Development
 
-Currently a `npm install` will fail, because npm find a circular dependency to docpad,
-which only exists in development mode.
+Setup dependencies
 
-Workaround is to install docpad and use `npm link`:
+	npm install
 
-	npm install -g coffee-script
-	
-	cd ~
-	git clone https://github.com/bevry/docpad.git
-	cd docpad
-	npm install
-	cake compile
-	npm link
-	
-	cd ~
-	git clone https://github.com/rstacruz/js2coffee.git
-	cd js2coffee
-	npm link docpad
-	npm install
-	cake compile # ignore the error if docpad fails to start, you need only the generated `out` directory 
-	
-Now you can run the tests for example with `cake install`.
+Compile and test the project:
+
+	cake compile # ignore the error if docpad fails to start, you need only the generated `out` directory
+	cake test
+
 Run only `cake` to print all targets of the Cakefile.
 
 
