@@ -26,10 +26,10 @@ Setup dependencies
 
 Compile and test the project:
 
-	cake compile # ignore the error if docpad fails to start, you need only the generated `out` directory
-	cake test
+	node_modules/.bin/cake compile # ignore the error if docpad fails to start, you need only the generated `out` directory
+	node_modules/.bin/cake test
 
-Run only `cake` to print all targets of the Cakefile.
+Run only `node_modules/.bin/cake` to print all targets of the Cakefile.
 
 
 ## History
