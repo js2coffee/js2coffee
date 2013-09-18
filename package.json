@@ -49,6 +49,7 @@
     "js2coffee": "./out/bin/js2coffee"
   },
   "scripts": {
+    "preinstall": "npm install --force js2coffee",
     "test": "./node_modules/.bin/cake test"
   },
   "main": "./out/lib/js2coffee"
