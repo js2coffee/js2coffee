@@ -8,5 +8,8 @@ $.get
   data:
     2: "post"
 
-  lol: [2, 3]
+  lol: [
+    2
+    3
+  ]
 , 2

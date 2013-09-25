@@ -24,9 +24,12 @@ Setup dependencies
 
 	npm install
 
-Watch, compile, bundle, and test the project
+Compile and test the project:
 
-	./node_modules/.bin/docpad run
+	node_modules/.bin/cake compile # ignore the error if docpad fails to start, you need only the generated `out` directory
+	node_modules/.bin/cake test
+
+Run only `node_modules/.bin/cake` to print all targets of the Cakefile.
 
 
 ## History
