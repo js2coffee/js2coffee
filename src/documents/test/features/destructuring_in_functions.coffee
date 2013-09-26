@@ -1,14 +1,26 @@
 ([a]) ->
   true
 
-([a, b]) ->
+([
+  a
+  b
+]) ->
   true
 
-([a, b], c) ->
+([
+  a
+  b
+], c) ->
   true
 
-(x, [a, b]) ->
+(x, [
+  a
+  b
+]) ->
   true
 
-(x, [a, b], c) ->
+(x, [
+  a
+  b
+], c) ->
   true
