@@ -13,14 +13,10 @@
 # Js2coffee relies on Narcissus's parser. (Narcissus is Mozilla's JavaScript
 # engine written in JavaScript).
 
-{parser} = require('./narcissus_packed')
-
 _ = require('underscore')
-
+{parser} = require('./narcissus_packed')
 {Types, Typenames, Node} = require('./node_ext')
-
-{Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim,
-  ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
+{Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
 
 # ## Main entry point
 # This is `require('js2coffee').build()`. It takes a JavaScript source

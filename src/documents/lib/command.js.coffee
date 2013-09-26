@@ -4,11 +4,10 @@
 
 # External dependencies.
 js2coffee = require './js2coffee'
-_         = require 'underscore'
-fs        = require 'fs'
-path      = require 'path'
+fsUtil    = require 'fs'
+pathUtil  = require 'path'
 tty       = require 'tty'
-file      = require 'file'
+fileUtil  = require 'file'
 optparse  = require './optparse'
 
 # The help banner that is printed when `js2coffee` is called without arguments.
@@ -38,8 +37,7 @@ sources  = []
 
 encoding = 'utf-8'
 UnsupportedError = js2coffee.UnsupportedError
-basename = path.basename
-cmd      = basename(process.argv[1])
+cmd      = pathUtil.basename(process.argv[1])
 
 parseOptions = ->
   optionParser  = new optparse.OptionParser SWITCHES, BANNER
@@ -53,13 +51,13 @@ writeFile = (dir, currfile, coffee) ->
       outputdir = outputdir.concat '/'
     newPath = outputdir + dir + '/'
     try
-      fs.statSync(newPath).isDirectory()
+      fsUtil.statSync(newPath).isDirectory()
     catch e
-      file.mkdirsSync(newPath)
+      fileUtil.mkdirsSync(newPath)
     currfile = (currfile.split '.')[0] + '.coffee'
     newFile = newPath + currfile
     (console.warn "writing %s ", newFile) if options.verbose
-    fs.writeFileSync(newFile, coffee, encoding)
+    fsUtil.writeFileSync(newFile, coffee, encoding)
   catch e
     console.warn e
 
@@ -70,7 +68,7 @@ batch = () ->
         if ((f.split '.')[1] == 'js')
           readf = dirPath + '/' + f
           (console.warn "read file %s", readf) if options.verbose
-          contents = fs.readFileSync(readf, encoding)
+          contents = fsUtil.readFileSync(readf, encoding)
           output = js2coffee.build(contents,options)
           writeFile(dirPath, f, output)
       catch e
@@ -78,13 +76,13 @@ batch = () ->
 
   for i in sources
     try
-      if fs.statSync(i).isDirectory()
+      if fsUtil.statSync(i).isDirectory()
         if options.recursive
-          file.walkSync(i, callback)
+          fileUtil.walkSync(i, callback)
         else
           list = []
-          for v in fs.readdirSync(i)
-            if fs.statSync(v).isFile()
+          for v in fsUtil.readdirSync(i)
+            if fsUtil.statSync(v).isFile()
               list.add v
           callback(i, '', list)
     catch e
@@ -94,7 +92,7 @@ batch = () ->
 # is passed, recursively compile all '.js' extension source files in it
 # and all subdirectories.
 compilePath = (source, topLevel, base) ->
-  fs.stat source, (err, stats) ->
+  fsUtil.stat source, (err, stats) ->
     throw err if err and err.code isnt 'ENOENT'
     if err?.code is 'ENOENT' # file does not exist
       if topLevel and source[-3..] isnt '.js'
@@ -108,15 +106,15 @@ compilePath = (source, topLevel, base) ->
 
     if stats.isDirectory()
       # watchDir source, base if opts.watch
-      fs.readdir source, (err, files) ->
+      fsUtil.readdir source, (err, files) ->
         throw err if err and err.code isnt 'ENOENT'
         return if err?.code is 'ENOENT'
         # index = sources.indexOf source
-        # sources[index..index] = (path.join source, file for file in files)
+        # sources[index..index] = (pathUtil.join source, file for file in files)
         # sourceCode[index..index] = files.map -> null
         for file in files when not hidden file
-          compilePath (path.join source, file), no, base
-    else if topLevel or path.extname(source) is '.js'
+          compilePath (pathUtil.join source, file), no, base
+    else if topLevel or pathUtil.extname(source) is '.js'
       compileScript source
 
 # Test if file is hidden (starts with a dot)
@@ -127,7 +125,7 @@ hidden = (file) -> /^\.|~$/.test file
 compileScript = ( fname ) ->
   try
     console.log "#### ---- #{fname}" if options.verbose
-    code = fs.readFileSync fname
+    code = fsUtil.readFileSync fname
     compiled_code = js2coffee.build(code.toString(),options)
     console.log compiled_code
   catch err
@@ -135,7 +133,7 @@ compileScript = ( fname ) ->
     exit 1 if options.stop_on_error
 
 compileFromStdin = ->
-  contents = fs.readFileSync("/dev/stdin", encoding) # TODO: is this cross-platform?
+  contents = fsUtil.readFileSync("/dev/stdin", encoding) # TODO: is this cross-platform?
   output   = js2coffee.build(contents,options)
   console.log output
 
