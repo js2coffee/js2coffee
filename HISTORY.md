@@ -1,3 +1,12 @@
+# History
+
+v0.2.0 - September 26, 2013
+--------------------
+
+- Nested objects and arrays are now easier to read
+  - Thanks to [Anton Wilhelm](https://github.com/timaschew) for [issue #224](https://github.com/rstacruz/js2coffee/issues/224) and [pull request #227](https://github.com/rstacruz/js2coffee/pull/227)
+
+
 v0.1.4 - June 7, 2013
 --------------------
 
