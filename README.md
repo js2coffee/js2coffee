@@ -33,7 +33,7 @@ Run only `node_modules/.bin/cake` to print all targets of the Cakefile.
 
 
 ## History
-[You can discover the history inside the `History.md` file](https://github.com/rstacruz/js2coffee/blob/master/History.md#files)
+[You can discover the history inside the `HISTORY.md` file](https://github.com/rstacruz/js2coffee/blob/master/HISTORY.md#files)
 
 
 ## License
