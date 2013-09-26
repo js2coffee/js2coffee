@@ -17,8 +17,8 @@ module.exports =
 			docpad = @docpad
 
 			# Test
-			require('bal-util').spawn 'npm test', {output:true}, (err) ->
-				if err
+			require('child_process').spawn('./node_modules/.bin/cake', ['test'], {stdio:'inherit'}).on 'close', (code) ->
+				if code isnt 0
 					message = 'TESTS FAILED'
 					docpad.log('warn', message)
 				else

@@ -39,30 +39,30 @@ safe = (next,fn) ->
 
 bench = (opts,next) ->
   (next = opts; opts = {})  unless next?
-  spawn(NODE, ["#{OUT}/test/benchmark.js"], {stdio:'inherit',cwd:APP}).on('exit',next)
+  spawn(NODE, ["#{OUT}/test/benchmark.js"], {stdio:'inherit',cwd:APP}).on('close',next)
 
 clean = (opts,next) ->
   (next = opts; opts = {})  unless next?
   args = [
     '-Rf'
     OUT
-    pathUtil.join(APP,'node_modules')
-    pathUtil.join(APP,'*out')
-    pathUtil.join(APP,'*log')
+    pathUtil.join(APP, 'node_modules')
+    pathUtil.join(APP, '*out')
+    pathUtil.join(APP, '*log')
   ]
-  spawn('rm', args, {stdio:'inherit',cwd:APP}).on('exit',next)
+  spawn('rm', args, {stdio:'inherit',cwd:APP}).on('close',next)
 
 compile = (opts,next) ->
   (next = opts; opts = {})  unless next?
-  spawn(DOCPAD, ['generate'], {stdio:'inherit',cwd:APP}).on('exit',next)
+  spawn(DOCPAD, ['generate'], {stdio:'inherit',cwd:APP}).on('close',next)
 
 watch = (opts,next) ->
   (next = opts; opts = {})  unless next?
-  spawn(DOCPAD, ['watch'], {stdio:'inherit',cwd:APP}).on('exit',next)
+  spawn(DOCPAD, ['watch'], {stdio:'inherit',cwd:APP}).on('close',next)
 
 install = (opts,next) ->
   (next = opts; opts = {})  unless next?
-  spawn(NPM, ['install'], {stdio:'inherit',cwd:APP}).on('exit',next)
+  spawn(NPM, ['install'], {stdio:'inherit',cwd:APP}).on('close',next)
 
 reset = (opts,next) ->
   (next = opts; opts = {})  unless next?
@@ -78,7 +78,6 @@ test = (opts,next) ->
   args = []
   args.push("--debug-brk")  if opts.debug
   args.push("#{OUT}/test/everything.js")
-  args.push("--joe-reporter=list")
   spawn(NODE, args, {stdio:'inherit',cwd:APP}, next)
 
 finish = (err) ->

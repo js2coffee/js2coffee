@@ -1,6 +1,6 @@
 {
   "name": "js2coffee",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "JavaScript to CoffeeScript compiler",
   "homepage": "http://ricostacruz.com/js2coffee",
   "keywords": [
@@ -29,7 +29,7 @@
     "node": ">=0.4.0"
   },
   "dependencies": {
-    "underscore": "~1.4.4",
+    "underscore": "~1.5.1",
     "coffee-script": "~1.6.2",
     "file": "~0.2.1"
   },
@@ -39,9 +39,8 @@
     "docpad-plugin-eco": "2.x",
     "docpad-plugin-coffeescript": "2.x",
     "docpad-plugin-uglify": "2.x",
-    "joe": "~1.2.0",
-    "joe-reporter-console": "~1.2.1",
-    "joe-reporter-list": "~1.2.1"
+    "joe": "~1.3.0",
+    "joe-reporter-console": "~1.2.1"
   },
   "directories": {
     "lib": "./out/lib"
@@ -51,6 +50,8 @@
   },
   "scripts": {
     "preinstall": "node ./cyclic.js",
+    "watch": "./node_modules/.bin/cake watch",
+    "compile": "./node_modules/.bin/cake compile",
     "test": "./node_modules/.bin/cake test"
   },
   "main": "./out/lib/js2coffee"
