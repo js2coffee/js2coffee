@@ -8,28 +8,45 @@ A JavaScript to [CoffeeScript](http://coffeescript.org/) compiler
 
 ## Install
 
-	npm install -g js2coffee
+``` bash
+npm install -g js2coffee
+```
 
 
 ## Usage
 
-	js2coffee input_file.js
-	js2coffee input_file.js > output.coffee
-	cat input.js | js2coffee
+``` bash
+js2coffee input_file.js
+js2coffee input_file.js > output.coffee
+cat input.js | js2coffee
+```
 
 
 ## Development
 
-Setup dependencies
+Install dependencies:
 
-	npm install
+``` bash
+npm install
+```
 
-Compile and test the project:
+To compile and test changes as they happen:
 
-	node_modules/.bin/cake compile # ignore the error if docpad fails to start, you need only the generated `out` directory
-	node_modules/.bin/cake test
+``` bash
+npm run-script watch
+```
 
-Run only `node_modules/.bin/cake` to print all targets of the Cakefile.
+To compile and test manually:
+
+``` bash
+npm run-script compile
+```
+
+To test manually:
+
+``` bash
+npm test
+```
 
 
 ## History
