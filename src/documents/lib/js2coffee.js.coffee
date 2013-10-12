@@ -31,6 +31,9 @@ buildCoffee = (str, opts = {}) ->
   str  = str.replace /\r/g, ''
   str += "\n"
 
+  if opts.indent?
+    Code.INDENT = opts.indent
+
   builder    = new Builder opts
   scriptNode = parser.parse str
 

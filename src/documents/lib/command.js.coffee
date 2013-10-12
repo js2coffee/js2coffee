@@ -8,7 +8,8 @@ fsUtil    = require 'fs'
 pathUtil  = require 'path'
 tty       = require 'tty'
 fileUtil  = require 'file'
-optparse  = require './optparse'
+{inspect} = require 'util'
+nopt      = require 'nopt'
 
 # The help banner that is printed when `js2coffee` is called without arguments.
 BANNER =  """
@@ -19,17 +20,31 @@ BANNER =  """
        cat file.js | js2coffee
 """
 
+knownOpts =
+  version: Boolean # show js2coffee version
+  verbose: Boolean # be verbose
+  no_comments: Boolean # do not translate comments
+  show_src_lineno: Boolean # show src lineno's as comments
+  help: Boolean # if you need help
+  indent: String # set indent character(s), default two spaces
+
+shortHands =
+  v: ["--version"]
+  V: ["--verbose"]
+  X: ["--no-comments"]
+  l: ["--show-src_lineno"]
+  h: ["--help"]
+  i4: ["--indent", "    "]
+  it: ["--indent", "\t"]
+
 # The list of all the valid option flags that `js2coffee` knows how to handle.
-SWITCHES = [
-  # ['-b', '--batch', 'batch mode to convert all .js files in directory']
-  # ['-o', '--output [OUTDIR]', 'set the output directory']
-  # ['-r', '--recursive', 'recurse on all subdirectories']
-  ['-v', '--version', 'Show js2coffee version']
-  ['-V', '--verbose', 'Be verbose']
-  ['-X', '--no_comments', 'Do not translate comments']
-  ['-l', '--show_src_lineno', 'Show src lineno\'s as comments']
-  ['-h', '--help', 'If you need help']
-]
+description =
+  'version': 'Show js2coffee version'
+  'verbose': 'Be verbose'
+  'no_comments': 'Do not translate comments'
+  'show_src_lineno': 'Show src lineno\'s as comments'
+  'help': 'If you need help'
+  'indent': 'Specify the indent character(s) - default 2 spaces'
 
 # Top-level objects shared by all the functions.
 options  = {}
@@ -40,9 +55,13 @@ UnsupportedError = js2coffee.UnsupportedError
 cmd      = pathUtil.basename(process.argv[1])
 
 parseOptions = ->
-  optionParser  = new optparse.OptionParser SWITCHES, BANNER
-  options       = optionParser.parse process.argv.slice 2
-  sources       = options.arguments
+  options = nopt knownOpts, shortHands, process.argv, 2
+  sources = options.argv.remain or= []
+
+  # nopt trim string values, copy it manually from argv.cooked
+  index = options.argv.cooked.indexOf "--indent"
+  if index isnt -1 and options.argv.cooked.length >= index
+    options.indent = options.argv.cooked[index+1]
 
 writeFile = (dir, currfile, coffee) ->
   outputdir = options.output || '.'
@@ -138,7 +157,13 @@ compileFromStdin = ->
   console.log output
 
 usage = ->
-  console.warn (new optparse.OptionParser SWITCHES, BANNER).help()
+  console.warn BANNER + "\n"
+  console.warn "options:"
+  for arg, type of knownOpts
+    console.warn "--#{arg} #  #{description[arg]}"
+  console.warn "\nshorcuts:"
+  for short, long of shortHands
+    console.warn "-#{short} = #{inspect long}"
   process.exit 0
 
 version = ->
