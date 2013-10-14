@@ -4,6 +4,9 @@ v0.2.1 - October 14, 2013
 --------------------
 - Replace option parser with nopt
   - add CLI option for indent [issue #143](https://github.com/rstacruz/js2coffee/issues/143)
+  - add CLI option for single quoted string literals
+  - use ansidiff in tests for colored assertion errors
+  - you can pass build options as a JSON comment in test files: `// OPTIONS:{"single_quotes":true}`
 
 v0.2.0 - September 26, 2013
 --------------------

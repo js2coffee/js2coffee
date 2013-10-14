@@ -25,6 +25,7 @@ knownOpts =
   verbose: Boolean # be verbose
   no_comments: Boolean # do not translate comments
   show_src_lineno: Boolean # show src lineno's as comments
+  single_quotes: Boolean # use single quoted string literals
   help: Boolean # if you need help
   indent: String # set indent character(s), default two spaces
 
@@ -34,17 +35,19 @@ shortHands =
   X: ["--no_comments"]
   l: ["--show_src_lineno"]
   h: ["--help"]
+  sq: ["--single_quotes"]
   i4: ["--indent", "    "]
   it: ["--indent", "\t"]
 
 # The list of all the valid option flags that `js2coffee` knows how to handle.
 description =
-  'version': 'Show js2coffee version'
-  'verbose': 'Be verbose'
-  'no_comments': 'Do not translate comments'
-  'show_src_lineno': 'Show src lineno\'s as comments'
-  'help': 'If you need help'
-  'indent': 'Specify the indent character(s) - default 2 spaces'
+  version: 'Show js2coffee version'
+  verbose: 'Be verbose'
+  no_comments: 'Do not translate comments'
+  show_src_lineno: 'Show src lineno\'s as comments'
+  help: 'If you need help'
+  single_quotes: "Use single quoted string literals - default double quoted"
+  indent: 'Specify the indent character(s) - default 2 spaces'
 
 # Top-level objects shared by all the functions.
 options  = {}

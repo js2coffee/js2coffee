@@ -29,6 +29,7 @@ cat input.js | js2coffee
   - **no_comments** Boolean - ignore comments, if true
   - **show_src_lineno** Boolean - show source line numbers in each line as comment, if true
   - **indent** String - specify indent
+  - **single_quotes** Boolean - use single quoted string literals instead of double quoted
 
 ``` javascript
 js2coffee = require('js2coffee');
