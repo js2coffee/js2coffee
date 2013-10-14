@@ -31,8 +31,8 @@ knownOpts =
 shortHands =
   v: ["--version"]
   V: ["--verbose"]
-  X: ["--no-comments"]
-  l: ["--show-src_lineno"]
+  X: ["--no_comments"]
+  l: ["--show_src_lineno"]
   h: ["--help"]
   i4: ["--indent", "    "]
   it: ["--indent", "\t"]
@@ -58,6 +58,10 @@ parseOptions = ->
   options = nopt knownOpts, shortHands, process.argv, 2
   sources = options.argv.remain or= []
 
+  if options.no_comments is true and options.show_src_lineno is true
+    console.warn "You cannot combine -l and -X"
+    return process.exit 1
+
   # nopt trim string values, copy it manually from argv.cooked
   index = options.argv.cooked.indexOf "--indent"
   if index isnt -1 and options.argv.cooked.length >= index
@@ -75,10 +79,10 @@ writeFile = (dir, currfile, coffee) ->
       fileUtil.mkdirsSync(newPath)
     currfile = (currfile.split '.')[0] + '.coffee'
     newFile = newPath + currfile
-    (console.warn "writing %s ", newFile) if options.verbose
+    (console.log "writing %s ", newFile) if options.verbose
     fsUtil.writeFileSync(newFile, coffee, encoding)
   catch e
-    console.warn e
+    console.error e
 
 batch = () ->
   callback = (dirPath, dirs, files) ->
@@ -86,12 +90,12 @@ batch = () ->
       try
         if ((f.split '.')[1] == 'js')
           readf = dirPath + '/' + f
-          (console.warn "read file %s", readf) if options.verbose
+          (console.log "read file %s", readf) if options.verbose
           contents = fsUtil.readFileSync(readf, encoding)
           output = js2coffee.build(contents,options)
           writeFile(dirPath, f, output)
       catch e
-        console.warn e
+        console.error e
 
   for i in sources
     try
@@ -105,7 +109,7 @@ batch = () ->
               list.add v
           callback(i, '', list)
     catch e
-      #console.warn e
+      #console.error e
 
 # Compile a path, which could be a script or a directory. If a directory
 # is passed, recursively compile all '.js' extension source files in it
@@ -159,10 +163,12 @@ compileFromStdin = ->
 usage = ->
   console.warn BANNER + "\n"
   console.warn "options:"
-  for arg, type of knownOpts
-    console.warn "--#{arg} #  #{description[arg]}"
+  for arg of knownOpts
+    console.warn "--#{arg} # #{description[arg]}"
   console.warn "\nshorcuts:"
   for short, long of shortHands
+    if short is '___singles'
+      continue
     console.warn "-#{short} = #{inspect long}"
   process.exit 0
 
