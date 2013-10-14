@@ -1,6 +1,6 @@
 # History
 
-v0.2.1 - October 14, 2013
+v0.2.2 - October 14, 2013
 --------------------
 - Replace option parser with nopt
   - add CLI option for indent [issue #143](https://github.com/rstacruz/js2coffee/issues/143)
