@@ -21,6 +21,19 @@ js2coffee input_file.js > output.coffee
 cat input.js | js2coffee
 ```
 
+## API Usage
+
+### build(content, option) ###
+- **content** String - javascript source code
+- **option** Object - option object
+  - **no_comments** Boolean - ignore comments, if true
+  - **show_src_lineno** Boolean - show source line numbers in each line as comment, if true
+  - **indent** String - specify indent
+
+``` javascript
+js2coffee = require('js2coffee');
+coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "    ");
+```
 
 ## Development
 
