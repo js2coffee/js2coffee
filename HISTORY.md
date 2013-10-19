@@ -1,5 +1,8 @@
 # History
 
+v0.2.3 - October 19, 2013
+- fixed nopt issue [issue #231](https://github.com/rstacruz/js2coffee/issues/231) 
+
 v0.2.2 - October 14, 2013
 --------------------
 - Replace option parser with nopt
