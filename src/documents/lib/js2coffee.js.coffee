@@ -657,7 +657,7 @@ class Builder
         c.scope @l(item)+"else"
       else
         if fall_through == true
-          c.add @l(item)+", #{@build item.caseLabel}\n"
+          c.add @l(item)+", #{@build item.caseLabel}"
         else
           c.add @l(item)+"  when #{@build item.caseLabel}"
 
