@@ -14,6 +14,7 @@
 # engine written in JavaScript).
 
 _ = require('underscore')
+pkg = require('../../package')
 {parser} = require('./narcissus_packed')
 {Types, Typenames, Node} = require('./node_ext')
 {Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
@@ -917,7 +918,7 @@ class UnsupportedError
 # ## Exports
 
 @Js2coffee = exports =
-  VERSION: '0.1.3'
+  VERSION: pkg.version
   build: buildCoffee
   UnsupportedError: UnsupportedError
 
