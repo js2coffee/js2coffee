@@ -92,7 +92,15 @@ truthy = (n) ->
 #   * `hello "there"` turns to `"hello \"there\""`
 #
 strEscape = (str) ->
+  if str.indexOf('#{') isnt -1
+    return strEscapeSingleQuotes str # force single quoted, don't use "#{foo}"
   JSON.stringify "#{str}"
+
+strEscapeSingleQuotes = (str) ->
+  dq = JSON.stringify str # double quoted
+  rdq = dq.replace /\\"/g, '"' # revert escaping double quotes
+  esq = rdq.replace /'/g, "\\\'" # esapce single quotes
+  "'" + esq.substr(1, esq.length - 2) + "'" # relpace first and last
 
 # `p()`
 # Debugging tool. Prints an object to the console.
@@ -129,7 +137,8 @@ indentLines = (indent, lines) ->
   indent + lines.replace(/\n/g, "\n"+indent)
 
 @Js2coffeeHelpers = exports =
-  {Code, p, strEscape, unreserve, unshift, isSingleLine, trim,
-  blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines}
+  {Code, p, strEscapeDoubleQuotes: strEscape, strEscapeSingleQuotes, 
+  unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, 
+  paren, truthy, indentLines}
 
 module.exports = exports  if module?

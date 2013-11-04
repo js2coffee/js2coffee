@@ -1,3 +1,4 @@
+// OPTIONS: {"single_quotes": false}
 var hash = {
     a: b,
     'a.a': b,

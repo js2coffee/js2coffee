@@ -17,7 +17,9 @@ _ = require('underscore')
 pkg = require('../../package')
 {parser} = require('./narcissus_packed')
 {Types, Typenames, Node} = require('./node_ext')
-{Code, p, strEscape, unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
+{Code, p, strEscapeDoubleQuotes, strEscapeSingleQuotes, unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
+
+strEscape = undefined 
 
 # ## Main entry point
 # This is `require('js2coffee').build()`. It takes a JavaScript source
@@ -34,6 +36,12 @@ buildCoffee = (str, opts = {}) ->
 
   if opts.indent?
     Code.INDENT = opts.indent
+
+  if opts.single_quotes? and opts.single_quotes is true
+    console.log opts.single_quotes
+    strEscape = strEscapeSingleQuotes
+  else
+    strEscape = strEscapeDoubleQuotes
 
   builder    = new Builder opts
   scriptNode = parser.parse str

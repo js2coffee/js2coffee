@@ -1,9 +1,10 @@
-// OPTIONS: {"single_quotes": true}
+// OPTIONS: {"single_quotes": false}
 var foo = 'bar';
 
 var obj = {
     key: "value",
-    escape: 'rock\'n roll "escaped" strings',
+    escape: "rock'n roll",
+    escapeAnother: "rock\"n roll",
     "array": ["one", 2, 'tree'],
     'mixed': "hello" + foo,
     'empty foo bar': '',

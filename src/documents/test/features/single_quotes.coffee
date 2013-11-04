@@ -1,6 +1,7 @@
 foo = 'bar'
 obj =
   key: 'value'
+  escape: 'rock\'n roll "escaped" strings'
   array: [
     'one'
     2
