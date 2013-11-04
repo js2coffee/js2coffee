@@ -223,11 +223,7 @@ class Builder
     if str.match(/^([_\$a-z][_\$a-z0-9]*)$/i) or str.match(/^[0-9]+$/i)
       @l(n)+str
     else
-      str = strEscape str
-      if @options.single_quotes is true
-        str = "'" + str.substr(1, str.length - 2) + "'"
-
-      @l(n)+str
+      @l(n)+strEscape str
 
   # `identifier`
   # Any object identifier like a variable name.
@@ -441,11 +437,7 @@ class Builder
       @l(n)+"/#{value}/#{flag}"
 
   'string': (n) ->
-    str = strEscape n.value
-    if @options.single_quotes is true
-      str = "'" + str.substr(1, str.length - 2) + "'"
-
-    @l(n)+ str
+    @l(n)+ strEscape n.value
 
   # `call`
   # A Function call.
