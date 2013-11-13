@@ -117,21 +117,20 @@ batch = () ->
 # Compile a path, which could be a script or a directory. If a directory
 # is passed, recursively compile all '.js' extension source files in it
 # and all subdirectories.
-compilePath = (source, topLevel, base) ->
+compilePath = (source, topLevel = yes) ->
   fsUtil.stat source, (err, stats) ->
     throw err if err and err.code isnt 'ENOENT'
     if err?.code is 'ENOENT' # file does not exist
       if topLevel and source[-3..] isnt '.js'
         # retry with extension '.js' added
-        source = "#{source}.coffee"
-        return compilePath source, topLevel, base
+        source = "#{source}.js"
+        return compilePath source, topLevel
       if topLevel
         console.error "File not found: #{source}"
         process.exit 1
       return
 
     if stats.isDirectory()
-      # watchDir source, base if opts.watch
       fsUtil.readdir source, (err, files) ->
         throw err if err and err.code isnt 'ENOENT'
         return if err?.code is 'ENOENT'
@@ -139,8 +138,8 @@ compilePath = (source, topLevel, base) ->
         # sources[index..index] = (pathUtil.join source, file for file in files)
         # sourceCode[index..index] = files.map -> null
         for file in files when not hidden file
-          compilePath (pathUtil.join source, file), no, base
-    else if topLevel or pathUtil.extname(source) is '.js'
+          compilePath (pathUtil.join source, file), no
+    else if topLevel or (pathUtil.extname source) in ['.js', '.json']
       compileScript source
 
 # Test if file is hidden (starts with a dot)
@@ -152,6 +151,8 @@ compileScript = ( fname ) ->
   try
     console.log "#### ---- #{fname}" if options.verbose
     code = fsUtil.readFileSync fname
+    if '.json' is pathUtil.extname fname
+      code = "(#{code})"
     compiled_code = js2coffee.build(code.toString(),options)
     console.log compiled_code
   catch err
