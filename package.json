@@ -1,6 +1,6 @@
 {
   "name": "js2coffee",
-  "version": "0.2.3",
+  "version": "0.2.4-DEV",
   "description": "JavaScript to CoffeeScript compiler",
   "homepage": "http://ricostacruz.com/js2coffee",
   "keywords": [
@@ -16,7 +16,8 @@
   ],
   "contributors": [
     "Rico Sta. Cruz <hi@ricostacruz.com> (http://ricostacruz.com)",
-    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)"
+    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
+    "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)"
   ],
   "bugs": {
     "url": "https://github.com/rstacruz/js2coffee/issues"
