@@ -14,7 +14,8 @@
 # engine written in JavaScript).
 
 _ = require('underscore')
-pkg = require('../../package')
+#use extension to be compatible with browserify
+pkg = require('../../package.json')
 {parser} = require('./narcissus_packed')
 {Types, Typenames, Node} = require('./node_ext')
 {Code, p, strEscapeDoubleQuotes, strEscapeSingleQuotes, unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')

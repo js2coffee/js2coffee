@@ -21,6 +21,7 @@ COFFEE  = "#{BIN}/coffee#{EXT}"
 DOCPAD  = "#{BIN}/docpad#{EXT}"
 OUT     = "#{APP}/out"
 SRC     = "#{APP}/src"
+BROWSERIFY = "#{BIN}/browserify#{EXT}"
 
 
 # -----------------
@@ -51,6 +52,14 @@ clean = (opts,next) ->
     pathUtil.join(APP, '*log')
   ]
   spawn('rm', args, {stdio:'inherit',cwd:APP}).on('close',next)
+
+browserify = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  spawn(
+    BROWSERIFY, 
+    ["#{OUT}/lib/js2coffee.js", '-s', 'js2coffee', '-o', "#{OUT}/lib/browser.js"], 
+    {stdio:'inherit',cwd:APP}
+  ).on('close',next)
 
 compile = (opts,next) ->
   (next = opts; opts = {})  unless next?
@@ -99,6 +108,10 @@ task 'clean', 'clean up instance', ->
 # compile
 task 'compile', 'compile our files', ->
   compile finish
+
+# browserify
+task 'browserify', 'browserify', ->
+  browserify finish
 
 # dev/watch
 task 'dev', 'watch and recompile our files', ->
