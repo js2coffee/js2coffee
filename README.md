@@ -12,8 +12,7 @@ A JavaScript to [CoffeeScript](http://coffeescript.org/) compiler
 npm install -g js2coffee
 ```
 
-
-## Usage
+## CLI Usage
 
 ``` bash
 js2coffee input_file.js
@@ -21,6 +20,17 @@ js2coffee input_file.js > output.coffee
 cat input.js | js2coffee
 ```
 
+You can pass some options:
+
+``` bash
+--version           # Show js2coffee version
+--verbose           # Be verbose
+--no_comments       # Do not translate comments
+--show_src_lineno   # Show src lineno's as comments
+--single_quotes     # Use single quoted string literals - default double quoted
+--help              # If you need help
+--indent            # Specify the indent character(s) - default 2 spaces
+```
 ## API Usage
 
 ### build(content, option) ###
@@ -36,32 +46,8 @@ js2coffee = require('js2coffee');
 coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "    ");
 ```
 
-## Development
-
-Install dependencies:
-
-``` bash
-npm install
-```
-
-To compile and test changes as they happen:
-
-``` bash
-npm run-script watch
-```
-
-To compile and test manually:
-
-``` bash
-npm run-script compile
-```
-
-To test manually:
-
-``` bash
-npm test
-```
-
+## Contribute
+[Discover how you can contribute by heading on over to the `CONTRIBUTING.md` file](https://github.com/rstacruz/js2coffee/blob/master/CONTRIBUTING.md#files)
 
 ## History
 [You can discover the history inside the `HISTORY.md` file](https://github.com/rstacruz/js2coffee/blob/master/HISTORY.md#files)
