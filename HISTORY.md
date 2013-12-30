@@ -1,6 +1,11 @@
 # History
 
+v0.2.4 - will be released soon
+--------------------
+- support JSON, fixed [issue #240](https://github.com/rstacruz/js2coffee/issues/240) thanks to @michaelficarra
+
 v0.2.3 - October 19, 2013
+--------------------
 - fixed nopt issue [issue #231](https://github.com/rstacruz/js2coffee/issues/231) 
 
 v0.2.2 - October 14, 2013
@@ -9,7 +14,8 @@ v0.2.2 - October 14, 2013
   - add CLI option for indent [issue #143](https://github.com/rstacruz/js2coffee/issues/143)
   - add CLI option for single quoted string literals
   - use ansidiff in tests for colored assertion errors
-  - you can pass build options as a JSON comment in test files: `// OPTIONS:{"single_quotes":true}`
+  - you can pass build options as a JSON comment in test files:  
+    `// OPTIONS:{"single_quotes":true}`
 
 v0.2.0 - September 26, 2013
 --------------------
