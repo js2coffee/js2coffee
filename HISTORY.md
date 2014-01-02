@@ -3,6 +3,7 @@
 v0.2.4 - will be released soon
 --------------------
 - support JSON, fixed [issue #240](https://github.com/rstacruz/js2coffee/issues/240) thanks to @michaelficarra
+- [PR #226](https://github.com/rstacruz/js2coffee/issues/226) fixed #142, #182, #108 - thanks to @nateschiffer
 
 v0.2.3 - October 19, 2013
 --------------------
