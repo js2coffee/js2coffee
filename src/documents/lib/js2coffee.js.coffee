@@ -865,7 +865,7 @@ class Transformer
 
   'if': (n) ->
     # *Account for `if(x) {} else { something }` which should be `something unless x`.*
-    if n.thenPart.children.length == 0 and n.elsePart?.children.length > 0
+    if n.thenPart.isA('block') and n.thenPart.children.length == 0 and (!n.elsePartisA('block') or n.elsePart?.children.length > 0)
       n.positive = false
       n.thenPart = n.elsePart
       delete n.elsePart
