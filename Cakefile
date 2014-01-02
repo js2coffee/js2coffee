@@ -19,6 +19,7 @@ BIN     = "#{APP}/node_modules/.bin"
 CAKE    = "#{BIN}/cake#{EXT}"
 COFFEE  = "#{BIN}/coffee#{EXT}"
 DOCPAD  = "#{BIN}/docpad#{EXT}"
+UGLIFY  = "#{BIN}/uglifyjs#{EXT}"
 OUT     = "#{APP}/out"
 SRC     = "#{APP}/src"
 BROWSERIFY = "#{BIN}/browserify#{EXT}"
@@ -60,6 +61,10 @@ browserify = (opts,next) ->
     ["#{OUT}/lib/js2coffee.js", '-s', 'js2coffee', '-o', "#{OUT}/lib/browser.js"], 
     {stdio:'inherit',cwd:APP}
   ).on('close',next)
+
+uglify = (opts,next) ->
+  (next = opts; opts = {})  unless next?
+  spawn(UGLIFY, ["#{OUT}/lib/browser.js", '-ms'], {stdio:'inherit',cwd:APP}).on('close',next)
 
 compile = (opts,next) ->
   (next = opts; opts = {})  unless next?
@@ -112,6 +117,10 @@ task 'compile', 'compile our files', ->
 # browserify
 task 'browserify', 'browserify', ->
   browserify finish
+
+# uglify
+task 'uglify', 'minify browser.js and dump to stdout', ->
+  uglify ->
 
 # dev/watch
 task 'dev', 'watch and recompile our files', ->
