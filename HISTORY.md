@@ -1,11 +1,11 @@
 # History
 
-v0.2.4 - 03.01.2014
+v0.2.4 - January 03, 2014
 --------------------
-- merged [fixes #240: treat unrecognised extensions as JS; support JSON](https://github.com/rstacruz/js2coffee/issues/241) thanks to @michaelficarra
-- merged [Fix incorrect translation of unbracketed then/else (fixes #141, #182)](https://github.com/rstacruz/js2coffee/issues/226) fixes also #108 - thanks to @nateschiffer
-- merged [Parenthesize function expressions that are part of member expressions](https://github.com/rstacruz/js2coffee/issues/155) fixed #222, #135, #55, #177 thanks to @karlbohlmark
-- merged [Support empty for loops. Closes #116.](https://github.com/rstacruz/js2coffee/issues/120) fixed #116 thanks to @tricknotes
+- merged [fixes #240: treat unrecognised extensions as JS; support JSON](https://github.com/rstacruz/js2coffee/issues/241) thanks to [@michaelficarra](https://github.com/michaelficarra)
+- merged [Fix incorrect translation of unbracketed then/else (fixes #141, #182)](https://github.com/rstacruz/js2coffee/issues/226) fixes also [#108](https://github.com/rstacruz/js2coffee/issues/108) - thanks to [@nateschiffer](https://github.com/nateschiffer)
+- merged [Parenthesize function expressions that are part of member expressions](https://github.com/rstacruz/js2coffee/issues/155) fixed [#222](https://github.com/rstacruz/js2coffee/issues/222), [#135](https://github.com/rstacruz/js2coffee/issues/135), [#55](https://github.com/rstacruz/js2coffee/issues/55), [#177](https://github.com/rstacruz/js2coffee/issues/177) thanks to [@karlbohlmark](https://github.com/karlbohlmark)
+- merged [Support empty for loops. Closes #116.](https://github.com/rstacruz/js2coffee/issues/120) thanks to [@tricknotes](https://github.com/tricknotes)
 
 v0.2.3 - October 19, 2013
 --------------------
