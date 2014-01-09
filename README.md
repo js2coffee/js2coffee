@@ -43,7 +43,7 @@ You can pass some options:
 
 ``` javascript
 js2coffee = require('js2coffee');
-coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "    ");
+coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "    "});
 ```
 
 ## Try out in the browser
