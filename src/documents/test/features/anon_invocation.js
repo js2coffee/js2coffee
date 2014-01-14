@@ -1,2 +1,2 @@
-(function ($) { $; }(jQuery));
-(function ($) { $; }());
+(function ($) { return $; }(jQuery));
+(function ($) { return $; }());
