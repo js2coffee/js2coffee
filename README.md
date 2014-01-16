@@ -47,7 +47,8 @@ coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "   
 ```
 
 ## Try out in the browser
-[rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)
+[rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)  
+See hints for [js2coffee.org](https://github.com/rstacruz/js2coffee/tree/gh-pages)
 
 ## Contribute
 [Discover how you can contribute by heading on over to the `CONTRIBUTING.md` file](https://github.com/rstacruz/js2coffee/blob/master/CONTRIBUTING.md#files)
