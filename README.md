@@ -54,7 +54,7 @@ Js2coffee has some kown issues
 - CoffeeScript keywords become converted with an trailing underscore - [keywords](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=keywords&page=1&sort=updated&state=open)
 - Narcissus fails to parse JavaScript keywords as object properties - [narcissus](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=narcissus&page=1&sort=updated&state=open)
 - some IIFE syntaxes fail - [IIFE](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=iife&page=1&sort=updated&state=open) 
-- Empty function declrations within if statements fail
+- Empty function declrations within if statements fail [test](https://github.com/rstacruz/js2coffee/blob/069c4b0aaf4834e977a4ab60a571b7ea02b6450a/src/documents/test/pending/empty_function_with_postfix_if.js)
 
 ## Try out in the browser
 [http://rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)  
