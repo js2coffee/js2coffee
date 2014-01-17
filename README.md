@@ -49,14 +49,18 @@ coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "   
 ## Known issues
 Js2coffee has some kown issues
 
-- implicit return's for switch statements fail
-- CoffeeScript keywords become converted with an trailing underscore
-- Narcissus fails to parse JavaScript keywords as object properties
+- implicit return's for switch statements fail - [#168](https://github.com/rstacruz/js2coffee/pull/168)
+- some switch statements fail - [switch](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=switch-case&page=1&sort=updated&state=open)
+- CoffeeScript keywords become converted with an trailing underscore - [keywords](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=keywords&page=1&sort=updated&state=open)
+- Narcissus fails to parse JavaScript keywords as object properties - [narcissus](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=narcissus&page=1&sort=updated&state=open)
+- some IIFE syntaxes fail - [IIFE](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=iife&page=1&sort=updated&state=open) 
 - Empty function declrations within if statements fail
 
 ## Try out in the browser
-[rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)  
-See hints for [js2coffee.org](https://github.com/rstacruz/js2coffee/tree/gh-pages)
+[http://rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)  
+
+### js2coffee.org is outdated
+[http://js2coffee.org](https://github.com/rstacruz/js2coffee/tree/gh-pages) is curently outdated
 
 ## Contribute
 [Discover how you can contribute by heading on over to the `CONTRIBUTING.md` file](https://github.com/rstacruz/js2coffee/blob/master/CONTRIBUTING.md#files)
