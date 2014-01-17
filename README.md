@@ -46,6 +46,14 @@ js2coffee = require('js2coffee');
 coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "    "});
 ```
 
+## Known issues
+Js2coffee has some kown issues
+
+- implicit return's for switch statements fail
+- CoffeeScript keywords become converted with an trailing underscore
+- Narcissus fails to parse JavaScript keywords as object properties
+- Empty function declrations within if statements fail
+
 ## Try out in the browser
 [rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)
 
