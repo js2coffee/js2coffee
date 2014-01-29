@@ -57,7 +57,7 @@ Js2coffee has some kown issues
 - Empty function declrations within if statements fail - [#162](https://github.com/rstacruz/js2coffee/issues/162)
 
 ## Try out in the browser
-[http://rstacruz.github.io/js2coffee/try.html](http://rstacruz.github.io/js2coffee/try.html)  
+[http://rstacruz.github.io/js2coffee](http://rstacruz.github.io/js2coffee)  
 
 ### js2coffee.org is outdated
 [http://js2coffee.org](https://github.com/rstacruz/js2coffee/tree/gh-pages) is curently outdated
