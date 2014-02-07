@@ -20,13 +20,14 @@ If you've found a problem in Js2coffee use the [Issue Tracker](https://github.co
 
 With your bug report, specify:
 
+- **what you did**
+- **what happened**
+- **what you expected**
 - your Js2coffee version `js2coffee -v` or look it up in the package.json
 - your node version `node -v`
 - your npm version `npm -v`
 - your OS, architecture and version
-- what you did
-- what happened
-- what you expected  
+
 
 If you've found multiple bugs, which are not reported already, you should create **one issue per bug**.
 
