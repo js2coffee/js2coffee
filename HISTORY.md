@@ -1,5 +1,15 @@
 # History
 
+v0.2.7 - Februrary 7, 2014
+--------------------
+- fix [merge #233 swtich with >2 cases](https://github.com/js2coffee/js2coffee/pull/233) 
+thanks to [Tomasz Szatkowski](https://github.com/szatkus)
+
+
+v0.2.6 - January 31, 2014
+--------------------
+- fix [fix #252 install fails on unbutu](https://github.com/js2coffee/js2coffee/issues/252)
+
 v0.2.5 - January 20, 2014
 --------------------
 - merged [Add implicit returns (mostly fixes #48)](https://github.com/rstacruz/js2coffee/pull/168) thanks to [Dave Burt](https://github.com/dburt)
