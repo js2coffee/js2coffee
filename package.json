@@ -2,7 +2,7 @@
   "name": "js2coffee",
   "version": "0.2.7",
   "description": "JavaScript to CoffeeScript compiler",
-  "homepage": "http://ricostacruz.com/js2coffee",
+  "homepage": "http://js2coffee.org",
   "keywords": [
     "javascript",
     "coffeescript",
@@ -21,11 +21,11 @@
     "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)"
   ],
   "bugs": {
-    "url": "https://github.com/rstacruz/js2coffee/issues"
+    "url": "https://github.com/js2coffee/js2coffee/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rstacruz/js2coffee.git"
+    "url": "https://github.com/js2coffee/js2coffee.git"
   },
   "engines": {
     "node": ">=0.4.0"
