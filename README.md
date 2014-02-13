@@ -1,6 +1,6 @@
 # Js2Coffee
 
-[![Check this project's build status on TravisCI](https://secure.travis-ci.org/rstacruz/js2coffee.png?branch=master)](http://travis-ci.org/rstacruz/js2coffee)
+[![Check this project's build status on TravisCI](https://secure.travis-ci.org/js2coffee/js2coffee.png?branch=master)](http://travis-ci.org/js2coffee/js2coffee)
 [![View this project's NPM page](https://badge.fury.io/js/js2coffee.png)](https://npmjs.org/package/js2coffee)
 
 A JavaScript to [CoffeeScript](http://coffeescript.org/) compiler
