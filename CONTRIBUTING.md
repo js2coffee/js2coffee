@@ -5,8 +5,7 @@ Before anything else, thank you. Thank you for taking some of your precious time
 
 - [Contributing to Js2coffee](#reporting)
   - [Creating a Bug Report](#bugreport)
-    - [js2coffee.org isn't up to date!](#website)
-    - [Behaviour of CoffeeScript](#coffeeScript)
+  - [Behaviour of CoffeeScript](#coffeeScript)
   - [Creating a Pull Request](#pullRequest)
   - [Setting Up a Development Environment](#dev)
 
@@ -23,6 +22,8 @@ With your bug report, specify:
 - **what you did**
 - **what happened**
 - **what you expected**
+- **did you do that in the online editor**
+- or did you installed js2coffee via npm, if yes:
 - your Js2coffee version `js2coffee -v` or look it up in the package.json
 - your node version `node -v`
 - your npm version `npm -v`
@@ -31,14 +32,8 @@ With your bug report, specify:
 
 If you've found multiple bugs, which are not reported already, you should create **one issue per bug**.
 
-<a name="website" />
-### js2coffee.org isn't up to date!
-The website [js2coffee.org](http://js2coffee.org) contains an **old version** of Js2coffee.
-When you reporting a bug, ensure that you use the latest version.  
-This will be fixed soon.
-
 <a name="coffeeScript" />
-### Behaviour of CoffeeScript
+## Behaviour of CoffeeScript
 Remind that CoffeeScript itself has some special restrictions [[1]](http://https://github.com/michaelficarra/CoffeeScriptRedux/wiki/Intentional-Deviation-From-jashkenas-coffee-script)[[2]](http://ceronman.com/2012-09-17/coffeescript-less-typing-bad-readability) and also bugs.
 So if your want to report a bug, ensure that it's neither a feature nor a bug of CoffeeScript.
 
