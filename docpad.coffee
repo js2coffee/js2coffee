@@ -1,8 +1,13 @@
-# Prepare
-delay = (next) -> setTimeout(next,500)
-
 # Export
-module.exports =
+docpadConfig =
+	###
+	environments:
+		development:
+			plugins:
+				uglify:
+					enabled: true
+	###
+
 	renderPasses: 2
 
 	prompts: false
@@ -10,8 +15,5 @@ module.exports =
 	templateData:
 		package: require('./package.json')
 
-	environments:
-		development:
-			plugins:
-				uglify:
-					enabled: true
+# Export
+module.exports = docpadConfig
