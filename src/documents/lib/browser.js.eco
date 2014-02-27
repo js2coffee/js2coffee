@@ -1,5 +1,6 @@
 ---
-minify: true
+uglify: true
+browserify: false
 ---
 
 <%- @include('./narcissus_packed') %>

@@ -1,10 +1,15 @@
 # History
 
+v0.3.0 - Februrary 27, 2014
+--------------------
+- Updated for CoffeeScript ~1.7.1 from ~1.6.3
+- Browserify build no longer includes the entire `package.json` file
+  - It was only used for the verion number, which is now inserted automatically via our build script
+
 v0.2.7 - Februrary 7, 2014
 --------------------
 - fix [merge #233 swtich with >2 cases](https://github.com/js2coffee/js2coffee/pull/233) 
 thanks to [Tomasz Szatkowski](https://github.com/szatkus)
-
 
 v0.2.6 - January 31, 2014
 --------------------

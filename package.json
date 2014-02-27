@@ -1,24 +1,57 @@
 {
+  "title": "Js2Coffee",
   "name": "js2coffee",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "description": "JavaScript to CoffeeScript compiler",
   "homepage": "http://js2coffee.org",
+  "license": {
+    "type": "MIT"
+  },
   "keywords": [
     "javascript",
     "coffeescript",
     "language",
     "compiler"
   ],
-  "author": "Rico Sta. Cruz <hi@ricostacruz.com> (http://ricostacruz.com)",
+  "badges": {
+    "travis": true,
+    "npm": true,
+    "david": true,
+    "daviddev": true,
+    "gittip": "bevry",
+    "flattr": "344188/balupton-on-Flattr",
+    "paypal": "QB8GQPZAH84N6",
+    "bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a",
+    "wishlist": "http://amzn.com/w/2F8TXKSNAFG4V"
+  },
+  "browsers": true,
+  "author": "2011+ Rico Sta. Cruz <hi@ricostacruz.com> (http://ricostacruz.com)",
   "maintainers": [
     "Rico Sta. Cruz <hi@ricostacruz.com> (http://ricostacruz.com)",
     "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
     "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)"
   ],
   "contributors": [
-    "Rico Sta. Cruz <hi@ricostacruz.com> (http://ricostacruz.com)",
+    "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)",
     "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
-    "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)"
+    "clkao (https://github.com/clkao)",
+    "codelahoma (https://github.com/codelahoma)",
+    "dburt (https://github.com/dburt)",
+    "ForbesLindesay (https://github.com/ForbesLindesay)",
+    "gabipurcaru (https://github.com/gabipurcaru)",
+    "joelvh (https://github.com/joelvh)",
+    "karlbohlmark (https://github.com/karlbohlmark)",
+    "MichaelBlume (https://github.com/MichaelBlume)",
+    "michaelficarra (https://github.com/michaelficarra)",
+    "MissingHandle (https://github.com/MissingHandle)",
+    "nateschiffer (https://github.com/nateschiffer)",
+    "nilbus (https://github.com/nilbus)",
+    "rstacruz (https://github.com/rstacruz)",
+    "thoka (https://github.com/thoka)",
+    "tricknotes (https://github.com/tricknotes)",
+    "tsantef (https://github.com/tsantef)",
+    "twilson63 (https://github.com/twilson63)",
+    "wlaurance (https://github.com/wlaurance)"
   ],
   "bugs": {
     "url": "https://github.com/js2coffee/js2coffee/issues"
@@ -32,21 +65,21 @@
   },
   "dependencies": {
     "underscore": "~1.5.1",
-    "coffee-script": "~1.6.2",
+    "coffee-script": "~1.7.1",
     "file": "~0.2.1",
     "nopt": "~2.1.1"
   },
   "devDependencies": {
     "glob": "~3.2.1",
     "docpad": "~6.63.3",
+    "docpad-plugin-browserifydocs": "~2.1.0",
     "docpad-plugin-eco": "~2.0.3",
-    "docpad-plugin-coffeescript": "~2.2.3",
+    "docpad-plugin-coffeescript": "~2.3.0",
     "docpad-plugin-uglify": "~2.4.0",
+    "projectz": "~0.3.11",
     "joe": "~1.3.0",
     "joe-reporter-console": "~1.2.1",
-    "ansidiff": "~1.0.0",
-    "browserify": "~3.18.0",
-    "uglify-js": "2.4.8"
+    "ansidiff": "~1.0.0"
   },
   "directories": {
     "lib": "./out/lib"
@@ -58,7 +91,11 @@
     "preinstall": "npm run-script ./cyclic.js",
     "watch": "./node_modules/.bin/cake watch",
     "compile": "./node_modules/.bin/cake compile",
-    "test": "./node_modules/.bin/cake test"
+    "test": "node ./out/test/everything.js"
   },
-  "main": "./out/lib/js2coffee"
+  "main": "./out/lib/js2coffee",
+  "cakeConfiguration": {
+    "COFFEE_SRC_PATH": false,
+    "DOCPAD_SRC_PATH": "src"
+  }
 }
