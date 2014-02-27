@@ -1,19 +1,18 @@
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
+# v1.3.10 December 10, 2013
+# https://github.com/bevry/base
 
-pids
-logs
-results
+# Temp Files
+**/*.log
+**/.docpad.db
 
-node_modules
+# Build Files
+build/
+components/
+bower_components/
+node_modules/
+out/
 
-env.coffee
-.env
+# =====================================
+# CUSTOM MODIFICATIONS
 
-out
+# None

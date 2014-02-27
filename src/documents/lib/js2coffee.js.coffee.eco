@@ -14,13 +14,11 @@
 # engine written in JavaScript).
 
 _ = require('underscore')
-#use extension to be compatible with browserify
-pkg = require('../../package.json')
 {parser} = require('./narcissus_packed')
 {Types, Typenames, Node} = require('./node_ext')
 {Code, p, strEscapeDoubleQuotes, strEscapeSingleQuotes, unreserve, unshift, isSingleLine, trim, blockTrim, ltrim, rtrim, strRepeat, paren, truthy, indentLines} = require('./helpers')
 
-strEscape = undefined 
+strEscape = undefined
 
 # ## Main entry point
 # This is `require('js2coffee').build()`. It takes a JavaScript source
@@ -945,7 +943,7 @@ class UnsupportedError
 # ## Exports
 
 @Js2coffee = exports =
-  VERSION: pkg.version
+  VERSION: '<%- @package.version %>'
   build: buildCoffee
   UnsupportedError: UnsupportedError
 
