@@ -20,7 +20,7 @@ joe.suite 'js2coffee', (suite,test) ->
       ###
 
       # default options
-      options = {no_comments: true}
+      options = {no_comments: true, indent: "  "}
       optionsPattern = /^\/\/\s*OPTIONS:\s*(.*)/
       input = fs.readFileSync(f).toString().trim()
       matches = input.match optionsPattern

@@ -665,7 +665,7 @@ class Builder
         if fall_through == true
           c.add @l(item)+", #{@build item.caseLabel}"
         else
-          c.add @l(item)+"  when #{@build item.caseLabel}"
+          c.add @l(item)+"#{Code.INDENT}when #{@build item.caseLabel}"
 
       if @body(item.statements).length == 0
         fall_through = true
