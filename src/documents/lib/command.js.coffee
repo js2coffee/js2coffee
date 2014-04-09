@@ -156,7 +156,7 @@ compileScript = ( fname ) ->
     compiled_code = js2coffee.build(code.toString(),options)
     console.log compiled_code
   catch err
-    console.warn err instanceof Error and err.stack or "ERROR: #{err} while compiling #{file}"
+    console.warn err instanceof Error and err.stack or "ERROR: #{err} while compiling #{fname}"
     exit 1 if options.stop_on_error
 
 compileFromStdin = ->
