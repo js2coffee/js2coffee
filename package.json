@@ -98,7 +98,6 @@
   "browser": "./out/lib/browser.js",
   "main": "./out/lib/js2coffee",
   "cakeConfiguration": {
-    "COFFEE_SRC_PATH": false,
     "DOCPAD_SRC_PATH": "src"
   }
 }
