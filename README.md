@@ -29,7 +29,7 @@ A JavaScript to [CoffeeScript](http://coffeescript.org/) compiler
 ### [Browserify](http://browserify.org/)
 - Use: `require('js2coffee')`
 - Install: `npm install --save js2coffee`
-- CDN URL: `//wzrd.in/bundle/js2coffee@0.2.7`
+- CDN URL: `//wzrd.in/bundle/js2coffee@0.3.0`
 
 ### [Ender](http://ender.jit.su/)
 - Use: `require('js2coffee')`
@@ -149,6 +149,7 @@ These amazing people have contributed code to this project:
 - [dburt](https://github.com/dburt) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=dburt)
 - [ForbesLindesay](https://github.com/ForbesLindesay) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=ForbesLindesay)
 - [gabipurcaru](https://github.com/gabipurcaru) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=gabipurcaru)
+- [grandquista](https://github.com/grandquista) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=grandquista)
 - [joelvh](https://github.com/joelvh) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=joelvh)
 - [karlbohlmark](https://github.com/karlbohlmark) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=karlbohlmark)
 - [MichaelBlume](https://github.com/MichaelBlume) — [view contributions](https://github.com/js2coffee/js2coffee/commits?author=MichaelBlume)
