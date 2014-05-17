@@ -29,4 +29,14 @@ bower.json
 # =====================================
 # CUSTOM MODIFICATIONS
 
-# None
+out/ace
+out/images
+out/test
+out/CNAME
+out/editor.js
+out/editor.html
+out/index.js
+out/index.html
+out/style.css
+.env
+.editorconfig
