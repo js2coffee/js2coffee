@@ -1,14 +1,14 @@
 # History
 
-v0.3.0 - Februrary 27, 2014
+v0.3.0 - May 17, 2014
 --------------------
 - Updated for CoffeeScript ~1.7.1 from ~1.6.3
 - Browserify build no longer includes the entire `package.json` file
-  - It was only used for the verion number, which is now inserted automatically via our build script
+  - It was only used for the version number, which is now inserted automatically via our build script
 
 v0.2.7 - Februrary 7, 2014
 --------------------
-- fix [merge #233 swtich with >2 cases](https://github.com/js2coffee/js2coffee/pull/233) 
+- fix [merge #233 swtich with >2 cases](https://github.com/js2coffee/js2coffee/pull/233)
 thanks to [Tomasz Szatkowski](https://github.com/szatkus)
 
 v0.2.6 - January 31, 2014
@@ -28,7 +28,7 @@ v0.2.4 - January 03, 2014
 
 v0.2.3 - October 19, 2013
 --------------------
-- fixed nopt issue [issue #231](https://github.com/rstacruz/js2coffee/issues/231) 
+- fixed nopt issue [issue #231](https://github.com/rstacruz/js2coffee/issues/231)
 
 v0.2.2 - October 14, 2013
 --------------------
@@ -81,7 +81,7 @@ Thanks to @Wisdom, @nilbus, @joelvh, @gabipurcaru, @michaelficarra, @tricknotes,
   * Fix misspelling in package.json.
   * Object lookups using object literals (`o[{a:1, b:2}]`) are now supported.
   * Fixed `js2coffee file.js` not working in Linux. (#90, #54)
-  * Returning from an if without curly braces are now supported. (`if (x) return 
+  * Returning from an if without curly braces are now supported. (`if (x) return
       y;`)) (#50)
   * Returning object literals should now have the objects parenthesized
     properly.  ( `return {x:1, y:2}`) (#52)

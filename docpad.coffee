@@ -1,13 +1,5 @@
 # Export
 docpadConfig =
-	###
-	environments:
-		development:
-			plugins:
-				uglify:
-					enabled: true
-	###
-
 	renderPasses: 2
 
 	prompts: false

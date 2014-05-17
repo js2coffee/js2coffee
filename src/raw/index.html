@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Js2coffee: convert JavaScript code to CoffeeScript</title>
+    <meta charset='UTF-8' />
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    <meta content='width=device-width, initial-scale=1.0' name='viewport' />
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <section id="info">
+        <div class="version left" id="js2coffee-version">Js2coffee</div>
+        <div class="version right" id="coffeescript-version">CoffeeScript</div>
+
+        <iframe id="editorFrame" src="editor.html"></iframe>
+
+        <p class="more-info">
+            <a href="#overlay" id="open-overlay">Editor ↑</a>
+            <a href="#information">About ↓</a>
+        </p>
+        <h1 id="information">The JavaScript to CoffeeScript compiler</h1>
+        <h2>Js2coffee helps you migrate projects to CoffeeScript</h2>
+        <div class="logo">
+            <img src="images/logo.gif">
+        </div>
+        <article>
+            <div class="c">
+                <h3>Information</h3>
+                <p>Js2coffee helps you migrate projects to <a href="http://www.coffeescript.org">CoffeeScript</a> by compiling your JavaScript code into CoffeeScript.</p><p>Js2coffee is a project of <a href="http://ricostacruz.com">Rico Sta Cruz</a>. The source code is available over at <a href="http://github.com/rstacruz/js2coffee">GitHub</a>.</p>
+
+                <h3 id="local_usage">Local usage</h3><p>Js2coffee is also available as a NodeJS module.</p>
+                <pre><code>$ npm install js2coffee
+$ js2coffee file.js &gt; file.coffee</code>
+                </pre>
+
+                <h3 id="reporting_issues">Reporting issues</h3><p>Please report any issues you find over to the <a href="http://github.com/rstacruz/js2coffee/issues">Js2coffee issue tracker</a>. Read the
+                <a href="https://github.com/rstacruz/js2coffee/blob/master/CONTRIBUTING.md">contribution guide</a> before reporting issues.</p></div>
+        </article>
+    </section>
+    <div id="overlay">
+        <a href="#" class="close">&times;</a>
+            <p>You can switch between <br><strong>JS → CoffeeScript</strong> and <strong>CoffeeScript → JS</strong><br>
+            Just focus the editor and start typing.</p>
+
+        <h3>Options</h3>
+            <select type="text" name="js2coffee_indent">
+                <option value="  ">2 whitespaces</option>
+                <option value="    ">4 whitespaces</option>
+                <option value="&#09;">1 tab</option>
+            </select> Js2coffee indent
+            <br><input type="checkbox" name="line_numbers" /> Show Original Line Numbers (js2coffee)
+
+            <br><input type="checkbox" checked="checked" name="token_highlight"/> Highlight Tokens
+
+            <br><input type="checkbox" checked="checked" class="editor" name="ShowInvisibles"/> Show Invisibles
+            <br><input type="checkbox" checked="checked" class="editor renderer" name="ShowGutter"/> Show Gutter
+            <br><input type="checkbox" class="editor renderer" name="ShowPrintMargin"/> Show Print Gutter
+
+        <h3>Shortcuts</h3>
+            <ul>
+                <li><strong>Ctrl + ENTER </strong> - execuate JS code</li>
+                <li><strong>Cmd/Ctrl + Shift + 7 </strong> - (un)comment JS blocks </li>
+                <li><strong>Cmd/Ctrl + L </strong> - jump to line </li>
+            </ul>
+        <h3>Hints</h3>
+            <p>When using the browser console, ensure to use the <strong>editor.html</strong> frame.</p>
+
+    </div>
+    <div id="mask" onclick="document.location='#';"></div>
+
+    <script src="./index.js"></script>
+
+    <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-25112723-1','auto');ga('send','pageview');</script>
+</body>
+</html>
