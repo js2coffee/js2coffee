@@ -90,7 +90,7 @@
     "js2coffee": "./out/bin/js2coffee"
   },
   "scripts": {
-    "preinstall": "npm run-script ./cyclic.js",
+    "preinstall": "node ./cyclic.js",
     "watch": "./node_modules/.bin/cake watch",
     "compile": "./node_modules/.bin/cake compile",
     "test": "node ./out/test/everything.js"
