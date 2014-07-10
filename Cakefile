@@ -1,4 +1,4 @@
-# v1.3.15 May 16, 2014
+# v1.3.20 June 16, 2014
 # https://github.com/bevry/base
 
 
@@ -18,27 +18,29 @@ NPM              = (if WINDOWS then process.execPath.replace('node.exe', 'npm.cm
 EXT              = (if WINDOWS then '.cmd' else '')
 GIT              = "git"
 
-APP_PATH        = process.cwd()
+APP_PATH         = process.cwd()
 PACKAGE_PATH     = pathUtil.join(APP_PATH, "package.json")
 PACKAGE_DATA     = require(PACKAGE_PATH)
 
 MODULES_PATH     = pathUtil.join(APP_PATH, "node_modules")
 DOCPAD_PATH      = pathUtil.join(MODULES_PATH, "docpad")
-BIN_PATH         = pathUtil.join(MODULES_PATH, ".bin")
-CAKE             = pathUtil.join(BIN_PATH, "cake" + EXT)
-COFFEE           = pathUtil.join(BIN_PATH, "coffee" + EXT)
-PROJECTZ         = pathUtil.join(BIN_PATH, "projectz" + EXT)
-DOCCO            = pathUtil.join(BIN_PATH, "docco" + EXT)
-DOCPAD           = pathUtil.join(BIN_PATH, "docpad" + EXT)
+CAKE             = pathUtil.join(MODULES_PATH, "coffee-script/bin/cake")
+COFFEE           = pathUtil.join(MODULES_PATH, "coffee-script/bin/coffee")
+PROJECTZ         = pathUtil.join(MODULES_PATH, "projectz/bin/projectz")
+DOCCO            = pathUtil.join(MODULES_PATH, "docco/bin/docco")
+DOCPAD           = pathUtil.join(MODULES_PATH, "docpad/bin/docpad")
+BISCOTTO         = pathUtil.join(MODULES_PATH, "biscotto/bin/biscotto")
 
 config = {}
-config.TEST_PATH = "test"
-config.DOCCO_SRC_PATH   = null
-config.DOCCO_OUT_PATH   = "docs"
-config.COFFEE_SRC_PATH  = null
-config.COFFEE_OUT_PATH  = "out"
-config.DOCPAD_SRC_PATH  = null
-config.DOCPAD_OUT_PATH  = "out"
+config.TEST_PATH           = "test"
+config.DOCCO_SRC_PATH      = null
+config.DOCCO_OUT_PATH      = "docs"
+config.BISCOTTO_SRC_PATH   = null
+config.BISCOTTO_OUT_PATH   = "docs"
+config.COFFEE_SRC_PATH     = null
+config.COFFEE_OUT_PATH     = "out"
+config.DOCPAD_SRC_PATH     = null
+config.DOCPAD_OUT_PATH     = "out"
 
 for own key,value of (PACKAGE_DATA.cakeConfiguration or {})
 	config[key] = value
@@ -133,11 +135,11 @@ actions =
 		step2 = ->
 			return step3()  if !config.COFFEE_SRC_PATH or !fsUtil.existsSync(COFFEE)
 			console.log('coffee compile')
-			spawn(COFFEE, ['-co', config.COFFEE_OUT_PATH, config.COFFEE_SRC_PATH], {stdio:'inherit', cwd:APP_PATH}).on('close', safe next, step3)
+			spawn(NODE, [COFFEE, '-co', config.COFFEE_OUT_PATH, config.COFFEE_SRC_PATH], {stdio:'inherit', cwd:APP_PATH}).on('close', safe next, step3)
 		step3 = ->
 			return step4()  if !config.DOCPAD_SRC_PATH or !fsUtil.existsSync(DOCPAD)
 			console.log('docpad generate')
-			spawn(DOCPAD, ['generate'], {stdio:'inherit', cwd:APP_PATH}).on('close', safe next, step4)
+			spawn(NODE, [DOCPAD, 'generate'], {stdio:'inherit', cwd:APP_PATH}).on('close', safe next, step4)
 		step4 = next
 
 		# Start
@@ -154,12 +156,12 @@ actions =
 		step2 = ->
 			return step3()  if !config.COFFEE_SRC_PATH or !fsUtil.existsSync(COFFEE)
 			console.log('coffee watch')
-			spawn(COFFEE, ['-wco', config.COFFEE_OUT_PATH, config.COFFEE_SRC_PATH], {stdio:'inherit', cwd:APP_PATH}).on('close', safe)  # background
+			spawn(NODE, [COFFEE, '-wco', config.COFFEE_OUT_PATH, config.COFFEE_SRC_PATH], {stdio:'inherit', cwd:APP_PATH}).on('close', safe)  # background
 			step3()  # continue while coffee runs in background
 		step3 = ->
 			return step4()  if !config.DOCPAD_SRC_PATH or !fsUtil.existsSync(DOCPAD)
 			console.log('docpad run')
-			spawn(DOCPAD, ['run'], {stdio:'inherit', cwd:APP_PATH}).on('close', safe)  # background
+			spawn(NODE, [DOCPAD, 'run'], {stdio:'inherit', cwd:APP_PATH}).on('close', safe)  # background
 			step4()  # continue while docpad runs in background
 		step4 = next
 
@@ -193,12 +195,16 @@ actions =
 		step2 = ->
 			return step3()  if !fsUtil.existsSync(PROJECTZ)
 			console.log('projectz compile')
-			spawn(PROJECTZ, ['compile'], {stdio:'inherit', cwd:APP_PATH}).on('close', safe next, step3)
+			spawn(NODE, [PROJECTZ, 'compile'], {stdio:'inherit', cwd:APP_PATH}).on('close', safe next, step3)
 		step3 = ->
 			return step4()  if !config.DOCCO_SRC_PATH or !fsUtil.existsSync(DOCCO)
 			console.log('docco compile')
-			exec("#{DOCCO} -o #{config.DOCCO_OUT_PATH} #{config.DOCCO_SRC_PATH}", {stdio:'inherit', cwd:APP_PATH}, safe next, step4)
+			exec("#{NODE} #{DOCCO} -o #{config.DOCCO_OUT_PATH} #{config.DOCCO_SRC_PATH}", {stdio:'inherit', cwd:APP_PATH}, safe next, step4)
 		step4 = ->
+			return step5()  if !config.BISCOTTO_SRC_PATH or !fsUtil.existsSync(BISCOTTO)
+			console.log('biscotto compile')
+			exec("""#{BISCOTTO} --name #{PACKAGE_DATA.title or PACKAGE_DATA.name} --title "#{PACKAGE_DATA.title or PACKAGE_DATA.name} API Documentation" --readme README.md --output-dir #{config.BISCOTTO_OUT_PATH} #{config.BISCOTTO_SRC_PATH} - LICENSE.md HISTORY.md""", {stdio:'inherit', cwd:APP_PATH}, safe next, step5)
+		step5 = ->
 			console.log('cake test')
 			actions.test(opts, safe next, step5)
 		step5 = next

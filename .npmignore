@@ -1,4 +1,4 @@
-# v1.3.10 December 10, 2013
+# v1.3.18 June 8, 2014
 # https://github.com/bevry/base
 
 # Temp Files
@@ -12,6 +12,9 @@ bower_components/
 node_modules/
 
 # Development Files
+.editorconfig
+.jshintrc
+coffeelint.json
 .travis*
 Cakefile
 Makefile
@@ -39,4 +42,3 @@ out/index.js
 out/index.html
 out/style.css
 .env
-.editorconfig
