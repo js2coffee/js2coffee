@@ -1,5 +1,11 @@
 # History
 
+v0.3.1 - July 11, 2014
+--------------------
+- Update dependencies
+- Fixed DocPad always being installed (only needed for dev)
+
+
 v0.3.0 - May 17, 2014
 --------------------
 - Updated for CoffeeScript ~1.7.1 from ~1.6.3
