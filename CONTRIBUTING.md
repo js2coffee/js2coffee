@@ -32,6 +32,8 @@ With your bug report, specify:
 
 If you've found multiple bugs, which are not reported already, you should create **one issue per bug**.
 
+Issues with insufficient information will be closed without comment.
+
 <a name="coffeeScript" />
 ## Behaviour of CoffeeScript
 Remind that CoffeeScript itself has some special restrictions [[1]](http://https://github.com/michaelficarra/CoffeeScriptRedux/wiki/Intentional-Deviation-From-jashkenas-coffee-script)[[2]](http://ceronman.com/2012-09-17/coffeescript-less-typing-bad-readability) and also bugs.
