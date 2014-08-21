@@ -9,12 +9,12 @@ window.onload =  function() {
   window.js2coffee = require('./lib/browser.js')
   window.CoffeeScript = require('coffee-script')
 
-  var js2coffeeOptions = {}
+  window.js2coffeeOptions = {}
   js2coffeeOptions.show_src_lineno = false;
 
   var TokenTooltip = ace.require("kitchen-sink/token_tooltip").TokenTooltip;
 
-  var editor1 = ace.edit("editor1");
+  window.editor1 = ace.edit("editor1");
   editor1.getSession().setMode("ace/mode/javascript");
   editor1.setFontSize(14);
 
@@ -33,7 +33,7 @@ window.onload =  function() {
     readOnly: true
   });
 
-  var editor2 = ace.edit("editor2");
+  window.editor2 = ace.edit("editor2");
   editor2.getSession().setMode("ace/mode/coffee");
   editor2.setFontSize(14);
 
@@ -122,14 +122,14 @@ window.onload =  function() {
     }
   };
 
-  var disableToolTips = function() {
+  window.disableToolTips = function() {
     tooltip1 = editor1.tokenTooltip;
     tooltip2 = editor2.tokenTooltip;
     tooltip1.destroy();
     tooltip2.destroy();
   }
 
-  var enableToolTips = function() {
+  window.enableToolTips = function() {
     editor1.tokenTooltip = new TokenTooltip(editor1);
     editor2.tokenTooltip = new TokenTooltip(editor2);
   }
