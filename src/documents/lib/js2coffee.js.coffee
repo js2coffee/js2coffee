@@ -13,6 +13,7 @@
 # Js2coffee relies on Narcissus's parser. (Narcissus is Mozilla's JavaScript
 # engine written in JavaScript).
 
+pkg = require('../../package.json')
 _ = require('underscore')
 {parser} = require('./narcissus_packed')
 {Types, Typenames, Node} = require('./node_ext')
@@ -943,7 +944,7 @@ class UnsupportedError
 # ## Exports
 
 @Js2coffee = exports =
-  VERSION: '<%- @package.version %>'
+  VERSION: pkg.version
   build: buildCoffee
   UnsupportedError: UnsupportedError
 
