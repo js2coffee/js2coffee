@@ -121,7 +121,7 @@ class Builder
           c.shift()
         while c.length > 0 and c[c.length-1].length==0
           c.pop()
-        c.unshift('###')
+        c.unshift('###*')
         c.push('###')
       else
         c = ("##{line}" for line in c)
