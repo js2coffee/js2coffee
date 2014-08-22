@@ -5,6 +5,7 @@ ifChecks = ->
 ifNullChecks = ->
   yep  unless x?
   nah  if x is null
+  yep  unless obj.x?
   return
 voidChecks = ->
   yep  unless x?

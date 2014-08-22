@@ -5,6 +5,7 @@ function ifChecks() {
 function ifNullChecks() {
     if (x==null) { yep }
     if (x===null) { nah }
+    if (obj.x==null) {yep}
 }
 function voidChecks() {
     if (x==void 0) { yep }
