@@ -923,12 +923,14 @@ class Transformer
       n.positive = positive
 
   '==': (n) ->
-    if n.right().isA('null', 'void')
+    right = n.right()
+    if right.isA('null', 'void') or right.type is 60 and right.value is 'undefined'
       n.type     = Typenames['!']
       n.children = [n.clone(type: Typenames['existence_check'], children: [n.left()])]
 
   '!=': (n) ->
-    if n.right().isA('null', 'void')
+    right = n.right()
+    if right.isA('null', 'void') or right.type is 60 and right.value is 'undefined'
       n.type     = Typenames['existence_check']
       n.children = [n.left()]
 

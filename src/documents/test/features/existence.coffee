@@ -13,6 +13,8 @@ voidChecks = ->
   return
 undefinedChecks = ->
   nah  if typeof x is "undefined"
+  yep  unless x?
+  nah  unless obj.x?
   return
 edgeCase = ->
   nah  if not x is y
@@ -21,6 +23,8 @@ unlessChecks = ->
   yep  if x?
   nah  if x isnt null
   wat  unless typeof x is "undefined"
+  nah  if x?
+  wat  if obj.x?
   return
 whileAndFor = ->
   yep  until x?
