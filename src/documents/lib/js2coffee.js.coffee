@@ -48,7 +48,7 @@ buildCoffee = (str, opts = {}) ->
 
   output = trim builder.build(scriptNode)
 
-  if opts.no_comments
+  if opts.no_comments is true
     (rtrim line for line in output.split('\n')).join('\n')
 
   else
@@ -101,7 +101,7 @@ class Builder
   l: (n) ->
     # todo: this could be configurable debug helper
     # console.log n if n.lineno in [1]
-    if @options.no_comments
+    if @options.no_comments is true
       return ''
     if n and n.lineno
        # for DEBUG use this: "\uFEFE#{n.lineno},#{n.typeName()}\uFEFE"
