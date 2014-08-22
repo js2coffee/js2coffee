@@ -2,7 +2,11 @@
 # A helper class to deal with building code.
 
 CoffeeScript = require 'coffee-script'
-CoffeeScript.RESERVED ?= require('coffee-script/lib/coffee-script/lexer.js').RESERVED
+unless CoffeeScript.RESERVED?
+  lexer = require 'coffee-script/lib/coffee-script/lexer.js'
+  CoffeeScript.RESERVED = lexer.RESERVED.filter (word) ->
+    # filter out STRICT_PROSCRIBED (== ['arguments', 'eval'])
+    lexer.STRICT_PROSCRIBED.indexOf(word) < 0
 
 class Code
   Code.INDENT = "  "
