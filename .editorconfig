@@ -7,7 +7,7 @@ end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = false
 insert_final_newline = false
-indent_style = tab
+indent_style = space
 
 [*.json]
 indent_style = space
