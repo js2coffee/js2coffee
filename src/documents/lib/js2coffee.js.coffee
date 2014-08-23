@@ -258,7 +258,7 @@ class Builder
       @l(n)+unreserve n.value.toString()
 
   'number': (n) ->
-    @l(n)+"#{n.src()}"
+    @l(n)+"#{n.src().toLowerCase()}"
 
   'id': (n) ->
     if n.property_accessor
