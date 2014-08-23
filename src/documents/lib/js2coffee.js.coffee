@@ -44,7 +44,17 @@ buildCoffee = (str, opts = {}) ->
     strEscape = strEscapeDoubleQuotes
 
   builder    = new Builder opts
-  scriptNode = parser.parse str
+  try
+    scriptNode = parser.parse str
+  catch err
+    line = err.source.substr(0, err.cursor).split("\n").length
+    console.log "error in line: #{line}"
+    console.log "narcissus error code: #{err.message}"
+    console.log "at position: #{err.source.substr(err.cursor)}"
+    if process.exit?
+      process.exit 1 
+    else
+      throw new Error "#{err.message} in line #{line}"
 
   output = trim builder.build(scriptNode)
 
