@@ -157,7 +157,7 @@ compileScript = ( fname ) ->
     console.log compiled_code
   catch err
     console.warn err instanceof Error and err.stack or "ERROR: #{err} while compiling #{fname}"
-    exit 1 if options.stop_on_error
+    process.exit 1
 
 compileFromStdin = ->
   contents = fsUtil.readFileSync("/dev/stdin", encoding) # TODO: is this cross-platform?

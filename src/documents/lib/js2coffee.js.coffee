@@ -48,15 +48,16 @@ buildCoffee = (str, opts = {}) ->
     scriptNode = parser.parse str
   catch err
     line = err.source.substr(0, err.cursor).split("\n").length
-    console.log "error in line: #{line}"
-    console.log "narcissus error code: #{err.message}"
-    console.log "at position: #{err.source.substr(err.cursor)}"
-    if process.exit?
-      process.exit 1 
-    else
-      throw new Error "#{err.message} in line #{line}"
+    console.log "narcissus error: #{err.message} in line #{line}"
+    errorLine = err.source.substr(err.cursor)
+    console.log "at position: #{errorLine.split('\n')[0]}"
+    throw new Error "#{err.message} in line #{line}"
 
-  output = trim builder.build(scriptNode)
+  try
+    output = trim builder.build(scriptNode)
+  catch err
+    console.log "error during conversion: #{err.message}"
+    throw new Error "error after line: #{builder.lastLine}"
 
   if opts.no_comments is true
     (rtrim line for line in output.split('\n')).join('\n')
@@ -104,6 +105,7 @@ buildCoffee = (str, opts = {}) ->
 class Builder
   constructor: (@options={}) ->
     @transformer = new Transformer
+    @lastLine = 0;
 
   # `l()`
   # Inject the source line as a hidden element to be stripped out later.
@@ -111,6 +113,7 @@ class Builder
   l: (n) ->
     # todo: this could be configurable debug helper
     # console.log n if n.lineno in [1]
+    @lastLine = n.lineno;
     if @options.no_comments is true
       return ''
     if n and n.lineno
