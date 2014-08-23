@@ -1,5 +1,19 @@
 # History
 
+v0.3.2 - August 23, 2014
+--------------------
+- online editor: fix scrolling for safari
+- online editor: [add favicon](https://github.com/js2coffee/js2coffee/issues/274)
+- online editor: [fix options usage](https://github.com/js2coffee/js2coffee/issues/296)
+- [fix block comments](https://github.com/js2coffee/js2coffee/issues/309)
+- [merge 275](https://github.com/js2coffee/js2coffee/pull/275) thanks to [liukun](https://github.com/liukun)
+- [merge 276](https://github.com/js2coffee/js2coffee/pull/276) thanks to [liukun](https://github.com/liukun)
+- [merge 184](https://github.com/js2coffee/js2coffee/pull/184) thanks to [Carl Fürstenberg](https://github.com/azatoth)
+- [fix `x != undefined`](https://github.com/js2coffee/js2coffee/issues/301)
+- [fix `for in`](https://github.com/js2coffee/js2coffee/issues/284)
+- [fix CLI error code](https://github.com/js2coffee/js2coffee/issues/282)
+- [show line numbers in errors](https://github.com/js2coffee/js2coffee/issues/158)
+
 v0.3.1 - July 11, 2014
 --------------------
 - Update dependencies
