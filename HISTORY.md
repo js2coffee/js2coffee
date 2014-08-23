@@ -1,5 +1,9 @@
 # History
 
+v0.3.3 - August 23, 2014
+--------------------
+- add error handling during conversion
+
 v0.3.2 - August 23, 2014
 --------------------
 - online editor: fix scrolling for safari
