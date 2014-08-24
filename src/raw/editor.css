@@ -52,11 +52,3 @@ body {
   border-right: 12px solid transparent;
   border-top: 17px solid #d77d2d;
 }
-
-/*
-fix scrolling for safari / iOS
-*/
-
-#editor-wrapper .ace_scroller {
-    overflow:scroll !important; -webkit-overflow-scrolling:touch !important;
-}
