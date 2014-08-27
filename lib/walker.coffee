@@ -1,4 +1,14 @@
-# Generic walker class.
+###
+# Walker:
+# Traverses a JavaScript AST.
+#
+#     class MyWalker extends Walker
+#
+#     w = new MyWalker(ast)
+#     w.run()
+#
+###
+
 module.exports = class Walker
   constructor: (@root, @options) ->
     @path = []
@@ -11,13 +21,13 @@ module.exports = class Walker
     @path.push(node)
 
     type = node.type
-    fn = @nodes[type]
+    fn = @visitors[type]
 
     if fn
       out = fn.call(this, node)
       out = @decorator(node, out)  if @decorator?
     else
-      out = @nodes.Default.call(this, node)
+      out = @visitors.Default.call(this, node)
 
     @path.splice(oldLength)
     out

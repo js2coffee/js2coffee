@@ -76,7 +76,7 @@ class Builder extends Walker
       newlist.push(item)
     newlist
 
-  nodes:
+  visitors:
     Program: (node) ->
       node.body.map(@walk)
 
