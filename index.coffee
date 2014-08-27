@@ -6,7 +6,7 @@ class Walker
   run: ->
     @walk(@root)
 
-  walk: (node) ->
+  walk: (node) =>
     type = node.type
     fn = @nodes[type]
     if fn
@@ -16,8 +16,13 @@ class Walker
       @nodes.Default.apply(this, node)
 
   push: (node, value) ->
-    new SourceNode(node.loc.start.line, node.loc.start.column, 'input.js', value)
+    new SourceNode(
+      node.loc.start.line,
+      node.loc.start.column,
+      'input.js',
+      value)
 
+# Generates a source map.
 class Stringifier extends Walker
   nodes:
     Default: (type, node) ->
@@ -25,8 +30,7 @@ class Stringifier extends Walker
       throw new Error("walk(): No handler for #{type}")
 
     Program: (node) ->
-      blocks = node.body.map (node) => @walk node
-      @push node, blocks
+      @push node, node.body.map(@walk)
 
     # Assignment (a = b)
     AssignmentExpression: (node) ->
@@ -70,9 +74,10 @@ parse = (source, options = {}) ->
   newAst = xformer.run()
 
   builder = new Stringifier(newAst, options)
-  str = builder.run().toString()
+  sourcemap = builder.run()
+  {code, map} = sourcemap.toStringWithSourceMap()
 
-  { output: str, ast: ast }
+  { output: code, ast: ast, map: map }
 
 js2coffee = (source, options) ->
   parse(source, options).output

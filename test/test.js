@@ -34,6 +34,6 @@ groups.forEach(function (dirname) {
 describe('lol', function () {
   it('ok', function () {
     var out = js2coffee.parse("// hi\na=2");
-    console.log(require('util').inspect(out.ast, { depth: 1000 }));
+    console.log(require('util').inspect(out, { depth: 1000 }));
   });
 });
