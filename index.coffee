@@ -80,7 +80,6 @@ class Stringifier extends Walker
     newlist
 
   nodes:
-    # A file
     Program: (node) ->
       node.body.map(@walk)
 
@@ -99,6 +98,9 @@ class Stringifier extends Walker
 
     Literal: (node) ->
       [node.raw]
+
+    MemberExpression: (node) ->
+      [@walk(node.object), '.', @walk(node.property)]
 
     CallExpression: (node) ->
       list = []
