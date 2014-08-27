@@ -59,7 +59,7 @@ result.map    // source map
 
 Some differences from legacy js2coffee are to be intended:
 
- - Arrays will not be multiline by default
+ - Postfix `if` statements will not be supported by default
  - ...
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
