@@ -5,21 +5,22 @@ fs = require('fs')
 
 groups = glob.sync("#{__dirname}/../specs/*")
 
+toName = (dirname) ->
+  path.basename(dirname).replace(/_/g, ' ').trim()
+
 describe 'specs:', ->
-  groups.forEach (dirname) ->
-    group = path.basename(dirname).replace(/_/g, ' ')
+  groups.forEach (group) ->
+    describe toName(group), ->
 
-    describe group, ->
-      specs = glob.sync("#{dirname}/*")
+      specs = glob.sync("#{group}/*")
+      specs.forEach (spec) ->
 
-      specs.forEach (dirname) ->
-        name = path.basename(dirname).replace(/_/g, ' ')
-
-        isPending = (~group.indexOf('pending') or name.match(/^ /))
+        name = toName(spec)
+        isPending = ~group.indexOf('pending')
         test = if isPending then xit else it
 
-        test name.trim(), ->
-          input  = fs.readFileSync(dirname + '/input.js', 'utf-8')
-          output = fs.readFileSync(dirname + '/output.coffee', 'utf-8')
+        test name, ->
+          input  = fs.readFileSync("#{spec}/input.js", 'utf-8')
+          output = fs.readFileSync("#{spec}/output.coffee", 'utf-8')
           result = js2coffee(input)
           expect(result).eql(output)
