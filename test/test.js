@@ -31,9 +31,12 @@ groups.forEach(function (dirname) {
   });
 });
 
-describe('lol', function () {
-  it('ok', function () {
+describe('parse()', function () {
+  it('works', function () {
     var out = js2coffee.parse("// hi\na=2");
-    console.log(require('util').inspect(out, { depth: 1000 }));
+    expect(out.ast).be.an('object');
+    expect(out.map).be.an('object');
+    expect(out.code).be.a('string');
+    // console.log(require('util').inspect(out, { depth: 1000 }));
   });
 });

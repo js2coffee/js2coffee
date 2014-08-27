@@ -1,67 +1,63 @@
 esprima = require('esprima')
 SourceNode = require("source-map").SourceNode
+Walker = require('./lib/walker')
 
-class Walker
-  constructor: (@root, @options) ->
-  run: ->
-    @walk(@root)
+# Generates output based on a JavaScript AST.
+#
+#     s = new Stringifier(ast, {})
+#     s.get()
+#     => { code: '...', map: { ... } }
+#
+class Stringifier extends Walker
+  get: ->
+    @run().toStringWithSourceMap()
 
-  walk: (node) =>
-    type = node.type
-    fn = @nodes[type]
-    if fn
-      out = fn.call(this, node)
-      out
-    else
-      @nodes.Default.apply(this, node)
-
-  push: (node, value) ->
+  decorator: (node, output) ->
     new SourceNode(
       node.loc.start.line,
       node.loc.start.column,
       'input.js',
-      value)
+      output)
 
-# Generates a source map.
-class Stringifier extends Walker
   nodes:
     Default: (type, node) ->
       console.error node
       throw new Error("walk(): No handler for #{type}")
 
     Program: (node) ->
-      @push node, node.body.map(@walk)
+      node.body.map(@walk)
 
     # Assignment (a = b)
     AssignmentExpression: (node) ->
-      @push node, [@walk(node.left), ' = ', @walk(node.right)]
+      [@walk(node.left), ' = ', @walk(node.right)]
 
+    # A statement that ends in a semicolon
     ExpressionStatement: (node) ->
-      @push node, [@walk(node.expression), "\n"]
+      [@walk(node.expression), "\n"]
 
     # variable identifier
     Identifier: (node) ->
-      @push node, node.name
+      [node.name]
 
     # Operator (+)
     # (.left, .operator, .right)
     BinaryExpression: (node) ->
-      @push node, [@walk(node.left), ' ', node.operator, ' ', @walk(node.right)]
+      [@walk(node.left), ' ', node.operator, ' ', @walk(node.right)]
 
     # Literal, like numbers (20)
     # (.raw, .value)
     Literal: (node) ->
-      @push node, node.raw
+      [node.raw]
 
     # Calls (alert("Hi"))
     CallExpression: (node) ->
       list = []
+      callee = @walk(node.callee)
       for arg, i in node.arguments
         list.push ', ' if i > 0
         list.push @walk(arg)
         
-      callee = @walk(node.callee)
-      @push node, [callee, '('].concat(list).concat([')'])
+      [callee, '('].concat(list).concat([')'])
 
 class Transformer
   constructor: (@ast, @options = {}) ->
@@ -74,13 +70,11 @@ parse = (source, options = {}) ->
   newAst = xformer.run()
 
   builder = new Stringifier(newAst, options)
-  sourcemap = builder.run()
-  {code, map} = sourcemap.toStringWithSourceMap()
-
-  { output: code, ast: ast, map: map }
+  {code, map} = builder.get()
+  {code, ast, map}
 
 js2coffee = (source, options) ->
-  parse(source, options).output
+  parse(source, options).code
 
 module.exports = js2coffee
 module.exports.parse = parse
