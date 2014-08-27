@@ -37,9 +37,12 @@ These should be made configurable:
 ## API?
 
 ```js
-js2coffee(source, {
+var result = js2coffee.parse(source, {
   indent: 2
 });
+
+result.code   // code string
+result.map    // source map
 ```
 
 ## How?
@@ -56,6 +59,7 @@ js2coffee(source, {
 
 Some differences from legacy js2coffee are to be intended:
 
+ - Arrays will not be multiline by default
  - ...
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
