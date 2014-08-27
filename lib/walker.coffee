@@ -17,7 +17,7 @@ module.exports = class Walker
       out = fn.call(this, node)
       out = @decorator(node, out)  if @decorator?
     else
-      out = @nodes.Default.apply(this, node)
+      out = @nodes.Default.call(this, node)
 
     @path.splice(oldLength)
     out

@@ -47,6 +47,9 @@ js2coffee.parse = (source, options = {}) ->
 
 class Stringifier extends Walker
 
+  indent: (n=1) ->
+    "  "
+
   ###*
   # get():
   # Returns the output of source-map.
@@ -68,47 +71,58 @@ class Stringifier extends Walker
       'input.js',
       output)
 
+  # Zip helper
+  zipJoin: (list, joiner) ->
+    newlist = []
+    for item, i in list
+      newlist.push(joiner) if i > 0
+      newlist.push(item)
+    newlist
+
   nodes:
     # A file
     Program: (node) ->
       node.body.map(@walk)
 
-    # Assignment (a = b)
-    AssignmentExpression: (node) ->
-      [@walk(node.left), ' = ', @walk(node.right)]
-
-    # A statement that ends in a semicolon
     ExpressionStatement: (node) ->
       [@walk(node.expression), "\n"]
 
-    # variable identifier
+    AssignmentExpression: (node) ->
+      [@walk(node.left), ' = ', @walk(node.right)]
+
     Identifier: (node) ->
       [node.name]
 
     # Operator (+)
-    # (.left, .operator, .right)
     BinaryExpression: (node) ->
       [@walk(node.left), ' ', node.operator, ' ', @walk(node.right)]
 
-    # Literal, like numbers (20)
-    # (.raw, .value)
     Literal: (node) ->
       [node.raw]
 
-    # Calls (alert("Hi"))
     CallExpression: (node) ->
       list = []
       callee = @walk(node.callee)
-      for arg, i in node.arguments
-        list.push ', ' if i > 0
-        list.push @walk(arg)
+      list = @zipJoin(node.arguments.map(@walk), ', ')
         
-      [callee, '('].concat(list).concat([')'])
+      [ callee, '(' ].concat(list).concat([ ')' ])
+
+    IfStatement: (node) ->
+      [ 'if ', @walk(node.test), "\n", @indent(), @walk(node.consequent) ]
+
+    BlockStatement: (node) ->
+      list = @zipJoin(node.body.map(@walk), @indent())
+
+    FunctionDeclaration: (node) ->
+      [ @walk(node.id), " = ->\n", @indent(), @walk(node.body) ]
+
+    ReturnStatement: (node) ->
+      [ "return ", @walk(node.argument), "\n" ]
 
     # Default, when nothing else can do
-    Default: (type, node) ->
+    Default: (node) ->
       console.error node
-      throw new Error("walk(): No handler for #{type}")
+      throw new Error("walk(): No handler for #{node?.type}")
 
 ###
 # Performs transformations on the AST.
