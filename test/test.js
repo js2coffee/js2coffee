@@ -13,7 +13,7 @@ before(function () {
 
 describe('specs:', function () {
   specs.forEach(function (dirname) {
-    var name = path.basename(dirname);
+    var name = path.basename(dirname).replace(/_/g, ' ');
 
     it(name, function () {
       var input = fs.readFileSync(dirname + '/input.js', 'utf-8');
