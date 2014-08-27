@@ -84,49 +84,58 @@ class Stringifier extends Walker
       node.body.map(@walk)
 
     ExpressionStatement: (node) ->
-      [@walk(node.expression), "\n"]
+      [ @walk(node.expression), "\n" ]
 
     AssignmentExpression: (node) ->
-      [@walk(node.left), ' = ', @walk(node.right)]
+      [ @walk(node.left), ' = ', @walk(node.right) ]
 
     Identifier: (node) ->
-      [node.name]
+      [ node.name ]
 
     # Operator (+)
     BinaryExpression: (node) ->
-      [@walk(node.left), ' ', node.operator, ' ', @walk(node.right)]
+      [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
 
     Literal: (node) ->
-      [node.raw]
+      [ node.raw ]
 
     MemberExpression: (node) ->
-      [@walk(node.object), '.', @walk(node.property)]
+      [ @walk(node.object), '.', @walk(node.property) ]
 
     CallExpression: (node) ->
       list = []
       callee = @walk(node.callee)
       list = @zipJoin(node.arguments.map(@walk), ', ')
         
-      [ callee, '(' ].concat(list).concat([ ')' ])
+      [ callee, '(', list, ')' ]
 
     IfStatement: (node) ->
-      [ 'if ', @walk(node.test), "\n", @indent(), @walk(node.consequent) ]
+      [
+        'if ',
+        @walk(node.test),
+        "\n",
+        @indent(),
+        @walk(node.consequent)
+      ]
 
     BlockStatement: (node) ->
       list = @zipJoin(node.body.map(@walk), @indent())
 
     FunctionDeclaration: (node) ->
-      left = [ @walk(node.id), ' = ', ]
-      right = [ "->\n", @indent(), @walk(node.body) ]
-      middle = if node.params.length
-        [ '(' ].concat(@zipJoin(node.params.map(@walk), ', ')).concat([ ') '])
-      else
-        []
+      params =
+        if node.params.length
+          [ '(', @zipJoin(node.params.map(@walk), ', '), ') ']
+        else
+          []
 
-      left.concat(middle).concat(right)
+      [ @walk(node.id), ' = ', params, "->\n", @indent(), @walk(node.body) ]
 
     ReturnStatement: (node) ->
-      [ "return ", @walk(node.argument), "\n" ]
+      [
+        "return ",
+        @walk(node.argument),
+        "\n"
+      ]
 
     # Default, when nothing else can do
     Default: (node) ->
