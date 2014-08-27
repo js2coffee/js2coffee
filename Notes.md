@@ -13,6 +13,7 @@
  - [ ] Test Walker
  - [ ] Add support for filters
  - [ ] Put groundwork on comment generation
+ - [ ] Throw useful Esprima errors (like coffeescriptredux)
 
 ### Types
 

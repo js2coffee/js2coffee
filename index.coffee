@@ -140,3 +140,24 @@ class Builder extends Walker
         @walk(node.argument),
         "\n"
       ]
+
+    # everything below is just hastily-made and untested
+
+    UnaryExpression: (node) ->
+      [ node.operator, @walk(node.argument) ]
+
+    LogicalExpression: (node) ->
+      [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
+
+    ThisExpression: (node) ->
+      [ "this" ]
+
+    VariableDeclaration: (node) ->
+      node.declarations.map (d) =>
+        [ @walk(d.id), ' = ', @walk(d.init), "\n" ]
+
+    ObjectExpression: (node) ->
+      [ "{", "...", "}" ]
+
+    FunctionExpression: (node) ->
+      [ "->\n", @indent(), @walk(node.body) ]
