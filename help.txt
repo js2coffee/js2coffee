@@ -1,0 +1,6 @@
+Usage:
+    $0 FILES [options]
+
+Options:
+    -h, --help         print usage information
+    -v, --version      show version info and exit

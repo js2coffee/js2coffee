@@ -1,0 +1,17 @@
+{
+  "name": "js2coffee2",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
+  "license": "MIT",
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "esprima": "^1.2.2",
+    "minimist": "^1.1.0",
+    "read-input": "^0.2.0"
+  }
+}
