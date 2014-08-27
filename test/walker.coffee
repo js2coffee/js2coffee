@@ -1,3 +1,4 @@
+require 'coffee-script/register'
 require './setup'
 
 describe 'Walker', ->

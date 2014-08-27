@@ -1,4 +1,6 @@
+require 'coffee-script/register'
 require './setup'
+
 path = require('path')
 glob = require('glob')
 fs = require('fs')
