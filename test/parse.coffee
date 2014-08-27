@@ -1,4 +1,6 @@
-xdescribe 'parse()', ->
+require './setup'
+
+describe 'parse()', ->
   it 'works', ->
     out = js2coffee.parse("// hi\na=2")
     expect(out.ast).be.an('object')
