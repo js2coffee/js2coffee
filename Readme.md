@@ -18,7 +18,8 @@ Small attempt at making a new js2coffee.
 ## Why?
 
  - Maintainability.
- - Configurable options (like indentation).
+ - More configurable options (like tabs, comment styles, turning off features, 
+     and so on).
  - Better warnings and errors.
  - Source maps... maybe.
  - Maybe ES6 support once CoffeeScript supports it!
