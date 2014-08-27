@@ -18,12 +18,18 @@ Small attempt at making a new js2coffee.
 ## Why?
 
  - Maintainability.
- - More configurable options (like tabs, comment styles, turning off features, 
-     and so on).
- - Better warnings and errors.
- - Be scope-aware. This will allow you things like
- - Source maps... maybe.
+ - More configurable options.
+ - Better error messages, supporting line numbers and ranges.
+ - Be scope-aware.
+ - Be able to produce warnings for things that may break compatibility (such as 
+     `==` being converted to `is`).
+ - Source maps. Maybe.
  - Maybe ES6 support once CoffeeScript supports it!
+
+These should be made configurable:
+
+ - Turn implicit returns on/off.
+ - Specify whether to use `&&` or `and`.
 
 ## API?
 
