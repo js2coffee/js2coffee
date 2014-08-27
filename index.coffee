@@ -2,8 +2,43 @@ esprima = require('esprima')
 SourceNode = require("source-map").SourceNode
 Walker = require('./lib/walker')
 
+###*
+# js2coffee() : js2coffee(source, [options])
+# Converts to code.
+#
+#     output = js2coffee.parse('alert("hi")');
+#     output;
+#     => 'alert "hi"'
 ###
-# Generates output based on a JavaScript AST.
+
+module.exports = js2coffee = (source, options) ->
+  js2coffee.parse(source, options).code
+
+###*
+# parse() : js2coffee.parse(source, [options])
+# Parses.
+#
+#     output = js2coffee.parse('a = 2', {});
+#
+#     output.code
+#     output.ast
+#     output.map
+###
+
+js2coffee.parse = (source, options = {}) ->
+  ast = esprima.parse(source, loc: true, range: true, comment: true)
+
+  xformer = new Transformer(ast, options)
+  newAst = xformer.run()
+
+  builder = new Stringifier(newAst, options)
+  {code, map} = builder.get()
+
+  {code, ast, map}
+
+###
+# Stringifier : new Stringifier(ast, [options])
+# (private) Generates output based on a JavaScript AST.
 #
 #     s = new Stringifier(ast, {})
 #     s.get()
@@ -11,6 +46,12 @@ Walker = require('./lib/walker')
 ###
 
 class Stringifier extends Walker
+
+  ###*
+  # get():
+  # Returns the output of source-map.
+  ###
+
   get: ->
     @run().toStringWithSourceMap()
 
@@ -80,24 +121,3 @@ class Stringifier extends Walker
 class Transformer
   constructor: (@ast, @options = {}) ->
   run: -> @ast
-
-###*
-# parse():
-# Parses.
-###
-
-parse = (source, options = {}) ->
-  ast = esprima.parse(source, loc: true, range: true, comment: true)
-
-  xformer = new Transformer(ast, options)
-  newAst = xformer.run()
-
-  builder = new Stringifier(newAst, options)
-  {code, map} = builder.get()
-  {code, ast, map}
-
-js2coffee = (source, options) ->
-  parse(source, options).code
-
-module.exports = js2coffee
-module.exports.parse = parse
