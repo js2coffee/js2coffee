@@ -7,6 +7,7 @@ var args = require('../lib/cli')
   });
 
 var read = require('read-input');
+require('coffee-script/register');
 var js2coffee = require('../index');
 
 read(args._, function (err, res) {
@@ -15,8 +16,14 @@ read(args._, function (err, res) {
     process.exit(8);
   }
 
-  var data = res.data;
-  var out = js2coffee(data);
-
-  process.stdout.write(out);
+  res.successes.forEach(function (file) {
+    var data = file.data;
+    try {
+      var out = js2coffee(data);
+      process.stdout.write(out);
+    } catch (err) {
+      console.error(err.message);
+      throw err;
+    }
+  });
 });

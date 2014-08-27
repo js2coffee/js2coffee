@@ -1,5 +1,2 @@
-var esprima = require('esprima');
-
-module.exports = function (source, options) {
-  console.log(esprima.parse(source));
-};
+require('coffee-script/register');
+module.exports = require('./index.coffee');
