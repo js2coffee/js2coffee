@@ -11,26 +11,21 @@ before(function () {
   js2coffee = require('../index');
 });
 
-describe('specs:', function () {
-  groups.forEach(function (dirname) {
-    var group = path.basename(dirname).replace(/_/g, ' ');
+groups.forEach(function (dirname) {
+  var group = path.basename(dirname).replace(/_/g, ' ');
 
-    describe(group, function () {
-      var specs = glob.sync(dirname + '/*');
+  describe(group, function () {
+    var specs = glob.sync(dirname + '/*');
 
-      specs.forEach(function (dirname) {
-        var name = path.basename(dirname).replace(/_/g, ' ');
+    specs.forEach(function (dirname) {
+      var name = path.basename(dirname).replace(/_/g, ' ');
 
-        if (~group.indexOf('pending')) {
-          xit(name.trim(), function () {});
-        } else {
-          it(name, function () {
-            var input = fs.readFileSync(dirname + '/input.js', 'utf-8');
-            var output = fs.readFileSync(dirname + '/output.coffee', 'utf-8');
-            var result = js2coffee(input);
-            expect(result).eql(output);
-          });
-        }
+      var test = (~group.indexOf('pending')) ? xit : it;
+      test(name, function () {
+        var input = fs.readFileSync(dirname + '/input.js', 'utf-8');
+        var output = fs.readFileSync(dirname + '/output.coffee', 'utf-8');
+        var result = js2coffee(input);
+        expect(result).eql(output);
       });
     });
   });
