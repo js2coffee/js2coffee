@@ -5,21 +5,33 @@ var
   fs = require('fs');
 
 var js2coffee, name, input, output;
-var specs = glob.sync(__dirname + '/../spec/*');
+var groups = glob.sync(__dirname + '/../specs/*');
 
 before(function () {
   js2coffee = require('../index');
 });
 
 describe('specs:', function () {
-  specs.forEach(function (dirname) {
-    var name = path.basename(dirname).replace(/_/g, ' ');
+  groups.forEach(function (dirname) {
+    var group = path.basename(dirname).replace(/_/g, ' ');
 
-    it(name, function () {
-      var input = fs.readFileSync(dirname + '/input.js', 'utf-8');
-      var output = fs.readFileSync(dirname + '/output.coffee', 'utf-8');
-      var result = js2coffee(input);
-      expect(result).eql(output);
+    describe(group, function () {
+      var specs = glob.sync(dirname + '/*');
+
+      specs.forEach(function (dirname) {
+        var name = path.basename(dirname).replace(/_/g, ' ');
+
+        if (~group.indexOf('pending')) {
+          xit(name.trim(), function () {});
+        } else {
+          it(name, function () {
+            var input = fs.readFileSync(dirname + '/input.js', 'utf-8');
+            var output = fs.readFileSync(dirname + '/output.coffee', 'utf-8');
+            var result = js2coffee(input);
+            expect(result).eql(output);
+          });
+        }
+      });
     });
   });
 });

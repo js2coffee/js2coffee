@@ -21,6 +21,7 @@ Small attempt at making a new js2coffee.
  - More configurable options (like tabs, comment styles, turning off features, 
      and so on).
  - Better warnings and errors.
+ - Be scope-aware. This will allow you things like
  - Source maps... maybe.
  - Maybe ES6 support once CoffeeScript supports it!
 
@@ -42,3 +43,7 @@ js2coffee(source, {
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
 
+## References
+
+ - http://esprima.org/doc/index.html#ast
+ - https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API

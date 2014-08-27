@@ -1,10 +1,9 @@
 esprima = require('esprima')
 
-class Builder
+class Walker
   constructor: (@root, @options) ->
-
-  toString: ->
-    str = @walk(@root)
+  run: ->
+    @walk(@root)
 
   walk: (node) ->
     type = node.type
@@ -12,13 +11,17 @@ class Builder
     if fn
       out = fn.call(this, node)
     else
+      @nodes.Default.apply(this, node)
+
+
+class Stringifier extends Walker
+  nodes:
+    Default: (type, node) ->
       console.error node
       throw new Error("walk(): No handler for #{type}")
 
-  nodes:
     Program: (node) ->
-      blocks = node.body.map (node) =>
-        @walk node
+      blocks = node.body.map (node) => @walk node
       blocks.join("")
 
     # Assignment (a = b)
@@ -49,7 +52,17 @@ class Builder
       args = list.join(", ")
       "#{callee}(#{args})"
 
+class Transformer
+  constructor: (@ast, @options = {}) ->
+  run: -> @ast
+
 module.exports = (source, options = {}) ->
   ast = esprima.parse(source)
-  builder = new Builder(ast, options)
-  builder.toString()
+
+  xformer = new Transformer(ast, options)
+  newAst = xformer.run()
+
+  builder = new Stringifier(newAst, options)
+  str = builder.run()
+
+  str
