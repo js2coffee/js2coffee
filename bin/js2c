@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 var args = require('../lib/cli')
-  .helpfile(__dirname+'/../help.txt')
+  .helpfile(__dirname+'/../Usage.txt')
   .version(require('../package.json').version)
   .minimist({
     alias: { h: 'help', v: 'version' }
   });
 
 var read = require('read-input');
-require('coffee-script/register');
 var js2coffee = require('../index');
 
 read(args._, function (err, res) {
