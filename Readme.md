@@ -46,6 +46,8 @@ js2coffee(source, {
  - Tests are still plain files (`spec/*` with `input.js`+`output.coffee`)
    but invoked with a Mocha test runner. This allows us to reuse the same specs
    as js2coffee almost as-is.
+ - The stringifier class should be able to take an AST and produce a string 
+ output with source maps.
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
 

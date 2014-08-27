@@ -12,7 +12,8 @@
   "dependencies": {
     "esprima": "^1.2.2",
     "minimist": "^1.1.0",
-    "read-input": "^0.2.0"
+    "read-input": "^0.2.0",
+    "source-map": "^0.1.38"
   },
   "devDependencies": {
     "browserify": "^5.10.1",

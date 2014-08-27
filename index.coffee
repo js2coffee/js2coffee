@@ -1,4 +1,5 @@
 esprima = require('esprima')
+SourceNode = require("source-map").SourceNode
 
 class Walker
   constructor: (@root, @options) ->
@@ -10,9 +11,12 @@ class Walker
     fn = @nodes[type]
     if fn
       out = fn.call(this, node)
+      out
     else
       @nodes.Default.apply(this, node)
 
+  push: (node, value) ->
+    new SourceNode(node.loc.start.line, node.loc.start.column, 'input.js', value)
 
 class Stringifier extends Walker
   nodes:
@@ -22,47 +26,56 @@ class Stringifier extends Walker
 
     Program: (node) ->
       blocks = node.body.map (node) => @walk node
-      blocks.join("")
+      @push node, blocks
 
     # Assignment (a = b)
     AssignmentExpression: (node) ->
-      "#{@walk node.left} = #{@walk node.right}"
+      @push node, [@walk(node.left), ' = ', @walk(node.right)]
 
     ExpressionStatement: (node) ->
-      "#{@walk node.expression}\n"
+      @push node, [@walk(node.expression), "\n"]
 
     # variable identifier
     Identifier: (node) ->
-      node.name
+      @push node, node.name
 
     # Operator (+)
     # (.left, .operator, .right)
     BinaryExpression: (node) ->
-      "#{@walk node.left} #{node.operator} #{@walk node.right}"
+      @push node, [@walk(node.left), ' ', node.operator, ' ', @walk(node.right)]
 
     # Literal, like numbers (20)
     # (.raw, .value)
     Literal: (node) ->
-      node.raw
+      @push node, node.raw
 
     # Calls (alert("Hi"))
     CallExpression: (node) ->
-      list = node.arguments.map (a) => @walk(a)
+      list = []
+      for arg, i in node.arguments
+        list.push ', ' if i > 0
+        list.push @walk(arg)
+        
       callee = @walk(node.callee)
-      args = list.join(", ")
-      "#{callee}(#{args})"
+      @push node, [callee, '('].concat(list).concat([')'])
 
 class Transformer
   constructor: (@ast, @options = {}) ->
   run: -> @ast
 
-module.exports = (source, options = {}) ->
-  ast = esprima.parse(source)
+parse = (source, options = {}) ->
+  ast = esprima.parse(source, loc: true, range: true, comment: true)
 
   xformer = new Transformer(ast, options)
   newAst = xformer.run()
 
   builder = new Stringifier(newAst, options)
-  str = builder.run()
+  str = builder.run().toString()
 
-  str
+  { output: str, ast: ast }
+
+js2coffee = (source, options) ->
+  parse(source, options).output
+
+module.exports = js2coffee
+module.exports.parse = parse
