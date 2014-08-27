@@ -28,16 +28,13 @@ module.exports = js2coffee = (source, options) ->
 js2coffee.parse = (source, options = {}) ->
   ast = esprima.parse(source, loc: true, range: true, comment: true)
 
-  xformer = new Transformer(ast, options)
-  newAst = xformer.run()
-
-  builder = new Stringifier(newAst, options)
+  builder = new Builder(ast, options)
   {code, map} = builder.get()
 
   {code, ast, map}
 
 ###
-# Stringifier : new Stringifier(ast, [options])
+# Builder : new Stringifier(ast, [options])
 # (private) Generates output based on a JavaScript AST.
 #
 #     s = new Stringifier(ast, {})
@@ -45,7 +42,7 @@ js2coffee.parse = (source, options = {}) ->
 #     => { code: '...', map: { ... } }
 ###
 
-class Stringifier extends Walker
+class Builder extends Walker
 
   indent: (n=1) ->
     "  "
@@ -141,15 +138,3 @@ class Stringifier extends Walker
     Default: (node) ->
       console.error node
       throw new Error("walk(): No handler for #{node?.type}")
-
-###
-# Performs transformations on the AST.
-#
-#     ast = esprima.parse(...);
-#     new Transformer(ast, {}).run();
-#     ast; //= this is changed now
-###
-
-class Transformer
-  constructor: (@ast, @options = {}) ->
-  run: -> @ast

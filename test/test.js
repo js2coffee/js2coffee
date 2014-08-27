@@ -20,8 +20,9 @@ groups.forEach(function (dirname) {
     specs.forEach(function (dirname) {
       var name = path.basename(dirname).replace(/_/g, ' ');
 
-      var test = (~group.indexOf('pending')) ? xit : it;
-      test(name, function () {
+      var test = (~group.indexOf('pending') || name.match(/^ /)) ? xit : it;
+
+      test(name.trim(), function () {
         var input = fs.readFileSync(dirname + '/input.js', 'utf-8');
         var output = fs.readFileSync(dirname + '/output.coffee', 'utf-8');
         var result = js2coffee(input);

@@ -28,7 +28,8 @@ Small attempt at making a new js2coffee.
 
 These should be made configurable:
 
- - Turn implicit returns on/off.
+ - Toggle implicit returns.
+ - Toggle trailing commas in multiline arrays/objects.
  - Specify whether to use `&&` or `and`.
 
 ## API?
@@ -50,8 +51,3 @@ js2coffee(source, {
  output with source maps.
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
-
-## References
-
- - http://esprima.org/doc/index.html#ast
- - https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
