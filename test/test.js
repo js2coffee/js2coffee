@@ -1,17 +1,17 @@
-var expect = require('chai').expect;
-var path = require('path');
-var glob = require('glob');
-var fs = require('fs');
+var
+  expect = require('chai').expect,
+  path = require('path'),
+  glob = require('glob'),
+  fs = require('fs');
+
+var js2coffee, name, input, output;
 var specs = glob.sync(__dirname + '/../spec/*');
-var js2coffee;
 
 before(function () {
   js2coffee = require('../index');
 });
 
-describe('spec:', function () {
-  var name, input, output;
-
+describe('specs:', function () {
   specs.forEach(function (dirname) {
     var name = path.basename(dirname);
 
