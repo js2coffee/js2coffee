@@ -12,6 +12,7 @@
 
  - [ ] Test Walker
  - [ ] Add support for filters
+ - [ ] Put groundwork on comment generation
 
 ### Types
 
