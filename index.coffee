@@ -1,7 +1,7 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
-Walker = require('./lib/walker')
-{delimit} = require('./lib/helpers')
+Walker = require('./lib/walker.coffee')
+{delimit} = require('./lib/helpers.coffee')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
