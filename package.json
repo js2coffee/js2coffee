@@ -10,14 +10,16 @@
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
   "dependencies": {
+    "esprima": "^1.2.2",
+    "minimist": "^1.1.0",
+    "read-input": "^0.2.0"
+  },
+  "devDependencies": {
     "browserify": "^5.10.1",
     "chai": "^1.9.1",
     "coffee-script": "^1.8.0",
     "coffeeify": "^0.7.0",
-    "esprima": "^1.2.2",
     "glob": "^4.0.5",
-    "minimist": "^1.1.0",
-    "mocha": "^1.21.4",
-    "read-input": "^0.2.0"
+    "mocha": "^1.21.4"
   }
 }
