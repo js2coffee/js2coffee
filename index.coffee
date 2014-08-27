@@ -1,7 +1,7 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
 Walker = require('./lib/walker')
-{zipJoin} = require('./lib/helpers')
+{delimit} = require('./lib/helpers')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
@@ -109,7 +109,7 @@ class Builder extends Walker
     CallExpression: (node) ->
       list = []
       callee = @walk(node.callee)
-      list = zipJoin(node.arguments.map(@walk), ', ')
+      list = delimit(node.arguments.map(@walk), ', ')
         
       [ callee, '(', list, ')' ]
 
@@ -123,12 +123,12 @@ class Builder extends Walker
       ]
 
     BlockStatement: (node) ->
-      list = zipJoin(node.body.map(@walk), @indent())
+      list = delimit(node.body.map(@walk), @indent())
 
     FunctionDeclaration: (node) ->
       params =
         if node.params.length
-          [ '(', zipJoin(node.params.map(@walk), ', '), ') ']
+          [ '(', delimit(node.params.map(@walk), ', '), ') ']
         else
           []
 

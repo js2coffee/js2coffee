@@ -1,8 +1,8 @@
 require './setup'
 
 describe 'Helpers', ->
-  {zipJoin} = require('../lib/helpers')
+  {delimit} = require('../lib/helpers')
 
-  it 'zipJoin', ->
-    result = zipJoin(['a', 'b'], '-')
+  it 'delimit', ->
+    result = delimit(['a', 'b'], '-')
     expect(result).eql ['a', '-', 'b']

@@ -1,4 +1,4 @@
-exports.zipJoin = (list, joiner) ->
+exports.delimit = (list, joiner) ->
   newlist = []
   for item, i in list
     newlist.push(joiner) if i > 0
