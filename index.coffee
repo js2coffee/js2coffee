@@ -2,6 +2,13 @@ esprima = require('esprima')
 SourceNode = require("source-map").SourceNode
 Walker = require('./lib/walker')
 
+zipJoin = (list, joiner) ->
+  newlist = []
+  for item, i in list
+    newlist.push(joiner) if i > 0
+    newlist.push(item)
+  newlist
+
 ###*
 # js2coffee() : js2coffee(source, [options])
 # Converts to code.
@@ -68,13 +75,14 @@ class Builder extends Walker
       'input.js',
       output)
 
-  # Zip helper
-  zipJoin: (list, joiner) ->
-    newlist = []
-    for item, i in list
-      newlist.push(joiner) if i > 0
-      newlist.push(item)
-    newlist
+  ###
+  # onUnknownNode():
+  # Invoked when the node is not known. Throw an error.
+  ###
+
+  onUnknownNode: (node) ->
+    console.error node
+    throw new Error("walk(): No handler for #{node?.type}")
 
   visitors:
     Program: (node) ->
@@ -102,7 +110,7 @@ class Builder extends Walker
     CallExpression: (node) ->
       list = []
       callee = @walk(node.callee)
-      list = @zipJoin(node.arguments.map(@walk), ', ')
+      list = zipJoin(node.arguments.map(@walk), ', ')
         
       [ callee, '(', list, ')' ]
 
@@ -116,12 +124,12 @@ class Builder extends Walker
       ]
 
     BlockStatement: (node) ->
-      list = @zipJoin(node.body.map(@walk), @indent())
+      list = zipJoin(node.body.map(@walk), @indent())
 
     FunctionDeclaration: (node) ->
       params =
         if node.params.length
-          [ '(', @zipJoin(node.params.map(@walk), ', '), ') ']
+          [ '(', zipJoin(node.params.map(@walk), ', '), ') ']
         else
           []
 
@@ -133,8 +141,3 @@ class Builder extends Walker
         @walk(node.argument),
         "\n"
       ]
-
-    # Default, when nothing else can do
-    Default: (node) ->
-      console.error node
-      throw new Error("walk(): No handler for #{node?.type}")

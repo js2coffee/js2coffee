@@ -24,10 +24,10 @@ module.exports = class Walker
     fn = @visitors[type]
 
     if fn
-      out = fn.call(this, node)
+      out = fn.call(this, node, { path: @path })
       out = @decorator(node, out)  if @decorator?
     else
-      out = @visitors.Default.call(this, node)
+      out = @onUnknownNode(node, { path: @path })
 
     @path.splice(oldLength)
     out
