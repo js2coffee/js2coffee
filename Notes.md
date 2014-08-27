@@ -1,12 +1,17 @@
 ### References
 
-- [ Esprima docs]
-- [ Parser API spec]
-- [ Esprima demo]
+- [Esprima docs]
+- [Parser API spec]
+- [Esprima demo]
 
 [Esprima docs]: http://esprima.org/doc/index.html#ast
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 [Esprima demo]: http://esprima.org/demo/parse.html# 
+
+### Big to do
+
+ - [ ] Test Walker
+ - [ ] Add support for filters
 
 ### Types
 
