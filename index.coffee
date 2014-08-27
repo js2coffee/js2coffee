@@ -114,7 +114,14 @@ class Stringifier extends Walker
       list = @zipJoin(node.body.map(@walk), @indent())
 
     FunctionDeclaration: (node) ->
-      [ @walk(node.id), " = ->\n", @indent(), @walk(node.body) ]
+      left = [ @walk(node.id), ' = ', ]
+      right = [ "->\n", @indent(), @walk(node.body) ]
+      middle = if node.params.length
+        [ '(' ].concat(@zipJoin(node.params.map(@walk), ', ')).concat([ ') '])
+      else
+        []
+
+      left.concat(middle).concat(right)
 
     ReturnStatement: (node) ->
       [ "return ", @walk(node.argument), "\n" ]
