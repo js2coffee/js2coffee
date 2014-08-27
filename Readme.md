@@ -2,6 +2,8 @@
 
 Small attempt at making a new js2coffee.
 
+[![Status](https://travis-ci.org/rstacruz/js2coffee-redux.svg?branch=master)](https://travis-ci.org/rstacruz/js2coffee-redux)  
+
 ## Goals
 
  * __Use a new JS parser.__
@@ -23,7 +25,7 @@ Small attempt at making a new js2coffee.
  - Be scope-aware.
  - Be able to produce warnings for things that may break compatibility (such as 
      `==` being converted to `is`).
- - Source maps. Maybe.
+ - Source maps.
  - Maybe ES6 support once CoffeeScript supports it!
 
 These should be made configurable:
@@ -49,5 +51,11 @@ js2coffee(source, {
    as js2coffee almost as-is.
  - The stringifier class should be able to take an AST and produce a string 
  output with source maps.
+
+## Intentional deviations
+
+Some differences from legacy js2coffee are to be intended:
+
+ - ...
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
