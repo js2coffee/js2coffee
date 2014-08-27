@@ -1,13 +1,7 @@
-esprima = require('esprima')
-SourceNode = require("source-map").SourceNode
+Esprima = require('esprima')
+{SourceNode} = require("source-map")
 Walker = require('./lib/walker')
-
-zipJoin = (list, joiner) ->
-  newlist = []
-  for item, i in list
-    newlist.push(joiner) if i > 0
-    newlist.push(item)
-  newlist
+{zipJoin} = require('./lib/helpers')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
@@ -33,7 +27,7 @@ module.exports = js2coffee = (source, options) ->
 ###
 
 js2coffee.parse = (source, options = {}) ->
-  ast = esprima.parse(source, loc: true, range: true, comment: true)
+  ast = Esprima.parse(source, loc: true, range: true, comment: true)
 
   builder = new Builder(ast, options)
   {code, map} = builder.get()
@@ -64,7 +58,7 @@ class Builder extends Walker
 
   ###
   # decorator():
-  # (private) takes the output of each of the node visitors and turns them into
+  # Takes the output of each of the node visitors and turns them into
   # a SourceNode.
   ###
 
@@ -83,6 +77,11 @@ class Builder extends Walker
   onUnknownNode: (node) ->
     console.error node
     throw new Error("walk(): No handler for #{node?.type}")
+
+  ###
+  # visitors:
+  # The visitors of each node.
+  ###
 
   visitors:
     Program: (node) ->
