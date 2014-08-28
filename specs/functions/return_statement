@@ -1,0 +1,11 @@
+description: return statement
+----
+
+function a () {
+  return b;
+}
+
+----
+
+a = ->
+  return b

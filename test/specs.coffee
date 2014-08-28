@@ -23,15 +23,9 @@ describe 'specs:', ->
 
         test name, ((spec) ->
           ->
-            if fs.statSync(spec).isDirectory()
-              input  = fs.readFileSync("#{spec}/input.js", 'utf-8')
-              output = fs.readFileSync("#{spec}/output.coffee", 'utf-8')
-              result = js2coffee(input)
-              expect(result).eql(output)
-            else
-              data = fs.readFileSync(spec, 'utf-8')
-              [meta, input, output] = data.split("\n----\n\n")
+            data = fs.readFileSync(spec, 'utf-8')
+            [meta, input, output] = data.split("\n----\n\n")
 
-              result = js2coffee(input)
-              expect(result).eql(output)
+            result = js2coffee(input)
+            expect(result).eql(output)
         )(spec)

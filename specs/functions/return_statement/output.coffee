@@ -1,2 +1,0 @@
-a = ->
-  return b
