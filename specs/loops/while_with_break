@@ -1,12 +1,12 @@
-description: While loop with break
+description: Break statement
 
 ----
 
-while (true) { if (x) break; a(); }
+while (condition) { if (x) break; a(); }
 
 ----
 
-while true
+while condition
   if x
     break
   a()

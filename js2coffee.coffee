@@ -256,7 +256,13 @@ class Builder extends Walker
     [ "new ", callee, args ]
 
   WhileStatement: (node) ->
-    @indent => [ "while ", @walk(node.test), "\n", @walk(node.body) ]
+    isLoop = node.test?.type is 'Literal' and node.test?.value is true
+
+    left = if isLoop
+      [ "loop" ]
+    else
+      [ "while ", @walk(node.test) ]
+    @indent => [ left, "\n", @walk(node.body) ]
 
   BreakStatement: (node) ->
     [ "break\n" ]

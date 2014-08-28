@@ -24,20 +24,19 @@
  - [x] ExpressionStatement
  - [x] IfStatement
  - [ ] LabeledStatement
- - [ ] BreakStatement
- - [ ] ContinueStatement
+ - [x] BreakStatement
+ - [x] ContinueStatement
  - [ ] WithStatement
  - [ ] SwitchStatement
  - [x] ReturnStatement
  - [ ] ThrowStatement
  - [ ] TryStatement
- - [ ] WhileStatement
+ - [x] WhileStatement
  - [ ] DoWhileStatement
  - [ ] ForStatement
  - [ ] ForInStatement
  - [ ] ForOfStatement
- - [ ] LetStatement
- - [ ] DebuggerStatement
+ - [x] DebuggerStatement
  - [x] FunctionDeclaration
  - [ ] VariableDeclaration
  - [ ] VariableDeclarator
@@ -48,7 +47,7 @@
  - [ ] SequenceExpression
  - [x] UnaryExpression
  - [x] BinaryExpression
- - [x] AssignmentExpression
+ - [ ] AssignmentExpression
  - [ ] UpdateExpression
  - [ ] LogicalExpression
  - [ ] ConditionalExpression
@@ -64,6 +63,7 @@
 
  ES6:
 
+ - [ ] LetStatement
  - [ ] YieldExpression
  - [ ] ComprehensionExpression
  - [ ] GeneratorExpression

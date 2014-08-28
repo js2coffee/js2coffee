@@ -2,11 +2,11 @@ description: While loop with continue
 
 ----
 
-while (true) { if (x) continue; a(); }
+while (condition) { if (x) continue; a(); }
 
 ----
 
-while true
+while condition
   if x
     continue
   a()

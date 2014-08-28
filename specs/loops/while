@@ -2,9 +2,9 @@ description: While loop
 
 ----
 
-while (true) { a(); }
+while (condition) { a(); }
 
 ----
 
-while true
+while condition
   a()
