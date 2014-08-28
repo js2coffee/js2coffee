@@ -1,0 +1,9 @@
+description: empty statement
+----
+
+a();;;b()
+
+----
+
+a()
+b()
