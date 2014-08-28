@@ -5,4 +5,4 @@ a("hello", 2);
 
 ----
 
-a("hello", 2)
+a "hello", 2

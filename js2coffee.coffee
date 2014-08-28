@@ -34,7 +34,7 @@ js2coffee.parse = (source, options = {}) ->
 
   {code, ast, map}
 
-###
+###*
 # Builder : new Builder(ast, [options])
 # (private) Generates output based on a JavaScript AST.
 #
@@ -126,7 +126,7 @@ class Builder extends Walker
   ###
 
   Program: (node) ->
-    prependAll(node.body.map(@walk), @indent())
+    @BlockStatement(node)
 
   ExpressionStatement: (node) ->
     [ @walk(node.expression), "\n" ]
@@ -171,12 +171,17 @@ class Builder extends Walker
   ThisExpression: (node) ->
     [ "this" ]
 
-  CallExpression: (node) ->
-    list = []
+  CallExpression: (node, ctx) ->
     callee = @walk(node.callee)
     list = delimit(node.arguments.map(@walk), ', ')
+
+    hasArgs = list.length > 0
+    isStatement = ctx.parent.type is 'ExpressionStatement'
       
-    [ callee, '(', list, ')' ]
+    if isStatement and hasArgs
+      [ callee, ' ', list ]
+    else
+      [ callee, '(', list, ')' ]
 
   IfStatement: (node) ->
     alt = node.alternate

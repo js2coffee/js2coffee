@@ -19,6 +19,7 @@ module.exports = class Walker
   walk: (node, type) =>
     oldLength = @path.length
     @path.push(node)
+    @ctx = { path: @path, type: type, parent: @path[@path.length-2] }
 
     type = undefined if typeof type isnt 'string'
     type or= node.type
@@ -28,13 +29,13 @@ module.exports = class Walker
     if filters?
       node = filter(node) for filter in filters
 
+    # check for the main visitor
     fn = this[type]
-
     if fn
-      out = fn.call(this, node, { path: @path, type: type })
+      out = fn.call(this, node, @ctx)
       out = @decorator(node, out) if @decorator?
     else
-      out = @onUnknownNode(node, { path: @path, type: type })
+      out = @onUnknownNode(node, @ctx)
 
     @path.splice(oldLength)
     out
