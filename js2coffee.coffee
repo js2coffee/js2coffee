@@ -138,7 +138,10 @@ class Builder extends Walker
     [ node.name ]
 
   UnaryExpression: (node) ->
-    [ node.operator, @walk(node.argument) ]
+    if node.operator is 'void'
+      [ node.operator, ' ', @walk(node.argument) ]
+    else
+      [ node.operator, @walk(node.argument) ]
 
   # Operator (+)
   BinaryExpression: (node) ->
@@ -272,6 +275,9 @@ class Builder extends Walker
 
   DebuggerStatement: (node) ->
     [ "debugger\n" ]
+
+  ThrowStatement: (node) ->
+    [ "throw ", @walk(node.argument), "\n" ]
 
   toParams: (params) ->
     if params.length

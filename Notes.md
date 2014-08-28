@@ -98,3 +98,7 @@
  - [ ] Transform `.prototype.`
  - [ ] Ensure correct function orders
  - [ ] Warn about json being pasted
+ - [ ] `Math.pow(a,b)` => `a ** b`
+ - [ ] `Math.floor(a / b)` => `a // b`
+ - [ ] `typeof x !== 'undefined'` => `x?`
+ - [ ] `function() { a }.bind(this)` => `=> a`
