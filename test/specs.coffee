@@ -18,7 +18,7 @@ describe 'specs:', ->
       for spec in specs
 
         name = toName(spec)
-        isPending = ~group.indexOf('pending')
+        isPending = ~group.indexOf('pending') or ~name.indexOf('pending')
         test = if isPending then xit else it
 
         test name, ((spec) ->
