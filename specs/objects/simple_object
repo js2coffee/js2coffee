@@ -1,0 +1,11 @@
+description: Simple objects
+
+----
+
+a = { b: 2 }
+
+----
+
+a = {
+  b: 2
+}

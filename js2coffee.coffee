@@ -137,6 +137,9 @@ class Builder extends Walker
   Identifier: (node) ->
     [ node.name ]
 
+  UnaryExpression: (node) ->
+    [ node.operator, @walk(node.argument) ]
+
   # Operator (+)
   BinaryExpression: (node) ->
     [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
@@ -208,17 +211,22 @@ class Builder extends Walker
       "\n"
     ]
 
-  # everything below is just hastily-made and untested
+  ObjectExpression: (node) ->
+    props = @indent =>
+      props = node.properties.map(@walk)
+      prependAll(props, [ "\n", @indent() ])
 
-  UnaryExpression: (node) ->
-    [ node.operator, @walk(node.argument) ]
+    [ "{", props, "\n", @indent(), "}" ]
+
+  Property: (node) ->
+    if node.kind isnt 'init'
+      throw new Error("Property: not sure about kind " + node.kind)
+
+    [ @walk(node.key), ": ", @walk(node.value) ]
 
   VariableDeclaration: (node) ->
     node.declarations.map (d) =>
       [ @walk(d.id), ' = ', @walk(d.init), "\n" ]
-
-  ObjectExpression: (node) ->
-    [ "{", "...", "}" ]
 
   FunctionExpression: (node) ->
     params = @toParams(node.params)
