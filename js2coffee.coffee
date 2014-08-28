@@ -134,8 +134,11 @@ class Builder extends Walker
     @indent (i) =>
       test = @walk(node.test)
       consequent = @walk(node.consequent)
+      alt = []
+      if node.alternate
+        alt = [ 'else', "\n", @walk(node.alternate) ]
 
-      [ i, 'if ', test, "\n", consequent ]
+      [ i, 'if ', test, "\n", consequent, alt ]
 
   BlockStatement: (node) ->
     node.body.map(@walk)
