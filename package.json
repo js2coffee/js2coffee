@@ -21,6 +21,7 @@
     "coffee-script": "^1.8.0",
     "coffeeify": "^0.7.0",
     "glob": "^4.0.5",
-    "mocha": "^1.21.4"
+    "mocha": "^1.21.4",
+    "underscore": "^1.7.0"
   }
 }

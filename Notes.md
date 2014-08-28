@@ -10,15 +10,16 @@
 
 ### Big to do
 
- - [ ] Test Walker
- - [ ] Add support for filters
+ - [x] Test Walker
+ - [x] Add support for filters
+ - [ ] Really think indentation through
  - [ ] Put groundwork on comment generation
  - [ ] Throw useful Esprima errors (like coffeescriptredux)
 
 ### Types
 
  - [x] Program
- - [ ] EmptyStatement
+ - [x] EmptyStatement
  - [x] BlockStatement
  - [x] ExpressionStatement
  - [x] IfStatement
@@ -40,14 +41,14 @@
  - [x] FunctionDeclaration
  - [ ] VariableDeclaration
  - [ ] VariableDeclarator
- - [ ] ThisExpression
+ - [x] ThisExpression
  - [ ] ArrayExpression
  - [ ] ObjectExpression
- - [ ] FunctionExpression
+ - [x] FunctionExpression
  - [ ] SequenceExpression
- - [ ] UnaryExpression
+ - [x] UnaryExpression
  - [x] BinaryExpression
- - [ ] AssignmentExpression
+ - [x] AssignmentExpression
  - [ ] UpdateExpression
  - [ ] LogicalExpression
  - [ ] ConditionalExpression
