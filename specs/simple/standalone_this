@@ -1,0 +1,9 @@
+description: Standalone this
+
+----
+
+a = this;
+
+----
+
+a = this

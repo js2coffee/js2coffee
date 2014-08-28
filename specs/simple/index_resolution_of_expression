@@ -1,0 +1,9 @@
+description: Index resolution of strings
+
+----
+
+a["node" + n]
+
+----
+
+a["node" + n]

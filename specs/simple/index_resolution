@@ -1,0 +1,9 @@
+description: Index resolution
+
+----
+
+a[2]
+
+----
+
+a[2]

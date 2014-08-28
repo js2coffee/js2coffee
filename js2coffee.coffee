@@ -115,7 +115,22 @@ class Builder extends Walker
     [ node.raw ]
 
   MemberExpression: (node) ->
-    [ @walk(node.object), '.', @walk(node.property) ]
+    isThis = (node.object.type is 'ThisExpression')
+    isIdentifier = (node.property.type is 'Identifier')
+
+    left = if isThis
+      [ '@' ]
+    else
+      [ @walk(node.object) ]
+
+    right = if not isIdentifier
+      [ '[', @walk(node.property), ']' ]
+    else if isThis
+      [ @walk(node.property) ]
+    else
+      [ '.', @walk(node.property) ]
+
+    [ left, right ]
 
   LogicalExpression: (node) ->
     [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
