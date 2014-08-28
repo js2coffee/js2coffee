@@ -131,16 +131,22 @@ class Builder extends Walker
     [ callee, '(', list, ')' ]
 
   IfStatement: (node) ->
+    [ @indent(), @walk node, 'IfBlock' ]
+
+  IfBlock: (node) ->
+    alt = node.alternate
+    if alt?.type is 'IfStatement'
+      els = [ @indent(), "else ", @walk(node.alternate, 'IfBlock') ]
+    else if alt?
+      els = @indent (i) => [ i, "else\n", @walk(node.alternate) ]
+    else
+      els = []
+
     @indent (i) =>
       test = @walk(node.test)
       consequent = @walk(node.consequent)
-      if node.alternate?
-        alternate = @walk(node.alternate)
 
-      if alternate
-        [ i, 'if ', test, "\n", consequent, i, "else\n", alternate ]
-      else
-        [ i, 'if ', test, "\n", consequent ]
+      [ 'if ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
     node.body.map(@walk)
