@@ -45,8 +45,19 @@ js2coffee.parse = (source, options = {}) ->
 
 class Builder extends Walker
 
-  indent: (n=1) ->
-    "  "
+  constructor: ->
+    super
+    @_indent = 0
+
+  addIndent: (fn) ->
+    previous = @indent()
+    @_indent += 1
+    result = fn(previous)
+    @_indent -= 1
+    result
+
+  indent: ->
+    Array(@_indent + 1).join("  ")
 
   ###*
   # get():
@@ -88,7 +99,7 @@ class Builder extends Walker
       node.body.map(@walk)
 
     ExpressionStatement: (node) ->
-      [ @walk(node.expression), "\n" ]
+      [ @indent(), @walk(node.expression), "\n" ]
 
     AssignmentExpression: (node) ->
       [ @walk(node.left), ' = ', @walk(node.right) ]
@@ -114,16 +125,18 @@ class Builder extends Walker
       [ callee, '(', list, ')' ]
 
     IfStatement: (node) ->
-      [
-        'if ',
-        @walk(node.test),
-        "\n",
-        @indent(),
-        @walk(node.consequent)
-      ]
+      i = @indent()
+      @addIndent =>
+        [
+          i,
+          'if ',
+          @walk(node.test),
+          "\n",
+          @walk(node.consequent)
+        ]
 
     BlockStatement: (node) ->
-      list = delimit(node.body.map(@walk), @indent())
+      node.body.map(@walk)
 
     FunctionDeclaration: (node) ->
       params =
@@ -132,10 +145,13 @@ class Builder extends Walker
         else
           []
 
-      [ @walk(node.id), ' = ', params, "->\n", @indent(), @walk(node.body) ]
+      i = @indent()
+      @addIndent =>
+        [ i, @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
 
     ReturnStatement: (node) ->
       [
+        @indent(),
         "return ",
         @walk(node.argument),
         "\n"
@@ -160,4 +176,5 @@ class Builder extends Walker
       [ "{", "...", "}" ]
 
     FunctionExpression: (node) ->
-      [ "->\n", @indent(), @walk(node.body) ]
+      @addIndent =>
+        [ "->\n", @walk(node.body) ]
