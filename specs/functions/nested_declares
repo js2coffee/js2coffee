@@ -1,0 +1,15 @@
+description: Nesting functions.
+
+----
+
+function a() {
+  function b() {
+    c();
+  }
+}
+
+----
+
+a = ->
+  b = ->
+    c()

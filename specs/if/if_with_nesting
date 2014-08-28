@@ -1,0 +1,14 @@
+description: if with nesting
+----
+
+if (a) {
+  if (b) {
+    c();
+  }
+}
+
+----
+
+if a
+  if b
+    c()

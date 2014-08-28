@@ -1,0 +1,8 @@
+description: nested function calls
+----
+
+a(b());
+
+----
+
+a(b())

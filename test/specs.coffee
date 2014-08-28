@@ -11,18 +11,27 @@ toName = (dirname) ->
   path.basename(dirname).replace(/_/g, ' ').trim()
 
 describe 'specs:', ->
-  groups.forEach (group) ->
+  for group in groups
     describe toName(group), ->
 
       specs = glob.sync("#{group}/*")
-      specs.forEach (spec) ->
+      for spec in specs
 
         name = toName(spec)
         isPending = ~group.indexOf('pending')
         test = if isPending then xit else it
 
-        test name, ->
-          input  = fs.readFileSync("#{spec}/input.js", 'utf-8')
-          output = fs.readFileSync("#{spec}/output.coffee", 'utf-8')
-          result = js2coffee(input)
-          expect(result).eql(output)
+        test name, ((spec) ->
+          ->
+            if fs.statSync(spec).isDirectory()
+              input  = fs.readFileSync("#{spec}/input.js", 'utf-8')
+              output = fs.readFileSync("#{spec}/output.coffee", 'utf-8')
+              result = js2coffee(input)
+              expect(result).eql(output)
+            else
+              data = fs.readFileSync(spec, 'utf-8')
+              [meta, input, output] = data.split("\n----\n\n")
+
+              result = js2coffee(input)
+              expect(result).eql(output)
+        )(spec)

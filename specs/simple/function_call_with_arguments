@@ -1,0 +1,8 @@
+description: function call with arguments
+----
+
+a("hello", 2);
+
+----
+
+a("hello", 2)
