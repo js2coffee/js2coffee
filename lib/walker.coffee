@@ -19,10 +19,10 @@ module.exports = class Walker
   walk: (node, type) =>
     oldLength = @path.length
     @path.push(node)
-    @ctx = { path: @path, type: type, parent: @path[@path.length-2] }
 
     type = undefined if typeof type isnt 'string'
     type or= node.type
+    @ctx = { path: @path, type: type, parent: @path[@path.length-2] }
 
     # check for a filter first
     filters = @filters?[type]

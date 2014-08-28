@@ -1,0 +1,9 @@
+description: new operator
+
+----
+
+a = new B
+
+----
+
+a = new B

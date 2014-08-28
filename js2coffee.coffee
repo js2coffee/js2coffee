@@ -242,6 +242,19 @@ class Builder extends Walker
   EmptyStatement: (node) ->
     [ ]
 
+  NewExpression: (node) ->
+    callee = if node.callee?.type is 'Identifier'
+      [ @walk(node.callee) ]
+    else
+      [ '(', @walk(node.callee), ')' ]
+
+    args = if node.arguments?.length
+      [ '(', delimit(node.arguments.map(@walk), ', '), ')' ]
+    else
+      []
+
+    [ "new ", callee, args ]
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']

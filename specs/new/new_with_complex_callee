@@ -1,0 +1,9 @@
+description: Complex callee
+
+----
+
+a = new (require('foo'))()
+
+----
+
+a = new (require('foo'))

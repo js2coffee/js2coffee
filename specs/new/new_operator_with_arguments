@@ -1,0 +1,9 @@
+description: new operator with arguments
+
+----
+
+a = new B(x,y);
+
+----
+
+a = new B(x, y)
