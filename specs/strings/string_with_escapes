@@ -1,0 +1,9 @@
+description: string with escapes
+
+----
+
+"\n"
+
+----
+
+"\n"
