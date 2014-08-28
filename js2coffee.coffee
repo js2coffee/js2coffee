@@ -86,9 +86,9 @@ class Builder extends Walker
   # Invoked when the node is not known. Throw an error.
   ###
 
-  onUnknownNode: (node) ->
+  onUnknownNode: (node, ctx) ->
     console.error node
-    throw new Error("walk(): No handler for #{node?.type}")
+    throw new Error("walk(): No handler for #{ctx?.type}")
 
   ###
   # visitors:
@@ -134,11 +134,13 @@ class Builder extends Walker
     @indent (i) =>
       test = @walk(node.test)
       consequent = @walk(node.consequent)
-      alt = []
-      if node.alternate
-        alt = [ i, 'else', "\n", @walk(node.alternate) ]
+      if node.alternate?
+        alternate = @walk(node.alternate)
 
-      [ i, 'if ', test, "\n", consequent, alt ]
+      if alternate
+        [ i, 'if ', test, "\n", consequent, i, "else\n", alternate ]
+      else
+        [ i, 'if ', test, "\n", consequent ]
 
   BlockStatement: (node) ->
     node.body.map(@walk)
