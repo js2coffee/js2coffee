@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "prepublish": "[ -z \"$CI\" ] && ( mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee index.coffee > dist/js2coffee.js )"
+    "prepublish": "mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee index.coffee > dist/js2coffee.js"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
