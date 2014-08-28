@@ -1,7 +1,7 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
 Walker = require('./lib/walker.coffee')
-{delimit} = require('./lib/helpers.coffee')
+{delimit, prependAll} = require('./lib/helpers.coffee')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
@@ -49,14 +49,44 @@ class Builder extends Walker
     super
     @_indent = 0
 
-  # Indents
+  ###*
+  # indent():
+  # Indentation utility with 3 different functions.
+  #
+  # - `@indent(-> ...)` - adds an indent level.
+  # - `@indent([ ... ])` - adds indentation.
+  # - `@indent()` - returns the current indent level as a string.
+  #
+  # When invoked with a function, the indentation level is increased by 1, and
+  # the function is invoked. This is similar to escodegen's `withIndent`.
+  #
+  #     @indent =>
+  #       [ '...' ]
+  #
+  # The past indent level is passed to the function as the first argument.
+  #
+  #     @indent (indent) =>
+  #       [ indent, 'if', ... ]
+  #
+  # When invoked with an array, it will indent it.
+  #
+  #     @indent [ 'if...' ]
+  #     #=> [ '  ', [ 'if...' ] ]
+  #
+  # When invoked without arguments, it returns the current indentation as a string.
+  #
+  #     @indent()
+  ###
+
   indent: (fn) ->
-    if fn
+    if typeof fn is "function"
       previous = @indent()
       @_indent += 1
       result = fn(previous)
       @_indent -= 1
       result
+    else if fn
+      [ @indent(), fn ]
     else
       Array(@_indent + 1).join("  ")
 
@@ -96,10 +126,10 @@ class Builder extends Walker
   ###
 
   Program: (node) ->
-    node.body.map(@walk)
+    prependAll(node.body.map(@walk), @indent())
 
   ExpressionStatement: (node) ->
-    [ @indent(), @walk(node.expression), "\n" ]
+    [ @walk(node.expression), "\n" ]
 
   AssignmentExpression: (node) ->
     [ @walk(node.left), ' = ', @walk(node.right) ]
@@ -146,12 +176,9 @@ class Builder extends Walker
     [ callee, '(', list, ')' ]
 
   IfStatement: (node) ->
-    [ @indent(), @walk(node, '_IfSubStatement') ]
-
-  _IfSubStatement: (node) ->
     alt = node.alternate
     if alt?.type is 'IfStatement'
-      els = [ @indent(), "else ", @walk(node.alternate, '_IfSubStatement') ]
+      els = @indent [ "else ", @walk(node.alternate, 'IfStatement') ]
     else if alt?
       els = @indent (i) => [ i, "else\n", @walk(node.alternate) ]
     else
@@ -160,21 +187,22 @@ class Builder extends Walker
     @indent (i) =>
       test = @walk(node.test)
       consequent = @walk(node.consequent)
+      if node.consequent.type isnt 'BlockStatement'
+        consequent = @indent(consequent)
 
       [ 'if ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
-    node.body.map(@walk)
+    prependAll(node.body.map(@walk), @indent())
 
   FunctionDeclaration: (node) ->
     params = @toParams(node.params)
 
-    @indent (i) =>
-      [ i, @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
+    @indent (indent) =>
+      [ @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
 
   ReturnStatement: (node) ->
     [
-      @indent(),
       "return ",
       @walk(node.argument),
       "\n"
