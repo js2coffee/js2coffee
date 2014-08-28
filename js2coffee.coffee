@@ -183,6 +183,9 @@ class Builder extends Walker
     @indent (i) =>
       [ params, "->\n", @walk(node.body) ]
 
+  EmptyStatement: (node) ->
+    [ ]
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']
