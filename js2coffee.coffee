@@ -141,11 +141,7 @@ class Builder extends Walker
     node.body.map(@walk)
 
   FunctionDeclaration: (node) ->
-    params =
-      if node.params.length
-        [ '(', delimit(node.params.map(@walk), ', '), ') ']
-      else
-        []
+    params = @toParams(node.params)
 
     @indent (i) =>
       [ i, @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
@@ -171,5 +167,13 @@ class Builder extends Walker
     [ "{", "...", "}" ]
 
   FunctionExpression: (node) ->
+    params = @toParams(node.params)
+
     @indent (i) =>
-      [ "->\n", @walk(node.body) ]
+      [ params, "->\n", @walk(node.body) ]
+
+  toParams: (params) ->
+    if params.length
+      [ '(', delimit(params.map(@walk), ', '), ') ']
+    else
+      []
