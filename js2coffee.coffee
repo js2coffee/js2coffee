@@ -35,10 +35,10 @@ js2coffee.parse = (source, options = {}) ->
   {code, ast, map}
 
 ###
-# Builder : new Stringifier(ast, [options])
+# Builder : new Builder(ast, [options])
 # (private) Generates output based on a JavaScript AST.
 #
-#     s = new Stringifier(ast, {})
+#     s = new Builder(ast, {})
 #     s.get()
 #     => { code: '...', map: { ... } }
 ###
@@ -49,15 +49,16 @@ class Builder extends Walker
     super
     @_indent = 0
 
-  addIndent: (fn) ->
-    previous = @indent()
-    @_indent += 1
-    result = fn(previous)
-    @_indent -= 1
-    result
-
-  indent: ->
-    Array(@_indent + 1).join("  ")
+  # Indents
+  indent: (fn) ->
+    if fn
+      previous = @indent()
+      @_indent += 1
+      result = fn(previous)
+      @_indent -= 1
+      result
+    else
+      Array(@_indent + 1).join("  ")
 
   ###*
   # get():
@@ -94,87 +95,81 @@ class Builder extends Walker
   # The visitors of each node.
   ###
 
-  visitors:
-    Program: (node) ->
-      node.body.map(@walk)
+  Program: (node) ->
+    node.body.map(@walk)
 
-    ExpressionStatement: (node) ->
-      [ @indent(), @walk(node.expression), "\n" ]
+  ExpressionStatement: (node) ->
+    [ @indent(), @walk(node.expression), "\n" ]
 
-    AssignmentExpression: (node) ->
-      [ @walk(node.left), ' = ', @walk(node.right) ]
+  AssignmentExpression: (node) ->
+    [ @walk(node.left), ' = ', @walk(node.right) ]
 
-    Identifier: (node) ->
-      [ node.name ]
+  Identifier: (node) ->
+    [ node.name ]
 
-    # Operator (+)
-    BinaryExpression: (node) ->
-      [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
+  # Operator (+)
+  BinaryExpression: (node) ->
+    [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
 
-    Literal: (node) ->
-      [ node.raw ]
+  Literal: (node) ->
+    [ node.raw ]
 
-    MemberExpression: (node) ->
-      [ @walk(node.object), '.', @walk(node.property) ]
+  MemberExpression: (node) ->
+    [ @walk(node.object), '.', @walk(node.property) ]
 
-    CallExpression: (node) ->
-      list = []
-      callee = @walk(node.callee)
-      list = delimit(node.arguments.map(@walk), ', ')
-        
-      [ callee, '(', list, ')' ]
+  LogicalExpression: (node) ->
+    [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
 
-    IfStatement: (node) ->
-      i = @indent()
-      @addIndent =>
-        [
-          i,
-          'if ',
-          @walk(node.test),
-          "\n",
-          @walk(node.consequent)
-        ]
+  ThisExpression: (node) ->
+    [ "this" ]
 
-    BlockStatement: (node) ->
-      node.body.map(@walk)
+  CallExpression: (node) ->
+    list = []
+    callee = @walk(node.callee)
+    list = delimit(node.arguments.map(@walk), ', ')
+      
+    [ callee, '(', list, ')' ]
 
-    FunctionDeclaration: (node) ->
-      params =
-        if node.params.length
-          [ '(', delimit(node.params.map(@walk), ', '), ') ']
-        else
-          []
+  IfStatement: (node) ->
+    @indent (i) =>
+      test = @walk(node.test)
+      consequent = @walk(node.consequent)
 
-      i = @indent()
-      @addIndent =>
-        [ i, @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
+      [ i, 'if ', test, "\n", consequent ]
 
-    ReturnStatement: (node) ->
-      [
-        @indent(),
-        "return ",
-        @walk(node.argument),
-        "\n"
-      ]
+  BlockStatement: (node) ->
+    node.body.map(@walk)
 
-    # everything below is just hastily-made and untested
+  FunctionDeclaration: (node) ->
+    params =
+      if node.params.length
+        [ '(', delimit(node.params.map(@walk), ', '), ') ']
+      else
+        []
 
-    UnaryExpression: (node) ->
-      [ node.operator, @walk(node.argument) ]
+    @indent (i) =>
+      [ i, @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
 
-    LogicalExpression: (node) ->
-      [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
+  ReturnStatement: (node) ->
+    [
+      @indent(),
+      "return ",
+      @walk(node.argument),
+      "\n"
+    ]
 
-    ThisExpression: (node) ->
-      [ "this" ]
+  # everything below is just hastily-made and untested
 
-    VariableDeclaration: (node) ->
-      node.declarations.map (d) =>
-        [ @walk(d.id), ' = ', @walk(d.init), "\n" ]
+  UnaryExpression: (node) ->
+    [ node.operator, @walk(node.argument) ]
 
-    ObjectExpression: (node) ->
-      [ "{", "...", "}" ]
+  VariableDeclaration: (node) ->
+    node.declarations.map (d) =>
+      [ @walk(d.id), ' = ', @walk(d.init), "\n" ]
 
-    FunctionExpression: (node) ->
-      @addIndent =>
-        [ "->\n", @walk(node.body) ]
+  ObjectExpression: (node) ->
+    [ "{", "...", "}" ]
+
+  FunctionExpression: (node) ->
+    @indent (i) =>
+      [ "->\n", @walk(node.body) ]

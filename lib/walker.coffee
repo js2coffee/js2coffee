@@ -21,7 +21,7 @@ module.exports = class Walker
     @path.push(node)
 
     type = node.type
-    fn = @visitors[type]
+    fn = this[type]
 
     if fn
       out = fn.call(this, node, { path: @path })
