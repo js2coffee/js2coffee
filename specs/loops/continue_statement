@@ -1,0 +1,12 @@
+description: While loop with continue
+
+----
+
+while (true) { if (x) continue; a(); }
+
+----
+
+while true
+  if x
+    continue
+  a()

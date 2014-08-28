@@ -255,6 +255,18 @@ class Builder extends Walker
 
     [ "new ", callee, args ]
 
+  WhileStatement: (node) ->
+    @indent => [ "while ", @walk(node.test), "\n", @walk(node.body) ]
+
+  BreakStatement: (node) ->
+    [ "break\n" ]
+
+  ContinueStatement: (node) ->
+    [ "continue\n" ]
+
+  DebuggerStatement: (node) ->
+    [ "debugger\n" ]
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']

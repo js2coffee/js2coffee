@@ -1,0 +1,10 @@
+description: While loop
+
+----
+
+while (true) { a(); }
+
+----
+
+while true
+  a()

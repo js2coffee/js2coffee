@@ -1,0 +1,12 @@
+description: While loop with break
+
+----
+
+while (true) { if (x) break; a(); }
+
+----
+
+while true
+  if x
+    break
+  a()
