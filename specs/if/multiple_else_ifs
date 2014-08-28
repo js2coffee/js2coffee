@@ -1,0 +1,32 @@
+description: Multiple else ifs
+
+----
+
+if (a) {
+  x();
+} else if (b) {
+  y();
+} else if (b) {
+  y();
+} else if (b) {
+  y();
+} else if (b) {
+  y();
+} else {
+  z();
+}
+
+----
+
+if a
+  x()
+else if b
+  y()
+else if b
+  y()
+else if b
+  y()
+else if b
+  y()
+else
+  z()

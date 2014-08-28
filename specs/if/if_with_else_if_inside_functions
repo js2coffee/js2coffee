@@ -1,0 +1,18 @@
+description: if with else if inside functions
+----
+
+function fn() {
+  if (a) { b(); }
+  else if (b) { c(); }
+  else { d(); }
+}
+
+----
+
+fn = ->
+  if a
+    b()
+  else if b
+    c()
+  else
+    d()
