@@ -136,7 +136,7 @@ class Builder extends Walker
       consequent = @walk(node.consequent)
       alt = []
       if node.alternate
-        alt = [ 'else', "\n", @walk(node.alternate) ]
+        alt = [ i, 'else', "\n", @walk(node.alternate) ]
 
       [ i, 'if ', test, "\n", consequent, alt ]
 
