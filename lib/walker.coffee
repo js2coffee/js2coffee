@@ -21,11 +21,17 @@ module.exports = class Walker
     @path.push(node)
 
     type = node.type
+
+    # check for a filter first
+    filters = @filters?[type]
+    if filters?
+      node = filter(node) for filter in filters
+
     fn = this[type]
 
     if fn
       out = fn.call(this, node, { path: @path })
-      out = @decorator(node, out)  if @decorator?
+      out = @decorator(node, out) if @decorator?
     else
       out = @onUnknownNode(node, { path: @path })
 
