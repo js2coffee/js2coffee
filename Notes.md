@@ -23,7 +23,7 @@
  - [x] BlockStatement
  - [x] ExpressionStatement
  - [x] IfStatement
- - [ ] LabeledStatement
+ - [x] LabeledStatement
  - [x] BreakStatement
  - [x] ContinueStatement
  - [x] WithStatement

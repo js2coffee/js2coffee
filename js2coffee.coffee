@@ -363,6 +363,12 @@ class Builder extends Walker
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
 
+  LabeledStatement: (node, ctx) ->
+    if ctx.parent?.type is 'BlockStatement'
+      @syntaxError node, "Labeled statements are not supported (wrap your JSON in parentheses)"
+    else
+      @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']
