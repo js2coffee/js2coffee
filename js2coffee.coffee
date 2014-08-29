@@ -191,8 +191,10 @@ class Builder extends Walker
     alt = node.alternate
     if alt?.type is 'IfStatement'
       els = @indent [ "else ", @walk(node.alternate, 'IfStatement') ]
-    else if alt?
+    else if alt?.type is 'BlockStatement'
       els = @indent (i) => [ i, "else\n", @walk(node.alternate) ]
+    else if alt?
+      els = @indent (i) => [ i, "else\n", @indent(@walk(node.alternate)) ]
     else
       els = []
 

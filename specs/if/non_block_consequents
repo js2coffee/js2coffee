@@ -1,0 +1,16 @@
+description: Non block consequents
+
+----
+
+function fn() {
+  if (a) b();
+  else c();
+}
+
+----
+
+fn = ->
+  if a
+    b()
+  else
+    c()
