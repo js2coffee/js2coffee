@@ -38,8 +38,8 @@
  - [ ] ForOfStatement
  - [x] DebuggerStatement
  - [x] FunctionDeclaration
- - [ ] VariableDeclaration
- - [ ] VariableDeclarator
+ - [x] VariableDeclaration
+ - [x] VariableDeclarator
  - [x] ThisExpression
  - [ ] ArrayExpression
  - [ ] ObjectExpression

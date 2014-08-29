@@ -295,8 +295,16 @@ class Builder extends Walker
     [ @walk(node.key), ": ", @walk(node.value) ]
 
   VariableDeclaration: (node) ->
-    node.declarations.map (d) =>
-      [ @walk(d.id), ' = ', @walk(d.init), "\n" ]
+    declarators = node.declarations.map(@walk)
+    delimit(declarators, @indent())
+
+  VariableDeclarator: (node) ->
+    init = if node.init?
+      @walk(node.init)
+    else
+      "undefined"
+
+    [ @walk(node.id), ' = ', init, "\n" ]
 
   FunctionExpression: (node) ->
     params = @toParams(node.params)

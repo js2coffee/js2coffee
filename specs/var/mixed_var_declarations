@@ -1,0 +1,10 @@
+----
+function fn() {
+  var a = 1, b, c = 2, d;
+}
+----
+fn = ->
+  a = 1
+  b = undefined
+  c = 2
+  d = undefined
