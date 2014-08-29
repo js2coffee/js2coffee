@@ -1,5 +1,8 @@
 ----
-while (condition) { if (x) break; a(); }
+while (condition) {
+  if (x) break;
+  a();
+}
 ----
 while condition
   if x

@@ -12,7 +12,7 @@ toName = (dirname) ->
 
 describe 'specs:', ->
   for group in groups
-    describe toName(group), ->
+    describe toName(group) + ":", ->
 
       specs = glob.sync("#{group}/*")
       for spec in specs
@@ -21,11 +21,13 @@ describe 'specs:', ->
         isPending = ~group.indexOf('pending') or ~name.indexOf('pending')
         test = if isPending then xit else it
 
-        test name, ((spec) ->
+        fn = ((spec) ->
           ->
             data = fs.readFileSync(spec, 'utf-8')
             [meta, input, output] = data.split('----\n')
+            fn.data = { input, output }
 
             result = js2coffee(input)
             expect(result).eql(output)
         )(spec)
+        test name, fn
