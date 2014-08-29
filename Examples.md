@@ -226,7 +226,8 @@ else
 <tr>
 <th valign='top'>If with else</th>
 <td valign='top'>
-<pre class='lang-js'>if (a) { b(); } else { c(); }
+<pre class='lang-js'>if (a) { b(); }
+else { c(); }
 </pre>
 </td>
 <td width='50%' valign='top'>
@@ -348,7 +349,10 @@ else
 <tr>
 <th valign='top'>Continue statement</th>
 <td valign='top'>
-<pre class='lang-js'>while (condition) { if (x) continue; a(); }
+<pre class='lang-js'>while (condition) {
+  if (x) continue;
+  a();
+}
 </pre>
 </td>
 <td width='50%' valign='top'>
