@@ -6,12 +6,22 @@ groups = glob.sync("#{__dirname}/../specs/*")
 
 toName = (dirname) ->
   s = path.basename(dirname).replace(/_/g, ' ').trim()
-  s = s.substr(0,1).toUpperCase() + s.substr(1)
-  s
+  s.substr(0,1).toUpperCase() + s.substr(1)
+
+console.log """
+  <table width='100%'>
+  <thead>
+    <tr>
+      <th width='33%'>Example</th>
+      <th width='33%'>JavaScript</th>
+      <th width='33%'>CoffeeScript</th>
+  </thead>
+"""
 
 for group in groups
-  console.log "## #{toName(group)}"
-  console.log ""
+  console.log """
+    <tr><th colspan='3'>#{toName(group)}</th></tr>
+  """
 
   specs = glob.sync("#{group}/*")
   for spec in specs
@@ -24,15 +34,17 @@ for group in groups
     [meta, input, output] = data.split('----\n')
 
     console.log """
-      ### #{name}
-
-      <table width='100%'>
-      <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
-      <tr><td width='50%' valign='top'>
+      <tr>
+      <th valign='top'>#{name}</th>
+      <td valign='top'>
       <pre class='lang-js'>#{input}</pre>
-      </td><td width='50%' valign='top'>
+      </td>
+      <td width='50%' valign='top'>
       <pre class='lang-coffee'>#{output}</pre>
-      </td></tr></table>
-
+      </td>
+      </tr>
     """
 
+console.log """
+  </table>
+"""

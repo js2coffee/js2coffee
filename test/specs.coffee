@@ -8,7 +8,8 @@ fs = require('fs')
 groups = glob.sync("#{__dirname}/../specs/*")
 
 toName = (dirname) ->
-  path.basename(dirname).replace(/_/g, ' ').trim()
+  s = path.basename(dirname).replace(/_/g, ' ').trim()
+  s.substr(0,1).toUpperCase() + s.substr(1)
 
 describe 'specs:', ->
   for group in groups
