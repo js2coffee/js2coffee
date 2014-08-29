@@ -232,21 +232,6 @@ class Builder extends Walker
       [ 'if ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
-    injectComments = (comments, node, body) ->
-      range = node.range
-      list = []
-      left = range[0]
-      right = range[1]
-
-      # look for comments in left..node.range[0]
-      for item, i in body
-        newComments = comments.filter (c) ->
-          c.range[0] >= left and c.range[1] <= item.range[0]
-        list = list.concat(newComments)
-        list.push item
-        left = item.range[1]
-      list
-
     body = injectComments(@comments, node, node.body)
     prependAll(body.map(@walk), @indent())
 
@@ -257,12 +242,17 @@ class Builder extends Walker
   # Block comments
   Block: (node) ->
     lines = node.value.split("\n")
-    lines = lines.map (l, i) ->
-      if i is lines.length-1 and l.match(/^\s*$/)
+    lines = lines.map (line, i) ->
+      isTrailingSpace = i is lines.length-1 and line.match(/^\s*$/)
+      isSingleLine = i is 0 and lines.length is 1
+
+      if isTrailingSpace
         ''
+      else if isSingleLine
+        line
       else
-        l = l.replace(/^ \*/, '#')
-        l + "\n"
+        line = line.replace(/^ \*/, '#')
+        line + "\n"
     [ "###", lines, "###\n" ]
 
   FunctionDeclaration: (node) ->
@@ -382,3 +372,23 @@ class Builder extends Walker
       [ '(', delimit(params.map(@walk), ', '), ') ']
     else
       []
+
+###
+# injectComments():
+# Injects comment nodes into a node list.
+###
+
+injectComments = (comments, node, body) ->
+  range = node.range
+  list = []
+  left = range[0]
+  right = range[1]
+
+  # look for comments in left..node.range[0]
+  for item, i in body
+    newComments = comments.filter (c) ->
+      c.range[0] >= left and c.range[1] <= item.range[0]
+    list = list.concat(newComments)
+    list.push item
+    left = item.range[1]
+  list
