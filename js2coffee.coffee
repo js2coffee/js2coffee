@@ -322,7 +322,10 @@ class Builder extends Walker
     # block, guardedHandlers, handlers [], finalizer
     _try = @indent => [ "try\n", @walk(node.block) ]
     _catch = node.handlers.map(@walk)
-    _finally = @indent => [ "finally\n", @walk(node.finalizer) ]
+    _finally = if node.finalizer?
+      @indent => [ "finally\n", @walk(node.finalizer) ]
+    else
+      []
 
     [ _try, _catch, _finally ]
 
