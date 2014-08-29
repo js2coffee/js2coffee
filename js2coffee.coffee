@@ -130,13 +130,18 @@ class Builder extends Walker
   ###
 
   onUnknownNode: (node, ctx) ->
-    @unspported(node, ctx)
+    @syntaxError(node, "#{ctx?.type} is not supported")
 
-  unsupported: (node, ctx) ->
+  ###*
+  # syntaxError():
+  # Throws a syntax error for the given `node`.
+  ###
+
+  syntaxError: (node, description) ->
     err = buildError({
       lineNumber: node.loc.start.line,
       column: node.loc.start.column,
-      description: "#{ctx?.type} is not supported"
+      description: description
     }, @options.source, @options.filename)
     throw err
 
@@ -354,6 +359,9 @@ class Builder extends Walker
 
   ThrowStatement: (node) ->
     [ "throw ", @walk(node.argument), "\n" ]
+
+  WithStatement: (node) ->
+    @syntaxError node, "'with' is not supported in CoffeeScript"
 
   toParams: (params) ->
     if params.length

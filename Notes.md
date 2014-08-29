@@ -26,7 +26,7 @@
  - [ ] LabeledStatement
  - [x] BreakStatement
  - [x] ContinueStatement
- - [ ] WithStatement
+ - [x] WithStatement
  - [ ] SwitchStatement
  - [x] ReturnStatement
  - [x] ThrowStatement
