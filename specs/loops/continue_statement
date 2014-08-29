@@ -1,11 +1,6 @@
-description: While loop with continue
-
 ----
-
 while (condition) { if (x) continue; a(); }
-
 ----
-
 while condition
   if x
     continue

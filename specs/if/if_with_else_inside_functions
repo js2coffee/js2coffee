@@ -1,12 +1,8 @@
-description: if with else inside functions
 ----
-
 function fn() {
   if (a) { b(); } else { c(); }
 }
-
 ----
-
 fn = ->
   if a
     b()

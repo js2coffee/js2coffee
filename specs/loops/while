@@ -1,10 +1,5 @@
-description: While loop
-
 ----
-
 while (condition) { a(); }
-
 ----
-
 while condition
   a()

@@ -24,7 +24,7 @@ describe 'specs:', ->
         test name, ((spec) ->
           ->
             data = fs.readFileSync(spec, 'utf-8')
-            [meta, input, output] = data.split("\n----\n\n")
+            [meta, input, output] = data.split('----\n')
 
             result = js2coffee(input)
             expect(result).eql(output)

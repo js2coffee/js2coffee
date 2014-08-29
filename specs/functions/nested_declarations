@@ -1,14 +1,10 @@
-description: nested declarations
 ----
-
 function a () {
   function b () {
     return c;
   }
 }
-
 ----
-
 a = ->
   b = ->
     return c

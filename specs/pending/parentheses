@@ -1,9 +1,4 @@
-description: parentheses
 ----
-
 o = (a + b) / 2;
-
-
 ----
-
 o = (a + b) / 2

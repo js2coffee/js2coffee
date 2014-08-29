@@ -1,11 +1,7 @@
-description: iife functions
 ----
-
 (function () {
   hello();
 })();
-
 ----
-
 do ->
   hello()

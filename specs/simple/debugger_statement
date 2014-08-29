@@ -1,10 +1,5 @@
-description: Debugger statement
-
 ----
-
 if (x) debugger;
-
 ----
-
 if x
   debugger

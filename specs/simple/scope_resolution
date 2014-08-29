@@ -1,8 +1,4 @@
-description: scope resolution
 ----
-
 a.b
-
 ----
-
 a.b

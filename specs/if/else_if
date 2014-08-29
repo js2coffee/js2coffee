@@ -1,7 +1,4 @@
-description: Else if
-
 ----
-
 if (a) {
   x();
 } else if (b) {
@@ -9,9 +6,7 @@ if (a) {
 } else {
   z();
 }
-
 ----
-
 if a
   x()
 else if b

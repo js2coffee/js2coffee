@@ -1,12 +1,8 @@
-description: nesting if and assignment
 ----
-
 a.b = function (arg) {
   if (arg) cli.a = b;
 };
-
 ----
-
 a.b = (arg) ->
   if arg
     cli.a = b

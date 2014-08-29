@@ -1,7 +1,4 @@
-description: Multiple else ifs
-
 ----
-
 if (a) {
   x();
 } else if (b) {
@@ -15,9 +12,7 @@ if (a) {
 } else {
   z();
 }
-
 ----
-
 if a
   x()
 else if b

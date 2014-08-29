@@ -1,9 +1,4 @@
-description: the 'this' identifier as a prefix
-
 ----
-
 this.run();
-
 ----
-
 @run()

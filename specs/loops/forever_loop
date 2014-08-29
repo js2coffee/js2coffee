@@ -1,12 +1,7 @@
-description: Forever loops
-
 ----
-
 while (true) {
   a();
 }
-
 ----
-
 loop
   a()

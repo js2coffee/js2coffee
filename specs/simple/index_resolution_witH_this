@@ -1,9 +1,4 @@
-description: Index resolution with this
-
 ----
-
 this["#" + id]
-
 ----
-
 @["#" + id]

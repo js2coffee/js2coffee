@@ -1,8 +1,4 @@
-description: function call
 ----
-
 alert("Hello world");
-
 ----
-
 alert "Hello world"

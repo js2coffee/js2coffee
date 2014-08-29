@@ -1,12 +1,7 @@
-description: Assignments in the middle of a statement
-
 ----
-
 if (a = m = match) {
   m();
 }
-
 ----
-
 if a = m = match
   m()
