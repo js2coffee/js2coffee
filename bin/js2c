@@ -18,11 +18,11 @@ read(args._, function (err, res) {
   res.successes.forEach(function (file) {
     var data = file.data;
     try {
-      var out = js2coffee(data);
-      process.stdout.write(out);
+      var out = js2coffee.parse(data, { filename: file.name || '[stdin]' });
+      process.stdout.write(out.code);
     } catch (err) {
       console.error(err.message);
-      throw err;
+      process.exit(16);
     }
   });
 });
