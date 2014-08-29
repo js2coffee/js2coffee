@@ -227,6 +227,17 @@ class Builder extends Walker
   Line: (node) ->
     [ "#", node.value, "\n" ]
 
+  # Block comments
+  Block: (node) ->
+    lines = node.value.split("\n")
+    lines = lines.map (l, i) ->
+      if i is lines.length-1 and l.match(/^\s*$/)
+        ''
+      else
+        l = l.replace(/^ \*/, '#')
+        l + "\n"
+    [ "###", lines, "###\n" ]
+
   FunctionDeclaration: (node) ->
     params = @toParams(node.params)
 
@@ -241,11 +252,14 @@ class Builder extends Walker
     ]
 
   ObjectExpression: (node) ->
-    props = @indent =>
-      props = node.properties.map(@walk)
-      prependAll(props, [ "\n", @indent() ])
+    if node.properties.length is 0
+      [ "{}" ]
+    else
+      props = @indent =>
+        props = node.properties.map(@walk)
+        prependAll(props, [ "\n", @indent() ])
 
-    [ "{", props, "\n", @indent(), "}" ]
+      [ "{", props, "\n", @indent(), "}" ]
 
   Property: (node) ->
     if node.kind isnt 'init'

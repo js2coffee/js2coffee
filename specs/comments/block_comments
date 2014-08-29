@@ -1,0 +1,17 @@
+description: Block comments
+
+----
+
+a();
+/*
+ * hello
+ */
+b();
+
+----
+
+a()
+###
+# hello
+###
+b()
