@@ -21,15 +21,11 @@ describe 'specs:', ->
         isPending = ~group.indexOf('pending') or ~name.indexOf('pending')
         test = if isPending then xit else it
 
-        fn = ((spec) ->
+        test name, ((spec) ->
           ->
             data = fs.readFileSync(spec, 'utf-8')
             [meta, input, output] = data.split('----\n')
 
-            # Export data for the reporter.
-            fn.data = { input, output }
-
             result = js2coffee(input)
             expect(result).eql(output)
         )(spec)
-        test name, fn

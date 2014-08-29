@@ -1,5 +1,5 @@
 Examples.md: dummy
-	./node_modules/.bin/mocha -R lib/reporter.js > $@
+	./node_modules/.bin/coffee lib/report.coffee > $@
 
 dummy:
 
