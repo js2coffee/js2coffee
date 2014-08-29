@@ -32,29 +32,33 @@ module.exports = js2coffee = (source, options) ->
 
 js2coffee.parse = (source, options = {}) ->
   options.filename ?= 'input.js'
+  options.source = source
 
   try
     ast = Esprima.parse(source, loc: true, range: true, comment: true)
   catch err
     throw buildError(err, source, options.filename)
 
-  builder = new Builder(ast, options, source)
+  builder = new Builder(ast, options)
   {code, map} = builder.get()
 
   {code, ast, map}
 
 ###*
 # Builder : new Builder(ast, [options])
-# (private) Generates output based on a JavaScript AST.
+# Generates output based on a JavaScript AST.
 #
-#     s = new Builder(ast, {})
+#     s = new Builder(ast, { filename: 'input.js', source: '...' })
 #     s.get()
 #     => { code: '...', map: { ... } }
+#
+# The params `options` and `source` are optional. The source code is used to
+# generate meaningful errors.
 ###
 
 class Builder extends Walker
 
-  constructor: (ast, options={}, @source) ->
+  constructor: (ast, options={}) ->
     super
     @_indent = 0
 
@@ -107,10 +111,10 @@ class Builder extends Walker
   get: ->
     @run().toStringWithSourceMap()
 
-  ###
+  ###*
   # decorator():
   # Takes the output of each of the node visitors and turns them into
-  # a SourceNode.
+  # a `SourceNode`.
   ###
 
   decorator: (node, output) ->
@@ -120,17 +124,20 @@ class Builder extends Walker
       @options.filename,
       output)
 
-  ###
+  ###*
   # onUnknownNode():
   # Invoked when the node is not known. Throw an error.
   ###
 
   onUnknownNode: (node, ctx) ->
+    @unspported(node, ctx)
+
+  unsupported: (node, ctx) ->
     err = buildError({
       lineNumber: node.loc.start.line,
       column: node.loc.start.column,
       description: "#{ctx?.type} is not supported"
-    }, @source, @options.filename)
+    }, @options.source, @options.filename)
     throw err
 
   ###
