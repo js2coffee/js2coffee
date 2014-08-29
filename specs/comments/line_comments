@@ -1,0 +1,13 @@
+description: Line comments
+
+----
+
+a();
+// hello
+b();
+
+----
+
+a()
+# hello
+b()

@@ -126,6 +126,7 @@ class Builder extends Walker
   ###
 
   Program: (node) ->
+    @comments = node.comments
     @BlockStatement(node)
 
   ExpressionStatement: (node) ->
@@ -204,7 +205,27 @@ class Builder extends Walker
       [ 'if ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
-    prependAll(node.body.map(@walk), @indent())
+    injectComments = (comments, node, body) ->
+      range = node.range
+      list = []
+      left = range[0]
+      right = range[1]
+
+      # look for comments in left..node.range[0]
+      for item, i in body
+        newComments = comments.filter (c) ->
+          c.range[0] >= left and c.range[1] <= item.range[0]
+        list = list.concat(newComments)
+        list.push item
+        left = item.range[1]
+      list
+
+    body = injectComments(@comments, node, node.body)
+    prependAll(body.map(@walk), @indent())
+
+  # Line comments
+  Line: (node) ->
+    [ "#", node.value, "\n" ]
 
   FunctionDeclaration: (node) ->
     params = @toParams(node.params)
