@@ -5,10 +5,12 @@ fs = require('fs')
 groups = glob.sync("#{__dirname}/../specs/*")
 
 toName = (dirname) ->
-  path.basename(dirname).replace(/_/g, ' ').trim()
+  s = path.basename(dirname).replace(/_/g, ' ').trim()
+  s = s.substr(0,1).toUpperCase() + s.substr(1)
+  s
 
 for group in groups
-  console.log "## #{group}"
+  console.log "## #{toName(group)}"
   console.log ""
 
   specs = glob.sync("#{group}/*")

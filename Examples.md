@@ -1,6 +1,6 @@
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/comments
+## Comments
 
-### block comments
+### Block comments
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -20,7 +20,7 @@ b()
 </pre>
 </td></tr></table>
 
-### block comments with space
+### Block comments with space
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -35,7 +35,7 @@ b()
 </pre>
 </td></tr></table>
 
-### line comments
+### Line comments
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -51,7 +51,7 @@ b()
 </pre>
 </td></tr></table>
 
-### trailing line comment
+### Trailing line comment
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -66,9 +66,9 @@ world()
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/errors
+## Errors
 
-### no finally
+### No finally
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -87,7 +87,7 @@ catch e
 </pre>
 </td></tr></table>
 
-### try catch finally
+### Try catch finally
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -110,9 +110,9 @@ finally
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/functions
+## Functions
 
-### nested declarations
+### Nested declarations
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -130,7 +130,7 @@ finally
 </pre>
 </td></tr></table>
 
-### nested declares
+### Nested declares
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -148,7 +148,7 @@ finally
 </pre>
 </td></tr></table>
 
-### return statement
+### Return statement
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -163,7 +163,7 @@ finally
 </pre>
 </td></tr></table>
 
-### with arguments
+### With arguments
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -176,9 +176,9 @@ finally
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/if
+## If
 
-### else if
+### Else if
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -201,7 +201,7 @@ else
 </pre>
 </td></tr></table>
 
-### if blocks
+### If blocks
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -220,7 +220,7 @@ else
 </pre>
 </td></tr></table>
 
-### if statement
+### If statement
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -233,7 +233,7 @@ else
 </pre>
 </td></tr></table>
 
-### if with else
+### If with else
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -248,7 +248,7 @@ else
 </pre>
 </td></tr></table>
 
-### if with else if inside functions
+### If with else if inside functions
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -270,7 +270,7 @@ else
 </pre>
 </td></tr></table>
 
-### if with else inside functions
+### If with else inside functions
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -288,7 +288,7 @@ else
 </pre>
 </td></tr></table>
 
-### if with nesting
+### If with nesting
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -306,7 +306,7 @@ else
 </pre>
 </td></tr></table>
 
-### multiple else ifs
+### Multiple else ifs
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -341,7 +341,7 @@ else
 </pre>
 </td></tr></table>
 
-### non block consequents
+### Non block consequents
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -360,9 +360,9 @@ else
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/loops
+## Loops
 
-### continue statement
+### Continue statement
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -377,7 +377,7 @@ else
 </pre>
 </td></tr></table>
 
-### do while
+### Do while
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -393,7 +393,7 @@ else
 </pre>
 </td></tr></table>
 
-### do while with other statements
+### Do while with other statements
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -416,7 +416,7 @@ else
 </pre>
 </td></tr></table>
 
-### forever loop
+### Forever loop
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -431,7 +431,7 @@ else
 </pre>
 </td></tr></table>
 
-### while
+### While
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -444,7 +444,7 @@ else
 </pre>
 </td></tr></table>
 
-### while with break
+### While with break
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -462,9 +462,9 @@ else
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/new
+## New
 
-### new operator
+### New operator
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -476,7 +476,7 @@ else
 </pre>
 </td></tr></table>
 
-### new operator with arguments
+### New operator with arguments
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -488,7 +488,7 @@ else
 </pre>
 </td></tr></table>
 
-### new with complex callee
+### New with complex callee
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -500,9 +500,9 @@ else
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/objects
+## Objects
 
-### call with object
+### Call with object
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -517,7 +517,7 @@ else
 </pre>
 </td></tr></table>
 
-### multiple properties
+### Multiple properties
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -532,7 +532,7 @@ else
 </pre>
 </td></tr></table>
 
-### nested objects
+### Nested objects
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -550,7 +550,7 @@ else
 </pre>
 </td></tr></table>
 
-### simple object
+### Simple object
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -562,11 +562,11 @@ else
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/pending
+## Pending
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/simple
+## Simple
 
-### assignments
+### Assignments
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -580,7 +580,7 @@ z = 2
 </pre>
 </td></tr></table>
 
-### booleans
+### Booleans
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -594,7 +594,7 @@ false
 </pre>
 </td></tr></table>
 
-### debugger statement
+### Debugger statement
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -607,7 +607,7 @@ false
 </pre>
 </td></tr></table>
 
-### empty statement
+### Empty statement
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -618,7 +618,7 @@ false
 <pre class='lang-coffee'></pre>
 </td></tr></table>
 
-### empty statement with other statements
+### Empty statement with other statements
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -631,7 +631,7 @@ b()
 </pre>
 </td></tr></table>
 
-### function call
+### Function call
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -643,7 +643,7 @@ b()
 </pre>
 </td></tr></table>
 
-### function call with arguments
+### Function call with arguments
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -655,7 +655,7 @@ b()
 </pre>
 </td></tr></table>
 
-### indented throw
+### Indented throw
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -668,7 +668,7 @@ b()
 </pre>
 </td></tr></table>
 
-### index resolution
+### Index resolution
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -680,7 +680,7 @@ b()
 </pre>
 </td></tr></table>
 
-### index resolution of expression
+### Index resolution of expression
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -692,7 +692,7 @@ b()
 </pre>
 </td></tr></table>
 
-### index resolution of strings
+### Index resolution of strings
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -704,7 +704,7 @@ b()
 </pre>
 </td></tr></table>
 
-### index resolution witH this
+### Index resolution witH this
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -716,7 +716,7 @@ b()
 </pre>
 </td></tr></table>
 
-### inline assignment
+### Inline assignment
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -731,7 +731,7 @@ b()
 </pre>
 </td></tr></table>
 
-### nested function calls
+### Nested function calls
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -743,7 +743,7 @@ b()
 </pre>
 </td></tr></table>
 
-### nesting if and assignment
+### Nesting if and assignment
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -760,7 +760,7 @@ b()
 </pre>
 </td></tr></table>
 
-### scope resolution
+### Scope resolution
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -772,7 +772,7 @@ b()
 </pre>
 </td></tr></table>
 
-### standalone this
+### Standalone this
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -784,7 +784,7 @@ b()
 </pre>
 </td></tr></table>
 
-### this prefix
+### This prefix
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -796,7 +796,7 @@ b()
 </pre>
 </td></tr></table>
 
-### throw
+### Throw
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -808,7 +808,7 @@ b()
 </pre>
 </td></tr></table>
 
-### unary void
+### Unary void
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -820,9 +820,9 @@ b()
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/strings
+## Strings
 
-### empty string
+### Empty string
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -834,7 +834,7 @@ b()
 </pre>
 </td></tr></table>
 
-### simple string
+### Simple string
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -846,7 +846,7 @@ b()
 </pre>
 </td></tr></table>
 
-### single quotes
+### Single quotes
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -858,7 +858,7 @@ b()
 </pre>
 </td></tr></table>
 
-### string with escapes
+### String with escapes
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -870,9 +870,9 @@ b()
 </pre>
 </td></tr></table>
 
-## /Users/rsc/Projects/@incubate/js2coffee2/specs/var
+## Var
 
-### mixed var declarations
+### Mixed var declarations
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -890,7 +890,7 @@ b()
 </pre>
 </td></tr></table>
 
-### multiple var declaration
+### Multiple var declaration
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -903,7 +903,7 @@ b = 2
 </pre>
 </td></tr></table>
 
-### multiple var declarations with indent
+### Multiple var declarations with indent
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -919,7 +919,7 @@ b = 2
 </pre>
 </td></tr></table>
 
-### var declaration
+### Var declaration
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
@@ -931,7 +931,7 @@ b = 2
 </pre>
 </td></tr></table>
 
-### var without initializer
+### Var without initializer
 
 <table width='100%'>
 <tr><th>JavaScript</th><th>CoffeeScript</th></tr>
