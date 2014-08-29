@@ -31,12 +31,14 @@ module.exports = js2coffee = (source, options) ->
 ###
 
 js2coffee.parse = (source, options = {}) ->
+  options.filename ?= 'input.js'
+
   try
     ast = Esprima.parse(source, loc: true, range: true, comment: true)
   catch err
-    throw buildError(err, source, options.filename or 'input.js')
+    throw buildError(err, source, options.filename)
 
-  builder = new Builder(ast, options)
+  builder = new Builder(ast, options, source)
   {code, map} = builder.get()
 
   {code, ast, map}
@@ -52,7 +54,7 @@ js2coffee.parse = (source, options = {}) ->
 
 class Builder extends Walker
 
-  constructor: ->
+  constructor: (ast, options={}, @source) ->
     super
     @_indent = 0
 
@@ -115,7 +117,7 @@ class Builder extends Walker
     new SourceNode(
       node.loc.start.line,
       node.loc.start.column,
-      'input.js',
+      @options.filename,
       output)
 
   ###
@@ -124,8 +126,12 @@ class Builder extends Walker
   ###
 
   onUnknownNode: (node, ctx) ->
-    console.error node
-    throw new Error("walk(): No handler for #{ctx?.type}")
+    err = buildError({
+      lineNumber: node.loc.start.line,
+      column: node.loc.start.column,
+      description: "#{ctx?.type} is not supported"
+    }, @source, @options.filename)
+    throw err
 
   ###
   # visitors:
