@@ -304,6 +304,11 @@ class Builder extends Walker
       [ "while ", @walk(node.test) ]
     @indent => [ left, "\n", @walk(node.body) ]
 
+  DoWhileStatement: (node) ->
+    @indent =>
+      breaker = @indent [ "break unless ", @walk(node.test), "\n" ]
+      [ "loop", "\n", @walk(node.body), breaker ]
+
   BreakStatement: (node) ->
     [ "break\n" ]
 

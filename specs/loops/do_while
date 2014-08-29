@@ -1,0 +1,8 @@
+----
+do {
+  b();
+} while (a)
+----
+loop
+  b()
+  break unless a
