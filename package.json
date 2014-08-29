@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "autotest": "mocha -R min -b --watch",
     "prepublish": "mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee js2coffee.coffee > dist/js2coffee.js"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",

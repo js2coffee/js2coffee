@@ -1,7 +1,7 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
 Walker = require('./lib/walker.coffee')
-{delimit, prependAll} = require('./lib/helpers.coffee')
+{delimit, prependAll, buildError} = require('./lib/helpers.coffee')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
@@ -24,10 +24,17 @@ module.exports = js2coffee = (source, options) ->
 #     output.code
 #     output.ast
 #     output.map
+#
+# All options are optional. Available options are:
+#
+# ~ filename (String): the filename, used in source maps and errors.
 ###
 
 js2coffee.parse = (source, options = {}) ->
-  ast = Esprima.parse(source, loc: true, range: true, comment: true)
+  try
+    ast = Esprima.parse(source, loc: true, range: true, comment: true)
+  catch err
+    throw buildError(err, source, options.filename or 'input.js')
 
   builder = new Builder(ast, options)
   {code, map} = builder.get()
