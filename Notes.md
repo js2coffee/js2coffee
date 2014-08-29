@@ -32,7 +32,7 @@
  - [ ] ThrowStatement
  - [ ] TryStatement
  - [x] WhileStatement
- - [ ] DoWhileStatement
+ - [x] DoWhileStatement
  - [ ] ForStatement
  - [ ] ForInStatement
  - [ ] ForOfStatement

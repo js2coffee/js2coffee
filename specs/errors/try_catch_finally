@@ -1,0 +1,15 @@
+----
+try {
+  a();
+} catch (e) {
+  b();
+} finally {
+  c();
+}
+----
+try
+  a()
+catch e
+  b()
+finally
+  c()

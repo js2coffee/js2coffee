@@ -318,6 +318,17 @@ class Builder extends Walker
   DebuggerStatement: (node) ->
     [ "debugger\n" ]
 
+  TryStatement: (node) ->
+    # block, guardedHandlers, handlers [], finalizer
+    _try = @indent => [ "try\n", @walk(node.block) ]
+    _catch = node.handlers.map(@walk)
+    _finally = @indent => [ "finally\n", @walk(node.finalizer) ]
+
+    [ _try, _catch, _finally ]
+
+  CatchClause: (node) ->
+    @indent => [ "catch ", @walk(node.param), "\n", @walk(node.body) ]
+
   ThrowStatement: (node) ->
     [ "throw ", @walk(node.argument), "\n" ]
 
