@@ -1,7 +1,7 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
 Walker = require('./lib/walker.coffee')
-{delimit, prependAll, buildError} = require('./lib/helpers.coffee')
+{delimit, prependAll, buildError, space} = require('./lib/helpers.coffee')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
@@ -158,7 +158,7 @@ class Builder extends Walker
     [ @walk(node.expression), "\n" ]
 
   AssignmentExpression: (node) ->
-    [ @walk(node.left), ' = ', @walk(node.right) ]
+    space [ @walk(node.left), '=', @walk(node.right) ]
 
   Identifier: (node) ->
     [ node.name ]
@@ -171,7 +171,7 @@ class Builder extends Walker
 
   # Operator (+)
   BinaryExpression: (node) ->
-    [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
+    space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Literal: (node) ->
     [ node.raw ]
@@ -205,10 +205,10 @@ class Builder extends Walker
     list = delimit(node.arguments.map(@walk), ', ')
 
     hasArgs = list.length > 0
-    isStatement = ctx.parent.type is 'ExpressionStatement'
-      
-    if isStatement and hasArgs
-      [ callee, ' ', list ]
+    node._isStatement = ctx.parent.type is 'ExpressionStatement'
+
+    if node._isStatement and hasArgs
+      space [ callee, list ]
     else
       [ callee, '(', list, ')' ]
 
@@ -262,27 +262,42 @@ class Builder extends Walker
       [ @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
 
   ReturnStatement: (node) ->
-    [
-      "return ",
-      @walk(node.argument),
-      "\n"
+    space [
+      "return",
+      [ @walk(node.argument), "\n" ]
     ]
 
-  ObjectExpression: (node) ->
-    if node.properties.length is 0
+  ObjectExpression: (node, ctx) ->
+    props = node.properties.length
+    isBraced = props > 1 and ctx.parent.type is 'CallExpression' and ctx.parent._isStatement
+
+    # Empty
+    if props is 0
       [ "{}" ]
+
+    # Simple ({ a: 2 })
+    else if props is 1
+      props = node.properties.map(@walk)
+      if isBraced
+        space [ "{", props, "}" ]
+      else
+        [ props ]
+
     else
       props = @indent =>
         props = node.properties.map(@walk)
         prependAll(props, [ "\n", @indent() ])
 
-      [ "{", props, "\n", @indent(), "}" ]
+      if isBraced
+        [ "{", props, "\n", @indent(), "}" ]
+      else
+        [ props, "\n" ]
 
   Property: (node) ->
     if node.kind isnt 'init'
       throw new Error("Property: not sure about kind " + node.kind)
 
-    [ @walk(node.key), ": ", @walk(node.value) ]
+    space [ [@walk(node.key), ":"], @walk(node.value) ]
 
   VariableDeclaration: (node) ->
     declarators = node.declarations.map(@walk)

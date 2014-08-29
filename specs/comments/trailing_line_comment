@@ -1,0 +1,7 @@
+----
+hello(); // there
+world();
+----
+hello()
+# there
+world()

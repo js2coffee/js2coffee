@@ -52,3 +52,20 @@ exports.buildError = (err, source, file = '') ->
   err.sourcePreview = source
   err
 
+###*
+# space():
+# Delimit using spaces.
+#
+#     space [ 'a', '=', 'b' ]
+#     => [ 'a', ' ', '=', ' ', 'b' ]
+###
+
+exports.space = (list) ->
+  list.reduce ((newlist, item, i) ->
+    if i is 0
+      newlist.concat [ item ]
+    else if item.toString().substr(0, 1) is "\n"
+      newlist.concat [ item ]
+    else
+      newlist.concat [ ' ', item ]
+  ), []
