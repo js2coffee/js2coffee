@@ -25,6 +25,8 @@ describe 'specs:', ->
           ->
             data = fs.readFileSync(spec, 'utf-8')
             [meta, input, output] = data.split('----\n')
+
+            # Export data for the reporter.
             fn.data = { input, output }
 
             result = js2coffee(input)
