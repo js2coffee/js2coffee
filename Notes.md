@@ -29,8 +29,8 @@
  - [ ] WithStatement
  - [ ] SwitchStatement
  - [x] ReturnStatement
- - [ ] ThrowStatement
- - [ ] TryStatement
+ - [x] ThrowStatement
+ - [x] TryStatement
  - [x] WhileStatement
  - [x] DoWhileStatement
  - [ ] ForStatement
@@ -47,7 +47,7 @@
  - [ ] SequenceExpression
  - [x] UnaryExpression
  - [x] BinaryExpression
- - [ ] AssignmentExpression
+ - [x] AssignmentExpression
  - [ ] UpdateExpression
  - [ ] LogicalExpression
  - [ ] ConditionalExpression
@@ -57,7 +57,7 @@
  - [ ] ObjectPattern
  - [ ] ArrayPattern
  - [ ] SwitchCase
- - [ ] CatchClause
+ - [x] CatchClause
  - [x] Identifier
  - [x] Literal
 
