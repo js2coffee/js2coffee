@@ -1,3 +1,13 @@
+Developer notes
+===============
+
+### Roadmap
+
+ - [ ] Implement all expression/statement types.
+ - [x] Implement comments.
+ - [ ] Ensure that all JSON looks good.
+ - [ ] Make underscore.js compile and pass.
+
 ### References
 
 - [Esprima docs]

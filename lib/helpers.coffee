@@ -39,8 +39,10 @@ exports.buildError = (err, source, file = '') ->
   lines = source.split("\n")
   min = Math.max(ln-3, 0)
   max = ln-1
-  source = lines[min..max].map (ln, i) -> "#{1+i+min}   #{ln}"
-  source.push "    " + Array(column).join("-") + "^"
+  digits = max.toString().length
+  pad = (s) -> Array(1 + digits - s.toString().length).join(" ") + s
+  source = lines[min..max].map (ln, i) -> "#{pad(1+i+min)}  #{ln}"
+  source.push Array(digits + 3).join(" ") + Array(column).join("-") + "^"
   source = source.join("\n")
 
   message = heading + "\n\n" + source
