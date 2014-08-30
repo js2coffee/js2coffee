@@ -270,14 +270,15 @@ class Builder extends Walker
   ArrayExpression: (node, ctx) ->
     items = node.elements.length
     isSingleLine = items is 1
+    contents = =>
+      prependAll(node.elements.map(@walk), [ "\n", @indent() ])
 
     if items is 0
       [ "[]" ]
+    else if isSingleLine
+      space [ "[", contents(), "]" ]
     else
-      if isSingleLine
-        space [ "[", node.elements.map(@walk), "]" ]
-      else
-        @indent => [ "[\n", node.elements.map(@walk), "]" ]
+      @indent (ind) => [ "[", contents(), "\n", ind, "]" ]
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
