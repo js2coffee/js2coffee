@@ -84,9 +84,9 @@ Some differences from legacy js2coffee are to be intended:
 ## Thanks
 
 **js2coffee** © 2012+, Rico Sta. Cruz. Released under the [MIT] License.<br>
-Authored by Rico Sta. Cruz with help from contributors ([list][contributors]).
+Authored by Rico Sta. Cruz with help from co-maintainers and contributors ([list][contributors]).
 
-Maintained by:
+Maintainers:
 
  * Rico Sta. Cruz ([@rstacruz](https://github.com/rstacruz)) —
    [ricostacruz.com](http://ricostacruz.com) · twitter [@rstacruz](https://twitter.com/rstacruz)
