@@ -5,6 +5,34 @@
     <th width='33%'>JavaScript</th>
     <th width='33%'>CoffeeScript</th>
 </thead>
+<tr><th colspan='3'>Arrays</th></tr>
+<tr>
+<th valign='top'>Empty array</th>
+<td valign='top'>
+<pre class='lang-js'>a = []
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = []
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Multiple items</th>
+<td valign='top'>
+<pre class='lang-js'>a = [ 1, 2, 3, 4 ]
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = [
+  1
+  2
+  3
+  4
+]
+</pre>
+</td>
+</tr>
 <tr><th colspan='3'>Comments</th></tr>
 <tr>
 <th valign='top'>Block comments</th>
@@ -488,7 +516,6 @@ else
 <pre class='lang-coffee'>call
   a: 1
   b: 2
-
 </pre>
 </td>
 </tr>
@@ -502,7 +529,6 @@ else
 <pre class='lang-coffee'>a =
   b: 2
   c: 3
-
 </pre>
 </td>
 </tr>
@@ -517,9 +543,29 @@ else
   b:
     x: 3
     y: 3
-
   d: 4
-
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Object with arrays</th>
+<td valign='top'>
+<pre class='lang-js'>a = {
+  empty: [],
+  one: [ 1 ],
+  many: [ 1, 2, 3 ]
+};
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a =
+  empty: []
+  one: [ 1 ]
+  many: [
+    1
+    2
+    3
+  ]
 </pre>
 </td>
 </tr>
