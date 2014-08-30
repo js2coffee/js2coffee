@@ -3,6 +3,7 @@ Esprima = require('esprima')
 Walker = require('./lib/walker.coffee')
 {
   buildError
+  commaDelimit
   delimit
   newline
   prependAll
@@ -215,7 +216,7 @@ class Builder extends Walker
     @parenthesizeCallee(node)
 
     callee = @walk(node.callee)
-    list = delimit(node.arguments.map(@walk), ', ')
+    list = commaDelimit(node.arguments.map(@walk))
 
     hasArgs = list.length > 0
     node._isStatement = ctx.parent.type is 'ExpressionStatement'
@@ -356,13 +357,15 @@ class Builder extends Walker
     [ ]
 
   NewExpression: (node) ->
+    @parenthesizeArguments(node)
+
     callee = if node.callee?.type is 'Identifier'
       [ @walk(node.callee) ]
     else
       [ '(', @walk(node.callee), ')' ]
 
     args = if node.arguments?.length
-      [ '(', delimit(node.arguments.map(@walk), ', '), ')' ]
+      [ '(', commaDelimit(node.arguments.map(@walk)), ')' ]
     else
       []
 

@@ -1,0 +1,8 @@
+----
+a = new MyClass('left', function () {
+  go();
+})
+----
+a = new MyClass('left', ->
+  go()
+)

@@ -5,6 +5,18 @@ exports.delimit = (list, joiner) ->
     newlist.push(item)
   newlist
 
+exports.commaDelimit = (list) ->
+  newlist = []
+  for item, i in list
+    if i > 0
+      if /^\n/.test(item.toString())
+        newlist.push(',')
+      else
+        newlist.push(', ')
+
+    newlist.push(item)
+  newlist
+
 exports.prependAll = (list, prefix) ->
   newlist = []
   for item, i in list

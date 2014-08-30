@@ -1,0 +1,7 @@
+----
+box.on('click', { silent: true }, function () {
+  go();
+})
+----
+box.on 'click', silent: true, ->
+  go()
