@@ -402,6 +402,14 @@ class Builder extends Walker
     else
       @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
+  # Ternary operator (`a ? b : c`)
+  ConditionalExpression: (node) ->
+    space [
+      "if", @walk(node.test),
+      "then", @walk(node.consequent),
+      "else", @walk(node.alternate)
+    ]
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']
