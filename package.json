@@ -24,7 +24,7 @@
     "coffeeify": "^0.7.0",
     "glob": "^4.0.5",
     "mocha": "^1.21.4",
-    "uglifyjs": "^2.3.6",
+    "uglify-js": "^2.4.15",
     "underscore": "^1.7.0"
   }
 }
