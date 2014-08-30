@@ -6,55 +6,60 @@ Small attempt at making a new js2coffee.
 
 ## Goals
 
- * ✓ __Use a new JS parser.__
+ * ✓ __Use a new JS parser.__<br>
    The new js2coffee is built upon Esprima, which uses the standardized 
    ECMAScript Parser API.
 
- * __Cleaner repository.__
+ * __Cleaner repository.__<br>
    [js2coffee/js2coffee] has way too much boilerplate and DocPad-related things 
    in it. There should be no Cakefiles or anything, just package.json.
 
- * ✓ __Be fully browserify-compatible with minimal cruft.__
+ * ✓ __Be fully browserify-compatible with minimal cruft.__<br>
    Building a browesrify build is as easy as `browserify -t coffeeify .`.  
    Everything will work with minimal fuzz.
 
- * __More maintainable.__
+ * __More maintainable.__<br>
    Carefully think out the API and the structure of the repository so to 
    minimize boilerplates and dependencies.
 
 ## New features in js2coffee-redux
 
- - __Compatibility warnings.__
+ - __Compatibility warnings.__<br>
    Give warnings for things that may break, such as `==` being converted to 
    `is`.
  
- - ✓ __Source maps.__
+ - ✓ __Source maps.__<br>
    The new js2coffee website will feature a new editor that will allow you to 
    see what each point of the source compiles to.
 
- - __More configurable options.__
+ - __More configurable options.__<br>
    This will allow you to select if you would like `and` vs `&&`, or `is` vs
    `===`, and so on.
 
- - ✓ __Better error messages.__
+ - ✓ __Better error messages.__<br>
    Error messages now show a preview of the source where errors happen, such as 
    what you'd expect in CoffeeScriptRedux.
 
-These should be made configurable:
-
- - Toggle implicit returns.
- - Toggle trailing commas in multiline arrays/objects.
- - Specify whether to use `&&` or `and`.
-
-## API?
+## API
 
 ```js
-var result = js2coffee.parse(source, {
-  indent: 2
-});
+try {
+  result = js2coffee.parse(source, {
+    indent: 2
+  });
 
-result.code   // code string
-result.map    // source map
+  result.code     // code string
+  result.map      // source map
+
+} catch (e) {
+
+  e.message       // "index.js:3:1: Unexpected INDENT\n\n   3   var\n   ---^"
+  e.description   // "Unexpected INDENT"
+  e.lineNumber    // 3
+  e.column        // 1
+  e.sourcePreview // '...'
+
+}
 ```
 
 ## How?
