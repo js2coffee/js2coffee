@@ -267,6 +267,18 @@ class Builder extends Walker
       [ @walk(node.argument), "\n" ]
     ]
 
+  ArrayExpression: (node, ctx) ->
+    items = node.elements.length
+    isSingleLine = items is 1
+
+    if items is 0
+      [ "[]" ]
+    else
+      if isSingleLine
+        space [ "[", node.elements.map(@walk), "]" ]
+      else
+        @indent => [ "[\n", node.elements.map(@walk), "]" ]
+
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
     isBraced = props > 1 and ctx.parent.type is 'CallExpression' and ctx.parent._isStatement
