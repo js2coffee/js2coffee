@@ -209,6 +209,8 @@ class Builder extends Walker
     [ "this" ]
 
   CallExpression: (node, ctx) ->
+    @parenthesizeArguments(node)
+
     callee = @walk(node.callee)
     list = delimit(node.arguments.map(@walk), ', ')
 
@@ -336,11 +338,16 @@ class Builder extends Walker
 
     [ @walk(node.id), ' = ', init, "\n" ]
 
-  FunctionExpression: (node) ->
+  FunctionExpression: (node, ctx) ->
     params = @toParams(node.params)
 
-    @indent (i) =>
+    expr = @indent (i) =>
       [ params, "->\n", @walk(node.body) ]
+
+    if node._parenthesized
+      [ "(", expr, ")" ]
+    else
+      expr
 
   EmptyStatement: (node) ->
     [ ]
@@ -453,6 +460,15 @@ class Builder extends Walker
         node.consequent.length -= 1
       else if last?.type isnt 'ReturnStatement'
         @syntaxError node, "No break or return statement found in a case"
+
+  # In a call expression, ensure that non-last function arguments get
+  # parenthesized (eg, `setTimeout (-> x), 500`)
+  parenthesizeArguments: (node) ->
+    for arg, i in node.arguments
+      isLast = i is (node.arguments.length-1)
+      if arg.type is "FunctionExpression"
+        if not isLast
+          arg._parenthesized = true
 
 ###
 # injectComments():

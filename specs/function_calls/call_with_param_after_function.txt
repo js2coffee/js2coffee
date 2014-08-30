@@ -1,0 +1,8 @@
+----
+setTimeout(function () {
+  work();
+}, 500);
+----
+setTimeout (->
+  work()
+), 500
