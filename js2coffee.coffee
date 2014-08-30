@@ -410,6 +410,13 @@ class Builder extends Walker
       "else", @walk(node.alternate)
     ]
 
+  # Increment (`a++`)
+  UpdateExpression: (node) ->
+    if node.prefix
+      [ node.operator, @walk(node.argument) ]
+    else
+      [ @walk(node.argument), node.operator ]
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']

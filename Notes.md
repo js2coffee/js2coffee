@@ -65,9 +65,9 @@ Developer notes
  - [x] UnaryExpression
  - [x] BinaryExpression
  - [x] AssignmentExpression
- - [ ] UpdateExpression
+ - [x] UpdateExpression
  - [ ] LogicalExpression
- - [ ] ConditionalExpression
+ - [x] ConditionalExpression
  - [x] NewExpression
  - [x] CallExpression
  - [x] MemberExpression
