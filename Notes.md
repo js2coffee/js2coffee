@@ -71,8 +71,6 @@ Developer notes
  - [x] NewExpression
  - [x] CallExpression
  - [x] MemberExpression
- - [ ] ObjectPattern
- - [ ] ArrayPattern
  - [ ] SwitchCase
  - [x] CatchClause
  - [x] Identifier
