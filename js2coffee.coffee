@@ -212,6 +212,7 @@ class Builder extends Walker
 
   CallExpression: (node, ctx) ->
     @parenthesizeArguments(node)
+    @parenthesizeCallee(node)
 
     callee = @walk(node.callee)
     list = delimit(node.arguments.map(@walk), ', ')
@@ -467,6 +468,15 @@ class Builder extends Walker
         node.consequent.length -= 1
       else if last?.type isnt 'ReturnStatement'
         @syntaxError node, "No break or return statement found in a case"
+
+  ###
+  # In an IIFE, ensure that the function expression is parenthesized (eg,
+  # `(($)-> x) jQuery`).
+  ###
+
+  parenthesizeCallee: (node) ->
+    if node.callee.type is 'FunctionExpression'
+      node.callee._parenthesized = true
 
   ###
   # In a call expression, ensure that non-last function arguments get
