@@ -185,6 +185,8 @@ class Builder extends Walker
     [ node.raw ]
 
   MemberExpression: (node) ->
+    @parenthesizeObjectIfFunction(node)
+
     isThis = (node.object.type is 'ThisExpression')
     isIdentifier = (node.property.type is 'Identifier')
 
@@ -451,6 +453,11 @@ class Builder extends Walker
     else
       []
 
+  ###
+  # Removes `break` statements from consequents in a switch case.
+  # (eg, `case x: a(); break;` gets break; removed)
+  ###
+
   removeBreaksFromConsequents: (node) =>
     if node.test
       idx = node.consequent.length-1
@@ -461,14 +468,26 @@ class Builder extends Walker
       else if last?.type isnt 'ReturnStatement'
         @syntaxError node, "No break or return statement found in a case"
 
+  ###
   # In a call expression, ensure that non-last function arguments get
-  # parenthesized (eg, `setTimeout (-> x), 500`)
+  # parenthesized (eg, `setTimeout (-> x), 500`).
+  ###
+
   parenthesizeArguments: (node) ->
     for arg, i in node.arguments
       isLast = i is (node.arguments.length-1)
       if arg.type is "FunctionExpression"
         if not isLast
           arg._parenthesized = true
+
+  ###
+  # Parenthesize function expressions if they're in the left-hand side of a
+  # member expression (eg, `(-> x).toString()`).
+  ###
+
+  parenthesizeObjectIfFunction: (node) ->
+    if node.object.type is 'FunctionExpression'
+      node.object._parenthesized = true
 
 ###
 # injectComments():

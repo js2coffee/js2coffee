@@ -1,0 +1,8 @@
+----
+(function () {
+  go();
+}).call(this);
+----
+(->
+  go()
+).call this
