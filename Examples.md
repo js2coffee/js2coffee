@@ -139,6 +139,44 @@ finally
 </tr>
 <tr><th colspan='3'>Functions</th></tr>
 <tr>
+<th valign='top'>Multiple declarations</th>
+<td valign='top'>
+<pre class='lang-js'>function one() {
+  a();
+}
+function two() {
+  b();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>one = ->
+  a()
+two = ->
+  b()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Multiple expressions</th>
+<td valign='top'>
+<pre class='lang-js'>obj.one = function () {
+  return a();
+};
+obj.two = function () {
+  return b();
+};
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>obj.one = ->
+  return a()
+obj.two = ->
+  return b()
+</pre>
+</td>
+</tr>
+<tr>
 <th valign='top'>Nested declarations</th>
 <td valign='top'>
 <pre class='lang-js'>function a () {
@@ -665,6 +703,19 @@ b()
 </td>
 </tr>
 <tr>
+<th valign='top'>Increment</th>
+<td valign='top'>
+<pre class='lang-js'>a++
+b--
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a++
+b--
+</pre>
+</td>
+</tr>
+<tr>
 <th valign='top'>Indented throw</th>
 <td valign='top'>
 <pre class='lang-js'>if (x) throw e
@@ -757,7 +808,19 @@ b()
 <pre class='lang-coffee'>a.b = (arg) ->
   if arg
     cli.a = b
-
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Prefix increment</th>
+<td valign='top'>
+<pre class='lang-js'>++a;
+--b;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>++a
+--b
 </pre>
 </td>
 </tr>
@@ -780,6 +843,28 @@ b()
 </td>
 <td width='50%' valign='top'>
 <pre class='lang-coffee'>a = this
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Ternary operator</th>
+<td valign='top'>
+<pre class='lang-js'>a ? b : c
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>if a then b else c
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Ternary operator nesting</th>
+<td valign='top'>
+<pre class='lang-js'>a ? b : c ? d : e
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>if a then b else if c then d else e
 </pre>
 </td>
 </tr>
@@ -858,6 +943,90 @@ b()
 </td>
 <td width='50%' valign='top'>
 <pre class='lang-coffee'>"\n"
+</pre>
+</td>
+</tr>
+<tr><th colspan='3'>Switch</th></tr>
+<tr>
+<th valign='top'>Switch</th>
+<td valign='top'>
+<pre class='lang-js'>switch (obj) {
+  case 'one':
+    a();
+    break;
+  case 'two':
+    b();
+    break;
+  default:
+    c();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>switch obj
+  when 'one'
+    a()
+  when 'two'
+    b()
+  else
+    c()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Switch with comments</th>
+<td valign='top'>
+<pre class='lang-js'>switch (obj) {
+  // test
+  case 'one':
+    // test
+    a();
+    break;
+  // test
+  case 'two':
+    // test
+    b();
+    break;
+  default:
+    c();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>switch obj
+  # test
+  when 'one'
+    # test
+    a()
+  # test
+  when 'two'
+    # test
+    b()
+  else
+    c()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Switch with return</th>
+<td valign='top'>
+<pre class='lang-js'>function fn () {
+  switch (obj) {
+    case 'one':
+      return a();
+    default:
+      return b();
+  }
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>fn = ->
+  switch obj
+    when 'one'
+      return a()
+    else
+      return b()
 </pre>
 </td>
 </tr>
