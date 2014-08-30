@@ -1,0 +1,12 @@
+----
+function one() {
+  a();
+}
+function two() {
+  b();
+}
+----
+one = ->
+  a()
+two = ->
+  b()

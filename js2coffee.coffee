@@ -1,7 +1,13 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
 Walker = require('./lib/walker.coffee')
-{delimit, prependAll, buildError, space} = require('./lib/helpers.coffee')
+{
+  buildError
+  delimit
+  newline
+  prependAll
+  space
+} = require('./lib/helpers.coffee')
 
 ###*
 # js2coffee() : js2coffee(source, [options])
@@ -155,7 +161,7 @@ class Builder extends Walker
     @BlockStatement(node)
 
   ExpressionStatement: (node) ->
-    [ @walk(node.expression), "\n" ]
+    newline @walk(node.expression)
 
   AssignmentExpression: (node) ->
     space [ @walk(node.left), '=', @walk(node.right) ]

@@ -6,4 +6,3 @@ a.b = function (arg) {
 a.b = (arg) ->
   if arg
     cli.a = b
-

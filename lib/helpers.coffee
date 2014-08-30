@@ -75,3 +75,19 @@ exports.space = (list) ->
     else
       newlist.concat [ ' ', item ]
   ), []
+
+###*
+# newline():
+# Appends a new line to a given SourceNode (what `walk()` returns). If it
+# already ends in a newline, it is left alone.
+#
+#     newline(@walk(node.body))
+#     => [ node, "\n" ]
+###
+
+exports.newline = (srcnode) ->
+  if (/\n$/).test(srcnode.toString())
+    srcnode
+  else
+    [ srcnode, "\n" ]
+

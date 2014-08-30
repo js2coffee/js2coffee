@@ -1,0 +1,12 @@
+----
+obj.one = function () {
+  return a();
+};
+obj.two = function () {
+  return b();
+};
+----
+obj.one = ->
+  return a()
+obj.two = ->
+  return b()
