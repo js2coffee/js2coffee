@@ -284,7 +284,13 @@ class Builder extends Walker
       [ @walk(node.argument), "\n" ]
     ]
 
+  parenthesizeObjectsInElements: (node) ->
+    for item in node.elements
+      if item.type is 'ObjectExpression'
+        item._braced = true
+
   ArrayExpression: (node, ctx) ->
+    @parenthesizeObjectsInElements(node)
     items = node.elements.length
     isSingleLine = items is 1
 
@@ -300,7 +306,10 @@ class Builder extends Walker
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
-    isBraced = props > 1 and ctx.parent.type is 'CallExpression' and ctx.parent._isStatement
+    isBraced = node._braced or
+      (props > 1 and
+      ctx.parent.type is 'CallExpression' and
+      ctx.parent._isStatement)
 
     # Empty
     if props is 0
