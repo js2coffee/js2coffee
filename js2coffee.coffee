@@ -141,6 +141,8 @@ class Builder extends Walker
   ###*
   # syntaxError():
   # Throws a syntax error for the given `node`.
+  #
+  #     @syntaxError node, "Not supported"
   ###
 
   syntaxError: (node, description) ->
@@ -238,7 +240,10 @@ class Builder extends Walker
       [ 'if ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
-    body = injectComments(@comments, node, node.body)
+    @renderStatements(node, node.body)
+
+  renderStatements: (node, body) ->
+    body = injectComments(@comments, node, body)
     prependAll(body.map(@walk), @indent())
 
   # Line comments
@@ -417,11 +422,36 @@ class Builder extends Walker
     else
       [ @walk(node.argument), node.operator ]
 
+  SwitchStatement: (node) ->
+    body = @indent => @renderStatements(node, node.cases)
+    [ "switch ", @walk(node.discriminant), "\n", body ]
+
+  SwitchCase: (node) ->
+    @removeBreaksFromConsequents(node)
+
+    left = if node.test
+      [ "when ", @walk(node.test) ]
+    else
+      [ "else" ]
+
+    right = @indent => @renderStatements(node, node.consequent)
+
+    [ left, "\n", right ]
+
   toParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']
     else
       []
+
+  removeBreaksFromConsequents: (node) =>
+    if node.test
+      idx = node.consequent.length-1
+      last = node.consequent[idx]
+      if last?.type isnt 'BreakStatement'
+        @syntaxError node, "No 'break' statement found in a case"
+      delete node.consequent[idx]
+      node.consequent.length -= 1
 
 ###
 # injectComments():
