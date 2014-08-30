@@ -22,11 +22,11 @@ exports.prependAll = (list, prefix) ->
 #       column: 1
 #     err = buildError(e, code, "index.js")
 #
-#     err.lineNumber #=> 3
-#     err.column     #=> 1
-#     err.description
+#     err.message       #=> "index.js:3:1: Unexpected indentifier\n..."
+#     err.lineNumber    #=> 3
+#     err.column        #=> 1
+#     err.description   #=> "Unexpected identifier"
 #     err.sourcePreview
-#     err.message    # => "index.js:3:1: Unexpected indentifier\n..."
 ###
 
 exports.buildError = (err, source, file = '') ->
