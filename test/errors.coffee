@@ -19,8 +19,8 @@ describe 'Error cases', ->
     catch err
       expect(err.description).match /'with' is not supported in CoffeeScript/
 
-  it 'happens on break-less cases', ->
+  xit 'happens on break-less cases', ->
     try
       js2coffee('switch (x) { case "a": b(); case "b": c(); }')
     catch err
-      expect(err.description).match /No 'break' statement found in a case/
+      expect(err.description).match /No break or return statement found in a case/

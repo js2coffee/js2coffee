@@ -1,0 +1,27 @@
+----
+switch (obj) {
+  // test
+  case 'one':
+    // test
+    a();
+    break;
+  // test
+  case 'two':
+    // test
+    b();
+    break;
+  default:
+    c();
+}
+----
+switch obj
+  # test
+  when 'one'
+    # test
+    a()
+  # test
+  when 'two'
+    # test
+    b()
+  else
+    c()

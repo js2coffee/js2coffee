@@ -448,10 +448,11 @@ class Builder extends Walker
     if node.test
       idx = node.consequent.length-1
       last = node.consequent[idx]
-      if last?.type isnt 'BreakStatement'
-        @syntaxError node, "No 'break' statement found in a case"
-      delete node.consequent[idx]
-      node.consequent.length -= 1
+      if last?.type is 'BreakStatement'
+        delete node.consequent[idx]
+        node.consequent.length -= 1
+      else if last?.type isnt 'ReturnStatement'
+        @syntaxError node, "No break or return statement found in a case"
 
 ###
 # injectComments():
