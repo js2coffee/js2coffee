@@ -9,6 +9,7 @@ groups = glob.sync("#{__dirname}/../specs/*")
 
 toName = (dirname) ->
   s = path.basename(dirname).replace(/_/g, ' ').trim()
+  s = s.replace(/\.txt$/, '')
   s.substr(0,1).toUpperCase() + s.substr(1)
 
 describe 'specs:', ->
