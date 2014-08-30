@@ -291,7 +291,7 @@ class Builder extends Walker
       if isBraced
         [ "{", props, "\n", @indent(), "}" ]
       else
-        [ props, "\n" ]
+        [ props ]
 
   Property: (node) ->
     if node.kind isnt 'init'

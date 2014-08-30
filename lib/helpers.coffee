@@ -56,10 +56,14 @@ exports.buildError = (err, source, file = '') ->
 
 ###*
 # space():
-# Delimit using spaces.
+# Delimit using spaces. This also accounts for times where one of the
+# statements begin with a new line, such as in the case of function
+# expressions and object expressions.
 #
 #     space [ 'a', '=', 'b' ]
 #     => [ 'a', ' ', '=', ' ', 'b' ]
+#     space [ 'a', '=', '\n  b: 2' ]
+#     => [ 'a', ' ', '=', '\n  b: 2' ]
 ###
 
 exports.space = (list) ->

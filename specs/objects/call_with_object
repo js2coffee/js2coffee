@@ -4,4 +4,3 @@ call({ a: 1, b: 2 })
 call
   a: 1
   b: 2
-
