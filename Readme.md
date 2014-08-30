@@ -15,8 +15,8 @@ Small attempt at making a new js2coffee.
    in it. There should be no Cakefiles or anything, just package.json.
 
  * ✓ __Be fully browserify-compatible with minimal cruft.__
-   Building a browesrify build is as easy as `browserify -t coffeeify 
-   js2coffee.coffee`. Everything will work with minimal fuzz.
+   Building a browesrify build is as easy as `browserify -t coffeeify .`.  
+   Everything will work with minimal fuzz.
 
  * __More maintainable.__
    Carefully think out the API and the structure of the repository so to 

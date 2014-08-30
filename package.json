@@ -6,10 +6,11 @@
   "scripts": {
     "test": "mocha",
     "autotest": "mocha -R min -b --watch",
-    "prepublish": "mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee js2coffee.coffee > dist/js2coffee.js"
+    "prepublish": "mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee js2coffee.coffee | uglifyjs -m > dist/js2coffee.js"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
+  "browser": "js2coffee.coffee",
   "dependencies": {
     "esprima": "^1.2.2",
     "minimist": "^1.1.0",
@@ -23,6 +24,7 @@
     "coffeeify": "^0.7.0",
     "glob": "^4.0.5",
     "mocha": "^1.21.4",
+    "uglifyjs": "^2.3.6",
     "underscore": "^1.7.0"
   }
 }
