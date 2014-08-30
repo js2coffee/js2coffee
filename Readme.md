@@ -80,3 +80,21 @@ Some differences from legacy js2coffee are to be intended:
  - ...
 
 [js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
+
+## Thanks
+
+**js2coffee** © 2012+, Rico Sta. Cruz. Released under the [MIT] License.<br>
+Authored by Rico Sta. Cruz with help from contributors ([list][contributors]).
+
+Maintained by:
+
+ * Rico Sta. Cruz ([@rstacruz](https://github.com/rstacruz)) —
+   [ricostacruz.com](http://ricostacruz.com) · twitter [@rstacruz](https://twitter.com/rstacruz)
+
+ * Anton Wilhelm ([@timaschew](https://github.com/timaschew)) — twitter [@timaschew](https://twitter.com/timaschew)
+
+ * Benjamin Lupton ([@balupton](https://github.com/balupton)) —
+   [balupton.com](http://balupton.com) · twitter [@balupton](https://twitter.com/balupton)
+
+[MIT]: http://mit-license.org/
+[contributors]: http://github.com/rstacruz/js2coffee/contributors
