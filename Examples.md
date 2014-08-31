@@ -137,6 +137,117 @@ finally
 </pre>
 </td>
 </tr>
+<tr><th colspan='3'>Function calls</th></tr>
+<tr>
+<th valign='top'>Call with function expression</th>
+<td valign='top'>
+<pre class='lang-js'>run(function () {
+  a();
+  b();
+});
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>run ->
+  a()
+  b()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Call with function then object</th>
+<td valign='top'>
+<pre class='lang-js'>box.on('click', function () {
+  go();
+}, { delay: 500, silent: true })
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>box.on 'click', (->
+  go()
+),
+  delay: 500
+  silent: true
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Call with object</th>
+<td valign='top'>
+<pre class='lang-js'>box.on('click', { silent: true }, function () {
+  go();
+})
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>box.on 'click', silent: true, ->
+  go()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Call with param after function</th>
+<td valign='top'>
+<pre class='lang-js'>setTimeout(function () {
+  work();
+}, 500);
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>setTimeout (->
+  work()
+), 500
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Chaining</th>
+<td valign='top'>
+<pre class='lang-js'>get().then(function () {
+  a();
+}).then(function () {
+  b();
+});
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>get().then(->
+  a()
+).then ->
+  b()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Expression with call</th>
+<td valign='top'>
+<pre class='lang-js'>(function () {
+  go();
+}).call(this);
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>(->
+  go()
+).call this
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Iife with different argument names</th>
+<td valign='top'>
+<pre class='lang-js'>(function($) {
+  go();
+})(jQuery);
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>(($) ->
+  go()
+) jQuery
+</pre>
+</td>
+</tr>
 <tr><th colspan='3'>Functions</th></tr>
 <tr>
 <th valign='top'>Multiple declarations</th>
@@ -543,7 +654,60 @@ else
 </pre>
 </td>
 </tr>
+<tr>
+<th valign='top'>New with function expression</th>
+<td valign='top'>
+<pre class='lang-js'>a = new MyClass('left', function () {
+  go();
+})
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = new MyClass('left', ->
+  go()
+)
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>New with function expression and string</th>
+<td valign='top'>
+<pre class='lang-js'>a = new MyClass(function () {
+  go();
+}, 'left')
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = new MyClass((->
+  go()
+), 'left')
+</pre>
+</td>
+</tr>
 <tr><th colspan='3'>Objects</th></tr>
+<tr>
+<th valign='top'>Arrray of objects</th>
+<td valign='top'>
+<pre class='lang-js'>list = [
+  { a: 1, b: 1 },
+  { a: 2, b: 2 },
+]
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>list = [
+  {
+    a: 1
+    b: 1
+  }
+  {
+    a: 2
+    b: 2
+  }
+]
+</pre>
+</td>
+</tr>
 <tr>
 <th valign='top'>Call with object</th>
 <td valign='top'>
