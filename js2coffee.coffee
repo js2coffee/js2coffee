@@ -212,11 +212,10 @@ class Builder extends Walker
     [ "this" ]
 
   CallExpression: (node, ctx) ->
-    @parenthesizeArguments(node)
     @parenthesizeCallee(node)
 
     callee = @walk(node.callee)
-    list = commaDelimit(node.arguments.map(@walk))
+    list = @makeSequence(node.arguments)
 
     hasArgs = list.length > 0
     node._isStatement = ctx.parent.type is 'ExpressionStatement'
@@ -273,7 +272,7 @@ class Builder extends Walker
     [ "###", lines, "###\n" ]
 
   FunctionDeclaration: (node) ->
-    params = @toParams(node.params)
+    params = @makeParams(node.params)
 
     @indent (indent) =>
       [ @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
@@ -352,7 +351,7 @@ class Builder extends Walker
     [ @walk(node.id), ' = ', init, "\n" ]
 
   FunctionExpression: (node, ctx) ->
-    params = @toParams(node.params)
+    params = @makeParams(node.params)
 
     expr = @indent (i) =>
       [ params, "->\n", @walk(node.body) ]
@@ -366,15 +365,13 @@ class Builder extends Walker
     [ ]
 
   NewExpression: (node) ->
-    @parenthesizeArguments(node)
-
     callee = if node.callee?.type is 'Identifier'
       [ @walk(node.callee) ]
     else
       [ '(', @walk(node.callee), ')' ]
 
     args = if node.arguments?.length
-      [ '(', commaDelimit(node.arguments.map(@walk)), ')' ]
+      [ '(', @makeSequence(node.arguments), ')' ]
     else
       []
 
@@ -460,7 +457,26 @@ class Builder extends Walker
 
     [ left, "\n", right ]
 
-  toParams: (params) ->
+  ###*
+  # makeSequence():
+  # Builds a comma-separated sequence of nodes.
+  ###
+
+  makeSequence: (list) ->
+    for arg, i in list
+      isLast = i is (list.length-1)
+      if arg.type is "FunctionExpression"
+        if not isLast
+          arg._parenthesized = true
+
+    commaDelimit(list.map(@walk))
+
+  ###*
+  # makeParams():
+  # Builds parameters for a function list.
+  ###
+
+  makeParams: (params) ->
     if params.length
       [ '(', delimit(params.map(@walk), ', '), ') ']
     else
