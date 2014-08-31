@@ -179,7 +179,10 @@ class Builder extends Walker
     space [ @walk(node.left), '=', @walk(node.right) ]
 
   Identifier: (node) ->
-    [ node.name ]
+    if node.name is 'undefined'
+      [ '`undefined`' ]
+    else
+      [ node.name ]
 
   UnaryExpression: (node) ->
     if node.operator is 'void'
