@@ -475,6 +475,27 @@ class Builder extends Walker
 
     [ left, "\n", right ]
 
+  ForStatement: (node) ->
+    # init, test, update, body
+    body = @indent => [ @walk(node.body) ]
+
+    init = if node.init
+      [ @walk(node.init), "\n" ]
+    else
+      []
+
+    looper = if node.test
+      [ "while ", @walk(node.test), "\n" ]
+    else
+      [ "loop", "\n" ]
+
+    update = if node.update
+      @indent => [ @indent(), @walk(node.update), "\n" ]
+    else
+      [ ]
+
+    [ init, looper, body, update ]
+
   ###*
   # makeSequence():
   # Builds a comma-separated sequence of nodes.
