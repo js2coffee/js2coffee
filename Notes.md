@@ -20,8 +20,6 @@ Developer notes
 
 ### Features to do
 
- - [x] Test Walker
- - [x] Add support for filters
  - [x] Really think indentation through
  - [x] Put groundwork on comment generation
  - [x] Throw useful Esprima errors (like coffeescriptredux)
@@ -32,6 +30,13 @@ Developer notes
  - [ ] `Math.pow(a,b)` => `a ** b`
  - [ ] `Math.floor(a / b)` => `a // b`
  - [ ] `function() { a }.bind(this)` => `=> a`
+
+Edge cases:
+
+ - [ ] A `case` without any code
+ - [ ] Sequence of objects
+ - [ ] Array of functions
+ - [ ] Add `return` at the end as needed
 
 ### Types
 
@@ -75,9 +80,3 @@ Developer notes
  - [x] CatchClause
  - [x] Identifier
  - [x] Literal
-
-Edge cases:
-
- - [ ] A `case` without any code
- - [ ] Sequence of objects
- - [ ] Array of functions
