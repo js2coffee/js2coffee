@@ -477,7 +477,10 @@ class Builder extends Walker
 
   ForStatement: (node) ->
     # init, test, update, body
-    body = @indent => [ @walk(node.body) ]
+    body = if node.update or (node.body.body.length > 0)
+      @indent => [ @walk(node.body) ]
+    else
+      @indent => [ @indent(), "continue\n" ]
 
     init = if node.init
       [ @walk(node.init), "\n" ]
