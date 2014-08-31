@@ -11,6 +11,9 @@
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
   "browser": "js2coffee.coffee",
+  "bin": {
+    "js2c": "./bin/js2c"
+  },
   "dependencies": {
     "esprima": "^1.2.2",
     "minimist": "^1.1.0",
