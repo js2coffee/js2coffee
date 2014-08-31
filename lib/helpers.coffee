@@ -17,6 +17,14 @@ exports.commaDelimit = (list) ->
     newlist.push(item)
   newlist
 
+###*
+# prependAll():
+# Prepends every item in the `list` with a given `prefix\`.
+#
+#     prependAll( [ 1, 2, 3 ], 'x' )
+#     => [ 'x', 1, 'x', 2, 'x', 3 ]
+###
+
 exports.prependAll = (list, prefix) ->
   newlist = []
   for item, i in list
