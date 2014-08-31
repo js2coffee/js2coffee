@@ -46,8 +46,17 @@ js2coffee.parse = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  builder = new Builder(ast, options)
-  {code, map} = builder.get()
+  try
+    builder = new Builder(ast, options)
+    {code, map} = builder.get()
+  catch err
+    # Clean this up :(
+    path = builder.path.filter (node) -> !! node
+    node = path[path.length-1]
+    err.lineNumber = node?.loc.start.line
+    err.column = node?.loc.start.column
+    err.description = err.message
+    throw buildError(err, source, options.filename)
 
   {code, ast, map}
 
@@ -278,10 +287,13 @@ class Builder extends Walker
       [ @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
 
   ReturnStatement: (node) ->
-    space [
-      "return",
-      [ @walk(node.argument), "\n" ]
-    ]
+    if node.argument
+      space [
+        "return",
+        [ @walk(node.argument), "\n" ]
+      ]
+    else
+      [ "return\n" ]
 
   parenthesizeObjectsInElements: (node) ->
     for item in node.elements

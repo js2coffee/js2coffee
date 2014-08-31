@@ -42,6 +42,8 @@ exports.prependAll = (list, prefix) ->
 ###
 
 exports.buildError = (err, source, file = '') ->
+  if err.js2coffee then return err
+
   {lineNumber, column, description} = err
   ln = lineNumber
 
@@ -64,6 +66,7 @@ exports.buildError = (err, source, file = '') ->
   err.column        = column
   err.description   = description
   err.sourcePreview = source
+  err.js2coffee     = true
   err
 
 ###*
