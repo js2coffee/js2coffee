@@ -58,10 +58,10 @@ Developer notes
  - [x] VariableDeclaration
  - [x] VariableDeclarator
  - [x] ThisExpression
- - [ ] ArrayExpression
- - [ ] ObjectExpression
+ - [x] ArrayExpression
+ - [x] ObjectExpression
  - [x] FunctionExpression
- - [ ] SequenceExpression
+ - [x] SequenceExpression
  - [x] UnaryExpression
  - [x] BinaryExpression
  - [x] AssignmentExpression

@@ -245,9 +245,9 @@ class Builder extends Walker
       [ 'if ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
-    @renderStatements(node, node.body)
+    @makeStatements(node, node.body)
 
-  renderStatements: (node, body) ->
+  makeStatements: (node, body) ->
     body = injectComments(@comments, node, body)
     prependAll(body.map(@walk), @indent())
 
@@ -364,6 +364,12 @@ class Builder extends Walker
   EmptyStatement: (node) ->
     [ ]
 
+  SequenceExpression: (node) ->
+    exprs = node.expressions.map (expr) =>
+      [ @walk(expr), "\n" ]
+
+    delimit(exprs, @indent())
+
   NewExpression: (node) ->
     callee = if node.callee?.type is 'Identifier'
       [ @walk(node.callee) ]
@@ -442,7 +448,7 @@ class Builder extends Walker
       [ @walk(node.argument), node.operator ]
 
   SwitchStatement: (node) ->
-    body = @indent => @renderStatements(node, node.cases)
+    body = @indent => @makeStatements(node, node.cases)
     [ "switch ", @walk(node.discriminant), "\n", body ]
 
   SwitchCase: (node) ->
@@ -453,7 +459,7 @@ class Builder extends Walker
     else
       [ "else" ]
 
-    right = @indent => @renderStatements(node, node.consequent)
+    right = @indent => @makeStatements(node, node.consequent)
 
     [ left, "\n", right ]
 
