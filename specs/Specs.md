@@ -5,6 +5,8 @@
     <th width='33%'>JavaScript</th>
     <th width='33%'>CoffeeScript</th>
 </thead>
+<tr><th colspan='3'>Makefile</th></tr>
+<tr><th colspan='3'>Specs.md</th></tr>
 <tr><th colspan='3'>Arrays</th></tr>
 <tr>
 <th valign='top'>Empty array</th>
