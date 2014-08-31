@@ -44,7 +44,7 @@ Developer notes
  - [x] BreakStatement
  - [x] ContinueStatement
  - [x] WithStatement
- - [ ] SwitchStatement
+ - [x] SwitchStatement
  - [x] ReturnStatement
  - [x] ThrowStatement
  - [x] TryStatement
@@ -71,7 +71,13 @@ Developer notes
  - [x] NewExpression
  - [x] CallExpression
  - [x] MemberExpression
- - [ ] SwitchCase
+ - [x] SwitchCase
  - [x] CatchClause
  - [x] Identifier
  - [x] Literal
+
+Edge cases:
+
+ - [ ] A `case` without any code
+ - [ ] Sequence of objects
+ - [ ] Array of functions
