@@ -1,0 +1,8 @@
+----
+for (x in y) {
+  alert(x);
+}
+----
+for x_ of y
+  `x = x_`
+  alert x_

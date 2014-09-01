@@ -1,0 +1,10 @@
+----
+function fn() {
+  for (a;b;c) { d; }
+};
+----
+fn = ->
+  a
+  while b
+    d
+    c

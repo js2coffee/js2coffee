@@ -148,8 +148,8 @@ class Builder extends Walker
 
   syntaxError: (node, description) ->
     err = buildError({
-      lineNumber: node.loc.start.line,
-      column: node.loc.start.column,
+      lineNumber: node.loc?.start?.line,
+      column: node.loc?.start?.column,
       description: description
     }, @options.source, @options.filename)
     throw err
@@ -481,7 +481,7 @@ class Builder extends Walker
       @indent => [ @indent(), "continue\n" ]
 
     init = if node.init
-      [ @walk(node.init), "\n" ]
+      [ @walk(node.init), "\n", @indent() ]
     else
       []
 
@@ -501,10 +501,17 @@ class Builder extends Walker
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
       @syntaxError node, "Using 'for..in' loops without 'var' can produce unexpected results"
+      node.left.name += '_'
+      id = @walk(node.left)
+      propagator = { type: 'CoffeeEscapedExpression', value: "#{id} = #{id}_" }
+      node.body.body = [ propagator ].concat(node.body.body)
+    else
+      id = @walk(node.left.declarations[0].id)
 
-    identifier = @walk(node.left.declarations[0].id)
+    [ "for ", id, " of ", @walk(node.right), "\n", @indent => @walk(node.body) ]
 
-    [ "for ", identifier, " of ", @walk(node.right), "\n", @indent => @walk(node.body) ]
+  CoffeeEscapedExpression: (node) ->
+    [ '`', node.value, '`' ]
 
   ###*
   # makeSequence():
@@ -603,6 +610,7 @@ injectComments = (comments, node, body) ->
 
   # look for comments in left..node.range[0]
   for item, i in body
+    continue unless item.range
     newComments = comments.filter (c) ->
       c.range[0] >= left and c.range[1] <= item.range[0]
     list = list.concat(newComments)
