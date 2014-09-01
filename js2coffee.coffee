@@ -289,6 +289,9 @@ class Builder extends Walker
 
   ReturnStatement: (node) ->
     if node.argument
+      if node.argument.type is 'ObjectExpression'
+        node.argument._braced = true
+
       space [
         "return",
         [ @walk(node.argument), "\n" ]

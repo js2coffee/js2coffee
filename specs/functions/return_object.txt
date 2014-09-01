@@ -1,0 +1,14 @@
+----
+function fn() {
+  if (x)
+    return { a: 1, b: 2 };
+  return true
+}
+----
+fn = ->
+  if x
+    return {
+      a: 1
+      b: 2
+    }
+  return true
