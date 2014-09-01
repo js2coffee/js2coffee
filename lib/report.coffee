@@ -38,10 +38,10 @@ for group in groups
       <tr>
       <th valign='top'>#{name}</th>
       <td valign='top'>
-      <pre class='lang-js'>#{input}</pre>
+      <pre><code class='lang-js'>#{input}</code></pre>
       </td>
       <td width='50%' valign='top'>
-      <pre class='lang-coffee'>#{output}</pre>
+      <pre><code class='lang-coffee'>#{output}</code></pre>
       </td>
       </tr>
     """
