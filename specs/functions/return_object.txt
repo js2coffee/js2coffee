@@ -1,11 +1,14 @@
 notes: """
   Having a return of an object without braces is ambiguous:
 
-      return
-        a: 1
-        b: 2
+  > ```
+  > return
+  >   a: 1
+  >   b: 2
+  > ```
 
-  CoffeeScript and CoffeeScriptRedux will both choke on this.
+  CoffeeScript and CoffeeScriptRedux will both choke on this. Js2coffee will
+  put braces around the object to make it work.
 """
 ----
 function fn() {

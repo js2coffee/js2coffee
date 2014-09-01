@@ -1,6 +1,6 @@
 ## Arrays
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Empty array</th>
 <td width='33%' valign='top'>
@@ -12,9 +12,6 @@
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Multiple items</th>
 <td width='33%' valign='top'>
@@ -35,7 +32,7 @@
 
 ## Comments
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Block comments</th>
 <td width='33%' valign='top'>
@@ -55,9 +52,6 @@ b()
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Block comments with space</th>
 <td width='33%' valign='top'>
@@ -72,9 +66,6 @@ b()
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Line comments</th>
 <td width='33%' valign='top'>
@@ -90,9 +81,6 @@ b()
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Trailing line comment</th>
 <td width='33%' valign='top'>
@@ -111,7 +99,7 @@ world()
 
 ## Errors
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>No finally</th>
 <td width='33%' valign='top'>
@@ -130,9 +118,6 @@ catch e
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Try catch finally</th>
 <td width='33%' valign='top'>
@@ -155,9 +140,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Try with indent</th>
 <td width='33%' valign='top'>
@@ -183,7 +165,7 @@ finally
 
 ## Function calls
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Call with function expression</th>
 <td width='33%' valign='top'>
@@ -200,9 +182,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Call with function indented</th>
 <td width='33%' valign='top'>
@@ -219,9 +198,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Call with function then object</th>
 <td width='33%' valign='top'>
@@ -239,9 +215,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Call with object</th>
 <td width='33%' valign='top'>
@@ -256,9 +229,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Call with param after function</th>
 <td width='33%' valign='top'>
@@ -274,9 +244,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Chaining</th>
 <td width='33%' valign='top'>
@@ -295,9 +262,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Expression with call</th>
 <td width='33%' valign='top'>
@@ -313,9 +277,6 @@ finally
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Iife with different argument names</th>
 <td width='33%' valign='top'>
@@ -335,7 +296,7 @@ finally
 
 ## Functions
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Multiple declarations</th>
 <td width='33%' valign='top'>
@@ -355,9 +316,6 @@ two = ->
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Multiple expressions</th>
 <td width='33%' valign='top'>
@@ -377,9 +335,6 @@ obj.two = ->
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Nested declarations</th>
 <td width='33%' valign='top'>
@@ -397,9 +352,6 @@ obj.two = ->
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Nested declares</th>
 <td width='33%' valign='top'>
@@ -417,9 +369,6 @@ obj.two = ->
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Return object</th>
 <td width='33%' valign='top'>
@@ -441,17 +390,6 @@ obj.two = ->
 </code></pre>
 </td>
 </tr>
-</table>
-
-> Having a return of an object without braces is ambiguous:
-> 
->     return
->       a: 1
->       b: 2
-> 
-> CoffeeScript and CoffeeScriptRedux will both choke on this.
-
-<table>
 <tr>
 <th width='33%' valign='top'>Return statement</th>
 <td width='33%' valign='top'>
@@ -466,9 +404,6 @@ obj.two = ->
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>With arguments</th>
 <td width='33%' valign='top'>
@@ -485,7 +420,7 @@ obj.two = ->
 
 ## If
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Else if</th>
 <td width='33%' valign='top'>
@@ -508,9 +443,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>If blocks</th>
 <td width='33%' valign='top'>
@@ -529,9 +461,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>If statement</th>
 <td width='33%' valign='top'>
@@ -544,9 +473,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>If with else</th>
 <td width='33%' valign='top'>
@@ -562,9 +488,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>If with else if inside functions</th>
 <td width='33%' valign='top'>
@@ -586,9 +509,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>If with else inside functions</th>
 <td width='33%' valign='top'>
@@ -606,9 +526,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>If with nesting</th>
 <td width='33%' valign='top'>
@@ -626,9 +543,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Multiple else ifs</th>
 <td width='33%' valign='top'>
@@ -663,9 +577,6 @@ else
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Non block consequents</th>
 <td width='33%' valign='top'>
@@ -688,7 +599,7 @@ else
 
 ## Legacy
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Array literals</th>
 <td width='33%' valign='top'>
@@ -708,9 +619,6 @@ console.log arr2[1][0] + [ 4 ]
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Assign</th>
 <td width='33%' valign='top'>
@@ -736,9 +644,6 @@ a ^= 0
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Blank lines</th>
 <td width='33%' valign='top'>
@@ -753,9 +658,6 @@ y = 3
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Crlf</th>
 <td width='33%' valign='top'>
@@ -769,9 +671,6 @@ y = 2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Debugger</th>
 <td width='33%' valign='top'>
@@ -783,9 +682,6 @@ y = 2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Delete</th>
 <td width='33%' valign='top'>
@@ -797,9 +693,6 @@ y = 2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Do</th>
 <td width='33%' valign='top'>
@@ -819,9 +712,6 @@ loop
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Empty function</th>
 <td width='33%' valign='top'>
@@ -834,9 +724,6 @@ loop
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Empty semicolon</th>
 <td width='33%' valign='top'>
@@ -849,9 +736,6 @@ loop
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Floating point numbers</th>
 <td width='33%' valign='top'>
@@ -877,9 +761,6 @@ loop
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Increment decrement</th>
 <td width='33%' valign='top'>
@@ -901,9 +782,6 @@ a-- - a
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Numbers</th>
 <td width='33%' valign='top'>
@@ -915,9 +793,6 @@ a-- - a
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Simple addition</th>
 <td width='33%' valign='top'>
@@ -930,9 +805,6 @@ a-- - a
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Single return</th>
 <td width='33%' valign='top'>
@@ -944,9 +816,6 @@ a-- - a
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Throw</th>
 <td width='33%' valign='top'>
@@ -962,9 +831,6 @@ catch x
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Unary</th>
 <td width='33%' valign='top'>
@@ -988,9 +854,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Undefined</th>
 <td width='33%' valign='top'>
@@ -1006,7 +869,7 @@ a = ~2
 
 ## Loops
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Continue statement</th>
 <td width='33%' valign='top'>
@@ -1024,9 +887,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Do while</th>
 <td width='33%' valign='top'>
@@ -1042,9 +902,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Do while with other statements</th>
 <td width='33%' valign='top'>
@@ -1067,9 +924,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>For in with var</th>
 <td width='33%' valign='top'>
@@ -1084,9 +938,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>For with no arguments</th>
 <td width='33%' valign='top'>
@@ -1101,9 +952,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>For with no body</th>
 <td width='33%' valign='top'>
@@ -1116,9 +964,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>For with no init</th>
 <td width='33%' valign='top'>
@@ -1134,9 +979,6 @@ a = ~2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>For with no test</th>
 <td width='33%' valign='top'>
@@ -1153,9 +995,6 @@ loop
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>For with no update</th>
 <td width='33%' valign='top'>
@@ -1171,9 +1010,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Forever loop</th>
 <td width='33%' valign='top'>
@@ -1188,9 +1024,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Indented for</th>
 <td width='33%' valign='top'>
@@ -1208,9 +1041,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Simple for</th>
 <td width='33%' valign='top'>
@@ -1227,9 +1057,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>While</th>
 <td width='33%' valign='top'>
@@ -1242,9 +1069,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>While with break</th>
 <td width='33%' valign='top'>
@@ -1266,7 +1090,7 @@ while b
 
 ## Members
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Identifier in brackets</th>
 <td width='33%' valign='top'>
@@ -1278,9 +1102,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Identifiers</th>
 <td width='33%' valign='top'>
@@ -1296,7 +1117,7 @@ while b
 
 ## New
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>New operator</th>
 <td width='33%' valign='top'>
@@ -1308,9 +1129,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>New operator with arguments</th>
 <td width='33%' valign='top'>
@@ -1322,9 +1140,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>New with complex callee</th>
 <td width='33%' valign='top'>
@@ -1336,9 +1151,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>New with function expression</th>
 <td width='33%' valign='top'>
@@ -1354,9 +1166,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>New with function expression and string</th>
 <td width='33%' valign='top'>
@@ -1376,7 +1185,7 @@ while b
 
 ## Objects
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Arrray of objects</th>
 <td width='33%' valign='top'>
@@ -1400,9 +1209,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Call with object</th>
 <td width='33%' valign='top'>
@@ -1416,9 +1222,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Multiple properties</th>
 <td width='33%' valign='top'>
@@ -1432,9 +1235,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Nested objects</th>
 <td width='33%' valign='top'>
@@ -1450,9 +1250,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Object with arrays</th>
 <td width='33%' valign='top'>
@@ -1475,9 +1272,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Simple object</th>
 <td width='33%' valign='top'>
@@ -1489,9 +1283,6 @@ while b
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Unusual identifiers</th>
 <td width='33%' valign='top'>
@@ -1528,7 +1319,7 @@ while b
 
 ## Simple
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Booleans</th>
 <td width='33%' valign='top'>
@@ -1542,9 +1333,6 @@ false
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Call with function</th>
 <td width='33%' valign='top'>
@@ -1559,9 +1347,6 @@ false
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Debugger statement</th>
 <td width='33%' valign='top'>
@@ -1574,9 +1359,6 @@ false
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Delete</th>
 <td width='33%' valign='top'>
@@ -1588,9 +1370,6 @@ false
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Empty statement</th>
 <td width='33%' valign='top'>
@@ -1601,9 +1380,6 @@ false
 <pre><code class='lang-coffee'></code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Empty statement with other statements</th>
 <td width='33%' valign='top'>
@@ -1616,9 +1392,6 @@ b()
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Function call</th>
 <td width='33%' valign='top'>
@@ -1630,9 +1403,6 @@ b()
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Function call with arguments</th>
 <td width='33%' valign='top'>
@@ -1644,9 +1414,6 @@ b()
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Increment</th>
 <td width='33%' valign='top'>
@@ -1660,9 +1427,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Indented throw</th>
 <td width='33%' valign='top'>
@@ -1675,9 +1439,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Index resolution</th>
 <td width='33%' valign='top'>
@@ -1689,9 +1450,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Index resolution of expression</th>
 <td width='33%' valign='top'>
@@ -1703,9 +1461,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Index resolution of strings</th>
 <td width='33%' valign='top'>
@@ -1717,9 +1472,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Index resolution with this</th>
 <td width='33%' valign='top'>
@@ -1731,9 +1483,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Inline assignment</th>
 <td width='33%' valign='top'>
@@ -1748,9 +1497,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Nested function calls</th>
 <td width='33%' valign='top'>
@@ -1762,19 +1508,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-> CoffeeScript allows function calls without parentheses, such as `alert
-> "Hello"`. With this, you can do strange constructions such as `push new
-> Sidebar $ "left"` (that is: `push(new Sidebar($("#left")))`).
-> 
-> This is unreadable, however. Ruby has the same constructions, but Ruby
-> styleguides often advocate *not* omitting parentheses unless the call
-> expression is a statement.
-> 
-> Js2coffee takes the same convention into consideration.
-
-<table>
 <tr>
 <th width='33%' valign='top'>Nesting if and assignment</th>
 <td width='33%' valign='top'>
@@ -1790,9 +1523,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Prefix increment</th>
 <td width='33%' valign='top'>
@@ -1806,9 +1536,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Return nothing</th>
 <td width='33%' valign='top'>
@@ -1823,9 +1550,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Scientific notation</th>
 <td width='33%' valign='top'>
@@ -1837,9 +1561,6 @@ b--
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Sequence expression</th>
 <td width='33%' valign='top'>
@@ -1853,9 +1574,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Sequence expression with indent</th>
 <td width='33%' valign='top'>
@@ -1872,9 +1590,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Standalone this</th>
 <td width='33%' valign='top'>
@@ -1886,15 +1601,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-> CoffeeScript allows `this` as `@`. In fact, js2coffee compiles `this.x` into `@x`.
-> 
-> Using a standalone `@` was once allowed in CoffeeScript, but was removed in
-> future versions. Hence, standalone JavaScript `this` expressions compile into
-> the same thing, `this`.
-
-<table>
 <tr>
 <th width='33%' valign='top'>Ternary operator</th>
 <td width='33%' valign='top'>
@@ -1906,9 +1612,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Ternary operator nesting</th>
 <td width='33%' valign='top'>
@@ -1920,26 +1623,17 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-> This is previously broken in js2coffee 0.x since Narcissus didn't handle this
-> case properly.
-
-<table>
 <tr>
 <th width='33%' valign='top'>This prefix</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>this.run();
+<pre><code class='lang-js'>this.run(this);
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>@run()
+<pre><code class='lang-coffee'>@run this
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Throw</th>
 <td width='33%' valign='top'>
@@ -1951,9 +1645,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Undefined</th>
 <td width='33%' valign='top'>
@@ -1965,9 +1656,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Void 0</th>
 <td width='33%' valign='top'>
@@ -1981,16 +1669,9 @@ c
 </tr>
 </table>
 
-> CoffeeScript doesn't support the `void` operator.
-> 
-> Doing `void (anything)` will always produce `void 0`, which is what
-> CoffeeScript's `undefined` compiles to.
-> 
-> That is: `void 100 === void 0 === undefined`.
-
 ## Strings
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Empty string</th>
 <td width='33%' valign='top'>
@@ -2002,9 +1683,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Simple string</th>
 <td width='33%' valign='top'>
@@ -2016,9 +1694,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Single quotes</th>
 <td width='33%' valign='top'>
@@ -2030,9 +1705,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>String with escapes</th>
 <td width='33%' valign='top'>
@@ -2048,7 +1720,7 @@ c
 
 ## Switch
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Case consolidation</th>
 <td width='33%' valign='top'>
@@ -2071,9 +1743,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Case consolidation with default</th>
 <td width='33%' valign='top'>
@@ -2096,9 +1765,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Switch</th>
 <td width='33%' valign='top'>
@@ -2125,9 +1791,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Switch with comments</th>
 <td width='33%' valign='top'>
@@ -2162,9 +1825,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Switch with conditional expression</th>
 <td width='33%' valign='top'>
@@ -2182,9 +1842,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Switch with return</th>
 <td width='33%' valign='top'>
@@ -2212,7 +1869,7 @@ c
 
 ## Var
 
-<table>
+<table width='100%'>
 <tr>
 <th width='33%' valign='top'>Mixed var declarations</th>
 <td width='33%' valign='top'>
@@ -2230,9 +1887,6 @@ c
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Multiple var declaration</th>
 <td width='33%' valign='top'>
@@ -2245,9 +1899,6 @@ b = 2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Multiple var declarations with indent</th>
 <td width='33%' valign='top'>
@@ -2263,9 +1914,6 @@ b = 2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Var declaration</th>
 <td width='33%' valign='top'>
@@ -2277,9 +1925,6 @@ b = 2
 </code></pre>
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <th width='33%' valign='top'>Var without initializer</th>
 <td width='33%' valign='top'>

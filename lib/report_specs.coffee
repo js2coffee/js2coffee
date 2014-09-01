@@ -4,9 +4,10 @@ eachGroup (group) ->
   return if group.pending
   console.log "## #{group.name}\n"
 
+  console.log "<table width='100%'>"
+
   for spec in group.specs
     console.log """
-      <table>
       <tr>
       <th width='33%' valign='top'>#{spec.name}</th>
       <td width='33%' valign='top'>
@@ -16,11 +17,6 @@ eachGroup (group) ->
       <pre><code class='lang-coffee'>#{spec.output}</code></pre>
       </td>
       </tr>
-      </table>\n
     """
 
-    notes = spec.meta?.notes
-    if notes
-      lines = notes.split("\n").map (l) -> "> #{l}"
-      notes = lines.join("\n")
-      console.log "#{notes}\n"
+  console.log "</table>\n"

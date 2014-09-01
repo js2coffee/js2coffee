@@ -1,4 +1,11 @@
+notes: """
+  When using `this` on the left-side of a `.`, it gets converted into
+  CoffeeScript-style `@` prefixes.
+
+  When `this` is used on its own (such as in the case of the 2nd `this` in the
+  example), it is left alone as using a standalone `@` is discouraged.
+"""
 ----
-this.run();
+this.run(this);
 ----
-@run()
+@run this

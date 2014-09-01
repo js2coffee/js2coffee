@@ -1,3 +1,11 @@
+notes: """
+  It's possible for `undefined` to be redefined in JavaScript, eg, `var
+  undefined = 2`. While this is undesirable and never recommended, Js2coffee
+  ensures that using `undefined` will use whatever `undefined` is defined as.
+
+  The backticks around it ensures that CoffeeScript will not compile
+  `undefined` into `void 0`.
+"""
 ----
 undefined
 ----
