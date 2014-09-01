@@ -925,6 +925,22 @@ a = ~2
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>For in with if</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {
+  for (var a in b) if (c) d();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+  for a of b
+    if c
+      d()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>For in with var</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>for (var x in y) {
@@ -941,16 +957,17 @@ a = ~2
 <tr>
 <th width='33%' valign='top'>For with if</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>if (condition) {
-  for (var a in b) if (c) d();
-}
+<pre><code class='lang-js'>if (condition)
+  for (a;b;c) if (d) e();
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if condition
-  for a of b
-    if c
-      d()
+  a
+  while b
+    if d
+      e()
+    c
 </code></pre>
 </td>
 </tr>
@@ -1099,6 +1116,22 @@ while b
   if x
     break
   a()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>While with no body</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (true) {
+  while (a) {
+  }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if true
+  while a
+    continue
 </code></pre>
 </td>
 </tr>

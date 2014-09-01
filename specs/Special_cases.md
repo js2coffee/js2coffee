@@ -59,6 +59,27 @@ fn = ->
   return true
 ```
 
+## Loops
+
+### Simple for
+
+CoffeeScript has no `for` loop, so they are converted into `while` loops.
+
+```js
+// Input:
+for (a;b;c) {
+  d();
+}
+```
+
+```coffee
+# Output:
+a
+while b
+  d()
+  c
+```
+
 ## Simple
 
 ### Nested function calls

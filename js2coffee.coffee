@@ -400,7 +400,8 @@ class Builder extends Walker
     [ "new ", callee, args ]
 
   WhileStatement: (node) ->
-    isLoop = node.test?.type is 'Literal' and node.test?.value is true
+    isLoop = not node.test? or
+      (node.test?.type is 'Literal' and node.test?.value is true)
 
     looper = if isLoop
       [ "loop" ]
@@ -494,19 +495,12 @@ class Builder extends Walker
     # init, test, update, body
     @injectUpdateIntoBody(node)
 
-    body = @makeLoopBody(node.body)
-
     init = if node.init
       [ @walk(node.init), "\n", @indent() ]
     else
       []
 
-    looper = if node.test
-      [ "while ", @walk(node.test), "\n" ]
-    else
-      [ "loop", "\n" ]
-
-    [ init, looper, body ]
+    [ init, @WhileStatement(node) ]
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
