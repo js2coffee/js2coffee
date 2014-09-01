@@ -1,0 +1,15 @@
+----
+function x() {
+  if (true) {
+    return 2;
+  }
+
+  var b = 3;
+  return b;
+}
+----
+x = ->
+  return 2  if true
+  b = 3
+  b
+

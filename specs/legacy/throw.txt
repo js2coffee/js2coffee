@@ -1,0 +1,8 @@
+----
+try {
+throw 2;} catch(x) { alert (x); }
+----
+try
+  throw 2
+catch x
+  alert x

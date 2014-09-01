@@ -1,0 +1,7 @@
+----
+(function() { console.log("Listening to %d", port); })();
+----
+(->
+  console.log "Listening to %d", port
+  return
+)()

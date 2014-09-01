@@ -1,0 +1,8 @@
+----
+(function() {
+  return this;
+})
+
+----
+->
+  this

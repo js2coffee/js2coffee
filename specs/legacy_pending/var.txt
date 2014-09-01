@@ -1,0 +1,9 @@
+----
+var x = 2;
+var y;
+var f = function() { return y };
+----
+x = 2
+y = undefined
+f = ->
+  y

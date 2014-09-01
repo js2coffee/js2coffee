@@ -1,0 +1,12 @@
+----
+var i = 0;
+do {
+  console.log(i);
+  i++;
+} while (i < 14);
+----
+i = 0
+loop
+  console.log i
+  i++
+  break unless i < 14

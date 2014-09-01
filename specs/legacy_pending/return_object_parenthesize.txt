@@ -1,0 +1,44 @@
+----
+function parenthesized() {
+  return { a: 1, b: 2 };
+  a();
+}
+function not_parenthesized() {
+  return { a: 1 };
+  a();
+}
+function parenthesized_b() {
+  if (something()) {
+    return { a: 1, b: 2 };
+  }
+}
+function parenthesized_c() {
+  if (something()) {
+    return { a: 1, b: 2 };
+  }
+  a();
+}
+----
+parenthesized = ->
+  return (
+    a: 1
+    b: 2
+  )
+  a()
+  return
+not_parenthesized = ->
+  return a: 1
+  a()
+  return
+parenthesized_b = ->
+  if something()
+    a: 1
+    b: 2
+parenthesized_c = ->
+  if something()
+    return (
+      a: 1
+      b: 2
+    )
+  a()
+  return

@@ -1,0 +1,6 @@
+----
+test({url: url}, options || {});
+----
+test
+  url: url
+, options or {}

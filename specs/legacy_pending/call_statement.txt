@@ -1,0 +1,18 @@
+----
+function x() {
+  alert(2+2);
+  alert(y(10));
+}
+
+$.get({
+  ajax: true,
+  url: 'foo'
+});
+----
+x = ->
+  alert 2 + 2
+  alert y(10)
+  return
+$.get
+  ajax: true
+  url: "foo"

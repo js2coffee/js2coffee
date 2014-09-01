@@ -1,0 +1,6 @@
+----
+(function($) { return new jQuery.fn.init( selector, context ); })(jQuery);
+----
+(($) ->
+  new jQuery.fn.init(selector, context)
+) jQuery

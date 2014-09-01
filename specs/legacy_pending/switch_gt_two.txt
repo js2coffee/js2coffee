@@ -1,0 +1,20 @@
+----
+switch (x) {
+ case 1:
+ case 2: 
+ case 3: foo()
+ case 4: bar()
+}
+
+switch (x) {
+ case 4: case 5: case 6: baz()
+}
+----
+switch x
+  when 1, 2, 3
+    foo()
+  when 4
+    bar()
+switch x
+  when 4, 5, 6
+    baz()
