@@ -491,10 +491,9 @@ class Builder extends Walker
 
   ForStatement: (node) ->
     # init, test, update, body
-    body = if node.update or (node.body.body.length > 0)
-      @indent => [ @walk(node.body) ]
-    else
-      @indent => [ @indent(), "continue\n" ]
+    @injectUpdateIntoBody(node)
+
+    body = @makeLoopBody(node.body)
 
     init = if node.init
       [ @walk(node.init), "\n", @indent() ]
@@ -506,13 +505,7 @@ class Builder extends Walker
     else
       [ "loop", "\n" ]
 
-    update = if node.update
-      @indent => [ @indent(), @walk(node.update), "\n" ]
-    else
-      [ ]
-
-    [ init, looper, body, update ]
-
+    [ init, looper, body ]
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
@@ -524,12 +517,18 @@ class Builder extends Walker
     else
       id = @walk(node.left.declarations[0].id)
 
-    if node.body.type is 'BlockStatement'
-      body = @indent => @walk(node.body)
-    else
-      body = @indent => [ @indent(), @walk(node.body) ]
+    body = @makeLoopBody(node.body)
 
     [ "for ", id, " of ", @walk(node.right), "\n", body ]
+
+  makeLoopBody: (body) ->
+    isBlock = body?.type is 'BlockStatement'
+    if not body or (isBlock and body.body.length is 0)
+      @indent => [ @indent(), "continue\n" ]
+    else if isBlock
+      @indent => @walk(body)
+    else
+      @indent => [ @indent(), @walk(body) ]
 
   CoffeeEscapedExpression: (node) ->
     [ '`', node.value, '`' ]
@@ -604,6 +603,19 @@ class Builder extends Walker
     if node.object.type is 'FunctionExpression'
       node.object._parenthesized = true
 
+  ###
+  # Injects a ForStatement's update (eg, `i++`) into the body.
+  ###
+
+  injectUpdateIntoBody: (node) ->
+    if node.update
+      statement =
+        type: 'ExpressionStatement'
+        expression: node.update
+      node.body ?= { type: 'BlockStatement', body: [] }
+      node.body.body = node.body.body.concat([statement])
+      delete node.update
+
   consolidateCases: (node) ->
     list = []
     toConsolidate = []
@@ -631,10 +643,13 @@ injectComments = (comments, node, body) ->
 
   # look for comments in left..node.range[0]
   for item, i in body
-    continue unless item.range
-    newComments = comments.filter (c) ->
-      c.range[0] >= left and c.range[1] <= item.range[0]
-    list = list.concat(newComments)
+    if item.range
+      newComments = comments.filter (c) ->
+        c.range[0] >= left and c.range[1] <= item.range[0]
+      list = list.concat(newComments)
+
     list.push item
-    left = item.range[1]
+
+    if item.range
+      left = item.range[1]
   list
