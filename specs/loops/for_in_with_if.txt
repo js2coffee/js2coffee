@@ -1,0 +1,9 @@
+----
+if (condition) {
+  for (var a in b) if (c) d();
+}
+----
+if condition
+  for a of b
+    if c
+      d()

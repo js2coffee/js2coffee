@@ -1,9 +1,10 @@
 ----
-if (condition) {
-  for (var a in b) if (c) d();
-}
+if (condition)
+  for (a;b;c) if (d) e();
 ----
 if condition
-  for a of b
-    if c
-      d()
+  a
+  while b
+    if d
+      e()
+    c
