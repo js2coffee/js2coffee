@@ -176,7 +176,7 @@ class Builder extends Walker
     newline @walk(node.expression)
 
   AssignmentExpression: (node) ->
-    space [ @walk(node.left), '=', @walk(node.right) ]
+    space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Identifier: (node) ->
     if node.name is 'undefined'
