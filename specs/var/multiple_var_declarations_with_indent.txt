@@ -1,8 +1,8 @@
 ----
-function fn() {
+if (true) {
   var a = 1, b = 2;
 }
 ----
-fn = ->
+if true
   a = 1
   b = 2

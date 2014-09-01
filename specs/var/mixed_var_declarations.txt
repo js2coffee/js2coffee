@@ -1,9 +1,9 @@
 ----
-function fn() {
+if (true) {
   var a = 1, b, c = 2, d;
 }
 ----
-fn = ->
+if true
   a = 1
   b = undefined
   c = 2

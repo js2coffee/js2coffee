@@ -939,6 +939,22 @@ a = ~2
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>For with if</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {
+  for (var a in b) if (c) d();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+  for a of b
+    if c
+      d()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>For with no arguments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>for (;;) {
@@ -1027,13 +1043,13 @@ while b
 <tr>
 <th width='33%' valign='top'>Indented for</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>function fn() {
+<pre><code class='lang-js'>if (true) {
   for (a;b;c) { d; }
-};
+}
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>fn = ->
+<pre><code class='lang-coffee'>if true
   a
   while b
     d
@@ -1873,13 +1889,13 @@ c
 <tr>
 <th width='33%' valign='top'>Mixed var declarations</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>function fn() {
+<pre><code class='lang-js'>if (true) {
   var a = 1, b, c = 2, d;
 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>fn = ->
+<pre><code class='lang-coffee'>if true
   a = 1
   b = undefined
   c = 2
@@ -1902,13 +1918,13 @@ b = 2
 <tr>
 <th width='33%' valign='top'>Multiple var declarations with indent</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>function fn() {
+<pre><code class='lang-js'>if (true) {
   var a = 1, b = 2;
 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>fn = ->
+<pre><code class='lang-coffee'>if true
   a = 1
   b = 2
 </code></pre>
