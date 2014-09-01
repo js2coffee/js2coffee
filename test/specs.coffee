@@ -25,14 +25,16 @@ describe 'specs:', ->
         test = if isPending then xit else it
         data = fs.readFileSync(spec, 'utf-8')
         [meta, input, output] = data.split('----\n')
-        if meta.length
-          meta = coffee.compile(meta, bare: true)
+        meta = if meta.length
+          coffee.compile(meta, bare: true)
+        else
+          {}
 
         test name, do (spec, input, output) ->
           ->
             result = js2coffee(input)
             try
-              expect(result).eql(output)
+              expect(result).eq(output)
             catch e
               e.stack = ''
               throw e
