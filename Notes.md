@@ -56,7 +56,7 @@ Edge cases:
  - [x] WhileStatement
  - [x] DoWhileStatement
  - [x] ForStatement
- - [ ] ForInStatement
+ - [x] ForInStatement
  - [x] DebuggerStatement
  - [x] FunctionDeclaration
  - [x] VariableDeclaration

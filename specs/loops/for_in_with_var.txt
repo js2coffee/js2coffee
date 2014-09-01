@@ -1,0 +1,7 @@
+----
+for (var x in y) {
+  z();
+}
+----
+for x of y
+  z()

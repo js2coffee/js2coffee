@@ -497,6 +497,15 @@ class Builder extends Walker
 
     [ init, looper, body, update ]
 
+
+  ForInStatement: (node) ->
+    if node.left.type isnt 'VariableDeclaration'
+      @syntaxError node, "Using 'for..in' loops without 'var' can produce unexpected results"
+
+    identifier = @walk(node.left.declarations[0].id)
+
+    [ "for ", identifier, " of ", @walk(node.right), "\n", @indent => @walk(node.body) ]
+
   ###*
   # makeSequence():
   # Builds a comma-separated sequence of nodes.
