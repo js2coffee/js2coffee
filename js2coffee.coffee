@@ -511,9 +511,12 @@ class Builder extends Walker
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
       # @syntaxError node, "Using 'for..in' loops without 'var' can produce unexpected results"
-      node.left.name += '_'
+      # node.left.name += '_'
       id = @walk(node.left)
-      propagator = { type: 'CoffeeEscapedExpression', value: "#{id} = #{id}_" }
+      propagator = {
+        type: 'ExpressionStatement'
+        expression: { type: 'CoffeeEscapedExpression', value: "#{id} = #{id}" }
+      }
       node.body.body = [ propagator ].concat(node.body.body)
     else
       id = @walk(node.left.declarations[0].id)
@@ -613,7 +616,14 @@ class Builder extends Walker
       statement =
         type: 'ExpressionStatement'
         expression: node.update
-      node.body ?= { type: 'BlockStatement', body: [] }
+
+      # Ensure that the body is a BlockStatement with a body
+      if not node.body?
+        node.body ?= { type: 'BlockStatement', body: [] }
+      else if node.body.type isnt 'BlockStatement'
+        old = node.body
+        node.body = { type: 'BlockStatement', body: [ old ] }
+
       node.body.body = node.body.body.concat([statement])
       delete node.update
 
@@ -638,6 +648,8 @@ class Builder extends Walker
 
 injectComments = (comments, node, body) ->
   range = node.range
+  return body unless range?
+
   list = []
   left = range[0]
   right = range[1]

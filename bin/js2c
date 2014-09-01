@@ -22,6 +22,8 @@ read(args._, function (err, res) {
       process.stdout.write(out.code);
     } catch (err) {
       console.error(err.message);
+      if (!err.js2coffee)
+        console.error(err.stack);
       process.exit(16);
     }
   });
