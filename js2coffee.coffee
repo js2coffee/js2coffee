@@ -414,9 +414,9 @@ class Builder extends Walker
   TryStatement: (node) ->
     # block, guardedHandlers, handlers [], finalizer
     _try = @indent => [ "try\n", @walk(node.block) ]
-    _catch = node.handlers.map(@walk)
+    _catch = prependAll(node.handlers.map(@walk), @indent())
     _finally = if node.finalizer?
-      @indent => [ "finally\n", @walk(node.finalizer) ]
+      @indent (indent) => [ indent, "finally\n", @walk(node.finalizer) ]
     else
       []
 
@@ -500,7 +500,7 @@ class Builder extends Walker
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
-      @syntaxError node, "Using 'for..in' loops without 'var' can produce unexpected results"
+      # @syntaxError node, "Using 'for..in' loops without 'var' can produce unexpected results"
       node.left.name += '_'
       id = @walk(node.left)
       propagator = { type: 'CoffeeEscapedExpression', value: "#{id} = #{id}_" }

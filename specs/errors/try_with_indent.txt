@@ -1,0 +1,14 @@
+----
+if (x) {
+  try { a(); }
+  catch (e) { b(); }
+  finally { c(); }
+}
+----
+if x
+  try
+    a()
+  catch e
+    b()
+  finally
+    c()
