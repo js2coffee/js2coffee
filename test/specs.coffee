@@ -1,6 +1,7 @@
 require 'coffee-script/register'
 require './setup'
 
+coffee = require('coffee-script')
 path = require('path')
 glob = require('glob')
 fs = require('fs')
@@ -22,12 +23,16 @@ describe 'specs:', ->
         name = toName(spec)
         isPending = ~group.indexOf('pending') or ~name.indexOf('pending')
         test = if isPending then xit else it
+        data = fs.readFileSync(spec, 'utf-8')
+        [meta, input, output] = data.split('----\n')
+        if meta.length
+          meta = coffee.compile(meta, bare: true)
 
-        test name, ((spec) ->
+        test name, do (spec, input, output) ->
           ->
-            data = fs.readFileSync(spec, 'utf-8')
-            [meta, input, output] = data.split('----\n')
-
             result = js2coffee(input)
-            expect(result).eql(output)
-        )(spec)
+            try
+              expect(result).eql(output)
+            catch e
+              e.stack = ''
+              throw e
