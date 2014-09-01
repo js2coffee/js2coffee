@@ -370,7 +370,7 @@ class Builder extends Walker
       [ params, "->\n", @walk(node.body) ]
 
     if node._parenthesized
-      [ "(", expr, ")" ]
+      [ "(", expr, @indent(), ")" ]
     else
       expr
 

@@ -1,0 +1,9 @@
+----
+if (x) {
+  setTimeout(function() { go(); }, 300)
+}
+----
+if x
+  setTimeout (->
+    go()
+  ), 300
