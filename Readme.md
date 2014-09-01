@@ -2,7 +2,7 @@
 
 Small attempt at making a new js2coffee.
 
-[![Status](https://travis-ci.org/rstacruz/js2coffee-redux.svg?branch=master)](https://travis-ci.org/rstacruz/js2coffee-redux)  
+[![Status](https://travis-ci.org/js2coffee/js2coffee-redux.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee-redux)  
 
 ## Goals
 
