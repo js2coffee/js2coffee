@@ -33,10 +33,13 @@ Developer notes
 
 Edge cases:
 
- - [ ] A `case` without any code
+ - [x] A `case` without any code
  - [ ] Sequence of objects
  - [ ] Array of functions
  - [ ] Add `return` at the end as needed
+ - [ ] `a(/=b/i)` should not compile to `a /=b/i`
+
+## Edge cases
 
 ### Types
 

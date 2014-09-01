@@ -1,3 +1,7 @@
+notes: """
+  CoffeeScript doesn't allow loop constructs (while/loop/for) without any
+  body. To get around this, we use `continue` in place of an empty body.
+"""
 ----
 while (a) {}
 ----

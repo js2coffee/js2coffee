@@ -1,3 +1,11 @@
+notes: """
+  CoffeeScript doesn't support the `void` operator.
+
+  Doing `void (anything)` will always produce `void 0`, which is what
+  CoffeeScript's `undefined` compiles to.
+
+  That is: `void 100 === void 0 === undefined`.
+"""
 ----
 void 0
 ----

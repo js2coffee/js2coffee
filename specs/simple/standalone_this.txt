@@ -1,3 +1,10 @@
+notes: """
+  CoffeeScript allows `this` as `@`. In fact, js2coffee compiles `this.x` into `@x`.
+
+  Using a standalone `@` was once allowed in CoffeeScript, but was removed in
+  future versions. Hence, standalone JavaScript `this` expressions compile into
+  the same thing, `this`.
+"""
 ----
 a = this;
 ----

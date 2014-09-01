@@ -1,4 +1,12 @@
+notes: """
+  CoffeeScript allow prototypes as `::`, as in `Array::join = ->`.
+
+  It also allows `a::` without anything on the right side (as is the case
+  of the 2nd line), but CoffeeScriptRedux doesn't.
+"""
 ----
 a.prototype.b = 1
+a.prototype = {}
 ----
 a::b = 1
+a.prototype = {}

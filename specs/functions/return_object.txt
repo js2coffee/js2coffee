@@ -1,3 +1,12 @@
+notes: """
+  Having a return of an object without braces is ambiguous:
+
+  return
+    a: 1
+    b: 2
+
+  CoffeeScript and CoffeeScriptRedux will both choke on this.
+"""
 ----
 function fn() {
   if (x)
