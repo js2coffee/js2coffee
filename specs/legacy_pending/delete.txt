@@ -1,4 +1,0 @@
-----
-delete a[x];----
-delete a[x]
-

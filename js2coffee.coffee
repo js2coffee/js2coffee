@@ -201,14 +201,13 @@ class Builder extends Walker
     @parenthesizeObjectIfFunction(node)
 
     isThis = (node.object.type is 'ThisExpression')
-    isIdentifier = (node.property.type is 'Identifier')
 
     left = if isThis
       [ '@' ]
     else
       [ @walk(node.object) ]
 
-    right = if not isIdentifier
+    right = if node.computed
       [ '[', @walk(node.property), ']' ]
     else if isThis
       [ @walk(node.property) ]
