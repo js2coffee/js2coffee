@@ -1,9 +1,9 @@
 ----
-function fn() {
+if (true) {
   for (a;b;c) { d; }
-};
+}
 ----
-fn = ->
+if true
   a
   while b
     d

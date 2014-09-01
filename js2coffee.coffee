@@ -524,7 +524,12 @@ class Builder extends Walker
     else
       id = @walk(node.left.declarations[0].id)
 
-    [ "for ", id, " of ", @walk(node.right), "\n", @indent => @walk(node.body) ]
+    if node.body.type is 'BlockStatement'
+      body = @indent => @walk(node.body)
+    else
+      body = @indent => [ @indent(), @walk(node.body) ]
+
+    [ "for ", id, " of ", @walk(node.right), "\n", body ]
 
   CoffeeEscapedExpression: (node) ->
     [ '`', node.value, '`' ]
