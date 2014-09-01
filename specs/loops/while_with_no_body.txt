@@ -1,0 +1,9 @@
+----
+if (true) {
+  while (a) {
+  }
+}
+----
+if true
+  while a
+    continue

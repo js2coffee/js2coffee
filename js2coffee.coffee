@@ -402,11 +402,12 @@ class Builder extends Walker
   WhileStatement: (node) ->
     isLoop = node.test?.type is 'Literal' and node.test?.value is true
 
-    left = if isLoop
+    looper = if isLoop
       [ "loop" ]
     else
       [ "while ", @walk(node.test) ]
-    @indent => [ left, "\n", @walk(node.body) ]
+
+    [ looper, "\n", @makeLoopBody(node.body) ]
 
   DoWhileStatement: (node) ->
     @indent =>
