@@ -524,6 +524,273 @@ else
 </pre>
 </td>
 </tr>
+<tr><th colspan='3'>Legacy</th></tr>
+<tr>
+<th valign='top'>Array literals</th>
+<td valign='top'>
+<pre class='lang-js'>var arr1 = [];
+var arr2 = [1,3,4];
+console.log(arr2[1][0] + [4]);
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>arr1 = []
+arr2 = [
+  1
+  3
+  4
+]
+console.log arr2[1][0] + [ 4 ]
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Assign</th>
+<td valign='top'>
+<pre class='lang-js'>a = 2;
+a += 1;
+a -= 1;
+a *= 4;
+a /= 2;
+a %= 0;
+a <<= 0;
+a ^= 0;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = 2
+a += 1
+a -= 1
+a *= 4
+a /= 2
+a %= 0
+a <<= 0
+a ^= 0
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Blank lines</th>
+<td valign='top'>
+<pre class='lang-js'>x = 2
+
+
+y = 3</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>x = 2
+y = 3
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Crlf</th>
+<td valign='top'>
+<pre class='lang-js'>var x = 3
+var y = 2
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>x = 3
+y = 2
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Debugger</th>
+<td valign='top'>
+<pre class='lang-js'>debugger;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>debugger
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Delete</th>
+<td valign='top'>
+<pre class='lang-js'>delete a[x];
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>delete a[x]
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Do</th>
+<td valign='top'>
+<pre class='lang-js'>var i = 0;
+do {
+  console.log(i);
+  i++;
+} while (i < 14);
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>i = 0
+loop
+  console.log i
+  i++
+  break unless i < 14
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Empty function</th>
+<td valign='top'>
+<pre class='lang-js'>(function($) {})()
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>(($) ->
+)()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Empty semicolon</th>
+<td valign='top'>
+<pre class='lang-js'>2;;;3
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>2
+3
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Floating point numbers</th>
+<td valign='top'>
+<pre class='lang-js'>0.094;
+91;
+9;
+0;
+-1;
+-20.89889;
+-424;
+482934.00000001;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>0.094
+91
+9
+0
+-1
+-20.89889
+-424
+482934.00000001
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Increment decrement</th>
+<td valign='top'>
+<pre class='lang-js'>a++;
+++a;
+--a;
+a--;
+a+++a;
+a---a;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a++
+++a
+--a
+a--
+a++ + a
+a-- - a
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Numbers</th>
+<td valign='top'>
+<pre class='lang-js'>var x = 1e3;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>x = 1e3
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Simple addition</th>
+<td valign='top'>
+<pre class='lang-js'>var a = 8+2+2;2
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = 8 + 2 + 2
+2
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Single return</th>
+<td valign='top'>
+<pre class='lang-js'>(function() { return; });</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>->
+  return
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Throw</th>
+<td valign='top'>
+<pre class='lang-js'>try {
+throw 2;} catch(x) { alert (x); }
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>try
+  throw 2
+catch x
+  alert x
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Unary</th>
+<td valign='top'>
+<pre class='lang-js'>-1;
++1;
++1 - 1;
++1 -1;
+~2 - 2;
+~2+-1;
+a =~ 2;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>-1
++1
++1 - 1
++1 - 1
+~2 - 2
+~2 + -1
+a = ~2
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Undefined</th>
+<td valign='top'>
+<pre class='lang-js'>undefined
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>`undefined`
+</pre>
+</td>
+</tr>
+<tr><th colspan='3'>Legacy pending</th></tr>
 <tr><th colspan='3'>Loops</th></tr>
 <tr>
 <th valign='top'>Continue statement</th>
@@ -580,6 +847,78 @@ else
 </td>
 </tr>
 <tr>
+<th valign='top'>For with no arguments</th>
+<td valign='top'>
+<pre class='lang-js'>for (;;) {
+  d();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>loop
+  d()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>For with no body</th>
+<td valign='top'>
+<pre class='lang-js'>for(;;){}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>loop
+  continue
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>For with no init</th>
+<td valign='top'>
+<pre class='lang-js'>for (;b;c) {
+  d();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>while b
+  d()
+  c
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>For with no test</th>
+<td valign='top'>
+<pre class='lang-js'>for (a;;c) {
+  d();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a
+loop
+  d()
+  c
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>For with no update</th>
+<td valign='top'>
+<pre class='lang-js'>for (a;b;) {
+  d();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a
+while b
+  d()
+</pre>
+</td>
+</tr>
+<tr>
 <th valign='top'>Forever loop</th>
 <td valign='top'>
 <pre class='lang-js'>while (true) {
@@ -590,6 +929,22 @@ else
 <td width='50%' valign='top'>
 <pre class='lang-coffee'>loop
   a()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Simple for</th>
+<td valign='top'>
+<pre class='lang-js'>for (a;b;c) {
+  d();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a
+while b
+  d()
+  c
 </pre>
 </td>
 </tr>
@@ -619,6 +974,29 @@ else
   if x
     break
   a()
+</pre>
+</td>
+</tr>
+<tr><th colspan='3'>Members</th></tr>
+<tr>
+<th valign='top'>Identifier in brackets</th>
+<td valign='top'>
+<pre class='lang-js'>a[x]
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a[x]
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Identifiers</th>
+<td valign='top'>
+<pre class='lang-js'>a.b
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a.b
 </pre>
 </td>
 </tr>
@@ -784,21 +1162,40 @@ else
 </pre>
 </td>
 </tr>
-<tr><th colspan='3'>Pending</th></tr>
-<tr><th colspan='3'>Simple</th></tr>
 <tr>
-<th valign='top'>Assignments</th>
+<th valign='top'>Unusual identifiers</th>
 <td valign='top'>
-<pre class='lang-js'>a = b + 1;
-z = 2;
+<pre class='lang-js'>object = {
+    a: b,
+    "a.a": b,
+    "a#a": b,
+    "a a": b,
+    0: b,
+    "0.a": b,
+    $: b,
+    $$: b,
+    $a: b,
+    "$a b": b
+};
 </pre>
 </td>
 <td width='50%' valign='top'>
-<pre class='lang-coffee'>a = b + 1
-z = 2
+<pre class='lang-coffee'>object =
+  a: b
+  "a.a": b
+  "a#a": b
+  "a a": b
+  0: b
+  "0.a": b
+  $: b
+  $$: b
+  $a: b
+  "$a b": b
 </pre>
 </td>
 </tr>
+<tr><th colspan='3'>Pending</th></tr>
+<tr><th colspan='3'>Simple</th></tr>
 <tr>
 <th valign='top'>Booleans</th>
 <td valign='top'>
@@ -813,6 +1210,20 @@ false
 </td>
 </tr>
 <tr>
+<th valign='top'>Call with function</th>
+<td valign='top'>
+<pre class='lang-js'>a(function() {
+  b();
+});
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a ->
+  b()
+</pre>
+</td>
+</tr>
+<tr>
 <th valign='top'>Debugger statement</th>
 <td valign='top'>
 <pre class='lang-js'>if (x) debugger;
@@ -821,6 +1232,17 @@ false
 <td width='50%' valign='top'>
 <pre class='lang-coffee'>if x
   debugger
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Delete</th>
+<td valign='top'>
+<pre class='lang-js'>delete x.y;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>delete x.y
 </pre>
 </td>
 </tr>
@@ -991,13 +1413,56 @@ b--
 </td>
 </tr>
 <tr>
-<th valign='top'>Scope resolution</th>
+<th valign='top'>Return nothing</th>
 <td valign='top'>
-<pre class='lang-js'>a.b
+<pre class='lang-js'>function fn () {
+  return;
+}
 </pre>
 </td>
 <td width='50%' valign='top'>
-<pre class='lang-coffee'>a.b
+<pre class='lang-coffee'>fn = ->
+  return
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Scientific notation</th>
+<td valign='top'>
+<pre class='lang-js'>a = -1.21e3;
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a = -1.21e3
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Sequence expression</th>
+<td valign='top'>
+<pre class='lang-js'>a,b,c
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>a
+b
+c
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Sequence expression with indent</th>
+<td valign='top'>
+<pre class='lang-js'>if (x) {
+  a,b,c;
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>if x
+  a
+  b
+  c
 </pre>
 </td>
 </tr>
@@ -1067,6 +1532,17 @@ b--
 </pre>
 </td>
 </tr>
+<tr>
+<th valign='top'>Undefined</th>
+<td valign='top'>
+<pre class='lang-js'>undefined
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>`undefined`
+</pre>
+</td>
+</tr>
 <tr><th colspan='3'>Strings</th></tr>
 <tr>
 <th valign='top'>Empty string</th>
@@ -1113,6 +1589,50 @@ b--
 </td>
 </tr>
 <tr><th colspan='3'>Switch</th></tr>
+<tr>
+<th valign='top'>Case consolidation</th>
+<td valign='top'>
+<pre class='lang-js'>switch (a) {
+  case one:
+  case two:
+    b();
+    break;
+  default:
+    c();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>switch a
+  when one, two
+    b()
+  else
+    c()
+</pre>
+</td>
+</tr>
+<tr>
+<th valign='top'>Case consolidation with default</th>
+<td valign='top'>
+<pre class='lang-js'>switch (a) {
+  case one:
+    b();
+    break;
+  case two:
+  default:
+    c();
+}
+</pre>
+</td>
+<td width='50%' valign='top'>
+<pre class='lang-coffee'>switch a
+  when one
+    b()
+  else
+    c()
+</pre>
+</td>
+</tr>
 <tr>
 <th valign='top'>Switch</th>
 <td valign='top'>
