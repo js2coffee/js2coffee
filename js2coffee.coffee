@@ -185,7 +185,7 @@ class Builder extends Walker
       [ node.name ]
 
   UnaryExpression: (node) ->
-    if node.operator is 'void'
+    if (/^[a-z]+$/i).test(node.operator)
       [ node.operator, ' ', @walk(node.argument) ]
     else
       [ node.operator, @walk(node.argument) ]

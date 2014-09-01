@@ -1,0 +1,4 @@
+----
+delete x.y;
+----
+delete x.y
