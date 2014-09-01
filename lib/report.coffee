@@ -1,51 +1,26 @@
+{eachGroup} = require('./specs_iterator')
 
-path = require('path')
-glob = require('glob')
-fs = require('fs')
-groups = glob.sync("#{__dirname}/../specs/*")
+eachGroup (group) ->
+  return if group.pending
+  console.log "## #{group.name}\n"
 
-toName = (dirname) ->
-  s = path.basename(dirname).replace(/_/g, ' ').trim()
-  s = s.replace(/\.txt$/, '')
-  s.substr(0,1).toUpperCase() + s.substr(1)
-
-console.log """
-  <table width='100%'>
-  <thead>
-    <tr>
-      <th width='33%'>Example</th>
-      <th width='33%'>JavaScript</th>
-      <th width='33%'>CoffeeScript</th>
-  </thead>
-"""
-
-for group in groups
-  console.log """
-    <tr><th colspan='3'>#{toName(group)}</th></tr>
-  """
-
-  specs = glob.sync("#{group}/*")
-  for spec in specs
-
-    name = toName(spec)
-    isPending = ~group.indexOf('pending') or ~name.indexOf('pending')
-    continue if isPending
-
-    data = fs.readFileSync(spec, 'utf-8')
-    [meta, input, output] = data.split('----\n')
-
+  for spec in group.specs
     console.log """
+      <table>
       <tr>
-      <th valign='top'>#{name}</th>
-      <td valign='top'>
-      <pre><code class='lang-js'>#{input}</code></pre>
+      <th width='33%' valign='top'>#{spec.name}</th>
+      <td width='33%' valign='top'>
+      <pre><code class='lang-js'>#{spec.input}</code></pre>
       </td>
-      <td width='50%' valign='top'>
-      <pre><code class='lang-coffee'>#{output}</code></pre>
+      <td width='33%' valign='top'>
+      <pre><code class='lang-coffee'>#{spec.output}</code></pre>
       </td>
       </tr>
+      </table>\n
     """
 
-console.log """
-  </table>
-"""
+    notes = spec.meta?.notes
+    if notes
+      lines = notes.split("\n").map (l) -> "> #{l}"
+      notes = lines.join("\n")
+      console.log "#{notes}\n"

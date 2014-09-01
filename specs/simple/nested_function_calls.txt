@@ -1,4 +1,15 @@
+notes: """
+  CoffeeScript allows function calls without parentheses, such as `alert
+  "Hello"`. With this, you can do strange constructions such as `push new
+  Sidebar $ "left"` (that is: `push(new Sidebar($("#left")))`).
+
+  This is unreadable, however. Ruby has the same constructions, but Ruby
+  styleguides often advocate *not* omitting parentheses unless the call
+  expression is a statement.
+
+  Js2coffee takes the same convention into consideration.
+"""
 ----
-a(b());
+a(b(c(d())));
 ----
-a b()
+a b(c(d()))
