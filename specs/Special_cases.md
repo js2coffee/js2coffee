@@ -155,10 +155,10 @@ undefined
 
 ### Void 0
 
-CoffeeScript doesn't support the `void` operator.
-
-Doing `void (anything)` will always produce `void 0`, which is what
-CoffeeScript's `undefined` compiles to.
+CoffeeScript doesn't support the `void` operator. However, doing `void
+(anything)` will always be identical to `void 0`, and CoffeeScript compiles
+the `undefined` keyword into `void 0`. Hence, all `void XXX` expressions will
+compile into `undefined`.
 
 That is: `void 100 === void 0 === undefined`.
 
@@ -226,5 +226,27 @@ switch a
     b()
   else
     c()
+```
+
+## Var
+
+### Var without initializer
+
+Doing `var a` in JavaScript will declare that the current
+function scope has a variable `a` in it, preventing things like `alert(a)`
+from getting the global `a`.
+
+CoffeeScript has no such construct as `var`. However, since JavaScript
+initializes all variables as `undefined`, doing an assignment to undefined
+(`a = undefined`) will yield the same result.
+
+```js
+// Input:
+var a;
+```
+
+```coffee
+# Output:
+a = undefined
 ```
 

@@ -1,8 +1,8 @@
 notes: """
-  CoffeeScript doesn't support the `void` operator.
-
-  Doing `void (anything)` will always produce `void 0`, which is what
-  CoffeeScript's `undefined` compiles to.
+  CoffeeScript doesn't support the `void` operator. However, doing `void
+  (anything)` will always be identical to `void 0`, and CoffeeScript compiles
+  the `undefined` keyword into `void 0`. Hence, all `void XXX` expressions will
+  compile into `undefined`.
 
   That is: `void 100 === void 0 === undefined`.
 """
