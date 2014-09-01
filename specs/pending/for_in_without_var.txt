@@ -1,3 +1,23 @@
+notes: """
+  CoffeeScript has a `for x of y` construct that compiles into JavaScript as
+  `for (var x in y)`. However, there is no direct equivalent for `for (x in y)`
+  without the `var` prefix.
+
+  While using such construct is undesirable, some popular libraries use
+  `for..in` without `var`, taking advantage of its side effect: using a variable in
+  the higher scope.
+
+  > ```js
+  > function fn () {
+  >   var x, object = { a: 2, b: 3 };
+  >   console.log(x); //=> undefined
+  >
+  >   for (x in object) { /* ... */ }
+  >   console.log(x); //=> 'b'
+  > ```
+
+  Js2coffee works around this.
+"""
 ----
 for (x in y) {
   alert(x);
