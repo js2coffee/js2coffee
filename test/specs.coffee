@@ -25,13 +25,10 @@ describe 'specs:', ->
         test = if isPending then xit else it
         data = fs.readFileSync(spec, 'utf-8')
         [meta, input, output] = data.split('----\n')
-        meta = if meta.length
-          eval coffee.compile(meta, bare: true)
-        else
-          {}
+        meta = eval(coffee.compile(meta, bare: true)) if meta.length
 
         # Put 'only: true' on top of the file to temporarily isolate it
-        test = it.only if meta.only
+        test = it.only if meta?.only
 
         test name, do (spec, input, output) ->
           ->

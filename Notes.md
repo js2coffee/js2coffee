@@ -79,3 +79,12 @@ Edge cases:
  - [x] CatchClause
  - [x] Identifier
  - [x] Literal
+
+### Precendence rules
+
+ - all expressions (CallExpression, NewExpression, ObjectExpression, ...)
+ - IfExpression
+ - `* /`
+ - `+ -`
+
+> if (level of child > level of parent) then parenthesize();

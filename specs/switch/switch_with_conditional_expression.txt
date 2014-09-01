@@ -1,0 +1,11 @@
+# This is exhibited in underscore.js inside createCallback().
+----
+switch (a?b:c) {
+  case d:
+    e();
+    break;
+}
+----
+switch (if a then b else c)
+  when d
+    e()

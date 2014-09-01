@@ -176,14 +176,22 @@ class Builder extends Walker
       [ node.name ]
 
   UnaryExpression: (node) ->
-    if (/^[a-z]+$/i).test(node.operator)
+    if node.operator is 'void'
+      [ 'undefined' ]
+    else if (/^[a-z]+$/i).test(node.operator)
       [ node.operator, ' ', @walk(node.argument) ]
     else
       [ node.operator, @walk(node.argument) ]
 
   # Operator (+)
   BinaryExpression: (node) ->
-    space [ @walk(node.left), node.operator, @walk(node.right) ]
+    dict =
+      '===': '=='
+      '!==': '!='
+    op = node.operator
+    if dict[op] then op = dict[op]
+
+    space [ @walk(node.left), op, @walk(node.right) ]
 
   Literal: (node) ->
     [ node.raw ]
@@ -455,7 +463,12 @@ class Builder extends Walker
   SwitchStatement: (node) ->
     @consolidateCases(node)
     body = @indent => @makeStatements(node, node.cases)
-    [ "switch ", @walk(node.discriminant), "\n", body ]
+    item = @walk(node.discriminant)
+
+    if node.discriminant.type is 'ConditionalExpression'
+      item = [ "(", item, ")" ]
+
+    [ "switch ", item, "\n", body ]
 
   # Custom node type for comma-separated expressions (`when a, b`)
   CoffeeListExpression: (node) ->
