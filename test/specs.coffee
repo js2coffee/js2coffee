@@ -13,5 +13,8 @@ eachGroup (group) ->
         try
           expect(result).eql(spec.output)
         catch e
+          # this doesn't actually disable diffs, but rather it makes the diff
+          # output look better. see: https://github.com/visionmedia/mocha/issues/1241
+          e.showDiff = false
           e.stack = ''
           throw e
