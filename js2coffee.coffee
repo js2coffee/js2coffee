@@ -46,17 +46,8 @@ js2coffee.parse = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  try
-    builder = new Builder(ast, options)
-    {code, map} = builder.get()
-  catch err
-    # Clean this up :(
-    path = builder.path.filter (node) -> !! node
-    node = path[path.length-1]
-    err.lineNumber = node?.loc.start.line
-    err.column = node?.loc.start.column
-    err.description = err.message
-    throw buildError(err, source, options.filename)
+  builder = new Builder(ast, options)
+  {code, map} = builder.get()
 
   {code, ast, map}
 
@@ -135,8 +126,8 @@ class Builder extends Walker
 
   decorator: (node, output) ->
     new SourceNode(
-      node.loc.start.line,
-      node.loc.start.column,
+      node?.loc?.start?.line,
+      node?.loc?.start?.column,
       @options.filename,
       output)
 
@@ -462,8 +453,13 @@ class Builder extends Walker
       [ @walk(node.argument), node.operator ]
 
   SwitchStatement: (node) ->
+    @consolidateCases(node)
     body = @indent => @makeStatements(node, node.cases)
     [ "switch ", @walk(node.discriminant), "\n", body ]
+
+  # Custom node type for comma-separated expressions (`when a, b`)
+  CoffeeListExpression: (node) ->
+    @makeSequence(node.expressions)
 
   SwitchCase: (node) ->
     @removeBreaksFromConsequents(node)
@@ -570,6 +566,20 @@ class Builder extends Walker
   parenthesizeObjectIfFunction: (node) ->
     if node.object.type is 'FunctionExpression'
       node.object._parenthesized = true
+
+  consolidateCases: (node) ->
+    list = []
+    toConsolidate = []
+    for case_, i in node.cases
+      # .type .test .consequent
+      toConsolidate.push(case_.test) if case_.test
+      if case_.consequent.length > 0
+        if case_.test
+          case_.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
+        toConsolidate = []
+        list.push case_
+
+    node.cases = list
 
 ###
 # injectComments():

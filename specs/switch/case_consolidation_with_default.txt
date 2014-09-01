@@ -1,0 +1,15 @@
+----
+switch (a) {
+  case one:
+    b();
+    break;
+  case two:
+  default:
+    c();
+}
+----
+switch a
+  when one
+    b()
+  else
+    c()
