@@ -71,15 +71,16 @@ class Transformer
 
   recurse: (root) ->
     self = this
+    orr = (n1, n2) -> if n1 or (!n1 and n1?) then n1 else n2
     @estraverse().replace root,
       enter: (node, parent) ->
         fn = self["#{node.type}"]
         if fn
-          fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
+          orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
       exit: (node, parent) ->
         fn = self["exit#{node.type}Exit"]
         if fn
-          fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
+          orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
     root
 
   estraverse: ->
@@ -87,6 +88,7 @@ class Transformer
       es = require('estraverse')
       es.VisitorKeys.CoffeeEscapedExpression = []
       es.VisitorKeys.CoffeeListExpression = []
+      es.VisitorKeys.CoffeePrototypeExpression = []
       es
 
   Program: (node) ->
@@ -111,7 +113,11 @@ class Transformer
   CallExpression: (node) ->
     @parenthesizeCallee node
   MemberExpression: (node) ->
+    @transformThisToAtSign(node)
+    @replaceWithPrototype(node) or
     @parenthesizeObjectIfFunction node
+  CoffeePrototypeExpression: (node) ->
+    @transformThisToAtSign(node)
   Identifier: (node) ->
     @escapeUndefined node
   BinaryExpression: (node) ->
@@ -126,6 +132,12 @@ class Transformer
     @addExplicitUndefinedInitializer node, parent, skip
 
   fixShadowing: (node) ->
+    node #TODO
+
+  transformThisToAtSign: (node) ->
+    if node.object.type is 'ThisExpression'
+      node._prefixed = true
+      node.object._prefix = true
     node
 
   ###
@@ -137,6 +149,21 @@ class Transformer
       node.init = { type: 'Identifier', name: 'undefined' }
       skip()
     node
+
+  ###
+  # Replaces `a.prototype.b` with `a::b` in a member expression.
+  ###
+
+  replaceWithPrototype: (node) ->
+    isPrototype = node.computed is false and
+      node.object.type is 'MemberExpression' and
+      node.object.property.type is 'Identifier' and
+      node.object.property.name is 'prototype'
+    if isPrototype
+      @recurse @replace node,
+        type: 'CoffeePrototypeExpression'
+        object: node.object.object
+        property: node.property
 
   ###
   # Produce warnings when using labels. It may be a JSON string being pasted,
@@ -440,27 +467,23 @@ class Builder extends Walker
     [ node.raw ]
 
   MemberExpression: (node) ->
-    isThis = (node.object.type is 'ThisExpression')
-
-    left = if isThis
-      [ '@' ]
-    else
-      [ @walk(node.object) ]
-
     right = if node.computed
       [ '[', @walk(node.property), ']' ]
-    else if isThis
+    else if node._prefixed
       [ @walk(node.property) ]
     else
       [ '.', @walk(node.property) ]
 
-    [ left, right ]
+    [ @walk(node.object), right ]
 
   LogicalExpression: (node) ->
     [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
 
   ThisExpression: (node) ->
-    [ "this" ]
+    if node._prefix
+      [ "@" ]
+    else
+      [ "this" ]
 
   CallExpression: (node, ctx) ->
     callee = @walk(node.callee)
@@ -752,6 +775,12 @@ class Builder extends Walker
 
   CoffeeEscapedExpression: (node) ->
     [ '`', node.value, '`' ]
+
+  CoffeePrototypeExpression: (node) ->
+    if node.computed
+      [ @walk(node.object), '::[', @walk(node.property), ']' ]
+    else
+      [ @walk(node.object), '::', @walk(node.property) ]
 
   ###*
   # makeSequence():

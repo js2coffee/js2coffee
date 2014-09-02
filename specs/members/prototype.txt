@@ -1,0 +1,6 @@
+----
+a.prototype.b = {};
+a.prototype;
+----
+a::b = {}
+a.prototype
