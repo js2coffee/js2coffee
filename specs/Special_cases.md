@@ -24,6 +24,43 @@ a()
 b()
 ```
 
+## Function calls
+
+### Call with multiple objects
+
+Objects aren't usually braced unless necessary. This leads to ambiguous
+constructions such as `one:1, two:2` where both objects are meant to be
+separated.
+
+```js
+// Input:
+a({ one: 1 }, { two: 2 })
+```
+
+```coffee
+# Output:
+a { one: 1 }, two: 2
+```
+
+### Named iife
+
+Named function expressions should be extracted.
+This pattern is seen in a browserify wrapper.
+
+```js
+// Input:
+(function fn () {
+  fn();
+})(a);
+```
+
+```coffee
+# Output:
+fn = ->
+  fn()
+fn a
+```
+
 ## Functions
 
 ### Return object

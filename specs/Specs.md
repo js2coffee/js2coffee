@@ -216,6 +216,17 @@ finally
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Call with multiple objects</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a({ one: 1 }, { two: 2 })
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a { one: 1 }, two: 2
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Call with object</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>box.on('click', { silent: true }, function () {
@@ -224,7 +235,7 @@ finally
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>box.on 'click', silent: true, ->
+<pre><code class='lang-coffee'>box.on 'click', { silent: true }, ->
   go()
 </code></pre>
 </td>
@@ -289,6 +300,21 @@ finally
 <pre><code class='lang-coffee'>(($) ->
   go()
 ) jQuery
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Named iife</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function fn () {
+  fn();
+})(a);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  fn()
+fn a
 </code></pre>
 </td>
 </tr>
