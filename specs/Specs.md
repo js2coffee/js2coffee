@@ -326,6 +326,27 @@ fn a
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>Function reordering</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>alert(name());
+if (ok) {
+  a();
+  function name() {
+    return "John";
+  }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>name = ->
+  return "John"
+alert name()
+if ok
+  a
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Multiple declarations</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function one() {

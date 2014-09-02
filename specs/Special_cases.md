@@ -68,6 +68,38 @@ fn a
 
 ## Functions
 
+### Function reordering
+
+Named function declarations in JavaScript can appear at any point of the
+scope, and they will be available anywhere in the scope. CoffeeScript doesn't
+allow named function declarations, however.
+
+To get around this, js2coffee takes function declarations and puts the on top
+of the scope.
+
+This is an improvement over js2coffee 0.x that only looks in the same level
+of the function body, not recursing into deeper blocks.
+
+```js
+// Input:
+alert(name());
+if (ok) {
+  a();
+  function name() {
+    return "John";
+  }
+}
+```
+
+```coffee
+# Output:
+name = ->
+  return "John"
+alert name()
+if ok
+  a
+```
+
 ### Return object
 
 Having a return of an object without braces is ambiguous:
