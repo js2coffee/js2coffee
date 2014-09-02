@@ -108,28 +108,20 @@ class Transformer
     @parenthesizeObjectIfFunction node
   Identifier: (node) ->
     @escapeUndefined node
+  BinaryExpression: (node) ->
+    @updateBinaryExpression node
+  UnaryExpression: (node) ->
+    @updateVoidToUndefined node
 
-  pushStack: (node) ->
-    @scopes.push node
-    @block = node
-
-  popStack: (node) ->
-    @block = @scopes.pop()
-
-  ###*
-  # syntaxError():
-  # Throws a syntax error for the given `node`.
-  #
-  #     @syntaxError node, "Not supported"
+  ###
+  # Updates `void 0` UnaryExpressions to `undefined` identifiers
   ###
 
-  syntaxError: (node, description) ->
-    err = buildError(
-      lineNumber: node.loc?.start?.line,
-      column: node.loc?.start?.column,
-      description: description
-    , @options.source, @options.filename)
-    throw err
+  updateVoidToUndefined: (node) ->
+    if node.operator is 'void'
+      @replace node, type: 'Identifier', name: 'undefined'
+    else
+      node
 
   ###
   # Turn 'undefined' into '`undefined`'
@@ -140,6 +132,22 @@ class Transformer
       @replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
     else
       node
+
+  ###
+  # Updates binary expressions to their CoffeeScript equivalents
+  ###
+
+  updateBinaryExpression: (node) ->
+    dict =
+      '===': '=='
+      '!==': '!='
+    op = node.operator
+    if dict[op] then node.operator = dict[op]
+    node
+
+  ###
+  # Removes `undefined` from function parameters
+  ###
 
   removeUndefinedParameter: (node) ->
     if node.params
@@ -227,7 +235,7 @@ class Transformer
       @replace node, type: 'Identifier', name: node.id.name
 
   ###*
-  # replace():
+  # replace() : @replace(node, newNode)
   # Fabricates a replacement node for `node` that maintains the same source
   # location.
   #
@@ -239,6 +247,34 @@ class Transformer
     newNode.range = node.range
     newNode.loc = node.loc
     newNode
+
+  ###*
+  # pushStack() : @pushStack(node)
+  # Pushes a scope to the scope stack.
+  ###
+
+  pushStack: (node) ->
+    @scopes.push node
+    @block = node
+
+  popStack: (node) ->
+    @block = @scopes.pop()
+
+  ###*
+  # syntaxError():
+  # Throws a syntax error for the given `node`.
+  #
+  #     @syntaxError node, "Not supported"
+  ###
+
+  syntaxError: (node, description) ->
+    err = buildError(
+      lineNumber: node.loc?.start?.line,
+      column: node.loc?.start?.column,
+      description: description
+    , @options.source, @options.filename)
+    throw err
+
 
 ###*
 # Builder : new Builder(ast, [options])
@@ -349,22 +385,14 @@ class Builder extends Walker
     [ node.name ]
 
   UnaryExpression: (node) ->
-    if node.operator is 'void'
-      [ 'undefined' ]
-    else if (/^[a-z]+$/i).test(node.operator)
+    if (/^[a-z]+$/i).test(node.operator)
       [ node.operator, ' ', @walk(node.argument) ]
     else
       [ node.operator, @walk(node.argument) ]
 
   # Operator (+)
   BinaryExpression: (node) ->
-    dict =
-      '===': '=='
-      '!==': '!='
-    op = node.operator
-    if dict[op] then op = dict[op]
-
-    space [ @walk(node.left), op, @walk(node.right) ]
+    space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Literal: (node) ->
     [ node.raw ]
