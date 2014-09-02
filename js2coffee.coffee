@@ -539,9 +539,11 @@ class Builder extends Walker
   makeSequence: (list) ->
     for arg, i in list
       isLast = i is (list.length-1)
-      if arg.type is "FunctionExpression"
-        if not isLast
+      if not isLast
+        if arg.type is "FunctionExpression"
           arg._parenthesized = true
+        else if arg.type is "ObjectExpression"
+          arg._braced = true
 
     commaDelimit(list.map(@walk))
 
