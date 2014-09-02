@@ -67,31 +67,40 @@ class Transformer
 
   run: ->
     self = this
-    require('estraverse').replace @ast,
+    @estraverse().replace @ast,
       enter: (node, parent) =>
         fn = self["#{node.type}"]
         if fn
           fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
       exit: (node, parent) ->
-        fn = self["exit#{node.type}"]
+        fn = self["exit#{node.type}Exit"]
         if fn
           fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
     @ast
 
+  estraverse: ->
+    @_estraverse ?= do ->
+      es = require('estraverse')
+      es.VisitorKeys.CoffeeEscapedExpression = []
+      es.VisitorKeys.CoffeeListExpression = []
+      es
+
   Program: (node) ->
     @pushStack node
-
-  exitProgram: (node) ->
+  ProgramExit: (node) ->
     @popStack()
-
   BlockStatement: (node) ->
     @pushStack node
-
-  exitBlockStatement: ->
+  BlockStatementExit: (node) ->
     @popStack()
-
   FunctionExpression: (node) ->
     @moveNamedFunctionExpressions node
+  SwitchStatement: (node) ->
+    @consolidateCases node
+  SwitchCase: (node) ->
+    @removeBreaksFromConsequents node
+  CallExpression: (node) ->
+    @parenthesizeCallee node
 
   pushStack: (node) ->
     @scopes.push node
@@ -100,8 +109,56 @@ class Transformer
   popStack: (node) ->
     @block = @scopes.pop()
 
-  CallExpression: (node) ->
-    @parenthesizeCallee node
+  ###*
+  # syntaxError():
+  # Throws a syntax error for the given `node`.
+  #
+  #     @syntaxError node, "Not supported"
+  ###
+
+  syntaxError: (node, description) ->
+    err = buildError(
+      lineNumber: node.loc?.start?.line,
+      column: node.loc?.start?.column,
+      description: description
+    , @options.source, @options.filename)
+    throw err
+
+  ###
+  # Consolidates empty cases into the next case.
+  # (`case x: case y: z()` => `case x, y: z()`)
+  ###
+
+  consolidateCases: (node) ->
+    list = []
+    toConsolidate = []
+    for kase, i in node.cases
+      # .type .test .consequent
+      toConsolidate.push(kase.test) if kase.test
+      if kase.consequent.length > 0
+        if kase.test
+          kase.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
+        toConsolidate = []
+        list.push kase
+
+    node.cases = list
+    node
+
+  ###
+  # Removes `break` statements from consequents in a switch case.
+  # (eg, `case x: a(); break;` gets break; removed)
+  ###
+
+  removeBreaksFromConsequents: (node) ->
+    if node.test
+      idx = node.consequent.length-1
+      last = node.consequent[idx]
+      if last?.type is 'BreakStatement'
+        delete node.consequent[idx]
+        node.consequent.length -= 1
+      else if last?.type isnt 'ReturnStatement'
+        @syntaxError node, "No break or return statement found in a case"
+      node
 
   ###
   # In an IIFE, ensure that the function expression is parenthesized (eg,
@@ -231,20 +288,7 @@ class Builder extends Walker
   onUnknownNode: (node, ctx) ->
     @syntaxError(node, "#{ctx?.type} is not supported")
 
-  ###*
-  # syntaxError():
-  # Throws a syntax error for the given `node`.
-  #
-  #     @syntaxError node, "Not supported"
-  ###
-
-  syntaxError: (node, description) ->
-    err = buildError({
-      lineNumber: node.loc?.start?.line,
-      column: node.loc?.start?.column,
-      description: description
-    }, @options.source, @options.filename)
-    throw err
+  syntaxError: Transformer::syntaxError
 
   ###
   # visitors:
@@ -558,7 +602,6 @@ class Builder extends Walker
       [ @walk(node.argument), node.operator ]
 
   SwitchStatement: (node) ->
-    @consolidateCases(node)
     body = @indent => @makeStatements(node, node.cases)
     item = @walk(node.discriminant)
 
@@ -572,8 +615,6 @@ class Builder extends Walker
     @makeSequence(node.expressions)
 
   SwitchCase: (node) ->
-    @removeBreaksFromConsequents(node)
-
     left = if node.test
       [ "when ", @walk(node.test) ]
     else
@@ -651,21 +692,6 @@ class Builder extends Walker
       []
 
   ###
-  # Removes `break` statements from consequents in a switch case.
-  # (eg, `case x: a(); break;` gets break; removed)
-  ###
-
-  removeBreaksFromConsequents: (node) =>
-    if node.test
-      idx = node.consequent.length-1
-      last = node.consequent[idx]
-      if last?.type is 'BreakStatement'
-        delete node.consequent[idx]
-        node.consequent.length -= 1
-      else if last?.type isnt 'ReturnStatement'
-        @syntaxError node, "No break or return statement found in a case"
-
-  ###
   # In a call expression, ensure that non-last function arguments get
   # parenthesized (eg, `setTimeout (-> x), 500`).
   ###
@@ -705,20 +731,6 @@ class Builder extends Walker
 
       node.body.body = node.body.body.concat([statement])
       delete node.update
-
-  consolidateCases: (node) ->
-    list = []
-    toConsolidate = []
-    for case_, i in node.cases
-      # .type .test .consequent
-      toConsolidate.push(case_.test) if case_.test
-      if case_.consequent.length > 0
-        if case_.test
-          case_.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
-        toConsolidate = []
-        list.push case_
-
-    node.cases = list
 
 ###
 # injectComments():
