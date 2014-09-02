@@ -64,6 +64,7 @@ transform = (ast, options) ->
 class Transformer
   constructor: (@ast, @options) ->
     @scopes = []
+    @ctx = {}
 
   run: ->
     @recurse @ast
@@ -97,8 +98,10 @@ class Transformer
   BlockStatementExit: (node) ->
     @popStack()
   FunctionDeclaration: (node) ->
+    @fixShadowing node
     @removeUndefinedParameter node
   FunctionExpression: (node) ->
+    @fixShadowing node
     @removeUndefinedParameter node
     @moveNamedFunctionExpressions node
   SwitchStatement: (node) ->
@@ -121,6 +124,9 @@ class Transformer
     @syntaxError node, "'with' is not supported in CoffeeScript"
   VariableDeclarator: (node, parent, skip) ->
     @addExplicitUndefinedInitializer node, parent, skip
+
+  fixShadowing: (node) ->
+    node
 
   ###
   # For VariableDeclarator with no initializers (`var a`), add `undefined` as the initializer.
@@ -287,11 +293,12 @@ class Transformer
   ###
 
   pushStack: (node) ->
-    @scopes.push node
+    @scopes.push [ node, @ctx ]
+    @ctx = clone(@ctx)
     @block = node
 
   popStack: (node) ->
-    @block = @scopes.pop()
+    [ @block, @ctx ] = @scopes.pop()
 
   ###*
   # syntaxError():
@@ -308,6 +315,8 @@ class Transformer
     , @options.source, @options.filename)
     throw err
 
+clone = (obj) ->
+  JSON.parse JSON.stringify obj
 
 ###*
 # Builder : new Builder(ast, [options])

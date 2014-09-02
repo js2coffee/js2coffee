@@ -433,6 +433,34 @@ obj.two = ->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Scope shadowing</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var val = 2;
+var fn = function () {
+  var val = 1;
+  console.log(val);
+  // 1
+  return;
+}
+fn();
+console.log(val);
+// 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>val = 2
+fn = ->
+  val_ = 1
+  console.log val_
+  # 1
+  return
+fn()
+console.log val
+# 2
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Undefined in function expression parameters</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>call(function (undefined) {
@@ -1638,6 +1666,21 @@ b--
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>++a
 --b
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Recursing into new functions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a = x ? y : function fn() {
+  return a === "b";
+};
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  return a == "b"
+a = if x then y else fn
 </code></pre>
 </td>
 </tr>

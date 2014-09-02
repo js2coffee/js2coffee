@@ -8,7 +8,7 @@ eachGroup (group) ->
 
   run group.name, ->
     group.specs.forEach (spec) ->
-      run = if spec.meta?.only then it.only else it
+      run = if spec.meta?.pending then xit else if spec.meta?.only then it.only else it
       run spec.name, do (spec) -> ->
         result = js2coffee(spec.input)
         try
