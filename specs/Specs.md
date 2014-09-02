@@ -431,6 +431,34 @@ obj.two = ->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Undefined in function expression parameters</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>call(function (undefined) {
+  return true;
+});
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>call ->
+  return true
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Undefined in parameters</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn (undefined) {
+  return true;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  return true
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>With arguments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function a(b, c) { d(); }

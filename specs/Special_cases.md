@@ -96,6 +96,31 @@ fn = ->
   return true
 ```
 
+### Undefined in parameters
+
+Some libraries shield against the JavaScript flaw of `undefined` being
+possible to redefine by using a function wrapper that includes an
+`undefined` parameter.
+
+CoffeeScript will throw an error when one of the functions have `undefined`
+as its parameters (eg, `(undefined) ->`). Js2coffee will simply strip it out
+of the parameter list.
+
+This is not accounted for in js2coffee 0.x.
+
+```js
+// Input:
+function fn (undefined) {
+  return true;
+}
+```
+
+```coffee
+# Output:
+fn = ->
+  return true
+```
+
 ## Loops
 
 ### Simple for

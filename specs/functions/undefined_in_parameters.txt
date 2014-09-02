@@ -6,6 +6,8 @@ notes: """
   CoffeeScript will throw an error when one of the functions have `undefined`
   as its parameters (eg, `(undefined) ->`). Js2coffee will simply strip it out
   of the parameter list.
+
+  This is not accounted for in js2coffee 0.x.
 """
 ----
 function fn (undefined) {
