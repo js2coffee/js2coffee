@@ -1,0 +1,12 @@
+notes: """
+  Named function expressions should be extracted.
+  This pattern is seen in a browserify wrapper.
+"""
+----
+(function fn () {
+  fn();
+})(a);
+----
+fn = ->
+  fn()
+fn a

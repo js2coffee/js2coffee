@@ -46,10 +46,77 @@ js2coffee.parse = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
+  try
+    ast = new Transformer(ast, options).run()
+  catch err
+    true
+
   builder = new Builder(ast, options)
   {code, map} = builder.get()
 
   {code, ast, map}
+
+###*
+# Transformer:
+# Mangles the AST.
+###
+
+class Transformer
+  constructor: (@ast, @options) ->
+    @scopes = []
+
+  run: ->
+    self = this
+    require('estraverse').replace @ast,
+      enter: (node, parent) =>
+        fn = self["#{node.type}"]
+        if fn
+          fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
+
+      exit: (node, parent) ->
+        fn = self["exit#{node.type}"]
+        if fn
+          fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
+    @ast
+
+  Program: (node) ->
+    @BlockStatement node
+
+  exitProgram: (node) ->
+    @exitBlockStatement node
+
+  BlockStatement: (node) ->
+    @scopes.push node
+    @block = node
+
+  exitBlockStatement: ->
+    @scopes.splice @scopes.length - 1
+    @block = @scopes[@scopes.length-1]
+
+  FunctionExpression: (node, parent, skip, brk) ->
+    @moveNamedFunctionExpressions(node)
+
+  moveNamedFunctionExpressions: (node) ->
+    if node.id?
+      statement = @replace node,
+        type: 'FunctionDeclaration'
+        params: node.params
+        id: node.id
+        body: node.body
+
+      @block.body = [ statement ].concat(@block.body)
+      @replace node, type: 'Identifier', name: node.id.name
+
+  ###
+  # replace():
+  # Fabricates a replacement node for `node` that maintains the same source
+  # location.
+  ###
+
+  replace: (node, newNode) ->
+    newNode.range = node.range
+    newNode.loc = node.loc
+    newNode
 
 ###*
 # Builder : new Builder(ast, [options])
@@ -367,6 +434,8 @@ class Builder extends Walker
     [ @walk(node.id), ' = ', init, "\n" ]
 
   FunctionExpression: (node, ctx) ->
+    # if node.id
+    #   @syntaxError node, "Named function expressions are not supported yet"
     params = @makeParams(node.params)
 
     expr = @indent (i) =>

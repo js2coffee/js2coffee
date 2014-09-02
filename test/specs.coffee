@@ -8,7 +8,8 @@ eachGroup (group) ->
 
   run group.name, ->
     group.specs.forEach (spec) ->
-      it spec.name, do (spec) -> ->
+      run = if spec.meta?.only then it.only else it
+      run spec.name, do (spec) -> ->
         result = js2coffee(spec.input)
         try
           expect(result).eql(spec.output)
