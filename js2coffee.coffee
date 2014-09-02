@@ -101,6 +101,10 @@ class Transformer
     @removeBreaksFromConsequents node
   CallExpression: (node) ->
     @parenthesizeCallee node
+  MemberExpression: (node) ->
+    @parenthesizeObjectIfFunction node
+  Identifier: (node) ->
+    @escapeUndefined node
 
   pushStack: (node) ->
     @scopes.push node
@@ -125,6 +129,16 @@ class Transformer
     throw err
 
   ###
+  # Turn 'undefined' into '`undefined`'
+  ###
+
+  escapeUndefined: (node) ->
+    if node.name is 'undefined'
+      @replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
+    else
+      node
+
+  ###
   # Consolidates empty cases into the next case.
   # (`case x: case y: z()` => `case x, y: z()`)
   ###
@@ -142,6 +156,16 @@ class Transformer
         list.push kase
 
     node.cases = list
+    node
+
+  ###
+  # Parenthesize function expressions if they're in the left-hand side of a
+  # member expression (eg, `(-> x).toString()`).
+  ###
+
+  parenthesizeObjectIfFunction: (node) ->
+    if node.object.type is 'FunctionExpression'
+      node.object._parenthesized = true
     node
 
   ###
@@ -306,10 +330,7 @@ class Builder extends Walker
     space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Identifier: (node) ->
-    if node.name is 'undefined'
-      [ '`undefined`' ]
-    else
-      [ node.name ]
+    [ node.name ]
 
   UnaryExpression: (node) ->
     if node.operator is 'void'
@@ -333,8 +354,6 @@ class Builder extends Walker
     [ node.raw ]
 
   MemberExpression: (node) ->
-    @parenthesizeObjectIfFunction(node)
-
     isThis = (node.object.type is 'ThisExpression')
 
     left = if isThis
@@ -702,15 +721,6 @@ class Builder extends Walker
       if arg.type is "FunctionExpression"
         if not isLast
           arg._parenthesized = true
-
-  ###
-  # Parenthesize function expressions if they're in the left-hand side of a
-  # member expression (eg, `(-> x).toString()`).
-  ###
-
-  parenthesizeObjectIfFunction: (node) ->
-    if node.object.type is 'FunctionExpression'
-      node.object._parenthesized = true
 
   ###
   # Injects a ForStatement's update (eg, `i++`) into the body.
