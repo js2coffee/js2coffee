@@ -71,14 +71,14 @@ class Transformer
 
   recurse: (root) ->
     self = this
-    orr = (n1, n2) -> if n1 or (!n1 and n1?) then n1 else n2
+    orr = (n1, n2) ->
+      if n1 or (n1 is null) then n1 else n2
     @estraverse().replace root,
       enter: (node, parent) ->
         fn = self["#{node.type}"]
         if fn
           orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
-      exit: (node, parent) ->
-        fn = self["exit#{node.type}Exit"]
+        fn = self["#{node.type}Exit"]
         if fn
           orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
     root
@@ -94,16 +94,28 @@ class Transformer
   Program: (node) ->
     @pushStack node
   ProgramExit: (node) ->
+    @consolidateBodies node
     @popStack()
-  BlockStatement: (node) ->
-    @pushStack node
   BlockStatementExit: (node) ->
-    @popStack()
-  FunctionDeclaration: (node) ->
+    @consolidateBodies node
+    @removeEmptyStatementsFromBody node
+
+  consolidateBodies: (node) ->
+    if node._prebody?
+      node.body = node._prebody.concat(node.body)
+      delete node._prebody
+  FunctionDeclaration: (node, parent) ->
+    @pushStack node.body
     @removeUndefinedParameter node
+    @moveDeclarationToTopOfScope node, parent
+  FunctionDeclarationExit: (node) ->
+    @popStack()
   FunctionExpression: (node) ->
+    @pushStack node.body
     @removeUndefinedParameter node
     @moveNamedFunctionExpressions node
+  FunctionExpressionExit: (node) ->
+    @popStack()
   SwitchStatement: (node) ->
     @consolidateCases node
   SwitchCase: (node) ->
@@ -129,6 +141,25 @@ class Transformer
   VariableDeclarator: (node, parent, skip) ->
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer node, parent, skip
+
+  moveDeclarationToTopOfScope: (node, paren) ->
+    @parent._prebody ?= []
+    @parent._prebody.unshift
+      type: 'ExpressionStatement'
+      expression:
+        type: 'AssignmentExpression'
+        operator: '='
+        left: node.id
+        right: @replace node,
+          type: 'FunctionExpression'
+          params: node.params
+          body: node.body
+    { type: 'EmptyStatement' }
+
+  removeEmptyStatementsFromBody: (node) ->
+    node.body = node.body.filter (n) ->
+      n.type isnt 'EmptyStatement'
+    node
 
   ###
   # Adds a `var x` shadowing statement when encountering shadowed variables.
@@ -308,13 +339,17 @@ class Transformer
   moveNamedFunctionExpressions: (node) ->
     if node.id?
       statement = @replace node,
-        type: 'FunctionDeclaration'
-        params: node.params
-        id: node.id
-        body: node.body
+        type: 'ExpressionStatement',
+        expression:
+          type: 'AssignmentExpression'
+          operator: '='
+          left: node.id
+          right:
+            type: 'FunctionExpression'
+            params: node.params
+            body: node.body
 
       @block.body = [ statement ].concat(@block.body)
-      @recurse statement
       @replace node, type: 'Identifier', name: node.id.name
     else
       node
@@ -339,12 +374,14 @@ class Transformer
   ###
 
   pushStack: (node) ->
+    @parent = @block
     @scopes.push [ node, @ctx ]
     @ctx = clone(@ctx)
     @block = node
 
   popStack: (node) ->
     [ @block, @ctx ] = @scopes.pop()
+    @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
 
   ###*
   # syntaxError():
