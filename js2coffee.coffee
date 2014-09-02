@@ -46,15 +46,15 @@ js2coffee.parse = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  try
-    ast = new Transformer(ast, options).run()
-  catch err
-    true
-
-  builder = new Builder(ast, options)
-  {code, map} = builder.get()
-
+  transform(ast, options)
+  {code, map} = build(ast, options)
   {code, ast, map}
+
+build = (ast, options) ->
+  new Builder(ast, options).get()
+
+transform = (ast, options) ->
+  new Transformer(ast, options).run()
 
 ###*
 # Transformer:
@@ -72,7 +72,6 @@ class Transformer
         fn = self["#{node.type}"]
         if fn
           fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
-
       exit: (node, parent) ->
         fn = self["exit#{node.type}"]
         if fn
@@ -80,21 +79,44 @@ class Transformer
     @ast
 
   Program: (node) ->
-    @BlockStatement node
+    @pushStack node
 
   exitProgram: (node) ->
-    @exitBlockStatement node
+    @popStack()
 
   BlockStatement: (node) ->
+    @pushStack node
+
+  exitBlockStatement: ->
+    @popStack()
+
+  FunctionExpression: (node) ->
+    @moveNamedFunctionExpressions node
+
+  pushStack: (node) ->
     @scopes.push node
     @block = node
 
-  exitBlockStatement: ->
-    @scopes.splice @scopes.length - 1
-    @block = @scopes[@scopes.length-1]
+  popStack: (node) ->
+    @block = @scopes.pop()
 
-  FunctionExpression: (node, parent, skip, brk) ->
-    @moveNamedFunctionExpressions(node)
+  CallExpression: (node) ->
+    @parenthesizeCallee node
+
+  ###
+  # In an IIFE, ensure that the function expression is parenthesized (eg,
+  # `(($)-> x) jQuery`).
+  ###
+
+  parenthesizeCallee: (node) ->
+    if node.callee.type is 'FunctionExpression'
+      node.callee._parenthesized = true
+      node
+
+  ###
+  # Moves named function expressions to the top.
+  # `(function fn() { })(x)` => `function fn() { }; fn(x);`
+  ###
 
   moveNamedFunctionExpressions: (node) ->
     if node.id?
@@ -107,10 +129,13 @@ class Transformer
       @block.body = [ statement ].concat(@block.body)
       @replace node, type: 'Identifier', name: node.id.name
 
-  ###
+  ###*
   # replace():
   # Fabricates a replacement node for `node` that maintains the same source
   # location.
+  #
+  #     node = { type: "FunctionExpression", range: [0,1], loc: { ... } }
+  #     @replace(node, { type: "Identifier", name: "xxx" })
   ###
 
   replace: (node, newNode) ->
@@ -289,8 +314,6 @@ class Builder extends Walker
     [ "this" ]
 
   CallExpression: (node, ctx) ->
-    @parenthesizeCallee(node)
-
     callee = @walk(node.callee)
     list = @makeSequence(node.arguments)
 
@@ -641,15 +664,6 @@ class Builder extends Walker
         node.consequent.length -= 1
       else if last?.type isnt 'ReturnStatement'
         @syntaxError node, "No break or return statement found in a case"
-
-  ###
-  # In an IIFE, ensure that the function expression is parenthesized (eg,
-  # `(($)-> x) jQuery`).
-  ###
-
-  parenthesizeCallee: (node) ->
-    if node.callee.type is 'FunctionExpression'
-      node.callee._parenthesized = true
 
   ###
   # In a call expression, ensure that non-last function arguments get
