@@ -1,0 +1,7 @@
+----
+call(function (undefined) {
+  return true;
+});
+----
+call ->
+  return true

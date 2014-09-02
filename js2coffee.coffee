@@ -93,7 +93,10 @@ class Transformer
     @pushStack node
   BlockStatementExit: (node) ->
     @popStack()
+  FunctionDeclaration: (node) ->
+    @removeUndefinedParameter node
   FunctionExpression: (node) ->
+    @removeUndefinedParameter node
     @moveNamedFunctionExpressions node
   SwitchStatement: (node) ->
     @consolidateCases node
@@ -137,6 +140,19 @@ class Transformer
       @replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
     else
       node
+
+  removeUndefinedParameter: (node) ->
+    if node.params
+      for param, i in node.params
+        isLast = i is node.params.length - 1
+        isUndefined = param.type is 'Identifier' and param.name is 'undefined'
+
+        if isUndefined
+          if isLast
+            node.params.pop()
+          else
+            @syntaxError node, "undefined is not allowed in function parameters"
+    node
 
   ###
   # Consolidates empty cases into the next case.
