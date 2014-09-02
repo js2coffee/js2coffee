@@ -100,10 +100,8 @@ class Transformer
   BlockStatementExit: (node) ->
     @popStack()
   FunctionDeclaration: (node) ->
-    @fixShadowing node
     @removeUndefinedParameter node
   FunctionExpression: (node) ->
-    @fixShadowing node
     @removeUndefinedParameter node
     @moveNamedFunctionExpressions node
   SwitchStatement: (node) ->
@@ -131,8 +129,9 @@ class Transformer
   VariableDeclarator: (node, parent, skip) ->
     @addExplicitUndefinedInitializer node, parent, skip
 
-  fixShadowing: (node) ->
-    node #TODO
+  ###
+  # Converts `this.x` into `@x` for MemberExpressions.
+  ###
 
   transformThisToAtSign: (node) ->
     if node.object.type is 'ThisExpression'
@@ -177,7 +176,7 @@ class Transformer
       @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
   ###
-  # Updates `void 0` UnaryExpressions to `undefined` identifiers
+  # Updates `void 0` UnaryExpressions to `undefined` Identifiers.
   ###
 
   updateVoidToUndefined: (node) ->
@@ -187,7 +186,7 @@ class Transformer
       node
 
   ###
-  # Turn 'undefined' into '`undefined`'
+  # Turn 'undefined' into '`undefined`'. This uses a new node type, CoffeeEscapedExpression.
   ###
 
   escapeUndefined: (node) ->
@@ -197,7 +196,7 @@ class Transformer
       node
 
   ###
-  # Updates binary expressions to their CoffeeScript equivalents
+  # Updates binary expressions to their CoffeeScript equivalents.
   ###
 
   updateBinaryExpression: (node) ->
@@ -209,7 +208,8 @@ class Transformer
     node
 
   ###
-  # Removes `undefined` from function parameters
+  # Removes `undefined` from function parameters.
+  # (`function (a, undefined) {}` => `(a) ->`)
   ###
 
   removeUndefinedParameter: (node) ->
@@ -226,8 +226,9 @@ class Transformer
     node
 
   ###
-  # Consolidates empty cases into the next case.
-  # (`case x: case y: z()` => `case x, y: z()`)
+  # Consolidates empty cases into the next case. The case tests will then be
+  # made into a new node type, CoffeeListExpression, to represent
+  # comma-separated values. (`case x: case y: z()` => `case x, y: z()`)
   ###
 
   consolidateCases: (node) ->
