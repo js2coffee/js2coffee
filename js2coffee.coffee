@@ -66,8 +66,11 @@ class Transformer
     @scopes = []
 
   run: ->
+    @recurse @ast
+
+  recurse: (root) ->
     self = this
-    @estraverse().replace @ast,
+    @estraverse().replace root,
       enter: (node, parent) ->
         fn = self["#{node.type}"]
         if fn
@@ -76,7 +79,7 @@ class Transformer
         fn = self["exit#{node.type}Exit"]
         if fn
           fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
-    @ast
+    root
 
   estraverse: ->
     @_estraverse ?= do ->
@@ -259,7 +262,10 @@ class Transformer
         body: node.body
 
       @block.body = [ statement ].concat(@block.body)
+      @recurse statement
       @replace node, type: 'Identifier', name: node.id.name
+    else
+      node
 
   ###*
   # replace() : @replace(node, newNode)
