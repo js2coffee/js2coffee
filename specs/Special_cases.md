@@ -44,11 +44,15 @@ a { one: 1 }, two: 2
 
 ### Named iife
 
-Named function expressions should be extracted.
-This pattern is seen in a browserify wrapper.
+Named function expressions should be extracted to the top of the scope to
+maintain compatibility. This pattern is commonly seen in browserify's
+boilerplate code.
+
+Previously, js2coffee 0.x did not account for this behavior properly.
 
 ```js
 // Input:
+fn();
 (function fn () {
   fn();
 })(a);
@@ -58,6 +62,7 @@ This pattern is seen in a browserify wrapper.
 # Output:
 fn = ->
   fn()
+fn()
 fn a
 ```
 

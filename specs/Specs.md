@@ -306,7 +306,8 @@ finally
 <tr>
 <th width='33%' valign='top'>Named iife</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>(function fn () {
+<pre><code class='lang-js'>fn();
+(function fn () {
   fn();
 })(a);
 </code></pre>
@@ -314,6 +315,7 @@ finally
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>fn = ->
   fn()
+fn()
 fn a
 </code></pre>
 </td>
