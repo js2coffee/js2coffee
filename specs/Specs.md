@@ -433,34 +433,6 @@ obj.two = ->
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Scope shadowing</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>var val = 2;
-var fn = function () {
-  var val = 1;
-  console.log(val);
-  // 1
-  return;
-}
-fn();
-console.log(val);
-// 2
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>val = 2
-fn = ->
-  val_ = 1
-  console.log val_
-  # 1
-  return
-fn()
-console.log val
-# 2
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Undefined in function expression parameters</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>call(function (undefined) {
@@ -1246,6 +1218,30 @@ while b
 </code></pre>
 </td>
 </tr>
+<tr>
+<th width='33%' valign='top'>Prototype</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a.prototype.b = {};
+a.prototype;
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a::b = {}
+a.prototype
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>This prototype</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>this.prototype.a = 1;
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>@::a = 1
+</code></pre>
+</td>
+</tr>
 </table>
 
 ## New
@@ -1445,6 +1441,34 @@ while b
   $$: b
   $a: b
   "$a b": b
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Shadowing
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Var shadowing</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var val = 2;
+var fn = function () {
+  var val = 1;
+}
+fn();
+console.log(val);
+// 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>val = 2
+fn = ->
+  `var val`
+  val = 1
+
+fn()
+console.log val
 </code></pre>
 </td>
 </tr>

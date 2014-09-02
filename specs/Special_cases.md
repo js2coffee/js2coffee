@@ -101,43 +101,6 @@ fn = ->
   return true
 ```
 
-### Scope shadowing
-
-CoffeeScript doesn't support shadowing of outer variables (see
-[coffee-script#712]). To get around this, if a variable is redefined inside a
-scope, js2coffee will rename that variable.
-
-Previously, this is unsupported in js2coffee 0.x.
-
-[coffee-script#712]: https://github.com/jashkenas/coffee-script/issues/712
-
-```js
-// Input:
-var val = 2;
-var fn = function () {
-  var val = 1;
-  console.log(val);
-  // 1
-  return;
-}
-fn();
-console.log(val);
-// 2
-```
-
-```coffee
-# Output:
-val = 2
-fn = ->
-  val_ = 1
-  console.log val_
-  # 1
-  return
-fn()
-console.log val
-# 2
-```
-
 ### Undefined in parameters
 
 Some libraries shield against the JavaScript flaw of `undefined` being
@@ -182,6 +145,40 @@ a
 while b
   d()
   c
+```
+
+## Shadowing
+
+### Var shadowing
+
+CoffeeScript doesn't support shadowing of outer variables (see
+[coffee-script#712]). To get around this, if a variable is redefined inside a
+scope, js2coffee will rename that variable.
+
+Previously, this is unsupported in js2coffee 0.x.
+
+[coffee-script#712]: https://github.com/jashkenas/coffee-script/issues/712
+
+```js
+// Input:
+var val = 2;
+var fn = function () {
+  var val = 1;
+}
+fn();
+console.log(val);
+// 2
+```
+
+```coffee
+# Output:
+val = 2
+fn = ->
+  `var val`
+  val = 1
+
+fn()
+console.log val
 ```
 
 ## Simple

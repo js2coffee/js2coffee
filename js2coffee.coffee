@@ -64,7 +64,7 @@ transform = (ast, options) ->
 class Transformer
   constructor: (@ast, @options) ->
     @scopes = []
-    @ctx = {}
+    @ctx = { vars: [] }
 
   run: ->
     @recurse @ast
@@ -127,6 +127,16 @@ class Transformer
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
   VariableDeclarator: (node, parent, skip) ->
+    name = node.id.name
+    if ~@ctx.vars.indexOf(name)
+      statement = @replace node,
+        type: 'ExpressionStatement'
+        expression:
+          type: 'CoffeeEscapedExpression'
+          value: "var #{name}"
+      @block.body = [ statement ].concat(@block.body)
+    else
+      @ctx.vars.push name
     @addExplicitUndefinedInitializer node, parent, skip
 
   ###
