@@ -73,9 +73,11 @@ class Transformer
     self = this
     @estraverse().replace root,
       enter: (node, parent) ->
+        console.log "#{node.type}"
         fn = self["#{node.type}"]
         fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
       leave: (node, parent) ->
+        console.log "#{node.type}Exit"
         fn = self["#{node.type}Exit"]
         fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
     root
@@ -97,9 +99,9 @@ class Transformer
     @consolidateBodies node
     @removeEmptyStatementsFromBody node
   FunctionDeclaration: (node, parent) ->
-    @pushStack node.body
     @removeUndefinedParameter node
     @moveDeclarationToTopOfScope node, parent
+    { type: 'EmptyStatement' }
   FunctionDeclarationExit: (node) ->
     @popStack()
   FunctionExpression: (node) ->
@@ -135,15 +137,14 @@ class Transformer
     @addExplicitUndefinedInitializer node, parent, skip
 
   consolidateBodies: (node) ->
-    console.log 'consolidating prebody of', node.type
     if node._prebody
-      console.log "√"
       node.body = node._prebody.concat(node.body)
       delete node._prebody
 
-  moveDeclarationToTopOfScope: (node, paren) ->
-    @parent._prebody ?= []
-    @parent._prebody.unshift
+  moveDeclarationToTopOfScope: (node, parent) ->
+    @block._prebody ?= []
+    # @recurse node.body <- ??
+    @block._prebody.push
       type: 'ExpressionStatement'
       expression:
         type: 'AssignmentExpression'
@@ -153,7 +154,6 @@ class Transformer
           type: 'FunctionExpression'
           params: node.params
           body: node.body
-    { type: 'EmptyStatement' }
 
   removeEmptyStatementsFromBody: (node) ->
     node.body = node.body.filter (n) ->
