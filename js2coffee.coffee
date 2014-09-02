@@ -14,19 +14,19 @@ Walker = require('./lib/walker.coffee')
 # js2coffee() : js2coffee(source, [options])
 # Converts to code.
 #
-#     output = js2coffee.parse('alert("hi")');
+#     output = js2coffee.build('alert("hi")');
 #     output;
 #     => 'alert "hi"'
 ###
 
 module.exports = js2coffee = (source, options) ->
-  js2coffee.parse(source, options).code
+  js2coffee.build(source, options).code
 
 ###*
-# parse() : js2coffee.parse(source, [options])
-# Parses.
+# build() : js2coffee.build(source, [options])
+# builds.
 #
-#     output = js2coffee.parse('a = 2', {});
+#     output = js2coffee.build('a = 2', {});
 #
 #     output.code
 #     output.ast
@@ -37,7 +37,7 @@ module.exports = js2coffee = (source, options) ->
 # ~ filename (String): the filename, used in source maps and errors.
 ###
 
-js2coffee.parse = (source, options = {}) ->
+js2coffee.build = (source, options = {}) ->
   options.filename ?= 'input.js'
   options.source = source
 
@@ -450,9 +450,9 @@ class Builder extends Walker
   CallExpression: (node, ctx) ->
     callee = @walk(node.callee)
     list = @makeSequence(node.arguments)
+    node._isStatement = ctx.parent.type is 'ExpressionStatement'
 
     hasArgs = list.length > 0
-    node._isStatement = ctx.parent.type is 'ExpressionStatement'
 
     if node._isStatement and hasArgs
       space [ callee, list ]
