@@ -68,7 +68,7 @@ class Transformer
   run: ->
     self = this
     @estraverse().replace @ast,
-      enter: (node, parent) =>
+      enter: (node, parent) ->
         fn = self["#{node.type}"]
         if fn
           fn.apply self, [ node, parent, (=> @skip()), (=> @break()) ]
@@ -112,6 +112,33 @@ class Transformer
     @updateBinaryExpression node
   UnaryExpression: (node) ->
     @updateVoidToUndefined node
+  LabeledStatement: (node, parent) ->
+    @warnAboutLabeledStatements node, parent
+  WithStatement: (node) ->
+    @syntaxError node, "'with' is not supported in CoffeeScript"
+  VariableDeclarator: (node, parent, skip) ->
+    @addExplicitUndefinedInitializer node, parent, skip
+
+  ###
+  # For VariableDeclarator with no initializers (`var a`), add `undefined` as the initializer.
+  ###
+
+  addExplicitUndefinedInitializer: (node, parent, skip) ->
+    unless node.init?
+      node.init = { type: 'Identifier', name: 'undefined' }
+      skip()
+    node
+
+  ###
+  # Produce warnings when using labels. It may be a JSON string being pasted,
+  # so produce a more helpful warning for that case.
+  ###
+
+  warnAboutLabeledStatements: (node, parent) ->
+    if parent.type is 'BlockStatement' and parent is @block
+      @syntaxError node, "Labeled statements are not supported (wrap your JSON in parentheses)"
+    else
+      @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
   ###
   # Updates `void 0` UnaryExpressions to `undefined` identifiers
@@ -556,16 +583,9 @@ class Builder extends Walker
     delimit(declarators, @indent())
 
   VariableDeclarator: (node) ->
-    init = if node.init?
-      @walk(node.init)
-    else
-      "undefined"
-
-    [ @walk(node.id), ' = ', init, "\n" ]
+    [ @walk(node.id), ' = ', @walk(node.init), "\n" ]
 
   FunctionExpression: (node, ctx) ->
-    # if node.id
-    #   @syntaxError node, "Named function expressions are not supported yet"
     params = @makeParams(node.params)
 
     expr = @indent (i) =>
@@ -639,15 +659,6 @@ class Builder extends Walker
 
   ThrowStatement: (node) ->
     [ "throw ", @walk(node.argument), "\n" ]
-
-  WithStatement: (node) ->
-    @syntaxError node, "'with' is not supported in CoffeeScript"
-
-  LabeledStatement: (node, ctx) ->
-    if ctx.parent?.type is 'BlockStatement'
-      @syntaxError node, "Labeled statements are not supported (wrap your JSON in parentheses)"
-    else
-      @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
   # Ternary operator (`a ? b : c`)
   ConditionalExpression: (node) ->
