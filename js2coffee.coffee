@@ -71,16 +71,13 @@ class Transformer
 
   recurse: (root) ->
     self = this
-    orr = (n1, n2) ->
-      if n1 or (n1 is null) then n1 else n2
     @estraverse().replace root,
       enter: (node, parent) ->
         fn = self["#{node.type}"]
-        if fn
-          orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
+        fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
+      leave: (node, parent) ->
         fn = self["#{node.type}Exit"]
-        if fn
-          orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
+        fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
     root
 
   estraverse: ->
@@ -99,11 +96,6 @@ class Transformer
   BlockStatementExit: (node) ->
     @consolidateBodies node
     @removeEmptyStatementsFromBody node
-
-  consolidateBodies: (node) ->
-    if node._prebody?
-      node.body = node._prebody.concat(node.body)
-      delete node._prebody
   FunctionDeclaration: (node, parent) ->
     @pushStack node.body
     @removeUndefinedParameter node
@@ -141,6 +133,13 @@ class Transformer
   VariableDeclarator: (node, parent, skip) ->
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer node, parent, skip
+
+  consolidateBodies: (node) ->
+    console.log 'consolidating prebody of', node.type
+    if node._prebody
+      console.log "√"
+      node.body = node._prebody.concat(node.body)
+      delete node._prebody
 
   moveDeclarationToTopOfScope: (node, paren) ->
     @parent._prebody ?= []
@@ -349,7 +348,9 @@ class Transformer
             params: node.params
             body: node.body
 
-      @block.body = [ statement ].concat(@block.body)
+      @parent._prebody ?= []
+      @parent._prebody.unshift statement
+      console.log 'pushed to prebody of', @parent.type
       @replace node, type: 'Identifier', name: node.id.name
     else
       node
