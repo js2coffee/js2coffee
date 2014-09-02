@@ -1457,8 +1457,7 @@ var fn = function () {
   var val = 1;
 }
 fn();
-console.log(val);
-// 2
+assert(val == 2);
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -1468,7 +1467,7 @@ fn = ->
   val = 1
 
 fn()
-console.log val
+assert val == 2
 </code></pre>
 </td>
 </tr>

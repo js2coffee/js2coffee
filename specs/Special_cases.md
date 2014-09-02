@@ -152,8 +152,7 @@ while b
 ### Var shadowing
 
 CoffeeScript doesn't support shadowing of outer variables (see
-[coffee-script#712]). To get around this, if a variable is redefined inside a
-scope, js2coffee will rename that variable.
+[coffee-script#712]). js2coffee uses a terrible hack to make this work.
 
 Previously, this is unsupported in js2coffee 0.x.
 
@@ -166,8 +165,7 @@ var fn = function () {
   var val = 1;
 }
 fn();
-console.log(val);
-// 2
+assert(val == 2);
 ```
 
 ```coffee
@@ -178,7 +176,7 @@ fn = ->
   val = 1
 
 fn()
-console.log val
+assert val == 2
 ```
 
 ## Simple

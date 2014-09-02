@@ -127,6 +127,15 @@ class Transformer
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
   VariableDeclarator: (node, parent, skip) ->
+    @addShadowingIfNeeded(node)
+    @addExplicitUndefinedInitializer node, parent, skip
+
+  ###
+  # Adds a `var x` shadowing statement when encountering shadowed variables.
+  # (See specs/shadowing/var_shadowing)
+  ###
+
+  addShadowingIfNeeded: (node) ->
     name = node.id.name
     if ~@ctx.vars.indexOf(name)
       statement = @replace node,
@@ -137,7 +146,6 @@ class Transformer
       @block.body = [ statement ].concat(@block.body)
     else
       @ctx.vars.push name
-    @addExplicitUndefinedInitializer node, parent, skip
 
   ###
   # Converts `this.x` into `@x` for MemberExpressions.
