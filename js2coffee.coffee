@@ -146,10 +146,8 @@ class Transformer
     @estraverse().replace node,
       enter: (node, parent) ->
         switch node.type
-          when 'BlockStatement'
-            @skip()
-
           when 'FunctionDeclaration'
+            @skip()
             prebody.push
               type: 'ExpressionStatement'
               expression:
@@ -164,6 +162,7 @@ class Transformer
 
           when 'FunctionExpression'
             if node.id
+              @skip()
               prebody.push
                 type: 'ExpressionStatement'
                 expression:
