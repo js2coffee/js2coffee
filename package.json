@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha 2>&1|grep -v node_modules",
     "autotest": "mocha -R min -b --watch",
     "prepublish": "mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee js2coffee.coffee | uglifyjs -m > dist/js2coffee.js"
   },
@@ -27,6 +27,7 @@
     "coffee-script": "^1.8.0",
     "coffeeify": "^0.7.0",
     "glob": "^4.0.5",
+    "js-yaml": "^3.2.1",
     "mocha": "^1.21.4",
     "uglify-js": "^2.4.15",
     "underscore": "^1.7.0"

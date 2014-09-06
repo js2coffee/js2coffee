@@ -8,6 +8,7 @@ Walker = require('./lib/walker.coffee')
   newline
   prependAll
   space
+  inspect
 } = require('./lib/helpers.coffee')
 
 ###*
@@ -73,11 +74,9 @@ class Transformer
     self = this
     @estraverse().replace root,
       enter: (node, parent) ->
-        console.log "#{node.type}"
         fn = self["#{node.type}"]
         fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
       leave: (node, parent) ->
-        console.log "#{node.type}Exit"
         fn = self["#{node.type}Exit"]
         fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
     root
@@ -92,6 +91,7 @@ class Transformer
 
   Program: (node) ->
     @pushStack node
+    @fixScope node, node
   ProgramExit: (node) ->
     @consolidateBodies node
     @popStack()
@@ -106,8 +106,9 @@ class Transformer
     @popStack()
   FunctionExpression: (node) ->
     @pushStack node.body
+    @fixScope node, node.body
     @removeUndefinedParameter node
-    @moveNamedFunctionExpressions node
+    # @moveNamedFunctionExpressions node
   FunctionExpressionExit: (node) ->
     @popStack()
   SwitchStatement: (node) ->
@@ -141,9 +142,33 @@ class Transformer
       node.body = node._prebody.concat(node.body)
       delete node._prebody
 
+  fixScope: (node, body) ->
+    @estraverse().replace node,
+      enter: (node, parent) ->
+        switch node.type
+          when 'BlockStatement'
+            @skip()
+          when 'FunctionExpression'
+            if node.id
+              body.body.unshift
+                type: 'ExpressionStatement'
+                expression:
+                  type: 'AssignmentExpression'
+                  operator: '='
+                  left: node.id
+                  right:
+                    type: 'FunctionExpression'
+                    params: node.params
+                    body: node.body
+              { type: 'Identifier', name: node.id.name }
+            else
+              node
+          else
+            node
+    inspect node
+
   moveDeclarationToTopOfScope: (node, parent) ->
     @block._prebody ?= []
-    # @recurse node.body <- ??
     @block._prebody.push
       type: 'ExpressionStatement'
       expression:
@@ -350,7 +375,6 @@ class Transformer
 
       @parent._prebody ?= []
       @parent._prebody.unshift statement
-      console.log 'pushed to prebody of', @parent.type
       @replace node, type: 'Identifier', name: node.id.name
     else
       node
