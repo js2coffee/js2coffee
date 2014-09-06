@@ -119,19 +119,6 @@ exports.newline = (srcnode) ->
 # For debugging.
 ###
 exports.inspect = (node) ->
-  node = JSON.parse(JSON.stringify(node))
-  walk = (obj, key) ->
-    if Array.isArray(obj)
-      for val, i in obj
-        obj[i] = walk(val)
-    else if typeof obj is 'object'
-      for key, val of obj
-        if key is 'loc' or key is 'range'
-          delete obj[key]
-        else
-          obj[key] = walk(val, key)
-    obj
-
-  node = walk(node)
-  # console.log require('util').inspect(node, depth: 1000, colors: true)
-  console.log "\n~~~\n" + require('js-yaml').safeDump(node) + "\n~~~"
+  "~~~~\n" +
+  require('util').inspect(node, depth: 1000, colors: true) +
+  "\n~~~~"

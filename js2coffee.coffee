@@ -47,22 +47,22 @@ js2coffee.build = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  transform(ast, options)
+  Transformer.run(ast, options)
   {code, map} = build(ast, options)
   {code, ast, map}
 
 build = (ast, options) ->
   new Builder(ast, options).get()
 
-transform = (ast, options) ->
-  new Transformer(ast, options).run()
-
 ###*
-# Transformer:
-# Mangles the AST.
+# TransformerBase:
+# Base class.
 ###
 
 class TransformerBase
+  @run: (ast, options) ->
+    new this(ast, options).run()
+
   constructor: (@ast, @options) ->
     @scopes = []
     @ctx = { vars: [] }
@@ -72,14 +72,27 @@ class TransformerBase
 
   recurse: (root) ->
     self = this
+    depth = 0
     @estraverse().replace root,
       enter: (node, parent) ->
+        depth += 1
         fn = self["#{node.type}"]
-        fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
+        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
+        self.onEnter?(node, depth, fn, res)
+        res
       leave: (node, parent) ->
         fn = self["#{node.type}Exit"]
-        fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
+        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
+        self.onExit?(node, depth, fn, res)
+        depth -= 1
+        res
     root
+
+  # onEnter: (node, depth, fn) ->
+  #   console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), dead
+
+  # onExit: (node, depth, fn) ->
+  #   console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else ""), dead
 
   ###*
   # estraverse():
@@ -108,6 +121,7 @@ class TransformerBase
   popStack: (node) ->
     [ @block, @ctx ] = @scopes.pop()
     @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
+    node
 
   ###*
   # syntaxError():
@@ -135,22 +149,18 @@ class Transformer extends TransformerBase
     @pushStack node
     @fixScope node, node
   ProgramExit: (node) ->
-    @consolidateBodies node
     @popStack()
   BlockStatementExit: (node) ->
-    @consolidateBodies node
     @removeEmptyStatementsFromBody node
   FunctionDeclaration: (node, parent) ->
-    throw new Error("Not supposed to happen") # it's supposed to be eaten by fixScope
-    # @removeUndefinedParameter node
+    throw new Error("FnDecl: Not supposed to happen") # it's supposed to be eaten by fixScope
   FunctionDeclarationExit: (node) ->
     @popStack()
-  FunctionExpression: (node) ->
-    throw new Error("Not supposed to happen") if node.id # fixScope should've gotten this case
+  FunctionExpression: (node, parent) ->
+    throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
     @pushStack node.body
-    @removeUndefinedParameter node
     @fixScope node, node.body
-    # @moveNamedFunctionExpressions node
+    @removeUndefinedParameter node
   FunctionExpressionExit: (node) ->
     @popStack()
   SwitchStatement: (node) ->
@@ -179,17 +189,16 @@ class Transformer extends TransformerBase
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer node, parent, skip
 
-  consolidateBodies: (node) ->
-    if node._prebody
-      node.body = node._prebody.concat(node.body)
-      delete node._prebody
-
-  fixScope: (node, body) ->
+  fixScope: (root, scope) ->
     prebody = []
     self = this
-    @estraverse().replace node,
+
+    @estraverse().replace root,
       enter: (node, parent) ->
-        if node.type is 'FunctionDeclaration'
+        if node is root
+          return node
+
+        else if node.type is 'FunctionDeclaration'
           @skip()
           prebody.push self.buildFunctionDeclaration(node)
           { type: 'EmptyStatement' }
@@ -199,10 +208,13 @@ class Transformer extends TransformerBase
           prebody.push self.buildFunctionDeclaration(node)
           { type: 'Identifier', name: node.id.name }
 
-    if prebody.length
-      body.body = prebody.concat(body.body)
+        else
+          node
 
-    node
+    if prebody.length
+      scope.body = prebody.concat(scope.body)
+
+    root
 
   ###
   # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
@@ -400,30 +412,6 @@ class Transformer extends TransformerBase
       node.callee._parenthesized = true
       node
 
-  ###
-  # Moves named function expressions to the top.
-  # `(function fn() { })(x)` => `function fn() { }; fn(x);`
-  ###
-
-  moveNamedFunctionExpressions: (node) ->
-    if node.id?
-      statement = @replace node,
-        type: 'ExpressionStatement',
-        expression:
-          type: 'AssignmentExpression'
-          operator: '='
-          left: node.id
-          right:
-            type: 'FunctionExpression'
-            params: node.params
-            body: node.body
-
-      @parent._prebody ?= []
-      @parent._prebody.unshift statement
-      @replace node, type: 'Identifier', name: node.id.name
-    else
-      node
-
   ###*
   # replace() : @replace(node, newNode)
   # Fabricates a replacement node for `node` that maintains the same source
@@ -527,9 +515,9 @@ class Builder extends Walker
   ###
 
   onUnknownNode: (node, ctx) ->
-    @syntaxError(node, "#{ctx?.type} is not supported")
+    @syntaxError(node, "#{node.type} is not supported")
 
-  syntaxError: Transformer::syntaxError
+  syntaxError: TransformerBase::syntaxError
 
   ###
   # visitors:
