@@ -121,13 +121,13 @@ class TransformerBase
   ###
 
   pushStack: (node) ->
-    @parent = @block
+    @parent = @scope
     @scopes.push [ node, @ctx ]
     @ctx = clone(@ctx)
-    @block = node
+    @scope = node
 
   popStack: (node) ->
-    [ @block, @ctx ] = @scopes.pop()
+    [ @scope, @ctx ] = @scopes.pop()
     @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
     node
 
@@ -222,7 +222,7 @@ class Transformer extends TransformerBase
         expression:
           type: 'CoffeeEscapedExpression'
           value: "var #{name}"
-      @block.body = [ statement ].concat(@block.body)
+      @scope.body = [ statement ].concat(@scope.body)
     else
       @ctx.vars.push name
 
