@@ -62,7 +62,7 @@ transform = (ast, options) ->
 # Mangles the AST.
 ###
 
-class Transformer
+class TransformerBase
   constructor: (@ast, @options) ->
     @scopes = []
     @ctx = { vars: [] }
@@ -81,6 +81,11 @@ class Transformer
         fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn
     root
 
+  ###*
+  # estraverse():
+  # Returns `estraverse`.
+  ###
+
   estraverse: ->
     @_estraverse ?= do ->
       es = require('estraverse')
@@ -89,6 +94,43 @@ class Transformer
       es.VisitorKeys.CoffeePrototypeExpression = []
       es
 
+  ###*
+  # pushStack() : @pushStack(node)
+  # Pushes a scope to the scope stack.
+  ###
+
+  pushStack: (node) ->
+    @parent = @block
+    @scopes.push [ node, @ctx ]
+    @ctx = clone(@ctx)
+    @block = node
+
+  popStack: (node) ->
+    [ @block, @ctx ] = @scopes.pop()
+    @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
+
+  ###*
+  # syntaxError():
+  # Throws a syntax error for the given `node`.
+  #
+  #     @syntaxError node, "Not supported"
+  ###
+
+  syntaxError: (node, description) ->
+    err = buildError(
+      lineNumber: node.loc?.start?.line,
+      column: node.loc?.start?.column,
+      description: description
+    , @options.source, @options.filename)
+    throw err
+
+
+###*
+# Transformer:
+# Mangles the AST.
+###
+
+class Transformer extends TransformerBase
   Program: (node) ->
     @pushStack node
     @fixScope node, node
@@ -99,14 +141,15 @@ class Transformer
     @consolidateBodies node
     @removeEmptyStatementsFromBody node
   FunctionDeclaration: (node, parent) ->
+    throw new Error("Not supposed to happen") # it's supposed to be eaten by fixScope
     # @removeUndefinedParameter node
-    { type: 'EmptyStatement' }
   FunctionDeclarationExit: (node) ->
     @popStack()
   FunctionExpression: (node) ->
+    throw new Error("Not supposed to happen") if node.id # fixScope should've gotten this case
     @pushStack node.body
-    @fixScope node, node.body
     @removeUndefinedParameter node
+    @fixScope node, node.body
     # @moveNamedFunctionExpressions node
   FunctionExpressionExit: (node) ->
     @popStack()
@@ -143,59 +186,44 @@ class Transformer
 
   fixScope: (node, body) ->
     prebody = []
+    self = this
     @estraverse().replace node,
       enter: (node, parent) ->
-        switch node.type
-          when 'FunctionDeclaration'
-            @skip()
-            prebody.push
-              type: 'ExpressionStatement'
-              expression:
-                type: 'AssignmentExpression'
-                operator: '='
-                left: node.id
-                right:
-                  type: 'FunctionExpression'
-                  params: node.params
-                  body: node.body
-            { type: 'EmptyStatement' }
+        if node.type is 'FunctionDeclaration'
+          @skip()
+          prebody.push self.buildFunctionDeclaration(node)
+          { type: 'EmptyStatement' }
 
-          when 'FunctionExpression'
-            if node.id
-              @skip()
-              prebody.push
-                type: 'ExpressionStatement'
-                expression:
-                  type: 'AssignmentExpression'
-                  operator: '='
-                  left: node.id
-                  right:
-                    type: 'FunctionExpression'
-                    params: node.params
-                    body: node.body
-              { type: 'Identifier', name: node.id.name }
-            else
-              node
-          else
-            node
+        else if node.type is 'FunctionExpression' and node.id?
+          @skip()
+          prebody.push self.buildFunctionDeclaration(node)
+          { type: 'Identifier', name: node.id.name }
 
     if prebody.length
       body.body = prebody.concat(body.body)
 
     node
 
-  moveDeclarationToTopOfScope: (node, parent) ->
-    @block._prebody ?= []
-    @block._prebody.push
-      type: 'ExpressionStatement'
-      expression:
-        type: 'AssignmentExpression'
-        operator: '='
-        left: node.id
-        right: @replace node,
-          type: 'FunctionExpression'
-          params: node.params
-          body: node.body
+  ###
+  # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
+  ###
+
+  buildFunctionDeclaration: (node) ->
+    type: 'ExpressionStatement'
+    expression:
+      type: 'AssignmentExpression'
+      operator: '='
+      left: node.id
+      right:
+        type: 'FunctionExpression'
+        params: node.params
+        body: node.body
+
+  ###
+  # Remove `{type: 'EmptyStatement'}` from the body.
+  # Since estraverse doesn't support removing nodes from the AST, some filters
+  # replace nodes with 'EmptyStatement' nodes. This cleans that up.
+  ###
 
   removeEmptyStatementsFromBody: (node) ->
     node.body = node.body.filter (n) ->
@@ -409,36 +437,6 @@ class Transformer
     newNode.range = node.range
     newNode.loc = node.loc
     newNode
-
-  ###*
-  # pushStack() : @pushStack(node)
-  # Pushes a scope to the scope stack.
-  ###
-
-  pushStack: (node) ->
-    @parent = @block
-    @scopes.push [ node, @ctx ]
-    @ctx = clone(@ctx)
-    @block = node
-
-  popStack: (node) ->
-    [ @block, @ctx ] = @scopes.pop()
-    @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
-
-  ###*
-  # syntaxError():
-  # Throws a syntax error for the given `node`.
-  #
-  #     @syntaxError node, "Not supported"
-  ###
-
-  syntaxError: (node, description) ->
-    err = buildError(
-      lineNumber: node.loc?.start?.line,
-      column: node.loc?.start?.column,
-      description: description
-    , @options.source, @options.filename)
-    throw err
 
 clone = (obj) ->
   JSON.parse JSON.stringify obj
