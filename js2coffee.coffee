@@ -48,11 +48,11 @@ js2coffee.build = (source, options = {}) ->
     throw buildError(err, source, options.filename)
 
   Transformer.run(ast, options)
-  {code, map} = build(ast, options)
+
+  {code, map} = new Builder(ast, options).get()
   {code, ast, map}
 
-build = (ast, options) ->
-  new Builder(ast, options).get()
+# ----------------------------------------------------------------------------
 
 ###*
 # TransformerBase:
@@ -75,18 +75,26 @@ class TransformerBase
     depth = 0
     @estraverse().replace root,
       enter: (node, parent) ->
+        self.controller = this
         depth += 1
         fn = self["#{node.type}"]
         res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
         self.onEnter?(node, depth, fn, res)
         res
       leave: (node, parent) ->
+        self.controller = this
         fn = self["#{node.type}Exit"]
         res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
         self.onExit?(node, depth, fn, res)
         depth -= 1
         res
     root
+
+  skip: ->
+    @controller?.skip()
+
+  break: ->
+    @controller?.break()
 
   # onEnter: (node, depth, fn) ->
   #   console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), dead
@@ -138,6 +146,7 @@ class TransformerBase
     , @options.source, @options.filename)
     throw err
 
+# ----------------------------------------------------------------------------
 
 ###*
 # Transformer:
@@ -147,7 +156,7 @@ class TransformerBase
 class Transformer extends TransformerBase
   Program: (node) ->
     @pushStack node
-    @fixScope node, node
+    new ScopeTransformer(node, @options).run(node)
   ProgramExit: (node) ->
     @popStack()
   BlockStatementExit: (node) ->
@@ -159,8 +168,8 @@ class Transformer extends TransformerBase
   FunctionExpression: (node, parent) ->
     throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
     @pushStack node.body
-    @fixScope node, node.body
     @removeUndefinedParameter node
+    new ScopeTransformer(node, @options).run(node.body)
   FunctionExpressionExit: (node) ->
     @popStack()
   SwitchStatement: (node) ->
@@ -185,51 +194,9 @@ class Transformer extends TransformerBase
     @warnAboutLabeledStatements node, parent
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
-  VariableDeclarator: (node, parent, skip) ->
+  VariableDeclarator: (node) ->
     @addShadowingIfNeeded(node)
-    @addExplicitUndefinedInitializer node, parent, skip
-
-  fixScope: (root, scope) ->
-    prebody = []
-    self = this
-
-    @estraverse().replace root,
-      enter: (node, parent) ->
-        if node is root
-          return node
-
-        else if node.type is 'FunctionDeclaration'
-          @skip()
-          prebody.push self.buildFunctionDeclaration(node)
-          { type: 'EmptyStatement' }
-
-        else if node.type is 'FunctionExpression' and node.id?
-          @skip()
-          prebody.push self.buildFunctionDeclaration(node)
-          { type: 'Identifier', name: node.id.name }
-
-        else
-          node
-
-    if prebody.length
-      scope.body = prebody.concat(scope.body)
-
-    root
-
-  ###
-  # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
-  ###
-
-  buildFunctionDeclaration: (node) ->
-    type: 'ExpressionStatement'
-    expression:
-      type: 'AssignmentExpression'
-      operator: '='
-      left: node.id
-      right:
-        type: 'FunctionExpression'
-        params: node.params
-        body: node.body
+    @addExplicitUndefinedInitializer node
 
   ###
   # Remove `{type: 'EmptyStatement'}` from the body.
@@ -273,10 +240,10 @@ class Transformer extends TransformerBase
   # For VariableDeclarator with no initializers (`var a`), add `undefined` as the initializer.
   ###
 
-  addExplicitUndefinedInitializer: (node, parent, skip) ->
+  addExplicitUndefinedInitializer: (node) ->
     unless node.init?
       node.init = { type: 'Identifier', name: 'undefined' }
-      skip()
+      @skip()
     node
 
   ###
@@ -425,6 +392,51 @@ class Transformer extends TransformerBase
 
 clone = (obj) ->
   JSON.parse JSON.stringify obj
+
+# ----------------------------------------------------------------------------
+
+###**
+# ScopeTransformer:
+# Yep
+###
+
+class ScopeTransformer extends TransformerBase
+  run: (@body) ->
+    @prebody = []
+    @recurse @ast
+
+    if @prebody.length
+      @body.body = @prebody.concat(@body.body)
+
+    @ast
+
+  FunctionDeclaration: (node) ->
+    @skip()
+    @prebody.push @buildFunctionDeclaration(node)
+    { type: 'EmptyStatement' }
+
+  FunctionExpression: (node) ->
+    return unless node.id?
+    @skip()
+    @prebody.push @buildFunctionDeclaration(node)
+    { type: 'Identifier', name: node.id.name }
+
+  ###
+  # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
+  ###
+
+  buildFunctionDeclaration: (node) ->
+    type: 'ExpressionStatement'
+    expression:
+      type: 'AssignmentExpression'
+      operator: '='
+      left: node.id
+      right:
+        type: 'FunctionExpression'
+        params: node.params
+        body: node.body
+
+# ----------------------------------------------------------------------------
 
 ###*
 # Builder : new Builder(ast, [options])
