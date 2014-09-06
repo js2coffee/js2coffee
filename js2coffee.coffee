@@ -300,10 +300,7 @@ class Transformer extends TransformerBase
   ###
 
   warnAboutLabeledStatements: (node, parent) ->
-    if parent.type is 'BlockStatement' and parent is @block
-      @syntaxError node, "Labeled statements are not supported (wrap your JSON in parentheses)"
-    else
-      @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
+    @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
   ###
   # Updates `void 0` UnaryExpressions to `undefined` Identifiers.

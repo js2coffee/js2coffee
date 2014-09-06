@@ -17,11 +17,3 @@ describe 'Unsupported', ->
         expect(e.description).include 'Labeled statements are not supported'
         expect(e.lineNumber).eql 1
         expect(e.column).eql 0
-
-    it 'happens with naked JSON objects', ->
-      try
-        js2coffee.build('{a:2}')
-      catch e
-        expect(e.description).include 'wrap your JSON'
-        expect(e.lineNumber).eql 1
-        expect(e.column).eql 1
