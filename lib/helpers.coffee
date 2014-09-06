@@ -114,3 +114,11 @@ exports.newline = (srcnode) ->
   else
     [ srcnode, "\n" ]
 
+###*
+# inspect():
+# For debugging.
+###
+exports.inspect = (node) ->
+  "~~~~\n" +
+  require('util').inspect(node, depth: 1000, colors: true) +
+  "\n~~~~"

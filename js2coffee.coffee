@@ -8,6 +8,7 @@ Walker = require('./lib/walker.coffee')
   newline
   prependAll
   space
+  inspect
 } = require('./lib/helpers.coffee')
 
 ###*
@@ -46,22 +47,22 @@ js2coffee.build = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  transform(ast, options)
+  Transformer.run(ast, options)
   {code, map} = build(ast, options)
   {code, ast, map}
 
 build = (ast, options) ->
   new Builder(ast, options).get()
 
-transform = (ast, options) ->
-  new Transformer(ast, options).run()
-
 ###*
-# Transformer:
-# Mangles the AST.
+# TransformerBase:
+# Base class.
 ###
 
-class Transformer
+class TransformerBase
+  @run: (ast, options) ->
+    new this(ast, options).run()
+
   constructor: (@ast, @options) ->
     @scopes = []
     @ctx = { vars: [] }
@@ -71,17 +72,32 @@ class Transformer
 
   recurse: (root) ->
     self = this
-    orr = (n1, n2) -> if n1 or (!n1 and n1?) then n1 else n2
+    depth = 0
     @estraverse().replace root,
       enter: (node, parent) ->
+        depth += 1
         fn = self["#{node.type}"]
-        if fn
-          orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
-      exit: (node, parent) ->
-        fn = self["exit#{node.type}Exit"]
-        if fn
-          orr fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]), node
+        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
+        self.onEnter?(node, depth, fn, res)
+        res
+      leave: (node, parent) ->
+        fn = self["#{node.type}Exit"]
+        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
+        self.onExit?(node, depth, fn, res)
+        depth -= 1
+        res
     root
+
+  # onEnter: (node, depth, fn) ->
+  #   console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), dead
+
+  # onExit: (node, depth, fn) ->
+  #   console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else ""), dead
+
+  ###*
+  # estraverse():
+  # Returns `estraverse`.
+  ###
 
   estraverse: ->
     @_estraverse ?= do ->
@@ -91,19 +107,62 @@ class Transformer
       es.VisitorKeys.CoffeePrototypeExpression = []
       es
 
+  ###*
+  # pushStack() : @pushStack(node)
+  # Pushes a scope to the scope stack.
+  ###
+
+  pushStack: (node) ->
+    @parent = @block
+    @scopes.push [ node, @ctx ]
+    @ctx = clone(@ctx)
+    @block = node
+
+  popStack: (node) ->
+    [ @block, @ctx ] = @scopes.pop()
+    @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
+    node
+
+  ###*
+  # syntaxError():
+  # Throws a syntax error for the given `node`.
+  #
+  #     @syntaxError node, "Not supported"
+  ###
+
+  syntaxError: (node, description) ->
+    err = buildError(
+      lineNumber: node.loc?.start?.line,
+      column: node.loc?.start?.column,
+      description: description
+    , @options.source, @options.filename)
+    throw err
+
+
+###*
+# Transformer:
+# Mangles the AST.
+###
+
+class Transformer extends TransformerBase
   Program: (node) ->
     @pushStack node
+    @fixScope node, node
   ProgramExit: (node) ->
     @popStack()
-  BlockStatement: (node) ->
-    @pushStack node
   BlockStatementExit: (node) ->
+    @removeEmptyStatementsFromBody node
+  FunctionDeclaration: (node, parent) ->
+    throw new Error("FnDecl: Not supposed to happen") # it's supposed to be eaten by fixScope
+  FunctionDeclarationExit: (node) ->
     @popStack()
-  FunctionDeclaration: (node) ->
+  FunctionExpression: (node, parent) ->
+    throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
+    @pushStack node.body
+    @fixScope node, node.body
     @removeUndefinedParameter node
-  FunctionExpression: (node) ->
-    @removeUndefinedParameter node
-    @moveNamedFunctionExpressions node
+  FunctionExpressionExit: (node) ->
+    @popStack()
   SwitchStatement: (node) ->
     @consolidateCases node
   SwitchCase: (node) ->
@@ -129,6 +188,59 @@ class Transformer
   VariableDeclarator: (node, parent, skip) ->
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer node, parent, skip
+
+  fixScope: (root, scope) ->
+    prebody = []
+    self = this
+
+    @estraverse().replace root,
+      enter: (node, parent) ->
+        if node is root
+          return node
+
+        else if node.type is 'FunctionDeclaration'
+          @skip()
+          prebody.push self.buildFunctionDeclaration(node)
+          { type: 'EmptyStatement' }
+
+        else if node.type is 'FunctionExpression' and node.id?
+          @skip()
+          prebody.push self.buildFunctionDeclaration(node)
+          { type: 'Identifier', name: node.id.name }
+
+        else
+          node
+
+    if prebody.length
+      scope.body = prebody.concat(scope.body)
+
+    root
+
+  ###
+  # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
+  ###
+
+  buildFunctionDeclaration: (node) ->
+    type: 'ExpressionStatement'
+    expression:
+      type: 'AssignmentExpression'
+      operator: '='
+      left: node.id
+      right:
+        type: 'FunctionExpression'
+        params: node.params
+        body: node.body
+
+  ###
+  # Remove `{type: 'EmptyStatement'}` from the body.
+  # Since estraverse doesn't support removing nodes from the AST, some filters
+  # replace nodes with 'EmptyStatement' nodes. This cleans that up.
+  ###
+
+  removeEmptyStatementsFromBody: (node) ->
+    node.body = node.body.filter (n) ->
+      n.type isnt 'EmptyStatement'
+    node
 
   ###
   # Adds a `var x` shadowing statement when encountering shadowed variables.
@@ -188,10 +300,7 @@ class Transformer
   ###
 
   warnAboutLabeledStatements: (node, parent) ->
-    if parent.type is 'BlockStatement' and parent is @block
-      @syntaxError node, "Labeled statements are not supported (wrap your JSON in parentheses)"
-    else
-      @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
+    @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
   ###
   # Updates `void 0` UnaryExpressions to `undefined` Identifiers.
@@ -300,25 +409,6 @@ class Transformer
       node.callee._parenthesized = true
       node
 
-  ###
-  # Moves named function expressions to the top.
-  # `(function fn() { })(x)` => `function fn() { }; fn(x);`
-  ###
-
-  moveNamedFunctionExpressions: (node) ->
-    if node.id?
-      statement = @replace node,
-        type: 'FunctionDeclaration'
-        params: node.params
-        id: node.id
-        body: node.body
-
-      @block.body = [ statement ].concat(@block.body)
-      @recurse statement
-      @replace node, type: 'Identifier', name: node.id.name
-    else
-      node
-
   ###*
   # replace() : @replace(node, newNode)
   # Fabricates a replacement node for `node` that maintains the same source
@@ -332,34 +422,6 @@ class Transformer
     newNode.range = node.range
     newNode.loc = node.loc
     newNode
-
-  ###*
-  # pushStack() : @pushStack(node)
-  # Pushes a scope to the scope stack.
-  ###
-
-  pushStack: (node) ->
-    @scopes.push [ node, @ctx ]
-    @ctx = clone(@ctx)
-    @block = node
-
-  popStack: (node) ->
-    [ @block, @ctx ] = @scopes.pop()
-
-  ###*
-  # syntaxError():
-  # Throws a syntax error for the given `node`.
-  #
-  #     @syntaxError node, "Not supported"
-  ###
-
-  syntaxError: (node, description) ->
-    err = buildError(
-      lineNumber: node.loc?.start?.line,
-      column: node.loc?.start?.column,
-      description: description
-    , @options.source, @options.filename)
-    throw err
 
 clone = (obj) ->
   JSON.parse JSON.stringify obj
@@ -450,9 +512,9 @@ class Builder extends Walker
   ###
 
   onUnknownNode: (node, ctx) ->
-    @syntaxError(node, "#{ctx?.type} is not supported")
+    @syntaxError(node, "#{node.type} is not supported")
 
-  syntaxError: Transformer::syntaxError
+  syntaxError: TransformerBase::syntaxError
 
   ###
   # visitors:
