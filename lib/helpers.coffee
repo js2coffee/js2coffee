@@ -134,4 +134,4 @@ exports.inspect = (node) ->
 
   node = walk(node)
   # console.log require('util').inspect(node, depth: 1000, colors: true)
-  console.log "\n" + require('js-yaml').safeDump(node)
+  console.log "\n~~~\n" + require('js-yaml').safeDump(node) + "\n~~~"

@@ -99,8 +99,7 @@ class Transformer
     @consolidateBodies node
     @removeEmptyStatementsFromBody node
   FunctionDeclaration: (node, parent) ->
-    @removeUndefinedParameter node
-    @moveDeclarationToTopOfScope node, parent
+    # @removeUndefinedParameter node
     { type: 'EmptyStatement' }
   FunctionDeclarationExit: (node) ->
     @popStack()
@@ -143,14 +142,29 @@ class Transformer
       delete node._prebody
 
   fixScope: (node, body) ->
+    prebody = []
     @estraverse().replace node,
       enter: (node, parent) ->
         switch node.type
           when 'BlockStatement'
             @skip()
+
+          when 'FunctionDeclaration'
+            prebody.push
+              type: 'ExpressionStatement'
+              expression:
+                type: 'AssignmentExpression'
+                operator: '='
+                left: node.id
+                right:
+                  type: 'FunctionExpression'
+                  params: node.params
+                  body: node.body
+            { type: 'EmptyStatement' }
+
           when 'FunctionExpression'
             if node.id
-              body.body.unshift
+              prebody.push
                 type: 'ExpressionStatement'
                 expression:
                   type: 'AssignmentExpression'
@@ -165,7 +179,11 @@ class Transformer
               node
           else
             node
-    inspect node
+
+    if prebody.length
+      body.body = prebody.concat(body.body)
+
+    node
 
   moveDeclarationToTopOfScope: (node, parent) ->
     @block._prebody ?= []

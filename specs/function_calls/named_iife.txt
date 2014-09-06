@@ -1,4 +1,3 @@
-only:true
 notes: """
   Named function expressions should be extracted to the top of the scope to
   maintain compatibility. This pattern is commonly seen in browserify's
