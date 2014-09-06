@@ -1,15 +1,15 @@
 require 'coffee-script/register'
 require './setup'
 
-describe 'Walker', ->
-  Walker = require('../lib/walker')
+describe 'BuilderBase', ->
+  {BuilderBase} = require('../js2coffee')
 
   it 'works', ->
     ast =
       type: 'Program'
       body: { type: 'Identifier', value: 'hi' }
 
-    class MyWalker extends Walker
+    class MyWalker extends BuilderBase
       Program: (node) -> @walk node.body
       Identifier: (node) -> node.value
 

@@ -1,6 +1,5 @@
 Esprima = require('esprima')
 {SourceNode} = require("source-map")
-Walker = require('./lib/walker.coffee')
 {
   buildError
   commaDelimit
@@ -96,11 +95,12 @@ class TransformerBase
   break: ->
     @controller?.break()
 
-  # onEnter: (node, depth, fn) ->
-  #   console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), dead
+  # Call these onEnter() and onExit() for debugging
+  debugEnter: (node, depth, fn) ->
+    console.log Array(depth+1).join("  "), node.type, (if fn then "*" else "")
 
-  # onExit: (node, depth, fn) ->
-  #   console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else ""), dead
+  debugExit: (node, depth, fn) ->
+    console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else "")
 
   ###*
   # estraverse():
@@ -156,7 +156,7 @@ class TransformerBase
 class Transformer extends TransformerBase
   Program: (node) ->
     @pushStack node
-    new ScopeTransformer(node, @options).run(node)
+    new FunctionTransformer(node, @options).run(node)
   ProgramExit: (node) ->
     @popStack()
   BlockStatementExit: (node) ->
@@ -169,7 +169,7 @@ class Transformer extends TransformerBase
     throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
     @pushStack node.body
     @removeUndefinedParameter node
-    new ScopeTransformer(node, @options).run(node.body)
+    new FunctionTransformer(node, @options).run(node.body)
   FunctionExpressionExit: (node) ->
     @popStack()
   SwitchStatement: (node) ->
@@ -396,11 +396,11 @@ clone = (obj) ->
 # ----------------------------------------------------------------------------
 
 ###**
-# ScopeTransformer:
+# FunctionTransformer:
 # Yep
 ###
 
-class ScopeTransformer extends TransformerBase
+class FunctionTransformer extends TransformerBase
   run: (@body) ->
     @prebody = []
     @recurse @ast
@@ -438,6 +438,49 @@ class ScopeTransformer extends TransformerBase
 
 # ----------------------------------------------------------------------------
 
+###
+# Walker:
+# Traverses a JavaScript AST.
+#
+#     class MyWalker extends Walker
+#
+#     w = new MyWalker(ast)
+#     w.run()
+#
+###
+
+class BuilderBase
+  constructor: (@root, @options) ->
+    @path = []
+
+  run: ->
+    @walk(@root)
+
+  walk: (node, type) =>
+    oldLength = @path.length
+    @path.push(node)
+
+    type = undefined if typeof type isnt 'string'
+    type or= node.type
+    @ctx = { path: @path, type: type, parent: @path[@path.length-2] }
+
+    # check for a filter first
+    filters = @filters?[type]
+    if filters?
+      node = filter(node) for filter in filters
+
+    # check for the main visitor
+    fn = this[type]
+    if fn
+      out = fn.call(this, node, @ctx)
+      out = @decorator(node, out) if @decorator?
+    else
+      out = @onUnknownNode(node, @ctx)
+
+    @path.splice(oldLength)
+    out
+
+
 ###*
 # Builder : new Builder(ast, [options])
 # Generates output based on a JavaScript AST.
@@ -450,7 +493,7 @@ class ScopeTransformer extends TransformerBase
 # generate meaningful errors.
 ###
 
-class Builder extends Walker
+class Builder extends BuilderBase
 
   constructor: (ast, options={}) ->
     super
@@ -959,3 +1002,7 @@ injectComments = (comments, node, body) ->
     if item.range
       left = item.range[1]
   list
+
+# Export for testing
+js2coffee.Builder = Builder
+js2coffee.BuilderBase = BuilderBase
