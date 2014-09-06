@@ -1,13 +1,6 @@
 Developer notes
 ===============
 
-### Roadmap
-
- - [ ] Implement all expression/statement types.
- - [x] Implement comments.
- - [ ] Ensure that all JSON looks good.
- - [ ] Make underscore.js compile and pass.
-
 ### References
 
 - [Esprima docs]
@@ -23,23 +16,28 @@ Developer notes
  - [x] Really think indentation through
  - [x] Put groundwork on comment generation
  - [x] Throw useful Esprima errors (like coffeescriptredux)
+ - [ ] Move Comments to transformer
+ - [ ] Move For loops to transformer
+
+Critical for compatibility:
+
+ - [x] Ensure correct function orders
+ - [ ] Add `return` at the end as needed
+ - [ ] `a(/=b/i)` should not compile to `a /=b/i`
  - [ ] Take care of operator precedence
- - [ ] Transform `.prototype.`
- - [ ] Ensure correct function orders
- - [x] Warn about json being pasted
+ - [ ] Renaming variables in case of shadowing
+ - [ ] Empty while
+ - [ ] Continue in `for` loop
+
+ Niceness:
+
+ - [x] Transform `.prototype.`
  - [ ] `Math.pow(a,b)` => `a ** b`
  - [ ] `Math.floor(a / b)` => `a // b`
  - [ ] `function() { a }.bind(this)` => `=> a`
-
-Edge cases:
-
- - [x] A `case` without any code
- - [ ] Sequence of objects
+ - [x] Support a `case` without any code
+ - [ ] Sequence of objects (`a('ok', {a:b}, ->)`)
  - [ ] Array of functions
- - [ ] Add `return` at the end as needed
- - [ ] `a(/=b/i)` should not compile to `a /=b/i`
-
-## Edge cases
 
 ### Types
 
