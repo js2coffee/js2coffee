@@ -46,7 +46,8 @@ js2coffee.build = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  Transformer.run(ast, options)
+  FunctionTransformer.run(ast, options)
+  OtherTransformer.run(ast, options)
 
   {code, map} = new Builder(ast, options).get()
   {code, ast, map}
@@ -56,6 +57,34 @@ js2coffee.build = (source, options = {}) ->
 ###*
 # TransformerBase:
 # Base class.
+#
+#     class MyTransform extends TransformBase
+#       Program: (node) ->
+#         return { replacementNodeHere }
+#
+#       FunctionDeclaration: (node) ->
+#         ...
+#
+# From within the handlers, you can call some of the functions:
+#
+#     @break()
+#     @skip()
+#     @syntaxError(node, "fail~)
+#
+# You have access to these variables:
+#
+# ~ @scope: the Node that is the current scope. This is usually a block
+#   statement or a program.
+# ~ @ctx: Context variables for the scope. You can store anything here and it
+#   will be remembered for the current scope and the scopes below it.
+# ~ @depth: The depth of the current node
+# ~ @node: The current node
+# ~ @controller: The estraverse instance
+#
+# It also has a few hooks that you can override:
+#
+# ~ onScopeEnter: when scopes are entered (via `pushScope()`)
+# ~ onScopeExit: when scopes are exited (via `popScope()`)
 ###
 
 class TransformerBase
@@ -66,45 +95,64 @@ class TransformerBase
     @scopes = []
     @ctx = { vars: [] }
 
+  ###*
+  # run():
+  # Runs estraverse on `@ast`, and invokes functions on enter and exit
+  # depending on the node type. This is also in change of changing `@depth`,
+  # `@node`, `@controller` (etc) every step of the way.
+  ###
+
   run: ->
     @recurse @ast
 
+  ###*
+  # recurse():
+  # Delegate function of `run()`. See [run()] for details.
+  #
+  # This is sometimes called on its own to recurse down a certain path which
+  # will otherwise be skipped.
+  ###
+
   recurse: (root) ->
     self = this
-    depth = 0
+    @depth = 0
+
+    runner = (direction, node, parent) =>
+      @node   = node
+      @depth += if direction is 'Enter' then +1 else -1
+      fnName  = if direction is 'Enter' then "#{node.type}" else "#{node.type}Exit"
+
+      @["onBefore#{direction}"]?(node)
+      result = @[fnName]?(node, parent)
+      @["on#{direction}"]?(node)
+      result
+
     @estraverse().replace root,
       enter: (node, parent) ->
         self.controller = this
-        depth += 1
-        fn = self["#{node.type}"]
-        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
-        self.onEnter?(node, depth, fn, res)
-        res
+        runner("Enter", node, parent)
       leave: (node, parent) ->
-        self.controller = this
-        fn = self["#{node.type}Exit"]
-        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
-        self.onExit?(node, depth, fn, res)
-        depth -= 1
-        res
+        runner("Exit", node, parent)
+
     root
+
+  ###*
+  # skip():
+  # Skips a certain node from being parsed.
+  #
+  #     class MyTransform extends TransformerBase
+  #       Identifier: ->
+  #         @skip()
+  ###
 
   skip: ->
     @controller?.skip()
 
-  break: ->
-    @controller?.break()
-
-  # Call these onEnter() and onExit() for debugging
-  debugEnter: (node, depth, fn) ->
-    console.log Array(depth+1).join("  "), node.type, (if fn then "*" else "")
-
-  debugExit: (node, depth, fn) ->
-    console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else "")
-
   ###*
   # estraverse():
   # Returns `estraverse`.
+  #
+  #     @estraverse().replace ast, ...
   ###
 
   estraverse: ->
@@ -118,17 +166,21 @@ class TransformerBase
   ###*
   # pushStack() : @pushStack(node)
   # Pushes a scope to the scope stack.
+  #
+  # Every time the scope changes, `@scope` and `@ctx` gets changed.
   ###
 
   pushStack: (node) ->
-    @parent = @block
+    [ oldScope, oldCtx ] = [ @scope, @ctx ]
     @scopes.push [ node, @ctx ]
     @ctx = clone(@ctx)
-    @block = node
+    @scope = node
+    @onScopeEnter?(@scope, @ctx, oldScope, oldCtx)
 
   popStack: (node) ->
-    [ @block, @ctx ] = @scopes.pop()
-    @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
+    [ oldScope, oldCtx ] = [ @scope, @ctx ]
+    [ @scope, @ctx ] = @scopes.pop()
+    @onScopeExit?(@scope, @ctx, oldScope, oldCtx)
     node
 
   ###*
@@ -146,6 +198,25 @@ class TransformerBase
     , @options.source, @options.filename)
     throw err
 
+  ###
+  # Defaults: these are things that will change `scope`
+  ###
+
+  Program: (node) ->
+    @pushStack node
+    node
+
+  ProgramExit: (node) ->
+    @popStack()
+    node
+
+  FunctionExpression: (node) ->
+    @pushStack node.body
+    node
+
+  FunctionExpressionExit: (node) ->
+    @popStack()
+
 # ----------------------------------------------------------------------------
 
 ###*
@@ -153,50 +224,49 @@ class TransformerBase
 # Mangles the AST.
 ###
 
-class Transformer extends TransformerBase
-  Program: (node) ->
-    @pushStack node
-    new FunctionTransformer(node, @options).run(node)
-  ProgramExit: (node) ->
-    @popStack()
+class OtherTransformer extends TransformerBase
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody node
-  FunctionDeclaration: (node, parent) ->
-    throw new Error("FnDecl: Not supposed to happen") # it's supposed to be eaten by fixScope
-  FunctionDeclarationExit: (node) ->
-    @popStack()
+
   FunctionExpression: (node, parent) ->
-    throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
-    @pushStack node.body
+    super(node)
     @removeUndefinedParameter node
-    new FunctionTransformer(node, @options).run(node.body)
-  FunctionExpressionExit: (node) ->
-    @popStack()
+
   SwitchStatement: (node) ->
     @consolidateCases node
+
   SwitchCase: (node) ->
-    @removeBreaksFromConsequents node
+    @removeBreaksFromConsequents(node)
+
   CallExpression: (node) ->
-    @parenthesizeCallee node
+    @parenthesizeCallee(node)
+
   MemberExpression: (node) ->
     @transformThisToAtSign(node)
     @replaceWithPrototype(node) or
-    @parenthesizeObjectIfFunction node
+    @parenthesizeObjectIfFunction(node)
+
   CoffeePrototypeExpression: (node) ->
     @transformThisToAtSign(node)
+
   Identifier: (node) ->
-    @escapeUndefined node
+    @escapeUndefined(node)
+
   BinaryExpression: (node) ->
     @updateBinaryExpression node
+
   UnaryExpression: (node) ->
     @updateVoidToUndefined node
+
   LabeledStatement: (node, parent) ->
     @warnAboutLabeledStatements node, parent
+
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
+
   VariableDeclarator: (node) ->
     @addShadowingIfNeeded(node)
-    @addExplicitUndefinedInitializer node
+    @addExplicitUndefinedInitializer(node)
 
   ###
   # Remove `{type: 'EmptyStatement'}` from the body.
@@ -222,7 +292,7 @@ class Transformer extends TransformerBase
         expression:
           type: 'CoffeeEscapedExpression'
           value: "var #{name}"
-      @block.body = [ statement ].concat(@block.body)
+      @scope.body = [ statement ].concat(@scope.body)
     else
       @ctx.vars.push name
 
@@ -401,24 +471,31 @@ clone = (obj) ->
 ###
 
 class FunctionTransformer extends TransformerBase
-  run: (@body) ->
-    @prebody = []
-    @recurse @ast
+  onScopeEnter: (scope, ctx) ->
+    ctx.prebody = []
 
-    if @prebody.length
-      @body.body = @prebody.concat(@body.body)
-
-    @ast
+  onScopeExit: (scope, ctx, subscope, subctx) ->
+    if subctx.prebody.length
+      scope.body = subctx.prebody.concat(scope.body)
 
   FunctionDeclaration: (node) ->
-    @skip()
-    @prebody.push @buildFunctionDeclaration(node)
+    @ctx.prebody.push @buildFunctionDeclaration(node)
+    @pushStack(node.body)
+    return
+
+  FunctionDeclarationExit: (node) ->
+    @popStack(node)
     { type: 'EmptyStatement' }
 
   FunctionExpression: (node) ->
     return unless node.id?
-    @skip()
-    @prebody.push @buildFunctionDeclaration(node)
+    @ctx.prebody.push @buildFunctionDeclaration(node)
+    @pushStack(node.body)
+    return
+
+  FunctionExpressionExit: (node) ->
+    return unless node.id?
+    @popStack()
     { type: 'Identifier', name: node.id.name }
 
   ###
@@ -1003,6 +1080,48 @@ injectComments = (comments, node, body) ->
       left = item.range[1]
   list
 
+# ----------------------------------------------------------------------------
+
+###
+# Debugging provisions.
+# Run `before -> js2coffee.debug()` in tests to print out some debug information.
+###
+
+js2coffee.debug = ->
+  TransformerBase::onBeforeEnter = (node) ->
+    msg = "#{node.type}"
+    fn = @[msg]?
+    broken = isBroken(@ast) or ""
+    print @depth, (if fn then "#{msg} *" else "#{msg}"), broken
+
+  TransformerBase::onBeforeExit = (node) ->
+    msg = "#{node.type}Exit"
+    fn = @[msg]?
+    print @depth+1, (if fn then "#{msg} *" else "#{msg}"), broken
+
+  # Prints the current node.
+  print = (depth, nodeType, message="") ->
+    color = if (/\*$/.test(nodeType)) then 35 else 30
+    prefix = "\u001b[#{color}m#{nodeType}\u001b[0m"
+    indent = "\u001b[#{30 + (depth % 5)}m· \u001b[0m"
+
+    console.log \
+      Array(depth+1).join(indent) + prefix,
+      message
+
+  # Checks if a certain AST is broken.
+  isBroken = (ast) ->
+    output = require('util').inspect(ast, depth: 1000)
+    if ~output.indexOf("[Circular]")
+      "[Circular]"
+
+# ----------------------------------------------------------------------------
+
+###
 # Export for testing
+###
+
 js2coffee.Builder = Builder
 js2coffee.BuilderBase = BuilderBase
+
+# js2coffee.debug()
