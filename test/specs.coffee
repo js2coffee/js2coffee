@@ -10,7 +10,7 @@ eachGroup (group) ->
     group.specs.forEach (spec) ->
       run = if spec.meta?.pending then xit else if spec.meta?.only then it.only else it
       run spec.name, do (spec) -> ->
-        result = js2coffee(spec.input)
+        result = js2coffee.build(spec.input).code
         try
           expect(result).eql(spec.output)
         catch e
