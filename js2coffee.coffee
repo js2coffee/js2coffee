@@ -46,7 +46,8 @@ js2coffee.build = (source, options = {}) ->
   catch err
     throw buildError(err, source, options.filename)
 
-  Transformer.run(ast, options)
+  FunctionTransformer.run(ast, options)
+  OtherTransformer.run(ast, options)
 
   {code, map} = new Builder(ast, options).get()
   {code, ast, map}
@@ -56,6 +57,24 @@ js2coffee.build = (source, options = {}) ->
 ###*
 # TransformerBase:
 # Base class.
+#
+#     class MyTransform extends TransformBase
+#       Program: (node) ->
+#         return { replacementNodeHere }
+#
+#       FunctionDeclaration: (node) ->
+#         ...
+#
+# From within the handlers, you can call some of the functions
+#
+#     @break()
+#     @skip()
+#     @syntaxError(node, "fail~)
+#
+# It also has a few hooks that you can override:
+#
+# ~ onScopeEnter: when scopes are entered (via `pushScope()`)
+# ~ onScopeExit: when scopes are exited (via `popScope()`)
 ###
 
 class TransformerBase
@@ -95,13 +114,6 @@ class TransformerBase
   break: ->
     @controller?.break()
 
-  # Call these onEnter() and onExit() for debugging
-  debugEnter: (node, depth, fn) ->
-    console.log Array(depth+1).join("  "), node.type, (if fn then "*" else "")
-
-  debugExit: (node, depth, fn) ->
-    console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else "")
-
   ###*
   # estraverse():
   # Returns `estraverse`.
@@ -125,8 +137,10 @@ class TransformerBase
     @scopes.push [ node, @ctx ]
     @ctx = clone(@ctx)
     @scope = node
+    @onScopeEnter?(node, @ctx)
 
   popStack: (node) ->
+    @onScopeExit?(node, @ctx)
     [ @scope, @ctx ] = @scopes.pop()
     @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
     node
@@ -146,6 +160,7 @@ class TransformerBase
     , @options.source, @options.filename)
     throw err
 
+
 # ----------------------------------------------------------------------------
 
 ###*
@@ -153,10 +168,9 @@ class TransformerBase
 # Mangles the AST.
 ###
 
-class Transformer extends TransformerBase
+class OtherTransformer extends TransformerBase
   Program: (node) ->
     @pushStack node
-    new FunctionTransformer(node, @options).run(node)
   ProgramExit: (node) ->
     @popStack()
   BlockStatementExit: (node) ->
@@ -169,7 +183,6 @@ class Transformer extends TransformerBase
     throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
     @pushStack node.body
     @removeUndefinedParameter node
-    new FunctionTransformer(node, @options).run(node.body)
   FunctionExpressionExit: (node) ->
     @popStack()
   SwitchStatement: (node) ->
@@ -401,25 +414,37 @@ clone = (obj) ->
 ###
 
 class FunctionTransformer extends TransformerBase
-  run: (@body) ->
+  onScopeEnter: (node) ->
     @prebody = []
-    @recurse @ast
 
+  onScopeExit: (node) ->
     if @prebody.length
-      @body.body = @prebody.concat(@body.body)
+      @scope.body = @prebody.concat(@scope.body)
 
-    @ast
+  Program: (node) ->
+    @pushStack node
+
+  ProgramExit: (node) ->
+    @popStack()
 
   FunctionDeclaration: (node) ->
+    @pushStack node.body
     @skip()
     @prebody.push @buildFunctionDeclaration(node)
     { type: 'EmptyStatement' }
 
   FunctionExpression: (node) ->
+    @pushStack node.body
     return unless node.id?
     @skip()
     @prebody.push @buildFunctionDeclaration(node)
     { type: 'Identifier', name: node.id.name }
+
+  FunctionDeclarationExit: (node) ->
+    @popStack()
+
+  FunctionExpressionExit: (node) ->
+    @popStack()
 
   ###
   # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
@@ -1003,6 +1028,33 @@ injectComments = (comments, node, body) ->
       left = item.range[1]
   list
 
+# ----------------------------------------------------------------------------
+
+###
 # Export for testing
+###
+
 js2coffee.Builder = Builder
 js2coffee.BuilderBase = BuilderBase
+
+# ----------------------------------------------------------------------------
+
+###
+# Debugging provisions
+###
+
+js2coffee.debug = ->
+  isDead = (ast) ->
+    output = require('util').inspect(ast, depth: 1000)
+    if ~output.indexOf("[Circular]")
+      "[CIRCULAR]"
+    else
+      ""
+
+  TransformerBase::onEnter = (node, depth, fn) ->
+    console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), isDead(@ast)
+
+  TransformerBase::onExit = (node, depth, fn) ->
+    console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else ""), isDead(@ast)
+
+js2coffee.debug()
