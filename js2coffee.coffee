@@ -97,18 +97,18 @@ class TransformerBase
         self.node = node
         depth += 1
         fn = self["#{node.type}"]
-        self.onBeforeEnter?(node, depth, fn, res)
-        res = (fn.apply(self, [ node, parent ]) if fn)
-        self.onEnter?(node, depth, fn, res)
+        self.onBeforeEnter?(node, depth)
+        res = self["#{node.type}"]?(node, parent)
+        self.onEnter?(node, depth)
         res
       leave: (node, parent) ->
         self.controller = this
         self.node = node
         depth -= 1
         fn = self["#{node.type}Exit"]
-        self.onBeforeExit?(node, depth, fn, res)
+        self.onBeforeExit?(node, depth)
         res = (fn.apply(self, [ node, parent ]) if fn)
-        self.onExit?(node, depth, fn, res)
+        self.onExit?(node, depth)
         res
     root
 
@@ -1054,33 +1054,37 @@ injectComments = (comments, node, body) ->
 # ----------------------------------------------------------------------------
 
 ###
-# Debugging provisions
+# Debugging provisions.
+# Run `before -> js2coffee.debug()` in tests to print out some debug information.
 ###
 
 js2coffee.debug = ->
-  isDead = (ast) ->
-    output = require('util').inspect(ast, depth: 1000)
-    if ~output.indexOf("[Circular]")
-      "[CIRCULAR]"
-    else
-      ""
-
-  print = (depth, type, etc) ->
-    color = if (/\*$/.test(type)) then 35 else 30
-    type = "\u001b[#{color}m#{type}\u001b[0m"
-    indent = "\u001b[#{30 + (depth % 5)}m·  \u001b[0m"
-
-    console.log \
-      Array(depth+1).join(indent) + type,
-      etc
-
-  TransformerBase::onBeforeEnter = (node, depth, fn) ->
+  TransformerBase::onBeforeEnter = (node, depth) ->
     msg = "#{node.type}"
-    print depth, (if fn then "#{msg} *" else "#{msg}"), isDead(@ast)
+    fn = @[msg]?
+    broken = isBroken(@ast) or ""
+    print depth, (if fn then "#{msg} *" else "#{msg}"), broken
 
   TransformerBase::onBeforeExit = (node, depth, fn) ->
     msg = "#{node.type}Exit"
-    print depth, (if fn then "#{msg} *" else "#{msg}"), isDead(@ast)
+    fn = @[msg]?
+    print depth+1, (if fn then "#{msg} *" else "#{msg}"), broken
+
+  # Prints the current node.
+  print = (depth, nodeType, message="") ->
+    color = if (/\*$/.test(nodeType)) then 35 else 30
+    prefix = "\u001b[#{color}m#{nodeType}\u001b[0m"
+    indent = "\u001b[#{30 + (depth % 5)}m· \u001b[0m"
+
+    console.log \
+      Array(depth+1).join(indent) + prefix,
+      message
+
+  # Checks if a certain AST is broken.
+  isBroken = (ast) ->
+    output = require('util').inspect(ast, depth: 1000)
+    if ~output.indexOf("[Circular]")
+      "[Circular]"
 
 # ----------------------------------------------------------------------------
 
@@ -1090,3 +1094,5 @@ js2coffee.debug = ->
 
 js2coffee.Builder = Builder
 js2coffee.BuilderBase = BuilderBase
+
+# js2coffee.debug()
