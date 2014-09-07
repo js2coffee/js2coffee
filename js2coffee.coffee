@@ -756,12 +756,6 @@ class Builder extends BuilderBase
         line + "\n"
     [ "###", lines, "###\n" ]
 
-  FunctionDeclaration: (node) ->
-    params = @makeParams(node.params)
-
-    @indent (indent) =>
-      [ @walk(node.id), ' = ', params, "->\n", @walk(node.body) ]
-
   ReturnStatement: (node) ->
     if node.argument
       if node.argument.type is 'ObjectExpression'
