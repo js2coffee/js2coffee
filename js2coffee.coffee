@@ -434,12 +434,12 @@ clone = (obj) ->
 ###
 
 class FunctionTransformer extends TransformerBase
-  onScopeEnter: (scope, ctx, oldScope, oldCtx) ->
+  onScopeEnter: (scope, ctx) ->
     ctx.prebody = []
 
-  onScopeExit: (scope, ctx, oldScope, oldCtx) ->
-    if oldCtx.prebody.length
-      scope.body = oldCtx.prebody.concat(scope.body)
+  onScopeExit: (scope, ctx, subscope, subctx) ->
+    if subctx.prebody.length
+      scope.body = subctx.prebody.concat(scope.body)
 
   Program: (node) ->
     @pushStack node
@@ -451,7 +451,7 @@ class FunctionTransformer extends TransformerBase
 
   FunctionDeclaration: (node) ->
     @ctx.prebody.push @buildFunctionDeclaration(node)
-    @pushStack(node)
+    @pushStack(node.body)
     return
 
   FunctionDeclarationExit: (node) ->
@@ -461,12 +461,12 @@ class FunctionTransformer extends TransformerBase
   FunctionExpression: (node) ->
     return unless node.id?
     @ctx.prebody.push @buildFunctionDeclaration(node)
-    @pushStack(node)
+    @pushStack(node.body)
     return
 
   FunctionExpressionExit: (node) ->
     return unless node.id?
-    @popStack(node)
+    @popStack()
     { type: 'Identifier', name: node.id.name }
 
   ###
@@ -1054,15 +1054,6 @@ injectComments = (comments, node, body) ->
 # ----------------------------------------------------------------------------
 
 ###
-# Export for testing
-###
-
-js2coffee.Builder = Builder
-js2coffee.BuilderBase = BuilderBase
-
-# ----------------------------------------------------------------------------
-
-###
 # Debugging provisions
 ###
 
@@ -1074,10 +1065,28 @@ js2coffee.debug = ->
     else
       ""
 
+  print = (depth, type, etc) ->
+    color = if (/\*$/.test(type)) then 35 else 30
+    type = "\u001b[#{color}m#{type}\u001b[0m"
+    indent = "\u001b[#{30 + (depth % 5)}m·  \u001b[0m"
+
+    console.log \
+      Array(depth+1).join(indent) + type,
+      etc
+
   TransformerBase::onBeforeEnter = (node, depth, fn) ->
-    console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), isDead(@ast)
+    msg = "#{node.type}"
+    print depth, (if fn then "#{msg} *" else "#{msg}"), isDead(@ast)
 
   TransformerBase::onBeforeExit = (node, depth, fn) ->
-    console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else ""), isDead(@ast)
+    msg = "#{node.type}Exit"
+    print depth, (if fn then "#{msg} *" else "#{msg}"), isDead(@ast)
 
-# js2coffee.debug()
+# ----------------------------------------------------------------------------
+
+###
+# Export for testing
+###
+
+js2coffee.Builder = Builder
+js2coffee.BuilderBase = BuilderBase
