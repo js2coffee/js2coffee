@@ -48,7 +48,7 @@ js2coffee.build = (source, options = {}) ->
     throw buildError(err, source, options.filename)
 
   # Convert JavaScript AST to CoffeeScript AST
-  js2coffee.transform(ast, potions)
+  js2coffee.transform(ast, options)
 
   # build CoffeeScript code with source maps
   {code, map} = js2coffee.codegen(ast, options)
