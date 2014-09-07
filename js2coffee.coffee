@@ -65,11 +65,21 @@ js2coffee.build = (source, options = {}) ->
 #       FunctionDeclaration: (node) ->
 #         ...
 #
-# From within the handlers, you can call some of the functions
+# From within the handlers, you can call some of the functions:
 #
 #     @break()
 #     @skip()
 #     @syntaxError(node, "fail~)
+#
+# You have access to these variables:
+#
+# ~ @scope: the Node that is the current scope. This is usually a block
+#   statement or a program.
+# ~ @ctx: Context variables for the scope. You can store anything here and it
+#   will be remembered for the current scope and the scopes below it.
+# ~ @depth: The depth of the current node
+# ~ @node: The current node
+# ~ @controller: The estraverse instance
 #
 # It also has a few hooks that you can override:
 #
@@ -88,13 +98,8 @@ class TransformerBase
   ###*
   # run():
   # Runs estraverse on `@ast`, and invokes functions on enter and exit
-  # depending on the node type.
-  #
-  # For every run, it also sets:
-  #
-  # ~ @depth: The depth of the current node
-  # ~ @node: The current node
-  # ~ @controller: The estraverse instance
+  # depending on the node type. This is also in change of changing `@depth`,
+  # `@node`, `@controller` (etc) every step of the way.
   ###
 
   run: ->
@@ -161,6 +166,8 @@ class TransformerBase
   ###*
   # pushStack() : @pushStack(node)
   # Pushes a scope to the scope stack.
+  #
+  # Every time the scope changes, `@scope` and `@ctx` gets changed.
   ###
 
   pushStack: (node) ->
@@ -191,6 +198,24 @@ class TransformerBase
     , @options.source, @options.filename)
     throw err
 
+  ###
+  # Defaults: these are things that will change `scope`
+  ###
+
+  Program: (node) ->
+    @pushStack node
+    node
+
+  ProgramExit: (node) ->
+    @popStack()
+    node
+
+  FunctionExpression: (node) ->
+    @pushStack node.body
+    node
+
+  FunctionExpressionExit: (node) ->
+    @popStack()
 
 # ----------------------------------------------------------------------------
 
@@ -200,25 +225,12 @@ class TransformerBase
 ###
 
 class OtherTransformer extends TransformerBase
-  Program: (node) ->
-    @pushStack node
-
-  ProgramExit: (node) ->
-    @popStack node
-
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody node
 
-  FunctionDeclaration: (node, parent) ->
-    throw new Error("FnDecl: Not supposed to happen") # it's supposed to be eaten by fixScope
-
   FunctionExpression: (node, parent) ->
-    throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
-    @pushStack node.body
+    super(node)
     @removeUndefinedParameter node
-
-  FunctionExpressionExit: (node) ->
-    @popStack()
 
   SwitchStatement: (node) ->
     @consolidateCases node
@@ -465,14 +477,6 @@ class FunctionTransformer extends TransformerBase
   onScopeExit: (scope, ctx, subscope, subctx) ->
     if subctx.prebody.length
       scope.body = subctx.prebody.concat(scope.body)
-
-  Program: (node) ->
-    @pushStack node
-    node
-
-  ProgramExit: (node) ->
-    @popStack()
-    node
 
   FunctionDeclaration: (node) ->
     @ctx.prebody.push @buildFunctionDeclaration(node)
