@@ -85,42 +85,69 @@ class TransformerBase
     @scopes = []
     @ctx = { vars: [] }
 
+  ###*
+  # run():
+  # Runs estraverse on `@ast`, and invokes functions on enter and exit
+  # depending on the node type.
+  #
+  # For every run, it also sets:
+  #
+  # ~ @depth: The depth of the current node
+  # ~ @node: The current node
+  # ~ @controller: The estraverse instance
+  ###
+
   run: ->
     @recurse @ast
 
+  ###*
+  # recurse():
+  # Delegate function of `run()`. See [run()] for details.
+  #
+  # This is sometimes called on its own to recurse down a certain path which
+  # will otherwise be skipped.
+  ###
+
   recurse: (root) ->
     self = this
-    depth = 0
+    @depth = 0
+
+    runner = (direction, node, parent) =>
+      @node   = node
+      @depth += if direction is 'Enter' then +1 else -1
+      fnName  = if direction is 'Enter' then "#{node.type}" else "#{node.type}Exit"
+
+      @["onBefore#{direction}"]?(node)
+      result = @[fnName]?(node, parent)
+      @["on#{direction}"]?(node)
+      result
+
     @estraverse().replace root,
       enter: (node, parent) ->
         self.controller = this
-        self.node = node
-        depth += 1
-        fn = self["#{node.type}"]
-        self.onBeforeEnter?(node, depth)
-        res = self["#{node.type}"]?(node, parent)
-        self.onEnter?(node, depth)
-        res
+        runner("Enter", node, parent)
       leave: (node, parent) ->
-        self.controller = this
-        self.node = node
-        depth -= 1
-        fn = self["#{node.type}Exit"]
-        self.onBeforeExit?(node, depth)
-        res = (fn.apply(self, [ node, parent ]) if fn)
-        self.onExit?(node, depth)
-        res
+        runner("Exit", node, parent)
+
     root
+
+  ###*
+  # skip():
+  # Skips a certain node from being parsed.
+  #
+  #     class MyTransform extends TransformerBase
+  #       Identifier: ->
+  #         @skip()
+  ###
 
   skip: ->
     @controller?.skip()
 
-  break: ->
-    @controller?.break()
-
   ###*
   # estraverse():
   # Returns `estraverse`.
+  #
+  #     @estraverse().replace ast, ...
   ###
 
   estraverse: ->
@@ -138,7 +165,6 @@ class TransformerBase
 
   pushStack: (node) ->
     [ oldScope, oldCtx ] = [ @scope, @ctx ]
-    # TODO remove @parent = @scope
     @scopes.push [ node, @ctx ]
     @ctx = clone(@ctx)
     @scope = node
@@ -147,7 +173,6 @@ class TransformerBase
   popStack: (node) ->
     [ oldScope, oldCtx ] = [ @scope, @ctx ]
     [ @scope, @ctx ] = @scopes.pop()
-    # TODO remove @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
     @onScopeExit?(@scope, @ctx, oldScope, oldCtx)
     node
 
@@ -1059,16 +1084,16 @@ injectComments = (comments, node, body) ->
 ###
 
 js2coffee.debug = ->
-  TransformerBase::onBeforeEnter = (node, depth) ->
+  TransformerBase::onBeforeEnter = (node) ->
     msg = "#{node.type}"
     fn = @[msg]?
     broken = isBroken(@ast) or ""
-    print depth, (if fn then "#{msg} *" else "#{msg}"), broken
+    print @depth, (if fn then "#{msg} *" else "#{msg}"), broken
 
-  TransformerBase::onBeforeExit = (node, depth, fn) ->
+  TransformerBase::onBeforeExit = (node) ->
     msg = "#{node.type}Exit"
     fn = @[msg]?
-    print depth+1, (if fn then "#{msg} *" else "#{msg}"), broken
+    print @depth+1, (if fn then "#{msg} *" else "#{msg}"), broken
 
   # Prints the current node.
   print = (depth, nodeType, message="") ->
