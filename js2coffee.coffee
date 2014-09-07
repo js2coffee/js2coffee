@@ -41,16 +41,25 @@ js2coffee.build = (source, options = {}) ->
   options.filename ?= 'input.js'
   options.source = source
 
+  # get JavaScript AST
   try
     ast = Esprima.parse(source, loc: true, range: true, comment: true)
   catch err
     throw buildError(err, source, options.filename)
 
+  # Convert JavaScript AST to CoffeeScript AST
+  js2coffee.transform(ast, potions)
+
+  # build CoffeeScript code with source maps
+  {code, map} = js2coffee.codegen(ast, options)
+  {code, ast, map}
+
+js2coffee.transform = (ast, options = {}) ->
   FunctionTransformer.run(ast, options)
   OtherTransformer.run(ast, options)
 
-  {code, map} = new Builder(ast, options).get()
-  {code, ast, map}
+js2coffee.codegen = (ast, options = {}) ->
+  new Builder(ast, options).get()
 
 # ----------------------------------------------------------------------------
 
