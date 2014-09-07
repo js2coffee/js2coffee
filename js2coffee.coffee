@@ -186,11 +186,10 @@ class TransformerBase
     @scope = node
     @onScopeEnter?(@scope, @ctx, oldScope, oldCtx)
 
-  popStack: (node) ->
+  popStack: () ->
     [ oldScope, oldCtx ] = [ @scope, @ctx ]
     [ @scope, @ctx ] = @scopes.pop()
     @onScopeExit?(@scope, @ctx, oldScope, oldCtx)
-    node
 
   ###*
   # syntaxError():
@@ -225,6 +224,7 @@ class TransformerBase
 
   FunctionExpressionExit: (node) ->
     @popStack()
+    node
 
 # ----------------------------------------------------------------------------
 
