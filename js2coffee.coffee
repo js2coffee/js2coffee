@@ -94,17 +94,21 @@ class TransformerBase
     @estraverse().replace root,
       enter: (node, parent) ->
         self.controller = this
+        self.node = node
         depth += 1
         fn = self["#{node.type}"]
-        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
+        self.onBeforeEnter?(node, depth, fn, res)
+        res = (fn.apply(self, [ node, parent ]) if fn)
         self.onEnter?(node, depth, fn, res)
         res
       leave: (node, parent) ->
         self.controller = this
-        fn = self["#{node.type}Exit"]
-        res = (fn.apply(self, [ node, parent, (=> @skip()), (=> @break()) ]) if fn)
-        self.onExit?(node, depth, fn, res)
+        self.node = node
         depth -= 1
+        fn = self["#{node.type}Exit"]
+        self.onBeforeExit?(node, depth, fn, res)
+        res = (fn.apply(self, [ node, parent ]) if fn)
+        self.onExit?(node, depth, fn, res)
         res
     root
 
@@ -133,16 +137,18 @@ class TransformerBase
   ###
 
   pushStack: (node) ->
-    @parent = @scope
+    [ oldScope, oldCtx ] = [ @scope, @ctx ]
+    # TODO remove @parent = @scope
     @scopes.push [ node, @ctx ]
     @ctx = clone(@ctx)
     @scope = node
-    @onScopeEnter?(node, @ctx)
+    @onScopeEnter?(@scope, @ctx, oldScope, oldCtx)
 
   popStack: (node) ->
-    @onScopeExit?(node, @ctx)
+    [ oldScope, oldCtx ] = [ @scope, @ctx ]
     [ @scope, @ctx ] = @scopes.pop()
-    @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
+    # TODO remove @parent = if @scopes.length > 1 then @scopes[@scopes.length-2]
+    @onScopeExit?(@scope, @ctx, oldScope, oldCtx)
     node
 
   ###*
@@ -171,45 +177,59 @@ class TransformerBase
 class OtherTransformer extends TransformerBase
   Program: (node) ->
     @pushStack node
+
   ProgramExit: (node) ->
-    @popStack()
+    @popStack node
+
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody node
+
   FunctionDeclaration: (node, parent) ->
     throw new Error("FnDecl: Not supposed to happen") # it's supposed to be eaten by fixScope
-  FunctionDeclarationExit: (node) ->
-    @popStack()
+
   FunctionExpression: (node, parent) ->
     throw new Error("NamedFnExpr: Not supposed to happen") if node.id # fixScope should've gotten this case
     @pushStack node.body
     @removeUndefinedParameter node
+
   FunctionExpressionExit: (node) ->
     @popStack()
+
   SwitchStatement: (node) ->
     @consolidateCases node
+
   SwitchCase: (node) ->
-    @removeBreaksFromConsequents node
+    @removeBreaksFromConsequents(node)
+
   CallExpression: (node) ->
-    @parenthesizeCallee node
+    @parenthesizeCallee(node)
+
   MemberExpression: (node) ->
     @transformThisToAtSign(node)
     @replaceWithPrototype(node) or
-    @parenthesizeObjectIfFunction node
+    @parenthesizeObjectIfFunction(node)
+
   CoffeePrototypeExpression: (node) ->
     @transformThisToAtSign(node)
+
   Identifier: (node) ->
-    @escapeUndefined node
+    @escapeUndefined(node)
+
   BinaryExpression: (node) ->
     @updateBinaryExpression node
+
   UnaryExpression: (node) ->
     @updateVoidToUndefined node
+
   LabeledStatement: (node, parent) ->
     @warnAboutLabeledStatements node, parent
+
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
+
   VariableDeclarator: (node) ->
     @addShadowingIfNeeded(node)
-    @addExplicitUndefinedInitializer node
+    @addExplicitUndefinedInitializer(node)
 
   ###
   # Remove `{type: 'EmptyStatement'}` from the body.
@@ -414,37 +434,40 @@ clone = (obj) ->
 ###
 
 class FunctionTransformer extends TransformerBase
-  onScopeEnter: (node) ->
-    @prebody = []
+  onScopeEnter: (scope, ctx, oldScope, oldCtx) ->
+    ctx.prebody = []
 
-  onScopeExit: (node) ->
-    if @prebody.length
-      @scope.body = @prebody.concat(@scope.body)
+  onScopeExit: (scope, ctx, oldScope, oldCtx) ->
+    if oldCtx.prebody.length
+      scope.body = oldCtx.prebody.concat(scope.body)
 
   Program: (node) ->
     @pushStack node
+    node
 
   ProgramExit: (node) ->
     @popStack()
+    node
 
   FunctionDeclaration: (node) ->
-    @pushStack node.body
-    @skip()
-    @prebody.push @buildFunctionDeclaration(node)
+    @ctx.prebody.push @buildFunctionDeclaration(node)
+    @pushStack(node)
+    return
+
+  FunctionDeclarationExit: (node) ->
+    @popStack(node)
     { type: 'EmptyStatement' }
 
   FunctionExpression: (node) ->
-    @pushStack node.body
     return unless node.id?
-    @skip()
-    @prebody.push @buildFunctionDeclaration(node)
-    { type: 'Identifier', name: node.id.name }
-
-  FunctionDeclarationExit: (node) ->
-    @popStack()
+    @ctx.prebody.push @buildFunctionDeclaration(node)
+    @pushStack(node)
+    return
 
   FunctionExpressionExit: (node) ->
-    @popStack()
+    return unless node.id?
+    @popStack(node)
+    { type: 'Identifier', name: node.id.name }
 
   ###
   # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
@@ -1051,10 +1074,10 @@ js2coffee.debug = ->
     else
       ""
 
-  TransformerBase::onEnter = (node, depth, fn) ->
+  TransformerBase::onBeforeEnter = (node, depth, fn) ->
     console.log Array(depth+1).join("  "), node.type, (if fn then "*" else ""), isDead(@ast)
 
-  TransformerBase::onExit = (node, depth, fn) ->
+  TransformerBase::onBeforeExit = (node, depth, fn) ->
     console.log Array(depth+1).join("  "), ""+node.type+"Exit", (if fn then "*" else ""), isDead(@ast)
 
-js2coffee.debug()
+# js2coffee.debug()
