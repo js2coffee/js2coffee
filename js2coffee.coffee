@@ -68,11 +68,19 @@ js2coffee.parseJS = (source, options = {}) ->
 #
 #     ast = js2coffee.parseJS('var a = 2;')
 #     ast = js2coffee.transform(ast)
+#
+# This performs a few traversals across the tree using traversal classes
+# (TransformerBase subclasses).
 ###
 
 js2coffee.transform = (ast, options = {}) ->
+  # Moves named functions to the top of the scope
   FunctionTransforms.run(ast, options)
+
+  # Injects comments into the AST as BlockComment and LineComment
   CommentTransforms.run(ast, options) unless options.comments is false
+
+  # Everything else
   OtherTransforms.run(ast, options)
   ast
 
@@ -93,7 +101,9 @@ js2coffee.generate = (ast, options = {}) ->
 
 ###*
 # TransformerBase:
-# Base class.
+# Base class of all transformation steps, such as [FunctionTransforms] and
+# [OtherTransforms]. This is a thin wrapper around *estraverse* to make things
+# easier, as well as to add extra features like scope tracking and more.
 #
 #     class MyTransform extends TransformBase
 #       Program: (node) ->
@@ -102,26 +112,35 @@ js2coffee.generate = (ast, options = {}) ->
 #       FunctionDeclaration: (node) ->
 #         ...
 #
-# From within the handlers, you can call some of the functions:
+# From within the handlers, you can call some utility functions:
 #
-#     @break()
 #     @skip()
-#     @syntaxError(node, "fail~)
+#     @break()
+#     @syntaxError(node, "'with' is not supported")
 #
 # You have access to these variables:
 #
-# ~ @scope: the Node that is the current scope. This is usually a block
-#   statement or a program.
+# ~ @depth: The depth of the current node
+# ~ @node: The current node.
+# ~ @controller: The estraverse instance
+#
+# It also keeps track of scope. For every function body (eg:
+# FunctionExpression.body) it traverses to, you get a `@ctx` variable that is
+# only available from *within that scope* and the scopes below it.
+#
+# ~ @scope: the Node that is the current scope. This is usually a BlockStatement
+#   or a Program.
 # ~ @ctx: Context variables for the scope. You can store anything here and it
 #   will be remembered for the current scope and the scopes below it.
-# ~ @depth: The depth of the current node
-# ~ @node: The current node
-# ~ @controller: The estraverse instance
 #
 # It also has a few hooks that you can override:
 #
 # ~ onScopeEnter: when scopes are entered (via `pushScope()`)
 # ~ onScopeExit: when scopes are exited (via `popScope()`)
+# ~ onEnter: enter of a node
+# ~ onExit: exit of a node
+# ~ onBeforeEnter: before the enter of a node
+# ~ onBeforeExit: before the exit of a node
 ###
 
 class TransformerBase
@@ -137,6 +156,9 @@ class TransformerBase
   # Runs estraverse on `@ast`, and invokes functions on enter and exit
   # depending on the node type. This is also in change of changing `@depth`,
   # `@node`, `@controller` (etc) every step of the way.
+  #
+  #     Transformer.run(ast)
+  #     # roughly equivalent to: new Transformer(ast).run()
   ###
 
   run: ->
@@ -223,8 +245,8 @@ class TransformerBase
     @onScopeExit?(@scope, @ctx, oldScope, oldCtx)
 
   ###*
-  # syntaxError():
-  # Throws a syntax error for the given `node`.
+  # syntaxError() : @syntaxError(node, message)
+  # Throws a syntax error for the given `node` with a given `message`.
   #
   #     @syntaxError node, "Not supported"
   ###
@@ -238,7 +260,7 @@ class TransformerBase
     throw err
 
   ###*
-  # Defaults: these are things that will change `scope`.
+  # Defaults: these are default handlers that will automatially change `@scope`.
   ###
 
   Program: (node) ->
@@ -366,7 +388,7 @@ class CommentTransforms extends TransformerBase
 
 ###*
 # OtherTransforms:
-# Mangles the AST.
+# Mangles the AST with various CoffeeScript tweaks.
 ###
 
 class OtherTransforms extends TransformerBase
@@ -810,7 +832,7 @@ class Builder extends BuilderBase
 
   syntaxError: TransformerBase::syntaxError
 
-  ###
+  ###*
   # visitors:
   # The visitors of each node.
   ###
@@ -1163,7 +1185,7 @@ class Builder extends BuilderBase
     else
       []
 
-  ###
+  ###*
   # In a call expression, ensure that non-last function arguments get
   # parenthesized (eg, `setTimeout (-> x), 500`).
   ###
@@ -1175,7 +1197,7 @@ class Builder extends BuilderBase
         if not isLast
           arg._parenthesized = true
 
-  ###
+  ###*
   # Injects a ForStatement's update (eg, `i++`) into the body.
   ###
 
@@ -1197,7 +1219,8 @@ class Builder extends BuilderBase
 
 # ----------------------------------------------------------------------------
 
-###
+###*
+# debug() : js2coffee.debug()
 # Debugging provisions.
 # Run `before -> js2coffee.debug()` in tests to print out some debug information.
 ###
@@ -1233,8 +1256,8 @@ js2coffee.debug = ->
 
 # ----------------------------------------------------------------------------
 
-###
-# Export for testing
+###*
+# Export for testing.
 ###
 
 js2coffee.Builder = Builder
