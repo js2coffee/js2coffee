@@ -97,7 +97,7 @@ name = ->
   return "John"
 alert name()
 if ok
-  a
+  a()
 ```
 
 ### Return object
@@ -206,7 +206,6 @@ val = 2
 fn = ->
   `var val`
   val = 1
-
 fn()
 assert val == 2
 ```
@@ -233,6 +232,25 @@ a(b(c(d())));
 ```coffee
 # Output:
 a b(c(d()))
+```
+
+### Prototype
+
+CoffeeScript allow prototypes as `::`, as in `Array::join = ->`.
+
+It also allows `a::` without anything on the right side (as is the case
+of the 2nd line), but CoffeeScriptRedux doesn't.
+
+```js
+// Input:
+a.prototype.b = 1
+a.prototype = {}
+```
+
+```coffee
+# Output:
+a::b = 1
+a.prototype = {}
 ```
 
 ### Standalone this

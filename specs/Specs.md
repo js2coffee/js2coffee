@@ -342,7 +342,7 @@ if (ok) {
   return "John"
 alert name()
 if ok
-  a
+  a()
 </code></pre>
 </td>
 </tr>
@@ -398,23 +398,6 @@ obj.two = ->
 <pre><code class='lang-coffee'>a = ->
   b = ->
     return c
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Nested declares</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>function a() {
-  function b() {
-    c();
-  }
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a = ->
-  b = ->
-    c()
 </code></pre>
 </td>
 </tr>
@@ -1486,7 +1469,6 @@ assert(val == 2);
 fn = ->
   `var val`
   val = 1
-
 fn()
 assert val == 2
 </code></pre>
@@ -1710,6 +1692,19 @@ b--
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>++a
 --b
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Prototype</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a.prototype.b = 1
+a.prototype = {}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a::b = 1
+a.prototype = {}
 </code></pre>
 </td>
 </tr>
