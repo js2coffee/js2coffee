@@ -173,6 +173,7 @@ class TransformerBase
       es.VisitorKeys.CoffeeEscapedExpression = []
       es.VisitorKeys.CoffeeListExpression = []
       es.VisitorKeys.CoffeePrototypeExpression = []
+      es.VisitorKeys.CoffeeLoopStatement = []
       es.VisitorKeys.BlockComment = []
       es.VisitorKeys.LineComment = []
       es
@@ -386,6 +387,24 @@ class OtherTransforms extends TransformerBase
   VariableDeclarator: (node) ->
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer(node)
+
+  WhileStatement: (node) ->
+    @convertToLoopStatement(node)
+
+  ###
+  # Converts a `while (true)` to a CoffeeLoopStatement.
+  ###
+
+  convertToLoopStatement: (node) ->
+    isLoop = not node.test? or
+      (node.test?.type is 'Literal' and node.test?.value is true)
+
+    if isLoop
+      replace node,
+        type: 'CoffeeLoopStatement'
+        body: node.body
+    else
+      node
 
   ###
   # Remove `{type: 'EmptyStatement'}` from the body.
@@ -968,15 +987,10 @@ class Builder extends BuilderBase
     [ "new ", callee, args ]
 
   WhileStatement: (node) ->
-    isLoop = not node.test? or
-      (node.test?.type is 'Literal' and node.test?.value is true)
+    [ "while ", @walk(node.test), "\n", @makeLoopBody(node.body) ]
 
-    looper = if isLoop
-      [ "loop" ]
-    else
-      [ "while ", @walk(node.test) ]
-
-    [ looper, "\n", @makeLoopBody(node.body) ]
+  CoffeeLoopStatement: (node) ->
+    [ "loop", "\n", @makeLoopBody(node.body) ]
 
   DoWhileStatement: (node) ->
     @indent =>
@@ -1056,7 +1070,10 @@ class Builder extends BuilderBase
     else
       []
 
-    [ init, @WhileStatement(node) ]
+    if node.test
+      [ init, @WhileStatement(node) ]
+    else
+      [ init, @CoffeeLoopStatement(node) ]
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
