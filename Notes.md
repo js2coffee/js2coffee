@@ -47,11 +47,26 @@ Critical for compatibility:
 
 ### Types
 
+These things are converted into CoffeeScript:
+
+ - [ ] SequenceExpression
+   - turned into a sequence of ExpressionStatements
+
+Etc:
+
  - [x] Program
+
  - [x] EmptyStatement
+
  - [x] BlockStatement
+
  - [x] ExpressionStatement
+   - `expression` : Expression
+
  - [x] IfStatement
+   - `test` : Expression
+   - `consequent` : BlockStatement
+   - `alternate` : BlockStatement ?
  - [x] LabeledStatement
  - [x] BreakStatement
  - [x] ContinueStatement
@@ -59,6 +74,7 @@ Critical for compatibility:
  - [x] SwitchStatement
  - [x] ReturnStatement
  - [x] ThrowStatement
+   - `argument` : Expression
  - [x] TryStatement
  - [x] WhileStatement
  - [x] DoWhileStatement
@@ -72,20 +88,61 @@ Critical for compatibility:
  - [x] ArrayExpression
  - [x] ObjectExpression
  - [x] FunctionExpression
- - [x] SequenceExpression
+
  - [x] UnaryExpression
+   - `operator` : String (eg: 'void', '~')
+   - `argument` : Expression
+
  - [x] BinaryExpression
+   - `left` : Expression
+   - `operator` : String (eg: `+`)
+   - `right` : Expression
+
  - [x] AssignmentExpression
  - [x] UpdateExpression
- - [ ] LogicalExpression
+   - `prefix` : Boolean
+   - `operator` : String ('--' | '++')
+   - `argument` : Identifier
  - [x] ConditionalExpression
+
  - [x] NewExpression
+
  - [x] CallExpression
+   - `callee` : Identifier
+   - `arguments` : Expression +
+   - `_isStatement` : Boolean (true if it has no parentheses)
+
  - [x] MemberExpression
- - [x] SwitchCase (type=?, test=Expr, consequent=?)
+   - `computed` : Boolean (true if `a[b]`, false if `a.b`)
+   - `object` : Expression (left side)
+   - `property` : Expression (right side)
+
+ - [x] SwitchCase
+   - `type` : ??
+   - `test` : Expression
+   - `consquent` : BlockStatement
+
  - [x] CatchClause
+   - `param` : Identifier
+   - `body` : BlockStatement
+
  - [x] Identifier
+   - `name` : String
+
  - [x] Literal
+   - `raw` : raw code as a string (eg: `"\"hello\""`)
+   - `value` : whatever the value is (eg: `hello`)
+
+These are CoffeeScript-specific AST types:
+
+ - [x] CoffeeListExpression - a comma-separated list (eg: `when a, b`)
+    - `expressions` : Expression +
+
+ - [x] CoffeeLoopStatement - a forever loop
+   - `body` : BlockStatement
+
+ - [x] CoffeeEscapedExpression - a backtick-wrapped JS expression
+   - `value` : the raw value
 
 ### Precendence rules
 
