@@ -173,8 +173,8 @@ class TransformerBase
       es.VisitorKeys.CoffeeEscapedExpression = []
       es.VisitorKeys.CoffeeListExpression = []
       es.VisitorKeys.CoffeePrototypeExpression = []
-      es.VisitorKeys.Block = []
-      es.VisitorKeys.Line = []
+      es.VisitorKeys.BlockComment = []
+      es.VisitorKeys.LineComment = []
       es
 
   ###*
@@ -211,8 +211,8 @@ class TransformerBase
     , @options.source, @options.filename)
     throw err
 
-  ###
-  # Defaults: these are things that will change `scope`
+  ###*
+  # Defaults: these are things that will change `scope`.
   ###
 
   Program: (node) ->
@@ -235,7 +235,9 @@ class TransformerBase
 
 ###**
 # CommentTransforms:
-# Injects comments as nodes in the AST.
+# Injects comments as nodes in the AST. This takes the comments in the
+# `Program` node, finds list of expressions in bodies (eg, a BlockStatement's
+# `body`), and injects the comment nodes whenever relevant.
 ###
 
 class CommentTransforms extends TransformerBase
@@ -246,6 +248,7 @@ class CommentTransforms extends TransformerBase
 
   Program: (node) ->
     @comments = node.comments
+    @updateCommentTypes()
     @BlockStatement node
 
   BlockStatement: (node) ->
@@ -257,10 +260,23 @@ class CommentTransforms extends TransformerBase
   SwitchCase: (node) ->
     @injectComments(node, 'consequent')
 
-  Block: (node) ->
+  BlockComment: (node) ->
     @convertCommentPrefixes(node)
 
+  ###*
+  # updateCommentTypes():
+  # Updates comment `type` as needed. It changes *Block* to *BlockComment*, and
+  # *Line* to *LineComment*. This makes it play nice with the rest of the AST,
+  # because "Block" and "Line" are ambiguous.
   ###
+
+  updateCommentTypes: ->
+    for c in @comments
+      switch c.type
+        when 'Block' then c.type = 'BlockComment'
+        when 'Line'  then c.type = 'LineComment'
+
+  ###*
   # injectComments():
   # Injects comment nodes into a node list.
   ###
@@ -269,8 +285,10 @@ class CommentTransforms extends TransformerBase
     node[key] = @addCommentsToList(node.range, node[key])
     node
 
-  ###
+  ###*
   # addCommentsToList():
+  # Delegate of `injectComments()`.
+  #
   # Checks out the `@comments` list for any relevants comments, and injects
   # them into the correct places in the given `body` Array. Returns the
   # transformed `body` array.
@@ -296,7 +314,7 @@ class CommentTransforms extends TransformerBase
         left = item.range[1]
     list
 
-  ###
+  ###*
   # convertCommentPrefixes():
   # Changes JS block comments into CoffeeScript block comments.
   # This involves changing prefixes like `*` into `#`.
@@ -835,11 +853,11 @@ class Builder extends BuilderBase
     prependAll(body.map(@walk), @indent())
 
   # Line comments
-  Line: (node) ->
+  LineComment: (node) ->
     [ "#", node.value, "\n" ]
 
   # Block comments
-  Block: (node) ->
+  BlockComment: (node) ->
     [ "###", node.value, "###\n" ]
 
   ReturnStatement: (node) ->
