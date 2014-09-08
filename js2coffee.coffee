@@ -1,31 +1,20 @@
-Esprima = require('esprima')
-{SourceNode} = require("source-map")
 {
   buildError
   commaDelimit
   delimit
+  inspect
   newline
   prependAll
   replace
   space
-  inspect
 } = require('./lib/helpers.coffee')
-
-###*
-# js2coffee() : js2coffee(source, [options])
-# Converts to code.
-#
-#     output = js2coffee.build('alert("hi")');
-#     output;
-#     => 'alert "hi"'
-###
 
 module.exports = js2coffee = (source, options) ->
   js2coffee.build(source, options).code
 
 ###*
 # build() : js2coffee.build(source, [options])
-# builds.
+# Compiles JavaScript into CoffeeScript.
 #
 #     output = js2coffee.build('a = 2', {});
 #
@@ -37,31 +26,67 @@ module.exports = js2coffee = (source, options) ->
 #
 # ~ filename (String): the filename, used in source maps and errors.
 # ~ comments (Boolean): set to `false` to disable comments.
+#
+# How it works:
+#
+# 1. It uses Esprima to convert the input into a JavaScript AST.
+# 2. It uses AST transformations (see [js2coffee.transform]) to mutate the AST
+#    into a CoffeeScript AST.
+# 3. It generates cofe (see [js2coffee.generate]) to compile the CoffeeScript
+#    AST into CoffeeScript code.
 ###
 
 js2coffee.build = (source, options = {}) ->
   options.filename ?= 'input.js'
   options.source = source
 
-  # get JavaScript AST
+  ast = js2coffee.parseJS(source, options)
+  ast = js2coffee.transform(ast, options)
+  {code, map} = js2coffee.generate(ast, options)
+  {code, ast, map}
+
+###*
+# parseJS() : js2coffee.parseJS(source, [options])
+# Parses JavaScript code into an AST via Esprima.
+#
+#     try
+#       ast = js2coffee.parseJS('var a = 2;')
+#     catch err
+#       ...
+###
+
+js2coffee.parseJS = (source, options = {}) ->
   try
-    ast = Esprima.parse(source, loc: true, range: true, comment: true)
+    Esprima = require('esprima')
+    Esprima.parse(source, loc: true, range: true, comment: true)
   catch err
     throw buildError(err, source, options.filename)
 
-  # Convert JavaScript AST to CoffeeScript AST
-  js2coffee.transform(ast, options)
-
-  # build CoffeeScript code with source maps
-  {code, map} = js2coffee.codegen(ast, options)
-  {code, ast, map}
+###*
+# transform() : js2coffee.transform(ast, [options])
+# Mutates a given JavaScript syntax tree `ast` into a CoffeeScript AST.
+#
+#     ast = js2coffee.parseJS('var a = 2;')
+#     ast = js2coffee.transform(ast)
+###
 
 js2coffee.transform = (ast, options = {}) ->
   FunctionTransforms.run(ast, options)
   CommentTransforms.run(ast, options) unless options.comments is false
   OtherTransforms.run(ast, options)
+  ast
 
-js2coffee.codegen = (ast, options = {}) ->
+###*
+# generate() : js2coffee.generate(ast, [options])
+# Generates CoffeeScript code from a given CoffeeScript AST. Returns an object
+# with `code` (CoffeeScript source code) and `map` (source mapping object).
+#
+#     ast = js2coffee.parse('var a = 2;')
+#     ast = js2coffee.transform(ast)
+#     {code, map} = generate(ast)
+###
+
+js2coffee.generate = (ast, options = {}) ->
   new Builder(ast, options).get()
 
 # ----------------------------------------------------------------------------
@@ -768,6 +793,7 @@ class Builder extends BuilderBase
   ###
 
   decorator: (node, output) ->
+    {SourceNode} = require("source-map")
     new SourceNode(
       node?.loc?.start?.line,
       node?.loc?.start?.column,
