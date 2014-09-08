@@ -958,8 +958,8 @@ class Builder extends BuilderBase
       space [ "[", node.elements.map(@walk), "]" ]
     else
       @indent (indent) =>
-        prefix = [ @indent() ]
-        contents = prependAll(node.elements.map((e) => newline @walk(e)), prefix)
+        elements = node.elements.map (e) => newline @walk(e)
+        contents = prependAll(elements, @indent())
         [ "[\n", contents, indent, "]" ]
 
   ObjectExpression: (node, ctx) ->
