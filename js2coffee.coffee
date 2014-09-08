@@ -441,6 +441,33 @@ class OtherTransforms extends TransformerBase
   WhileStatement: (node) ->
     @convertToLoopStatement(node)
 
+  ArrayExpression: (node) ->
+    @parenthesizeObjectsInElements(node)
+
+  ReturnStatement: (node) ->
+    @parenthesizeObjectsInArgument(node)
+
+  ###
+  # Ensures that an Array's elements objects are braced.
+  ###
+
+  parenthesizeObjectsInElements: (node) ->
+    for item in node.elements
+      if item.type is 'ObjectExpression'
+        item._braced = true
+    node
+
+  ###
+  # Ensures that a ReturnStatement with an object ('return {a:1}') has a braced
+  # expression.
+  ###
+
+  parenthesizeObjectsInArgument: (node) ->
+    if node.argument
+      if node.argument.type is 'ObjectExpression'
+        node.argument._braced = true
+    node
+
   ###
   # Converts a `while (true)` to a CoffeeLoopStatement.
   ###
@@ -922,33 +949,19 @@ class Builder extends BuilderBase
   makeStatements: (node, body) ->
     prependAll(body.map(@walk), @indent())
 
-  # Line comments
   LineComment: (node) ->
     [ "#", node.value, "\n" ]
 
-  # Block comments
   BlockComment: (node) ->
     [ "###", node.value, "###\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
-      if node.argument.type is 'ObjectExpression'
-        node.argument._braced = true
-
-      space [
-        "return",
-        [ @walk(node.argument), "\n" ]
-      ]
+      space [ "return", [ @walk(node.argument), "\n" ] ]
     else
       [ "return\n" ]
 
-  parenthesizeObjectsInElements: (node) ->
-    for item in node.elements
-      if item.type is 'ObjectExpression'
-        item._braced = true
-
-  ArrayExpression: (node, ctx) ->
-    @parenthesizeObjectsInElements(node)
+  ArrayExpression: (node) ->
     items = node.elements.length
     isSingleLine = items is 1
 
