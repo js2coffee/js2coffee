@@ -18,6 +18,12 @@ Developer notes
  - [x] Throw useful Esprima errors (like coffeescriptredux)
  - [x] Move Comments to transformer
  - [ ] Move For loops to transformer
+   - [ ] WhileStatement to CoffeeLoopStatement
+   - [ ] DoWhileStatement to CoffeeLoopStatement
+   - [ ] `unless` support for IfStatement
+   - [ ] ForStatement as a transformation to WhileStatement
+   - [ ] ForInStatement ?
+   - [ ] add extra `continue` (makeLoopBody)
 
 Critical for compatibility:
 

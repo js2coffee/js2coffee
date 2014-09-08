@@ -40,15 +40,23 @@ Small attempt at making a new js2coffee.
    Error messages now show a preview of the source where errors happen, such as 
    what you'd expect in CoffeeScriptRedux.
 
+## Command line
+
+The command line utility accepts both filenames or stdin.
+
+```sh
+$ js2c file.js [file2.js ...]
+$ ... | js2c
+```
+
 ## API
 
 ```js
 try {
-  result = js2coffee.parse(source, {
-    indent: 2
-  });
+  result = js2coffee.build(source);
 
   result.code     // code string
+  result.ast      // transformed AST
   result.map      // source map
 
 } catch (e) {
