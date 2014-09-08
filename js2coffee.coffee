@@ -506,7 +506,7 @@ class OtherTransforms extends TransformerBase
         type: 'ExpressionStatement'
         expression:
           type: 'CoffeeEscapedExpression'
-          value: "var #{name}"
+          raw: "var #{name}"
       @scope.body = [ statement ].concat(@scope.body)
     else
       @ctx.vars.push name
@@ -570,7 +570,7 @@ class OtherTransforms extends TransformerBase
 
   escapeUndefined: (node) ->
     if node.name is 'undefined'
-      replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
+      replace node, type: 'CoffeeEscapedExpression', raw: 'undefined'
     else
       node
 
@@ -1143,7 +1143,7 @@ class Builder extends BuilderBase
       id = @walk(node.left)
       propagator = {
         type: 'ExpressionStatement'
-        expression: { type: 'CoffeeEscapedExpression', value: "#{id} = #{id}" }
+        expression: { type: 'CoffeeEscapedExpression', raw: "#{id} = #{id}" }
       }
       node.body.body = [ propagator ].concat(node.body.body)
     else
@@ -1163,7 +1163,7 @@ class Builder extends BuilderBase
       @indent => [ @indent(), @walk(body) ]
 
   CoffeeEscapedExpression: (node) ->
-    [ '`', node.value, '`' ]
+    [ '`', node.raw, '`' ]
 
   CoffeePrototypeExpression: (node) ->
     if node.computed
