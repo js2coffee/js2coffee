@@ -76,7 +76,7 @@ Critical for compatibility:
  - [x] NewExpression
  - [x] CallExpression
  - [x] MemberExpression
- - [x] SwitchCase
+ - [x] SwitchCase (type=?, test=Expr, consequent=?)
  - [x] CatchClause
  - [x] Identifier
  - [x] Literal

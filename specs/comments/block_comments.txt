@@ -1,4 +1,3 @@
-only: true
 notes: """
   In block comments, CoffeeScript converts `#` into JavaDoc-style ` *`. Hence,
   Js2coffee will transform ` *` inside block comments into the more

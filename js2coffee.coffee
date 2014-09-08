@@ -6,6 +6,7 @@ Esprima = require('esprima')
   delimit
   newline
   prependAll
+  replace
   space
   inspect
 } = require('./lib/helpers.coffee')
@@ -247,16 +248,24 @@ class CommentTransforms extends TransformerBase
     @BlockStatement node
 
   BlockStatement: (node) ->
-    node.body = @injectComments(node, node.body)
-    node
+    @injectComments(node, 'body')
+
+  SwitchStatement: (node) ->
+    @injectComments(node, 'cases')
+
+  SwitchCase: (node) ->
+    @injectComments(node, 'consequent')
 
   ###
   # injectComments():
   # Injects comment nodes into a node list.
   ###
 
-  injectComments: (node, body) ->
-    range = node.range
+  injectComments: (node, key) ->
+    node[key] = @addCommentsToList(node.range, node[key])
+    node
+
+  addCommentsToList: (range, body) ->
     return body unless range?
 
     list = []
@@ -346,7 +355,7 @@ class OtherTransforms extends TransformerBase
   addShadowingIfNeeded: (node) ->
     name = node.id.name
     if ~@ctx.vars.indexOf(name)
-      statement = @replace node,
+      statement = replace node,
         type: 'ExpressionStatement'
         expression:
           type: 'CoffeeEscapedExpression'
@@ -385,7 +394,7 @@ class OtherTransforms extends TransformerBase
       node.object.property.type is 'Identifier' and
       node.object.property.name is 'prototype'
     if isPrototype
-      @recurse @replace node,
+      @recurse replace node,
         type: 'CoffeePrototypeExpression'
         object: node.object.object
         property: node.property
@@ -404,7 +413,7 @@ class OtherTransforms extends TransformerBase
 
   updateVoidToUndefined: (node) ->
     if node.operator is 'void'
-      @replace node, type: 'Identifier', name: 'undefined'
+      replace node, type: 'Identifier', name: 'undefined'
     else
       node
 
@@ -414,7 +423,7 @@ class OtherTransforms extends TransformerBase
 
   escapeUndefined: (node) ->
     if node.name is 'undefined'
-      @replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
+      replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
     else
       node
 
@@ -459,11 +468,14 @@ class OtherTransforms extends TransformerBase
     toConsolidate = []
     for kase, i in node.cases
       # .type .test .consequent
-      toConsolidate.push(kase.test) if kase.test
-      if kase.consequent.length > 0
-        if kase.test
-          kase.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
-        toConsolidate = []
+      if kase.type is 'SwitchCase'
+        toConsolidate.push(kase.test) if kase.test
+        if kase.consequent.length > 0
+          if kase.test
+            kase.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
+          toConsolidate = []
+          list.push kase
+      else
         list.push kase
 
     node.cases = list
@@ -504,20 +516,6 @@ class OtherTransforms extends TransformerBase
     if node.callee.type is 'FunctionExpression'
       node.callee._parenthesized = true
       node
-
-  ###*
-  # replace() : @replace(node, newNode)
-  # Fabricates a replacement node for `node` that maintains the same source
-  # location.
-  #
-  #     node = { type: "FunctionExpression", range: [0,1], loc: { ... } }
-  #     @replace(node, { type: "Identifier", name: "xxx" })
-  ###
-
-  replace: (node, newNode) ->
-    newNode.range = node.range
-    newNode.loc = node.loc
-    newNode
 
 clone = (obj) ->
   JSON.parse JSON.stringify obj
@@ -568,7 +566,7 @@ class FunctionTransforms extends TransformerBase
   ###
 
   buildFunctionDeclaration: (node) ->
-    @replace node,
+    replace node,
       type: 'ExpressionStatement'
       expression:
         type: 'AssignmentExpression'
