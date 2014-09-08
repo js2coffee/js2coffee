@@ -977,10 +977,7 @@ class Builder extends BuilderBase
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
-    isBraced = node._braced or
-      (props > 1 and
-      ctx.parent.type is 'CallExpression' and
-      ctx.parent._isStatement)
+    isBraced = node._braced
 
     # Empty
     if props is 0
