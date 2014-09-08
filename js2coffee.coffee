@@ -36,6 +36,7 @@ module.exports = js2coffee = (source, options) ->
 # All options are optional. Available options are:
 #
 # ~ filename (String): the filename, used in source maps and errors.
+# ~ comments (Boolean): set to `false` to disable comments.
 ###
 
 js2coffee.build = (source, options = {}) ->
@@ -57,7 +58,7 @@ js2coffee.build = (source, options = {}) ->
 
 js2coffee.transform = (ast, options = {}) ->
   FunctionTransforms.run(ast, options)
-  CommentTransforms.run(ast, options)
+  CommentTransforms.run(ast, options) unless options.comments is false
   OtherTransforms.run(ast, options)
 
 js2coffee.codegen = (ast, options = {}) ->
@@ -256,6 +257,9 @@ class CommentTransforms extends TransformerBase
   SwitchCase: (node) ->
     @injectComments(node, 'consequent')
 
+  Block: (node) ->
+    @convertCommentPrefixes(node)
+
   ###
   # injectComments():
   # Injects comment nodes into a node list.
@@ -264,6 +268,13 @@ class CommentTransforms extends TransformerBase
   injectComments: (node, key) ->
     node[key] = @addCommentsToList(node.range, node[key])
     node
+
+  ###
+  # addCommentsToList():
+  # Checks out the `@comments` list for any relevants comments, and injects
+  # them into the correct places in the given `body` Array. Returns the
+  # transformed `body` array.
+  ###
 
   addCommentsToList: (range, body) ->
     return body unless range?
@@ -284,6 +295,28 @@ class CommentTransforms extends TransformerBase
       if item.range
         left = item.range[1]
     list
+
+  ###
+  # convertCommentPrefixes():
+  # Changes JS block comments into CoffeeScript block comments.
+  # This involves changing prefixes like `*` into `#`.
+  ###
+
+  convertCommentPrefixes: (node) ->
+    lines = node.value.split("\n")
+    lines = lines.map (line, i) ->
+      isTrailingSpace = i is lines.length-1 and line.match(/^\s*$/)
+      isSingleLine = i is 0 and lines.length is 1
+
+      if isTrailingSpace
+        ''
+      else if isSingleLine
+        line
+      else
+        line = line.replace(/^ \*/, '#')
+        line + "\n"
+    node.value = lines.join("")
+    node
 
 # ----------------------------------------------------------------------------
 
@@ -807,19 +840,7 @@ class Builder extends BuilderBase
 
   # Block comments
   Block: (node) ->
-    lines = node.value.split("\n")
-    lines = lines.map (line, i) ->
-      isTrailingSpace = i is lines.length-1 and line.match(/^\s*$/)
-      isSingleLine = i is 0 and lines.length is 1
-
-      if isTrailingSpace
-        ''
-      else if isSingleLine
-        line
-      else
-        line = line.replace(/^ \*/, '#')
-        line + "\n"
-    [ "###", lines, "###\n" ]
+    [ "###", node.value, "###\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
