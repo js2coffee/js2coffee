@@ -535,9 +535,11 @@ clone = (obj) ->
 
 class FunctionTransforms extends TransformerBase
   onScopeEnter: (scope, ctx) ->
+    # Keep a list of things to be prepended before the body
     ctx.prebody = []
 
   onScopeExit: (scope, ctx, subscope, subctx) ->
+    # prepend the functions back into the body
     if subctx.prebody.length
       scope.body = subctx.prebody.concat(scope.body)
 
@@ -567,15 +569,15 @@ class FunctionTransforms extends TransformerBase
 
   buildFunctionDeclaration: (node) ->
     replace node,
-      type: 'ExpressionStatement'
-      expression:
-        type: 'AssignmentExpression'
-        operator: '='
-        left: node.id
-        right:
+      type: 'VariableDeclaration'
+      declarations: [
+        type: 'VariableDeclarator'
+        id: node.id
+        init:
           type: 'FunctionExpression'
           params: node.params
           body: node.body
+      ]
 
 # ----------------------------------------------------------------------------
 
@@ -891,7 +893,9 @@ class Builder extends BuilderBase
     delimit(declarators, @indent())
 
   VariableDeclarator: (node) ->
-    [ @walk(node.id), ' = ', @walk(node.init), "\n" ]
+    init = @walk(node.init)
+    init = [ init, "\n" ] unless (/\n$/).test(init.toString())
+    [ @walk(node.id), ' = ', init ]
 
   FunctionExpression: (node, ctx) ->
     params = @makeParams(node.params)
