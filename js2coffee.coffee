@@ -183,7 +183,8 @@ class TransformerBase
     runner = (direction, node, parent) =>
       @node   = node
       @depth += if direction is 'Enter' then +1 else -1
-      fnName  = if direction is 'Enter' then "#{node.type}" else "#{node.type}Exit"
+      fnName  = if direction is 'Enter' \
+        then "#{node.type}" else "#{node.type}Exit"
 
       @["onBefore#{direction}"]?(node)
       result = @[fnName]?(node, parent)
@@ -522,7 +523,8 @@ class OtherTransforms extends TransformerBase
     node
 
   ###
-  # For VariableDeclarator with no initializers (`var a`), add `undefined` as the initializer.
+  # For VariableDeclarator with no initializers (`var a`), add `undefined` as
+  # the initializer.
   ###
 
   addExplicitUndefinedInitializer: (node) ->
@@ -565,7 +567,8 @@ class OtherTransforms extends TransformerBase
       node
 
   ###
-  # Turn 'undefined' into '`undefined`'. This uses a new node type, CoffeeEscapedExpression.
+  # Turn 'undefined' into '`undefined`'. This uses a new node type,
+  # CoffeeEscapedExpression.
   ###
 
   escapeUndefined: (node) ->
@@ -619,7 +622,9 @@ class OtherTransforms extends TransformerBase
         toConsolidate.push(kase.test) if kase.test
         if kase.consequent.length > 0
           if kase.test
-            kase.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
+            kase.test =
+              type: 'CoffeeListExpression'
+              expressions: toConsolidate
           toConsolidate = []
           list.push kase
       else
@@ -813,7 +818,8 @@ class Builder extends BuilderBase
   #     @indent [ 'if...' ]
   #     #=> [ '  ', [ 'if...' ] ]
   #
-  # When invoked without arguments, it returns the current indentation as a string.
+  # When invoked without arguments, it returns the current indentation as a
+  # string.
   #
   #     @indent()
   ###
@@ -1138,7 +1144,8 @@ class Builder extends BuilderBase
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
-      # @syntaxError node, "Using 'for..in' loops without 'var' can produce unexpected results"
+      # @syntaxError node, "Using 'for..in' loops without 'var' can produce
+      # unexpected results"
       # node.left.name += '_'
       id = @walk(node.left)
       propagator = {
@@ -1234,8 +1241,8 @@ class Builder extends BuilderBase
 
 ###*
 # debug() : js2coffee.debug()
-# Debugging provisions.
-# Run `before -> js2coffee.debug()` in tests to print out some debug information.
+# Debugging provisions. Run `before -> js2coffee.debug()` in tests to print
+# out some debug information.
 ###
 
 js2coffee.debug = ->
