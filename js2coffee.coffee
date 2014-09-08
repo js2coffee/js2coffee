@@ -56,6 +56,7 @@ js2coffee.build = (source, options = {}) ->
 
 js2coffee.transform = (ast, options = {}) ->
   FunctionTransforms.run(ast, options)
+  CommentTransforms.run(ast, options)
   OtherTransforms.run(ast, options)
 
 js2coffee.codegen = (ast, options = {}) ->
@@ -170,6 +171,8 @@ class TransformerBase
       es.VisitorKeys.CoffeeEscapedExpression = []
       es.VisitorKeys.CoffeeListExpression = []
       es.VisitorKeys.CoffeePrototypeExpression = []
+      es.VisitorKeys.Block = []
+      es.VisitorKeys.Line = []
       es
 
   ###*
@@ -228,8 +231,55 @@ class TransformerBase
 
 # ----------------------------------------------------------------------------
 
+###**
+# CommentTransforms:
+# Injects comments as nodes in the AST.
+###
+
+class CommentTransforms extends TransformerBase
+  # Disable the stack-tracking for now
+  ProgramExit: null
+  FunctionExpression: null
+  FunctionExpressionExit: null
+
+  Program: (node) ->
+    @comments = node.comments
+    @BlockStatement node
+
+  BlockStatement: (node) ->
+    node.body = @injectComments(node, node.body)
+    node
+
+  ###
+  # injectComments():
+  # Injects comment nodes into a node list.
+  ###
+
+  injectComments: (node, body) ->
+    range = node.range
+    return body unless range?
+
+    list = []
+    left = range[0]
+    right = range[1]
+
+    # look for comments in left..node.range[0]
+    for item, i in body
+      if item.range
+        newComments = @comments.filter (c) ->
+          c.range[0] >= left and c.range[1] <= item.range[0]
+        list = list.concat(newComments)
+
+      list.push item
+
+      if item.range
+        left = item.range[1]
+    list
+
+# ----------------------------------------------------------------------------
+
 ###*
-# Transformer:
+# OtherTransforms:
 # Mangles the AST.
 ###
 
@@ -518,15 +568,16 @@ class FunctionTransforms extends TransformerBase
   ###
 
   buildFunctionDeclaration: (node) ->
-    type: 'ExpressionStatement'
-    expression:
-      type: 'AssignmentExpression'
-      operator: '='
-      left: node.id
-      right:
-        type: 'FunctionExpression'
-        params: node.params
-        body: node.body
+    @replace node,
+      type: 'ExpressionStatement'
+      expression:
+        type: 'AssignmentExpression'
+        operator: '='
+        left: node.id
+        right:
+          type: 'FunctionExpression'
+          params: node.params
+          body: node.body
 
 # ----------------------------------------------------------------------------
 
@@ -748,7 +799,6 @@ class Builder extends BuilderBase
     @makeStatements(node, node.body)
 
   makeStatements: (node, body) ->
-    body = injectComments(@comments, node, body)
     prependAll(body.map(@walk), @indent())
 
   # Line comments
@@ -1063,32 +1113,6 @@ class Builder extends BuilderBase
       node.body.body = node.body.body.concat([statement])
       delete node.update
 
-###
-# injectComments():
-# Injects comment nodes into a node list.
-###
-
-injectComments = (comments, node, body) ->
-  range = node.range
-  return body unless range?
-
-  list = []
-  left = range[0]
-  right = range[1]
-
-  # look for comments in left..node.range[0]
-  for item, i in body
-    if item.range
-      newComments = comments.filter (c) ->
-        c.range[0] >= left and c.range[1] <= item.range[0]
-      list = list.concat(newComments)
-
-    list.push item
-
-    if item.range
-      left = item.range[1]
-  list
-
 # ----------------------------------------------------------------------------
 
 ###
@@ -1106,6 +1130,7 @@ js2coffee.debug = ->
   TransformerBase::onBeforeExit = (node) ->
     msg = "#{node.type}Exit"
     fn = @[msg]?
+    broken = isBroken(@ast) or ""
     print @depth+1, (if fn then "#{msg} *" else "#{msg}"), broken
 
   # Prints the current node.
