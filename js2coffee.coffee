@@ -55,8 +55,8 @@ js2coffee.build = (source, options = {}) ->
   {code, ast, map}
 
 js2coffee.transform = (ast, options = {}) ->
-  FunctionTransformer.run(ast, options)
-  OtherTransformer.run(ast, options)
+  FunctionTransforms.run(ast, options)
+  OtherTransforms.run(ast, options)
 
 js2coffee.codegen = (ast, options = {}) ->
   new Builder(ast, options).get()
@@ -233,7 +233,7 @@ class TransformerBase
 # Mangles the AST.
 ###
 
-class OtherTransformer extends TransformerBase
+class OtherTransforms extends TransformerBase
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody node
 
@@ -475,11 +475,17 @@ clone = (obj) ->
 # ----------------------------------------------------------------------------
 
 ###**
-# FunctionTransformer:
-# Yep
+# FunctionTransforms:
+# Reorders functions.
+#
+# * Moves function definitions (`function x(){}`) to the top of the scope and
+#   turns them into variable declarations (`x = -> ...`).
+#
+# * Moves named function expressions (`setTimeout(function tick(){})`) to the
+#   top of the scope.
 ###
 
-class FunctionTransformer extends TransformerBase
+class FunctionTransforms extends TransformerBase
   onScopeEnter: (scope, ctx) ->
     ctx.prebody = []
 
@@ -525,7 +531,7 @@ class FunctionTransformer extends TransformerBase
 # ----------------------------------------------------------------------------
 
 ###
-# Walker:
+# BuilderBase:
 # Traverses a JavaScript AST.
 #
 #     class MyWalker extends Walker
