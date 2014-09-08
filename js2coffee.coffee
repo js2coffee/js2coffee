@@ -932,9 +932,7 @@ class Builder extends BuilderBase
     delimit(declarators, @indent())
 
   VariableDeclarator: (node) ->
-    init = @walk(node.init)
-    init = [ init, "\n" ] unless (/\n$/).test(init.toString())
-    [ @walk(node.id), ' = ', init ]
+    [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
 
   FunctionExpression: (node, ctx) ->
     params = @makeParams(node.params)
