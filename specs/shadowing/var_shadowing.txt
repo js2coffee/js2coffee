@@ -18,6 +18,5 @@ val = 2
 fn = ->
   `var val`
   val = 1
-
 fn()
 assert val == 2

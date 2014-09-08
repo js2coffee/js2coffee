@@ -6,6 +6,7 @@ Esprima = require('esprima')
   delimit
   newline
   prependAll
+  replace
   space
   inspect
 } = require('./lib/helpers.coffee')
@@ -35,6 +36,7 @@ module.exports = js2coffee = (source, options) ->
 # All options are optional. Available options are:
 #
 # ~ filename (String): the filename, used in source maps and errors.
+# ~ comments (Boolean): set to `false` to disable comments.
 ###
 
 js2coffee.build = (source, options = {}) ->
@@ -55,8 +57,9 @@ js2coffee.build = (source, options = {}) ->
   {code, ast, map}
 
 js2coffee.transform = (ast, options = {}) ->
-  FunctionTransformer.run(ast, options)
-  OtherTransformer.run(ast, options)
+  FunctionTransforms.run(ast, options)
+  CommentTransforms.run(ast, options) unless options.comments is false
+  OtherTransforms.run(ast, options)
 
 js2coffee.codegen = (ast, options = {}) ->
   new Builder(ast, options).get()
@@ -170,6 +173,8 @@ class TransformerBase
       es.VisitorKeys.CoffeeEscapedExpression = []
       es.VisitorKeys.CoffeeListExpression = []
       es.VisitorKeys.CoffeePrototypeExpression = []
+      es.VisitorKeys.BlockComment = []
+      es.VisitorKeys.LineComment = []
       es
 
   ###*
@@ -206,8 +211,8 @@ class TransformerBase
     , @options.source, @options.filename)
     throw err
 
-  ###
-  # Defaults: these are things that will change `scope`
+  ###*
+  # Defaults: these are things that will change `scope`.
   ###
 
   Program: (node) ->
@@ -228,12 +233,117 @@ class TransformerBase
 
 # ----------------------------------------------------------------------------
 
+###**
+# CommentTransforms:
+# Injects comments as nodes in the AST. This takes the comments in the
+# `Program` node, finds list of expressions in bodies (eg, a BlockStatement's
+# `body`), and injects the comment nodes whenever relevant.
+###
+
+class CommentTransforms extends TransformerBase
+  # Disable the stack-tracking for now
+  ProgramExit: null
+  FunctionExpression: null
+  FunctionExpressionExit: null
+
+  Program: (node) ->
+    @comments = node.comments
+    @updateCommentTypes()
+    @BlockStatement node
+
+  BlockStatement: (node) ->
+    @injectComments(node, 'body')
+
+  SwitchStatement: (node) ->
+    @injectComments(node, 'cases')
+
+  SwitchCase: (node) ->
+    @injectComments(node, 'consequent')
+
+  BlockComment: (node) ->
+    @convertCommentPrefixes(node)
+
+  ###*
+  # updateCommentTypes():
+  # Updates comment `type` as needed. It changes *Block* to *BlockComment*, and
+  # *Line* to *LineComment*. This makes it play nice with the rest of the AST,
+  # because "Block" and "Line" are ambiguous.
+  ###
+
+  updateCommentTypes: ->
+    for c in @comments
+      switch c.type
+        when 'Block' then c.type = 'BlockComment'
+        when 'Line'  then c.type = 'LineComment'
+
+  ###*
+  # injectComments():
+  # Injects comment nodes into a node list.
+  ###
+
+  injectComments: (node, key) ->
+    node[key] = @addCommentsToList(node.range, node[key])
+    node
+
+  ###*
+  # addCommentsToList():
+  # Delegate of `injectComments()`.
+  #
+  # Checks out the `@comments` list for any relevants comments, and injects
+  # them into the correct places in the given `body` Array. Returns the
+  # transformed `body` array.
+  ###
+
+  addCommentsToList: (range, body) ->
+    return body unless range?
+
+    list = []
+    left = range[0]
+    right = range[1]
+
+    # look for comments in left..node.range[0]
+    for item, i in body
+      if item.range
+        newComments = @comments.filter (c) ->
+          c.range[0] >= left and c.range[1] <= item.range[0]
+        list = list.concat(newComments)
+
+      list.push item
+
+      if item.range
+        left = item.range[1]
+    list
+
+  ###*
+  # convertCommentPrefixes():
+  # Changes JS block comments into CoffeeScript block comments.
+  # This involves changing prefixes like `*` into `#`.
+  ###
+
+  convertCommentPrefixes: (node) ->
+    lines = node.value.split("\n")
+    lines = lines.map (line, i) ->
+      isTrailingSpace = i is lines.length-1 and line.match(/^\s*$/)
+      isSingleLine = i is 0 and lines.length is 1
+
+      if isTrailingSpace
+        ''
+      else if isSingleLine
+        line
+      else
+        line = line.replace(/^ \*/, '#')
+        line + "\n"
+    node.value = lines.join("")
+    node
+
+# ----------------------------------------------------------------------------
+
 ###*
-# Transformer:
+# OtherTransforms:
 # Mangles the AST.
 ###
 
-class OtherTransformer extends TransformerBase
+class OtherTransforms extends TransformerBase
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody node
 
@@ -296,7 +406,7 @@ class OtherTransformer extends TransformerBase
   addShadowingIfNeeded: (node) ->
     name = node.id.name
     if ~@ctx.vars.indexOf(name)
-      statement = @replace node,
+      statement = replace node,
         type: 'ExpressionStatement'
         expression:
           type: 'CoffeeEscapedExpression'
@@ -335,7 +445,7 @@ class OtherTransformer extends TransformerBase
       node.object.property.type is 'Identifier' and
       node.object.property.name is 'prototype'
     if isPrototype
-      @recurse @replace node,
+      @recurse replace node,
         type: 'CoffeePrototypeExpression'
         object: node.object.object
         property: node.property
@@ -354,7 +464,7 @@ class OtherTransformer extends TransformerBase
 
   updateVoidToUndefined: (node) ->
     if node.operator is 'void'
-      @replace node, type: 'Identifier', name: 'undefined'
+      replace node, type: 'Identifier', name: 'undefined'
     else
       node
 
@@ -364,7 +474,7 @@ class OtherTransformer extends TransformerBase
 
   escapeUndefined: (node) ->
     if node.name is 'undefined'
-      @replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
+      replace node, type: 'CoffeeEscapedExpression', value: 'undefined'
     else
       node
 
@@ -409,11 +519,14 @@ class OtherTransformer extends TransformerBase
     toConsolidate = []
     for kase, i in node.cases
       # .type .test .consequent
-      toConsolidate.push(kase.test) if kase.test
-      if kase.consequent.length > 0
-        if kase.test
-          kase.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
-        toConsolidate = []
+      if kase.type is 'SwitchCase'
+        toConsolidate.push(kase.test) if kase.test
+        if kase.consequent.length > 0
+          if kase.test
+            kase.test = { type: 'CoffeeListExpression', expressions: toConsolidate }
+          toConsolidate = []
+          list.push kase
+      else
         list.push kase
 
     node.cases = list
@@ -455,35 +568,29 @@ class OtherTransformer extends TransformerBase
       node.callee._parenthesized = true
       node
 
-  ###*
-  # replace() : @replace(node, newNode)
-  # Fabricates a replacement node for `node` that maintains the same source
-  # location.
-  #
-  #     node = { type: "FunctionExpression", range: [0,1], loc: { ... } }
-  #     @replace(node, { type: "Identifier", name: "xxx" })
-  ###
-
-  replace: (node, newNode) ->
-    newNode.range = node.range
-    newNode.loc = node.loc
-    newNode
-
 clone = (obj) ->
   JSON.parse JSON.stringify obj
 
 # ----------------------------------------------------------------------------
 
 ###**
-# FunctionTransformer:
-# Yep
+# FunctionTransforms:
+# Reorders functions.
+#
+# * Moves function definitions (`function x(){}`) to the top of the scope and
+#   turns them into variable declarations (`x = -> ...`).
+#
+# * Moves named function expressions (`setTimeout(function tick(){})`) to the
+#   top of the scope.
 ###
 
-class FunctionTransformer extends TransformerBase
+class FunctionTransforms extends TransformerBase
   onScopeEnter: (scope, ctx) ->
+    # Keep a list of things to be prepended before the body
     ctx.prebody = []
 
   onScopeExit: (scope, ctx, subscope, subctx) ->
+    # prepend the functions back into the body
     if subctx.prebody.length
       scope.body = subctx.prebody.concat(scope.body)
 
@@ -512,20 +619,21 @@ class FunctionTransformer extends TransformerBase
   ###
 
   buildFunctionDeclaration: (node) ->
-    type: 'ExpressionStatement'
-    expression:
-      type: 'AssignmentExpression'
-      operator: '='
-      left: node.id
-      right:
-        type: 'FunctionExpression'
-        params: node.params
-        body: node.body
+    replace node,
+      type: 'VariableDeclaration'
+      declarations: [
+        type: 'VariableDeclarator'
+        id: node.id
+        init:
+          type: 'FunctionExpression'
+          params: node.params
+          body: node.body
+      ]
 
 # ----------------------------------------------------------------------------
 
 ###
-# Walker:
+# BuilderBase:
 # Traverses a JavaScript AST.
 #
 #     class MyWalker extends Walker
@@ -742,28 +850,15 @@ class Builder extends BuilderBase
     @makeStatements(node, node.body)
 
   makeStatements: (node, body) ->
-    body = injectComments(@comments, node, body)
     prependAll(body.map(@walk), @indent())
 
   # Line comments
-  Line: (node) ->
+  LineComment: (node) ->
     [ "#", node.value, "\n" ]
 
   # Block comments
-  Block: (node) ->
-    lines = node.value.split("\n")
-    lines = lines.map (line, i) ->
-      isTrailingSpace = i is lines.length-1 and line.match(/^\s*$/)
-      isSingleLine = i is 0 and lines.length is 1
-
-      if isTrailingSpace
-        ''
-      else if isSingleLine
-        line
-      else
-        line = line.replace(/^ \*/, '#')
-        line + "\n"
-    [ "###", lines, "###\n" ]
+  BlockComment: (node) ->
+    [ "###", node.value, "###\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
@@ -837,7 +932,9 @@ class Builder extends BuilderBase
     delimit(declarators, @indent())
 
   VariableDeclarator: (node) ->
-    [ @walk(node.id), ' = ', @walk(node.init), "\n" ]
+    init = @walk(node.init)
+    init = [ init, "\n" ] unless (/\n$/).test(init.toString())
+    [ @walk(node.id), ' = ', init ]
 
   FunctionExpression: (node, ctx) ->
     params = @makeParams(node.params)
@@ -1057,32 +1154,6 @@ class Builder extends BuilderBase
       node.body.body = node.body.body.concat([statement])
       delete node.update
 
-###
-# injectComments():
-# Injects comment nodes into a node list.
-###
-
-injectComments = (comments, node, body) ->
-  range = node.range
-  return body unless range?
-
-  list = []
-  left = range[0]
-  right = range[1]
-
-  # look for comments in left..node.range[0]
-  for item, i in body
-    if item.range
-      newComments = comments.filter (c) ->
-        c.range[0] >= left and c.range[1] <= item.range[0]
-      list = list.concat(newComments)
-
-    list.push item
-
-    if item.range
-      left = item.range[1]
-  list
-
 # ----------------------------------------------------------------------------
 
 ###
@@ -1100,6 +1171,7 @@ js2coffee.debug = ->
   TransformerBase::onBeforeExit = (node) ->
     msg = "#{node.type}Exit"
     fn = @[msg]?
+    broken = isBroken(@ast) or ""
     print @depth+1, (if fn then "#{msg} *" else "#{msg}"), broken
 
   # Prints the current node.

@@ -122,3 +122,18 @@ exports.inspect = (node) ->
   "~~~~\n" +
   require('util').inspect(node, depth: 1000, colors: true) +
   "\n~~~~"
+
+###*
+# replace() : replace(node, newNode)
+# Fabricates a replacement node for `node` that maintains the same source
+# location.
+#
+#     node = { type: "FunctionExpression", range: [0,1], loc: { ... } }
+#     @replace(node, { type: "Identifier", name: "xxx" })
+###
+
+exports.replace = (node, newNode) ->
+  newNode.range = node.range
+  newNode.loc = node.loc
+  newNode
+
