@@ -9,6 +9,10 @@
   space
 } = require('./lib/helpers.coffee')
 
+###*
+# # Jscoffee API
+###
+
 module.exports = js2coffee = (source, options) ->
   js2coffee.build(source, options).code
 
@@ -99,7 +103,7 @@ js2coffee.generate = (ast, options = {}) ->
 
 # ----------------------------------------------------------------------------
 
-###*
+###**
 # TransformerBase:
 # Base class of all transformation steps, such as [FunctionTransforms] and
 # [OtherTransforms]. This is a thin wrapper around *estraverse* to make things
@@ -227,9 +231,8 @@ class TransformerBase
 
   ###*
   # pushStack() : @pushStack(node)
-  # Pushes a scope to the scope stack.
-  #
-  # Every time the scope changes, `@scope` and `@ctx` gets changed.
+  # Pushes a scope to the scope stack. Every time the scope changes, `@scope`
+  # and `@ctx` gets changed.
   ###
 
   pushStack: (node) ->
@@ -955,9 +958,9 @@ class Builder extends BuilderBase
       space [ "[", node.elements.map(@walk), "]" ]
     else
       @indent (indent) =>
-        prefix = [ "\n", @indent() ]
-        contents = prependAll(node.elements.map(@walk), prefix)
-        [ "[", contents, "\n", indent, "]" ]
+        prefix = [ @indent() ]
+        contents = prependAll(node.elements.map((e) => newline @walk(e)), prefix)
+        [ "[\n", contents, indent, "]" ]
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
