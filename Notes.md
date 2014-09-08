@@ -16,7 +16,7 @@ Developer notes
  - [x] Really think indentation through
  - [x] Put groundwork on comment generation
  - [x] Throw useful Esprima errors (like coffeescriptredux)
- - [ ] Move Comments to transformer
+ - [x] Move Comments to transformer
  - [ ] Move For loops to transformer
 
 Critical for compatibility:
