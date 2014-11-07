@@ -592,6 +592,31 @@ class Builder
     else
       c.add "loop"
 
+    # insert n.update before continue statement
+    insertUpdate = (parent) ->
+      children = parent.children.slice()
+      for child, i in children
+        if child.typeName() is 'continue'
+          # wrap in expression
+          if n.update.children.length is 1
+            opts =
+              type: Typenames[';']
+              value: n.update.value
+              expression: n.update
+            expr = new n.constructor {}, opts
+          else
+            expr = n.update
+
+          # insert expression before continue
+          parent.children.splice i, 0, expr
+        else
+          # check for if-else statements
+          insertUpdate child.thenPart  if child.thenPart?
+          insertUpdate child.elsePart  if child.elsePart?
+          insertUpdate child
+
+    insertUpdate n.body  if n.update?
+
     c.scope @body(n.body)
     c.scope @body(n.update)  if n.update?
     @l(n)+c
