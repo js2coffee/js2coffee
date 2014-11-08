@@ -594,44 +594,43 @@ class Builder
 
     # insert n.update before continue statement
     insertUpdate = (self, parent, i) ->
-      # check if self is a continue statement
-      if self.typeName() is 'continue'
-          # wrap in expression
-          if n.update.children.length is 1
-            expr = new n.constructor {},
-              type: Typenames[';']
-              value: n.update.value
-              expression: n.update
-          else
-            expr = n.update
-
-          # insert expression before continue
-          # index (i) is passed if object came from parent.children
-          if not i?
-            # support inline statements
-            # 1. inline loop body+continue: for(;;) continue;
-            # 2. inline if+continue: if(x) continue;
-            # 3. inline else+continue: else continue;
-            for branch in ['thenPart', 'elsePart', 'body']
-              # check where self is from
-              if self is parent[branch]
-                # wrap in scope
-                parent[branch] = new n.constructor {},
-                  type: Typenames['block']
-                  value: '{'
-                  children: [ expr, parent[branch] ]
-          else
-            parent.children.splice i, 0, expr
-
+      if self.isA('continue')
+        # wrap in expression
+        if n.update.children.length is 1
+          expr = new n.constructor {},
+            type: Typenames[';']
+            value: n.update.value
+            expression: n.update
         else
-          # check for if-else statements
-          insertUpdate self.thenPart, self  if self.thenPart?
-          insertUpdate self.elsePart, self  if self.elsePart?
+          expr = n.update
 
-      # check out child nodes
-      children = self.children.slice()
-      for child, i in children
-        insertUpdate child, self, i
+        # insert expression before continue
+        # index (i) is passed if object came from parent.children
+        if not i?
+          # support inline statements
+          # 1. inline loop body+continue: for(;;) continue;
+          # 2. inline if+continue: if(x) continue;
+          # 3. inline else+continue: else continue;
+          for branch in ['thenPart', 'elsePart', 'body']
+            # check where self is from
+            if self is parent[branch]
+              # wrap in scope
+              parent[branch] = new n.constructor {},
+                type: Typenames['block']
+                value: '{'
+                children: [ expr, parent[branch] ]
+        else
+          parent.children.splice i, 0, expr
+      else if self.isA('switch')
+        for cs in self.cases
+          insertUpdate cs.statements, cs
+      else if self.isA('if')
+        insertUpdate self.thenPart, self  if self.thenPart?
+        insertUpdate self.elsePart, self  if self.elsePart?
+      else
+        children = self.children.slice()
+        for child, i in children
+          insertUpdate child, self, i
 
     insertUpdate n.body, n  if n.update?
 
