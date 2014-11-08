@@ -1,6 +1,8 @@
 i = 0
 while i < 5
-  continue  if i is 2
+  if i is 2
+    ++i
+    continue
   alert i
   ++i
 i = 0
@@ -9,6 +11,7 @@ while i < 5
     when 1
       alert "one"
     when 2, 3
+      ++i
       continue
     else
       alert i
