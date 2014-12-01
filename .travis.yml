@@ -5,19 +5,12 @@ language: node_js
 # ensure coffee-script is installed (needed for cake commands)
 # ensure dev dependencies are installed (handled via npm install)
 # ensure test dependencies are installed (handled via cake install)
-install: "npm install -g npm && npm install coffee-script && npm install && ./node_modules/.bin/cake install"
+install: "npm install"
 # ensure our application is compiled before we run our tests
 before_script: "./node_modules/.bin/cake compile"
 script: "npm test"
 node_js:
-  - "0.8"
   - "0.10"
 cache:
   directories:
     - node_modules
-notifications:
-  irc:
-    - "irc.freenode.org#bevry-dev"
-  email:
-    recipients:
-      - travisci@bevry.me
