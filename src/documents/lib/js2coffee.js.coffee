@@ -345,7 +345,7 @@ class Builder
     @l(n)+"#{@build n.left()}[#{right}]"
 
   'throw': (n) ->
-    @l(n)+"throw #{@build n.exception}"
+    @l(n)+"throw #{@build n.exception}\n"
 
   '!': (n) ->
     target = n.left()
