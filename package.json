@@ -1,7 +1,7 @@
 {
   "title": "Js2Coffee",
   "name": "js2coffee",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "JavaScript to CoffeeScript compiler",
   "homepage": "http://js2coffee.org",
   "license": {
@@ -23,9 +23,11 @@
   "maintainers": [
     "Rico Sta. Cruz <hi@ricostacruz.com> (http://ricostacruz.com)",
     "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
-    "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)"
+    "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)",
+    "Andrej Mihajlov (https://github.com/pronebird)"
   ],
   "contributors": [
+    "Andrej Mihajlov (https://github.com/pronebird)",
     "Anton Wilhelm <timaschew@gmail.com> (https://github.com/timaschew)",
     "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
     "clkao (https://github.com/clkao)",
