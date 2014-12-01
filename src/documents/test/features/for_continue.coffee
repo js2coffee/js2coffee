@@ -23,6 +23,13 @@ while i < 5
   alert i
   ++i
 i = 0
+while i < 5
+  if i is 1
+    i += 2
+    continue
+  alert i
+  i += 2
+i = 0
 while i < 6
   if i is 2
     i++

@@ -14,6 +14,11 @@ for(i = 0; i < 5; ++i) {
   alert(i);
 }
 
+for(var i=0; i<5; i=i+2) {
+  if (i === 1) continue;
+  alert(i);
+}
+
 for(i = 0; i < 6; i++) {
   if(i == 2) continue;
   for(j = 0; j < 6; j++) {
