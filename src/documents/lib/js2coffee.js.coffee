@@ -596,10 +596,10 @@ class Builder
     insertUpdate = (self, parent, i) ->
       if self.isA('continue')
         # wrap in expression
-        if n.update.children.length is 1
+        if not n.update.isA(',')
           expr = new n.constructor {},
             type: Typenames[';']
-            value: n.update.value
+            value: ';'
             expression: n.update
         else
           expr = n.update
