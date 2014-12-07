@@ -25,6 +25,7 @@ With your bug report, specify:
 - **did you do that in the online editor**
 - or did you installed js2coffee via npm, if yes:
 - your Js2coffee version `js2coffee -v` or look it up in the package.json
+- did you install it as a normal user or superuser?
 - your node version `node -v`
 - your npm version `npm -v`
 - your OS, architecture and version
