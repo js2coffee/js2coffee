@@ -62,7 +62,6 @@
   },
   "dependencies": {
     "coffee-script": "~1.7.1",
-    "docpad-plugin-eco": "^2.1.0",
     "file": "~0.2.1",
     "nopt": "~3.0.1",
     "underscore": "~1.6.0"
@@ -72,6 +71,7 @@
     "docpad": "~6.69.0",
     "docpad-plugin-browserifydocs": "~2.2.0",
     "docpad-plugin-coffeescript": "~2.4.0",
+    "docpad-plugin-eco": "^2.1.0",
     "docpad-plugin-ghpages": "~2.4.3",
     "docpad-plugin-raw": "~2.3.2",
     "docpad-plugin-uglify": "~2.4.0",
