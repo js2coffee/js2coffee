@@ -14,7 +14,7 @@ for(i = 0; i < 5; ++i) {
   alert(i);
 }
 
-for(var i=0; i<5; i=i+2) {
+for(i = 0; i < 5; i = i + 2) {
   if (i === 1) continue;
   alert(i);
 }
