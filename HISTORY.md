@@ -1,7 +1,12 @@
 # History
 
-v0.3.4 - December 01, 2014
+v0.3.5 - December 11, 2014
+--------------------
+- fix complex update statements for issue [#49](https://github.com/js2coffee/js2coffee/issues/49)
+- move docpad-eco plugin to dev dependency [#327](https://github.com/js2coffee/js2coffee/issues/327)
 
+v0.3.4 - December 01, 2014
+--------------------
 - fix missing newline after `throw` [#320](https://github.com/js2coffee/js2coffee/issues/320)
 - fix `continue` within loops [#49](https://github.com/js2coffee/js2coffee/issues/49)
 
