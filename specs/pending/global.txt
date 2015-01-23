@@ -1,0 +1,9 @@
+notes: """
+  Global variables are not supported in CoffeeScript. To work around this,
+  Js2coffee (reluctantly) wraps the assignment in backticks as a hack.
+"""
+----
+if (typeof a === 'string') { a = 2; }
+----
+if typeof a == 'string'
+  `a = 2`

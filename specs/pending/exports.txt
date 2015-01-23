@@ -1,0 +1,8 @@
+----
+if (typeof exports !== 'undefined') {
+  exports = module.exports = {};
+}
+----
+global = do -> this
+if typeof global.exports != 'undefined'
+  global.exports = module.exports = {}

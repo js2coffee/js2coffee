@@ -61,6 +61,13 @@ Critical for compatibility:
  - [ ] Add `return` at the end as needed
  - [ ] Continue in `for` loop
 
+Max compatibility mode:
+
+ - [ ] --compat switch
+ - [ ] Warnings
+ - [ ] Global variables escaped
+ - [ ] double equals escaped
+
  Niceness:
 
  - [x] Transform `.prototype.`
