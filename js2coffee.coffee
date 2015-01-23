@@ -105,6 +105,7 @@ js2coffee.transform = (ast, options = {}) ->
     LoopTransforms
     SwitchTransforms
     MemberTransforms
+    ObjectTransforms
     OtherTransforms ]
   run [ BlockTransforms ]
 
@@ -126,8 +127,7 @@ js2coffee.generate = (ast, options = {}) ->
 # }}} -----------------------------------------------------------------------
 # {{{ CommentTransforms
 
-###**
-# CommentTransforms:
+###
 # Injects comments as nodes in the AST. This takes the comments in the
 # `Program` node, finds list of expressions in bodies (eg, a BlockStatement's
 # `body`), and injects the comment nodes wherever relevant.
@@ -158,8 +158,7 @@ class CommentTransforms extends TransformerBase
   BlockComment: (node) ->
     @convertCommentPrefixes(node)
 
-  ###*
-  # updateCommentTypes():
+  ###
   # Updates comment `type` as needed. It changes *Block* to *BlockComment*, and
   # *Line* to *LineComment*. This makes it play nice with the rest of the AST,
   # because "Block" and "Line" are ambiguous.
@@ -171,8 +170,7 @@ class CommentTransforms extends TransformerBase
         when 'Block' then c.type = 'BlockComment'
         when 'Line'  then c.type = 'LineComment'
 
-  ###*
-  # injectComments():
+  ###
   # Injects comment nodes into a node list.
   ###
 
@@ -180,8 +178,7 @@ class CommentTransforms extends TransformerBase
     node[key] = @addCommentsToList(node.range, node[key])
     node
 
-  ###*
-  # addCommentsToList():
+  ###
   # Delegate of `injectComments()`.
   #
   # Checks out the `@comments` list for any relevants comments, and injects
@@ -209,8 +206,7 @@ class CommentTransforms extends TransformerBase
         left = item.range[1]
     list
 
-  ###*
-  # convertCommentPrefixes():
+  ###
   # Changes JS block comments into CoffeeScript block comments.
   # This involves changing prefixes like `*` into `#`.
   ###
@@ -234,11 +230,15 @@ class CommentTransforms extends TransformerBase
 # }}} -----------------------------------------------------------------------
 # {{{ SwitchTransforms
 
-###*
-# SwitchTransforms:
+###
 # Updates `SwitchCase`s to a more coffee-compliant AST. This means having
 # to remove `return`/`break` statements, and taking into account the
 # correct way of consolidating empty ccases.
+#
+#     switch (x) { case a: b(); break; }
+#
+#     switch x
+#       when a then b()
 ###
 
 class SwitchTransforms extends TransformerBase
@@ -293,8 +293,7 @@ class SwitchTransforms extends TransformerBase
 # }}} -----------------------------------------------------------------------
 # {{{ MemberTransforms
 
-###*
-# MemberTransforms:
+###
 # Performs transformations on `a.b` scope resolutions.
 #
 #     this.x            =>  @x
@@ -348,10 +347,30 @@ class MemberTransforms extends TransformerBase
     node
 
 # }}} -----------------------------------------------------------------------
+# {{{ ObjectTransforms
+
+###
+# Mangles the AST with various CoffeeScript tweaks.
+###
+
+class ObjectTransforms extends TransformerBase
+  ArrayExpression: (node) ->
+    @parenthesizeObjectsInElements(node)
+
+  ###
+  # Ensures that an Array's elements objects are braced.
+  ###
+
+  parenthesizeObjectsInElements: (node) ->
+    for item in node.elements
+      if item.type is 'ObjectExpression'
+        item._braced = true
+    node
+
+# }}} -----------------------------------------------------------------------
 # {{{ OtherTransforms
 
-###*
-# OtherTransforms:
+###
 # Mangles the AST with various CoffeeScript tweaks.
 ###
 
@@ -385,9 +404,6 @@ class OtherTransforms extends TransformerBase
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer(node)
 
-  ArrayExpression: (node) ->
-    @parenthesizeObjectsInElements(node)
-
   ReturnStatement: (node) ->
     @parenthesizeObjectsInArgument(node)
 
@@ -409,16 +425,6 @@ class OtherTransforms extends TransformerBase
           value: m[1]
           raw: JSON.stringify(m[1])
         ]
-
-  ###
-  # Ensures that an Array's elements objects are braced.
-  ###
-
-  parenthesizeObjectsInElements: (node) ->
-    for item in node.elements
-      if item.type is 'ObjectExpression'
-        item._braced = true
-    node
 
   ###
   # Ensures that a ReturnStatement with an object ('return {a:1}') has a braced
@@ -542,8 +548,7 @@ class OtherTransforms extends TransformerBase
 # }}} -----------------------------------------------------------------------
 # {{{ LoopTransforms
 
-###**
-# LoopTransforms:
+###
 # Provides transformations for `while`, `for` and `do`.
 ###
 
@@ -611,8 +616,7 @@ class LoopTransforms extends TransformerBase
 # }}} -----------------------------------------------------------------------
 # {{{ BlockTransforms
 
-###**
-# BlockTransforms:
+###
 # Flattens nested `BlockStatements`.
 ###
 
@@ -625,7 +629,7 @@ class BlockTransforms extends TransformerBase
 # }}} -----------------------------------------------------------------------
 # {{{ FunctionTransforms
 
-###**
+###
 # FunctionTransforms:
 # Reorders functions.
 #
