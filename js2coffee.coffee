@@ -1,3 +1,4 @@
+# {{{ Imports
 {
   buildError
   commaDelimit
@@ -8,13 +9,17 @@
   replace
   space
 } = require('./lib/helpers.coffee')
+# }}}
+
+module.exports = js2coffee = (source, options) ->
+  js2coffee.build(source, options).code
+
+# ---------------------------------------------------------------------------
+# {{{ Build
 
 ###*
 # # Jscoffee API
 ###
-
-module.exports = js2coffee = (source, options) ->
-  js2coffee.build(source, options).code
 
 ###*
 # build() : js2coffee.build(source, [options])
@@ -101,7 +106,8 @@ js2coffee.transform = (ast, options = {}) ->
 js2coffee.generate = (ast, options = {}) ->
   new Builder(ast, options).get()
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
+# {{{ TransformerBase
 
 ###**
 # TransformerBase:
@@ -283,7 +289,8 @@ class TransformerBase
     @popStack()
     node
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
+# {{{ CommentTransforms
 
 ###**
 # CommentTransforms:
@@ -388,7 +395,8 @@ class CommentTransforms extends TransformerBase
     node.value = lines.join("")
     node
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
+# {{{ OtherTransforms
 
 ###*
 # OtherTransforms:
@@ -672,7 +680,8 @@ class OtherTransforms extends TransformerBase
 clone = (obj) ->
   JSON.parse JSON.stringify obj
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
+# {{{ FunctionTransforms
 
 ###**
 # FunctionTransforms:
@@ -731,7 +740,8 @@ class FunctionTransforms extends TransformerBase
           body: node.body
       ]
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
+# {{{ BuilderBase
 
 ###
 # BuilderBase:
@@ -1237,7 +1247,8 @@ class Builder extends BuilderBase
       node.body.body = node.body.body.concat([statement])
       delete node.update
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
+# {{{ debug
 
 ###*
 # debug() : js2coffee.debug()
@@ -1274,7 +1285,7 @@ js2coffee.debug = ->
     if ~output.indexOf("[Circular]")
       "[Circular]"
 
-# ----------------------------------------------------------------------------
+# }}} -----------------------------------------------------------------------
 
 ###*
 # Export for testing.
@@ -1284,3 +1295,4 @@ js2coffee.Builder = Builder
 js2coffee.BuilderBase = BuilderBase
 
 # js2coffee.debug()
+# vim:foldmethod=marker
