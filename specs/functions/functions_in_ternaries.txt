@@ -1,0 +1,12 @@
+----
+_.propertyOf = function(obj) {
+  return obj == null ? (x && function(){}) : function(key) {
+    return obj[key];
+  };
+};
+----
+_.propertyOf = (obj) ->
+  if obj == null then x and (->
+  ) else ((key) ->
+    obj[key]
+  )
