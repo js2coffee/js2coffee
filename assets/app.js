@@ -1,7 +1,22 @@
 ;(function () {
 
+  var defaultText = [
+    'function add(x, y) {',
+    '  // Welcome to the new js2coffee, now',
+    '  // rewritten to use esprima.',
+    '  return x + y;',
+    '}'
+  ].join("\n");
+
   ready(function () {
-    on(q('#src'), 'input', update);
+    var $src = q('#src');
+
+    new Behave({ textarea: $src, tabSize: 2 });
+
+    if ($src.value.length === 0)
+      $src.value = defaultText;
+
+    on($src, 'input', update);
     update();
   });
 
