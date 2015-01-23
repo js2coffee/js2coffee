@@ -3,8 +3,8 @@ var args = require('../lib/cli')
   .helpfile(__dirname+'/../Usage.txt')
   .version(require('../package.json').version)
   .minimist({
-    boolean: ['ast'],
-    alias: { h: 'help', v: 'version' }
+    boolean: ['ast', 'verbose'],
+    alias: { h: 'help', v: 'version', V: 'verbose' }
   });
 
 var read = require('read-input');
@@ -21,6 +21,8 @@ read(args._, function (err, res) {
     try {
       var out = js2coffee.build(data, { filename: file.name || '[stdin]' });
       if (args.ast) {
+        if (!args.verbose)
+          out.ast = scrub(out.ast);
         process.stdout.write(inspect(out.ast));
       } else {
         process.stdout.write(out.code);
@@ -35,5 +37,28 @@ read(args._, function (err, res) {
 });
 
 function inspect(data) {
-  return require('util').inspect(data, { depth: null });
+  var colors = process.stdout.isTTY;
+  return require('util').inspect(data, { depth: null, colors: colors });
+}
+
+/*
+ * removes "range" and "loc"
+ */
+
+function scrub(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(function (item) { return scrub(item); });
+  } else if (typeof obj === 'object') {
+    for (var key in obj) {
+      if (!obj.hasOwnProperty(key)) continue;
+      if (key === 'range' || key === 'loc') {
+        delete obj[key];
+      } else {
+        obj[key] = scrub(obj[key]);
+      }
+    }
+    return obj;
+  } else {
+    return obj;
+  }
 }

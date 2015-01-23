@@ -3,5 +3,7 @@ Usage:
 
 Options:
         --ast          prints the AST (for debugging)
+    -V, --verbose      prints more AST stuff (used with --ast)
+
     -h, --help         print usage information
     -v, --version      show version info and exit
