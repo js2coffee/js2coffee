@@ -165,7 +165,8 @@ exports.clone = (obj) ->
 
 ###*
 # getPrecedence() : getPrecedence(node)
-# Returns the precedence level
+# Returns the precedence level. If a node's precedence level is greater that
+# its parent, it has to be parenthesized.
 #
 #     getPrecedence({ type: 'BinaryExpression', operator: '&' })
 #     => 8
@@ -220,4 +221,4 @@ exports.getPrecedence = (node) ->
     when 'SequenceExpression'
       15
     else
-      16
+      99

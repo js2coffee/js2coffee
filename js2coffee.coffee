@@ -7,6 +7,7 @@ BuilderBase = require('./lib/builder_base')
   clone
   commaDelimit
   delimit
+  getPrecedence
   inspect
   newline
   prependAll
@@ -709,6 +710,23 @@ class FunctionTransforms extends TransformerBase
 # {{{ PrecedenceTransforms
 
 class PrecedenceTransforms extends TransformerBase
+  onEnter: (node, parent) ->
+    return unless parent
+
+    # No need to parenthesize arguments in `a(...)` and `a[...]`
+    type = parent.type
+    return if type is 'CallExpression' and parent.arguments.indexOf(node) > -1
+    return if type is 'MemberExpression' and parent.property is node
+
+    # Ensure that we actually care about the precedence of this node
+    prec = getPrecedence(node)
+    return if prec is 99
+
+    # Ensure that the precedence calls for it (eg, + inside a /)
+    return unless prec > getPrecedence(parent)
+
+    node._parenthesized = true
+    return
 
 # }}} -----------------------------------------------------------------------
 # {{{ Builder
@@ -796,6 +814,18 @@ class Builder extends BuilderBase
       output)
 
   ###*
+  # paren():
+  # Parenthesizes if the node's parenthesize flag is on.
+  ###
+
+  paren: (output) ->
+    node = @path[@path.length-1]
+    if node._parenthesized
+      [ '(', output, ')' ]
+    else
+      output
+
+  ###*
   # onUnknownNode():
   # Invoked when the node is not known. Throw an error.
   ###
@@ -818,20 +848,20 @@ class Builder extends BuilderBase
     newline @walk(node.expression)
 
   AssignmentExpression: (node) ->
-    space [ @walk(node.left), node.operator, @walk(node.right) ]
+    @paren space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Identifier: (node) ->
     [ node.name ]
 
   UnaryExpression: (node) ->
     if (/^[a-z]+$/i).test(node.operator)
-      [ node.operator, ' ', @walk(node.argument) ]
+      @paren [ node.operator, ' ', @walk(node.argument) ]
     else
-      [ node.operator, @walk(node.argument) ]
+      @paren [ node.operator, @walk(node.argument) ]
 
   # Operator (+)
   BinaryExpression: (node) ->
-    space [ @walk(node.left), node.operator, @walk(node.right) ]
+    @paren space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Literal: (node) ->
     [ node.raw ]
@@ -844,10 +874,10 @@ class Builder extends BuilderBase
     else
       [ '.', @walk(node.property) ]
 
-    [ @walk(node.object), right ]
+    @paren [ @walk(node.object), right ]
 
   LogicalExpression: (node) ->
-    [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
+    @paren [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
 
   ThisExpression: (node) ->
     if node._prefix
@@ -994,7 +1024,7 @@ class Builder extends BuilderBase
     else
       []
 
-    [ "new ", callee, args ]
+    @paren [ "new ", callee, args ]
 
   WhileStatement: (node) ->
     [ "while ", @walk(node.test), "\n", @makeLoopBody(node.body) ]
@@ -1035,7 +1065,7 @@ class Builder extends BuilderBase
 
   # Ternary operator (`a ? b : c`)
   ConditionalExpression: (node) ->
-    space [
+    @paren space [
       "if", @walk(node.test),
       "then", @walk(node.consequent),
       "else", @walk(node.alternate)

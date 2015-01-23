@@ -95,9 +95,9 @@ class TransformerBase
       fnName  = if direction is 'Enter' \
         then "#{node.type}" else "#{node.type}Exit"
 
-      @["onBefore#{direction}"]?(node)
+      @["onBefore#{direction}"]?(node, parent)
       result = @[fnName]?(node, parent)
-      @["on#{direction}"]?(node)
+      @["on#{direction}"]?(node, parent)
       result
 
     @estraverse().replace root,
