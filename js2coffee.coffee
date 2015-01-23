@@ -440,6 +440,17 @@ class OtherTransforms extends TransformerBase
   Literal: (node) ->
     @unpackRegexpIfNeeded(node)
 
+  IfStatement: (node) ->
+    @parenthesizeConditionals(node)
+
+  # recurse into `test` and ensure any ConditionalExpression in it is parenhtesized
+  parenthesizeConditionals: (node) ->
+    @estraverse().traverse node.test,
+      enter: (node, parent) ->
+        if node.type is 'ConditionalExpression'
+          node._parenthesized = true
+    return
+
   ###
   # Accounts for regexps that start with an equal sign or space.
   ###

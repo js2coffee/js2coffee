@@ -1,0 +1,5 @@
+----
+if (a ? b : c) { d(); }
+----
+if (if a then b else c)
+  d()
