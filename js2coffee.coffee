@@ -355,13 +355,30 @@ class MemberTransforms extends TransformerBase
 
 class ObjectTransforms extends TransformerBase
   ArrayExpression: (node) ->
-    @parenthesizeObjectsInElements(node)
+    @braceObjectsInElements(node)
+
+  ObjectExpression: (node, parent) ->
+    @braceObjectInExpression(node, parent)
+
+  ###
+  # Braces an object
+  ###
+
+  braceObjectInExpression: (node, parent) ->
+    if parent.type is 'ExpressionStatement'
+      isLastInScope = @scope.body?[@scope.body?.length-1] is parent
+
+      if isLastInScope
+        node._last = true
+      else
+        node._braced = true
+    return
 
   ###
   # Ensures that an Array's elements objects are braced.
   ###
 
-  parenthesizeObjectsInElements: (node) ->
+  braceObjectsInElements: (node) ->
     for item in node.elements
       if item.type is 'ObjectExpression'
         item._braced = true
@@ -902,7 +919,7 @@ class Builder extends BuilderBase
     if props is 0
       [ "{}" ]
 
-    # Simple ({ a: 2 })
+    # Single prop ({ a: 2 })
     else if props is 1
       props = node.properties.map(@walk)
       if isBraced
@@ -910,6 +927,12 @@ class Builder extends BuilderBase
       else
         [ props ]
 
+    # Last expression in scope (`function() { ({a:2}); }`)
+    else if node._last
+      props = node.properties.map(@walk)
+      return delimit(props, [ "\n", @indent() ])
+
+    # Multiple props ({ a: 2, b: 3 })
     else
       props = @indent =>
         props = node.properties.map(@walk)
@@ -1080,6 +1103,7 @@ class Builder extends BuilderBase
   ###*
   # makeSequence():
   # Builds a comma-separated sequence of nodes.
+  # TODO: turn this into a transformation
   ###
 
   makeSequence: (list) ->

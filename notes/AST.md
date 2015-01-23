@@ -56,6 +56,32 @@ An example of an AST:
   comments: [] }
 ```
 
+Basic node types
+----------------
+
+### Expression
+
+Usually ends in `Expression`.
+
+- [ObjectExpression]
+- [Identifier]
+- [AssignmentExpression]
+- [ThisExpression]
+- [ArrayExpression]
+- ...
+
+### Statement
+
+Anything that ends in `Statement`.
+
+- [BlockStatement]
+- [ExpressionStatement]
+- [IfStatement]
+- [BreakStatement]
+- [ContinueStatement]
+- [SwitchStatement]
+- ...
+
 Node types
 ----------
 
@@ -64,18 +90,18 @@ These are nodes available in both CoffeeScript and JavaScript.
 ### Program
 The root node.
 
-   - `body` : [ Statement, ... ]
+   - `body` : [ [Statement], ... ]
 
 ### BlockStatement
 A sequence of statements. Usually belongs to a loop like WhileStatement, or an 
 [IfStatement], or some other.
 
-   - `body` : [ Statement, ... ]
+   - `body` : [ [Statement], ... ]
 
 ### ExpressionStatement
 A statement with one expression in it.
 
-   - `expression` : Expression
+   - `expression` : [Expression]
 
 ### Identifier
 Just an identifier.
@@ -85,7 +111,7 @@ Just an identifier.
 ### IfStatement
 A conditional. This encompasses both the `if` and `else` parts.
 
-   - `test` : Expression
+   - `test` : [Expression]
    - `consequent` : [BlockStatement]
    - `alternate` : [BlockStatement] *
 
@@ -100,11 +126,11 @@ Just `continue`, for breaking out of loops. No properties.
 ### ReturnStatement
 Can have its argument missing (eg: `return`).
 
-   - `argument` : Expression *
+   - `argument` : [Expression] *
 
 ### ThrowStatement
 
-   - `argument` : Expression
+   - `argument` : [Expression]
 
 ### TryStatement
 A try block. Encompasses all `try`, `catch`, and `finally`.
@@ -131,19 +157,29 @@ Just `this`.
 
 ### ArrayExpression
 
-   - `elements` : [ Expression, ... ] *
+   - `elements` : [ [Expression], ... ] *
 
 ### ObjectExpression
 
    - `properties` : [ [Property], ... ] *
    - `_braced` : Boolean (true if braced, eg `{ a: 1 }`)
+   - `_last` : Boolean (true if it's the last expression in the scope)
+
+The `_last` property is set to `true` when the expression is the last in the
+scope, such as in this example. In these cases, js2coffee will omit the braces
+and won't indent the object.
+
+```js
+/* assume there's nothing else in the file */
+({a:2, c:3});
+```
 
 ### Property
-Inside ObjectExpression.
+Inside [ObjectExpression].
 
    - `kind` : "init" (not sure what this is)
-   - `key` : Expression (usually Identifier or Literal)
-   - `value` : Expression
+   - `key` : [Expression] (usually [Identifier] or [Literal])
+   - `value` : [Expression]
 
 ### FunctionExpression
 (note: `id` is removed from function expressions.)
@@ -332,11 +368,17 @@ Converted to [WhileStatement] loops.
 
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 
-
-[IfStatement]: #ifstatement
-[ExpressionStatement]: #expressionstatement
-[BlockStatement]: #blockstatement
-[WhileStatement]: #whilestatement
 [AssignmentExpression]: #assignmentexpression
+[BlockStatement]: #blockstatement
+[BreakStatement]: #breakstatement
+[ExpressionStatement]: #expressionstatement
+[Expression]: #expression
+[Identifier]: #identifier
+[IfStatement]: #ifstatement
+[Literal]: #literal
 [Property]: #property
+[Statement]: #statement
 [SwitchCase]: #switchcase
+[WhileStatement]: #whilestatement
+[ThisExpression]: #thisexpression
+[ArrayExpression]: #arrayexpression
