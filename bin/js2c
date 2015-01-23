@@ -3,6 +3,7 @@ var args = require('../lib/cli')
   .helpfile(__dirname+'/../Usage.txt')
   .version(require('../package.json').version)
   .minimist({
+    boolean: ['ast'],
     alias: { h: 'help', v: 'version' }
   });
 
@@ -19,7 +20,11 @@ read(args._, function (err, res) {
     var data = file.data;
     try {
       var out = js2coffee.build(data, { filename: file.name || '[stdin]' });
-      process.stdout.write(out.code);
+      if (args.ast) {
+        process.stdout.write(inspect(out.ast));
+      } else {
+        process.stdout.write(out.code);
+      }
     } catch (err) {
       console.error(err.message);
       if (!err.js2coffee)
@@ -28,3 +33,7 @@ read(args._, function (err, res) {
     }
   });
 });
+
+function inspect(data) {
+  return require('util').inspect(data, { depth: null });
+}

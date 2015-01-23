@@ -2,5 +2,6 @@ Usage:
     $0 FILES [options]
 
 Options:
+        --ast          prints the AST (for debugging)
     -h, --help         print usage information
     -v, --version      show version info and exit
