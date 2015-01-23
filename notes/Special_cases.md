@@ -197,6 +197,21 @@ while b
 
 ## Regexp
 
+### Blank with flag
+
+Expressions that begin with a space will be converted into `RegExp(...)` to
+avoid parse errors.
+
+```js
+// Input:
+/ /g
+```
+
+```coffee
+# Output:
+RegExp " ", "g"
+```
+
 ### Equals
 
 A RegExp literal starting with an equal sign is not allowed in CoffeeScript,

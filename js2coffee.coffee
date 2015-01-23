@@ -431,13 +431,13 @@ class OtherTransforms extends TransformerBase
     @unpackRegexpIfNeeded(node)
 
   ###
-  # Accounts for regexps that start with an equal sign.
+  # Accounts for regexps that start with an equal sign or space.
   ###
 
   unpackRegexpIfNeeded: (node) ->
-    m = node.value.toString().match(/^\/(\=.*)\/$/)
+    m = node.value.toString().match(/^\/([\s\=].*)\/([a-z]*)$/)
     if m
-      replace node,
+      node = replace node,
         type: 'CallExpression'
         callee: { type: 'Identifier', name: 'RegExp' },
         arguments: [
@@ -445,6 +445,14 @@ class OtherTransforms extends TransformerBase
           value: m[1]
           raw: JSON.stringify(m[1])
         ]
+
+      if m[2]
+        node.arguments.push
+          type: 'Literal'
+          value: m[2]
+          raw: JSON.stringify(m[2])
+
+      node
 
   ###
   # Ensures that a ReturnStatement with an object ('return {a:1}') has a braced

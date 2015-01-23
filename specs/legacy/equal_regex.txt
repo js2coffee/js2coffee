@@ -1,7 +1,6 @@
 ----
 var re = /=/;
-console.log('a = b'.match(re));
+console.log("a = b".match(re));
 ----
 re = RegExp("=")
 console.log "a = b".match(re)
-

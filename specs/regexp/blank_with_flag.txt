@@ -1,0 +1,8 @@
+notes: """
+  Expressions that begin with a space will be converted into `RegExp(...)` to
+  avoid parse errors.
+"""
+----
+/ /g
+----
+RegExp " ", "g"

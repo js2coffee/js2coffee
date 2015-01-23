@@ -705,6 +705,17 @@ a ^= 0
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Bitwise shift</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>value = ((value & 255) << 16) | (value & 65280) | ((value & 16711680) >>> 16);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>value = (value & 255) << 16 | value & 65280 | (value & 16711680) >>> 16
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Blank lines</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>x = 2
@@ -797,6 +808,19 @@ loop
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Equal regex</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var re = /=/;
+console.log("a = b".match(re));
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>re = RegExp("=")
+console.log "a = b".match(re)
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Floating point numbers</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>0.094;
@@ -843,6 +867,16 @@ a-- - a
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Index</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a[x] = 2</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a[x] = 2
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Numbers</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var x = 1e3;
@@ -850,6 +884,17 @@ a-- - a
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>x = 1e3
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Parenthesized new</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(new Date).getTime()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(new Date).getTime()
 </code></pre>
 </td>
 </tr>
@@ -873,6 +918,28 @@ a-- - a
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>->
   return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Switch</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>switch (x) { case 2: a; break; case 3: b; break; default: x; }
+switch (x) { case 2: case 3: b; break; default: x; }</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>switch x
+  when 2
+    a
+  when 3
+    b
+  else
+    x
+switch x
+  when 2, 3
+    b
+  else
+    x
 </code></pre>
 </td>
 </tr>
@@ -1368,6 +1435,23 @@ a.prototype
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Multiple object expressions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>({ a: 1, b: 2 });
+({ c: 3, d: 4 });
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>{
+  a: 1
+  b: 2
+}
+c: 3
+d: 4
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Multiple properties</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a = { b: 2, c: 3 }
@@ -1429,6 +1513,18 @@ a.prototype
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Single object expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>({ a: 1, b: 2 })
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a: 1
+b: 2
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Unusual identifiers</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>object = {
@@ -1462,9 +1558,135 @@ a.prototype
 </tr>
 </table>
 
+## Precedence
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Addition and multiplication</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(a + b) * c
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(a + b) * c
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Binary expressions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a | b ^ c & d
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a | b ^ c & d
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Binary expressions with parens</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>((a | b) ^ c) & d
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>((a | b) ^ c) & d
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Call expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a.b()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a.b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Instanceof and function call</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(a instanceof b)(c)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(a instanceof b) c
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Nested new</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>new X(new Y)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>new X(new Y)
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Parenthesized classname in new</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>new (X())
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>new (X())
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Strip useless parens</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(a + b) + c + (d + e)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a + b + c + d + e
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Ternary and assignment</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a ? (b=c) : d
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a then (b = c) else d
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Typeof and member expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(typeof x)[2]
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(typeof x)[2]
+</code></pre>
+</td>
+</tr>
+</table>
+
 ## Regexp
 
 <table width='100%'>
+<tr>
+<th width='33%' valign='top'>Blank with flag</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/ /g
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>RegExp " ", "g"
+</code></pre>
+</td>
+</tr>
 <tr>
 <th width='33%' valign='top'>Equals</th>
 <td width='33%' valign='top'>
@@ -1473,6 +1695,17 @@ a.prototype
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a RegExp("=\\s")
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Equals with flag</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/=/g
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>RegExp "=", "g"
 </code></pre>
 </td>
 </tr>
@@ -1528,6 +1761,27 @@ assert val == 2
     alert 'ok'
   'z'
 ]
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Binary operators</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a << b;
+a >> b;
+a | b;
+a ^ b;
+a & b;
+a ^ b & c | d;
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a << b
+a >> b
+a | b
+a ^ b
+a & b
+a ^ b & c | d
 </code></pre>
 </td>
 </tr>
