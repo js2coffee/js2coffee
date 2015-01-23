@@ -399,6 +399,15 @@ class OtherTransforms extends TransformerBase
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody(node)
 
+  SwitchCaseExit: (node) ->
+    @removeEmptyStatementsFromBody(node, 'consequent')
+
+  SwitchStatementExit: (node) ->
+    @removeEmptyStatementsFromBody(node, 'cases')
+
+  ProgramExit: (node) ->
+    @removeEmptyStatementsFromBody(node, 'body')
+
   FunctionExpression: (node, parent) ->
     super(node)
     @removeUndefinedParameter(node)
@@ -473,8 +482,8 @@ class OtherTransforms extends TransformerBase
   # replace nodes with 'EmptyStatement' nodes. This cleans that up.
   ###
 
-  removeEmptyStatementsFromBody: (node) ->
-    node.body = node.body.filter (n) ->
+  removeEmptyStatementsFromBody: (node, body = 'body') ->
+    node[body] = node[body].filter (n) ->
       n.type isnt 'EmptyStatement'
     node
 

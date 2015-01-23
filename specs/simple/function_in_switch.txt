@@ -1,0 +1,18 @@
+----
+for(i = 0; i <5; ++i) {
+   switch(i) {
+     case 1:
+       function foo() { return 2; }
+       alert("one");
+       break;
+   }
+}
+----
+foo = ->
+  2
+i = 0
+while i < 5
+  switch i
+    when 1
+      alert 'one'
+  ++i
