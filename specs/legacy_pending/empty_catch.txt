@@ -1,5 +1,0 @@
-----
-try { alert("OK"); } catch (e) {}
-----
-try
-  alert "OK"

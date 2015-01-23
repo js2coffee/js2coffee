@@ -173,7 +173,8 @@ exports.clone = (obj) ->
 exports.quote = (str) ->
   if typeof str is 'string'
     re = JSON.stringify(str)
-    "'" + re.substr(1, re.length-2) + "'"
+    re = re.substr(1, re.length - 2)
+    "'" + re.replace(/'/g, "\\'").replace(/\\"/g, '"') + "'"
   else
     JSON.stringify(str)
 

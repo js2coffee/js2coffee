@@ -46,6 +46,7 @@ Critical for compatibility:
 
  - [x] Ensure correct function orders
  - [ ] Add `return` at the end as needed
+ - [ ] Remove extraneous `return`
  - [x] `a(/=b/i)` should not compile to `a /=b/i`
  - [ ] Take care of operator precedence
  - [ ] Renaming variables in case of shadowing
