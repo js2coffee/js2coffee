@@ -42,7 +42,7 @@ body
  */
 
 .toolbar
-  background: lighten($bg, 3%)
+  background: lighten($bg, 1%)
   box-shadow: 0 0 4px rgba(black, 0.1)
   width: 20%
   height: 100%
@@ -59,14 +59,18 @@ body
     font-weight: 300
     margin: 0
     font-size: 1.5em
+    text-align: center
+    border: solid 2px lighten($bg, 5%)
+    padding: 30px 0
+    border-radius: 3px
+    margin-bottom: 15px
 
   h5
     font-weight: 400
     text-transform: uppercase
     font-size: 0.7em
     letter-spacing: 1px
-    color: #555
-
+    color: #888
 
 /*
  * each code box
@@ -76,18 +80,51 @@ body
   &
     width: 50%
     height: 100%
+    position: relative
     float: left
-    font-family: $monospace
+    $size: 2px
+    box-shadow: inset (-2*$size) 0 ($size) (-1*$size) rgba(black, 0.1)
 
-  &
-    background: $bg
+  h3
+    position: absolute
+    top: 0
+    left: 30px
+    right: 30px
+
+    padding: 10px 0
+    font-size: 0.8em
+    opacity: 0.5
+    border-bottom: solid 1px lighten($bg, 8%)
+
+    strong
+      font-weight: 300
+      text-transform: uppercase
+      letter-spacing: 2px
+
+    em
+      font-style: normal
+      font-weight: 400
+      opacity: 0.4
+      margin-left: 10px
+
+  textarea, .CodeMirror, .CodeMirror.CodeMirror
+    position: absolute
+    top: 40px
+    left: 0
+    right: 0
+    bottom: 0
+
+    font-family: $monospace
+    padding: 30px
+    background: transparent
+    box-shadow: none
+
+  textarea
     color: $text
     margin: 0
-    padding: 30px
     border: 0
     overflow: auto
     resize: none
-    box-shadow: 0 0 4px rgba(black, 0.1)
 
 /*
  * errors
@@ -95,6 +132,7 @@ body
 
 .error-display
   position: absolute
+  z-index: 10
   left: 50%
   top: 0
   margin: 0

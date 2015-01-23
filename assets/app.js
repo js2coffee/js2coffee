@@ -8,25 +8,35 @@
     '}'
   ].join("\n");
 
+  var editor, preview;
+
   ready(function () {
-    var $src = q('#src');
+    // new Behave({ textarea: $src, tabSize: 2 });
+    editor = CodeMirror(q('.code-box.left'), {
+      value: defaultText,
+      theme: 'ambiance',
+      mode: 'javascript',
+      tabSize: 2
+    });
 
-    new Behave({ textarea: $src, tabSize: 2 });
+    preview = CodeMirror(q('.code-box.right'), {
+      value: defaultText,
+      theme: 'ambiance',
+      mode: 'coffeescript',
+      tabSize: 2
+    });
 
-    if ($src.value.length === 0)
-      $src.value = defaultText;
-
-    on($src, 'input', update);
+    editor.on('change', update);
     update();
   });
 
   function update() {
-    var input = q('#src').value;
+    var input = editor.getValue();
     var output;
 
     try {
       output = Js2coffee.build(input);
-      q('#out').value = output.code;
+      preview.setValue(output.code);
       q('#errors').style.display = 'none';
     } catch (err) {
       q('#errors').innerHTML = err.message;

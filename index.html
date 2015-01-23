@@ -4,14 +4,23 @@
     <meta charset="UTF-8" />
     <title>js2coffee-redux</title>
     <link rel='stylesheet' href='assets/style.css'>
+    <link rel='stylesheet' href='http://codemirror.net/lib/codemirror.css'>
+    <link rel='stylesheet' href='http://codemirror.net/theme/ambiance.css'>
     <script src="http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.2/dist/js2coffee.js"></script>
     <script src='http://cdn.rawgit.com/jakiestfu/Behave.js/67bce8d/behave.js'></script>
+    <script src='http://codemirror.net/lib/codemirror.js'></script>
+    <script src='http://codemirror.net/mode/javascript/javascript.js'></script>
+    <script src='http://codemirror.net/mode/coffeescript/coffeescript.js'></script>
     <script src='assets/app.js'></script>
 </head>
 <body>
   <div class='code-area'>
-    <textarea class='code-box' id='src'></textarea>
-    <textarea class='code-box' id='out'></textarea>
+    <div class='code-box left'>
+      <h3><strong>JavaScript</strong> <em>Type here</em></h3>
+    </div>
+    <div class='code-box right'>
+      <h3><strong>CoffeeScript</strong> <em>output</em></h3>
+    </div>
     <pre class='error-display' id='errors'></pre>
   </div>
   <div class='toolbar'>
