@@ -1,3 +1,4 @@
+sass_dir: _sass
 exclude:
   - Makefile
   - README.md

@@ -2,10 +2,16 @@
 ---
 
 @import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400')
+@import 'ionicons'
+
++ion-font()
 
 $bg: #20242a
 $text: #ddd
 $monospace: menlo, monospace
+$sans: 'source sans pro', sans-serif
+$red: #C0392B
+$yellow: #F1C40F
 
 *
   box-sizing: border-box
@@ -17,7 +23,7 @@ html
   background: $bg
 
 html, input, textarea, td
-  font-family: 'source sans pro', sans-serif
+  font-family: $sans
   line-height: 1.5
   font-size: 1em
 
@@ -151,10 +157,44 @@ body
   .CodeMirror-lint-marker-warning,
   .CodeMirror-lint-marker-error,
   .CodeMirror-lint-marker-multiple
-    opacity: 0.9
-    transform: scale(0.6) translate(3px, 2px)
+    opacity: 1
+
+  .CodeMirror-lint-marker-error
+    background: transparent
+    &:before
+      +ion-icon('android-cancel', 16px, $top: -1px)
+      color: $red
+
+  .CodeMirror-lint-marker-warning
+    background: transparent
+    &:before
+      +ion-icon('android-warning', 16px, $top: -1px)
+      color: $yellow
+
   .CodeMirror-lint-marker-multiple
     opacity: 0
+
+.CodeMirror-lint-tooltip.CodeMirror-lint-tooltip
+  font-family: $sans
+  padding: 8px 15px
+  background: #111
+  color: white
+  border: 0
+
+  .CodeMirror-lint-message-error,
+  .CodeMirror-lint-message-warning
+    padding-left: 0
+    background: none
+
+  .CodeMirror-lint-message-error:before
+    +ion-icon('android-close', 20px, $top: -1px)
+    color: $red
+    margin-right: 12px
+  .CodeMirror-lint-message-warning:before
+    +ion-icon('alert', 16px, $top: -1px)
+    color: $yellow
+    margin-right: 12px
+
 
 /*
  * errors
