@@ -43,16 +43,21 @@ console.log(result.ast);
 An example of an AST:
 
 ```js
+/* echo "alert()" | js2c --ast */
+
 { type: 'Program',
   body:
    [ { type: 'ExpressionStatement',
        expression:
-        { type: 'Identifier',
-          name: 'a' } } ],
+        { type: 'CallExpression',
+          callee: { type: 'Identifier', name: 'alert' },
+          arguments: [],
+          _isStatement: true } } ],
   comments: [] }
 ```
-Nodes
------
+
+Node types
+----------
 
 These are nodes available in both CoffeeScript and JavaScript.
 
