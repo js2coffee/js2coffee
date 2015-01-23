@@ -436,6 +436,7 @@ class OtherTransforms extends TransformerBase
   ###
 
   unpackRegexpIfNeeded: (node) ->
+    return unless node.value instanceof RegExp
     m = node.value.toString().match(/^\/([\s\=].*)\/([a-z]*)$/)
     if m
       node = replace node,
