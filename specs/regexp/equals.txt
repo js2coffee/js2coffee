@@ -1,0 +1,8 @@
+notes: """
+  A RegExp literal starting with an equal sign is not allowed in CoffeeScript,
+  as it's ambiguous and clashes with the `/=` operator.
+"""
+----
+a(/=\s/)
+----
+a RegExp("=\\s")

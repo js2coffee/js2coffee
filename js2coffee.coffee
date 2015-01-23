@@ -338,6 +338,25 @@ class OtherTransforms extends TransformerBase
   ReturnStatement: (node) ->
     @parenthesizeObjectsInArgument(node)
 
+  Literal: (node) ->
+    @unpackRegexpIfNeeded(node)
+
+  ###
+  # Accounts for regexps that start with an equal sign.
+  ###
+
+  unpackRegexpIfNeeded: (node) ->
+    m = node.value.toString().match(/^\/(\=.*)\/$/)
+    if m
+      replace node,
+        type: 'CallExpression'
+        callee: { type: 'Identifier', name: 'RegExp' },
+        arguments: [
+          type: 'Literal'
+          value: m[1]
+          raw: JSON.stringify(m[1])
+        ]
+
   ###
   # Ensures that an Array's elements objects are braced.
   ###

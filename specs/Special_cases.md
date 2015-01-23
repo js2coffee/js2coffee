@@ -160,6 +160,22 @@ fn = ->
 
 ## Loops
 
+### Empty while
+
+CoffeeScript doesn't allow loop constructs (while/loop/for) without any
+body. To get around this, we use `continue` in place of an empty body.
+
+```js
+// Input:
+while (a) {}
+```
+
+```coffee
+# Output:
+while a
+  continue
+```
+
 ### Simple for
 
 CoffeeScript has no `for` loop, so they are converted into `while` loops.
@@ -177,6 +193,23 @@ a
 while b
   d()
   c
+```
+
+## Regexp
+
+### Equals
+
+A RegExp literal starting with an equal sign is not allowed in CoffeeScript,
+as it's ambiguous and clashes with the `/=` operator.
+
+```js
+// Input:
+a(/=\s/)
+```
+
+```coffee
+# Output:
+a RegExp("=\\s")
 ```
 
 ## Shadowing
