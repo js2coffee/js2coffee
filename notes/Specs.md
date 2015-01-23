@@ -347,6 +347,25 @@ if ok
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Functions in ternaries</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>_.propertyOf = function(obj) {
+  return obj == null ? (x && function(){}) : function(key) {
+    return obj[key];
+  };
+};
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>_.propertyOf = (obj) ->
+  if obj == null then x and (->
+  ) else ((key) ->
+    obj[key]
+  )
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Multiple declarations</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function one() {
@@ -674,6 +693,30 @@ else
     b()
   else
     c()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Ternary in if</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a ? b : c) { d(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if (if a then b else c)
+  d()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Ternary in if and binary</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (x && (a ? b : c)) { d(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if x and (if a then b else c)
+  d()
 </code></pre>
 </td>
 </tr>
@@ -2079,6 +2122,31 @@ b()
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Function in switch</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for(i = 0; i <5; ++i) {
+   switch(i) {
+     case 1:
+       function foo() { return 2; }
+       alert("one");
+       break;
+   }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>foo = ->
+  2
+i = 0
+while i < 5
+  switch i
+    when 1
+      alert 'one'
+  ++i
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Increment</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a++
@@ -2384,6 +2452,33 @@ c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>undefined
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Special cases
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Unary and object expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>+{ a: '2' }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>+{ a: '2' }
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Unary and object with call</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>!{ toString: null }.propertyIsEnumerable('string')
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>!(toString: null).propertyIsEnumerable('string')
 </code></pre>
 </td>
 </tr>

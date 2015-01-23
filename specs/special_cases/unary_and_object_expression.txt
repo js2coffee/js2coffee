@@ -1,0 +1,5 @@
+# As seen in underscore.js
+----
++{ a: '2' }
+----
++{ a: '2' }

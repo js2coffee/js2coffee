@@ -310,6 +310,7 @@ class SwitchTransforms extends TransformerBase
 class MemberTransforms extends TransformerBase
   MemberExpression: (node) ->
     @transformThisToAtSign(node)
+    @braceObjectOnLeft(node)
     @replaceWithPrototype(node) or
     @parenthesizeObjectIfFunction(node)
 
@@ -325,6 +326,11 @@ class MemberTransforms extends TransformerBase
       node._prefixed = true
       node.object._prefix = true
     node
+
+  braceObjectOnLeft: (node) ->
+    if node.object.type is 'ObjectExpression'
+      node.object._braced = true
+    return
 
   ###
   # Replaces `a.prototype.b` with `a::b` in a member expression.
@@ -449,6 +455,7 @@ class OtherTransforms extends TransformerBase
     @updateBinaryExpression(node)
 
   UnaryExpression: (node) ->
+    @braceObjectBesideUnary(node)
     @updateVoidToUndefined(node)
 
   LabeledStatement: (node, parent) ->
@@ -466,6 +473,11 @@ class OtherTransforms extends TransformerBase
 
   Literal: (node) ->
     @unpackRegexpIfNeeded(node)
+
+  braceObjectBesideUnary: (node) ->
+    if node.argument.type is 'ObjectExpression'
+      node.argument._braced = true
+    return
 
   ###
   # Accounts for regexps that start with an equal sign or space.
@@ -1036,9 +1048,9 @@ class Builder extends BuilderBase
     else if props is 1
       props = node.properties.map(@walk)
       if isBraced
-        space [ "{", props, "}" ]
+        @paren space [ "{", props, "}" ]
       else
-        [ props ]
+        @paren [ props ]
 
     # Last expression in scope (`function() { ({a:2}); }`)
     else if node._last
@@ -1052,9 +1064,9 @@ class Builder extends BuilderBase
         prependAll(props, [ "\n", @indent() ])
 
       if isBraced
-        [ "{", props, "\n", @indent(), "}" ]
+        @paren [ "{", props, "\n", @indent(), "}" ]
       else
-        [ props ]
+        @paren [ props ]
 
   Property: (node) ->
     if node.kind isnt 'init'

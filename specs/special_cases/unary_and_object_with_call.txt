@@ -1,0 +1,5 @@
+# As seen in underscore.js
+----
+!{ toString: null }.propertyIsEnumerable('string')
+----
+!{ toString: null }.propertyIsEnumerable('string')
