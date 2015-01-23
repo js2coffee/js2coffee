@@ -17,8 +17,8 @@ Developer notes
  - [x] Put groundwork on comment generation
  - [x] Throw useful Esprima errors (like coffeescriptredux)
  - [x] Move Comments to transformer
- - [ ] Move For loops to transformer
-   - [ ] WhileStatement to CoffeeLoopStatement
+ - [x] Move For loops to transformer
+   - [x] WhileStatement to CoffeeLoopStatement
    - [ ] DoWhileStatement to CoffeeLoopStatement
    - [ ] `unless` support for IfStatement
    - [ ] ForStatement as a transformation to WhileStatement

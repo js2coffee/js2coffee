@@ -85,12 +85,14 @@ js2coffee.parseJS = (source, options = {}) ->
 js2coffee.transform = (ast, options = {}) ->
   # Moves named functions to the top of the scope
   FunctionTransforms.run(ast, options)
+  LoopTransforms.run(ast, options)
 
   # Injects comments into the AST as BlockComment and LineComment
   CommentTransforms.run(ast, options) unless options.comments is false
 
   # Everything else
   OtherTransforms.run(ast, options)
+  BlockTransforms.run(ast, options)
   ast
 
 ###*
@@ -405,14 +407,14 @@ class CommentTransforms extends TransformerBase
 
 class OtherTransforms extends TransformerBase
   BlockStatementExit: (node) ->
-    @removeEmptyStatementsFromBody node
+    @removeEmptyStatementsFromBody(node)
 
   FunctionExpression: (node, parent) ->
     super(node)
-    @removeUndefinedParameter node
+    @removeUndefinedParameter(node)
 
   SwitchStatement: (node) ->
-    @consolidateCases node
+    @consolidateCases(node)
 
   SwitchCase: (node) ->
     @removeBreaksFromConsequents(node)
@@ -432,13 +434,13 @@ class OtherTransforms extends TransformerBase
     @escapeUndefined(node)
 
   BinaryExpression: (node) ->
-    @updateBinaryExpression node
+    @updateBinaryExpression(node)
 
   UnaryExpression: (node) ->
-    @updateVoidToUndefined node
+    @updateVoidToUndefined(node)
 
   LabeledStatement: (node, parent) ->
-    @warnAboutLabeledStatements node, parent
+    @warnAboutLabeledStatements(node, parent)
 
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
@@ -679,6 +681,60 @@ class OtherTransforms extends TransformerBase
 
 clone = (obj) ->
   JSON.parse JSON.stringify obj
+
+# }}} -----------------------------------------------------------------------
+# {{{ LoopsTransforms
+
+class LoopTransforms extends TransformerBase
+  ForStatement: (node, parent) ->
+    # init, test, update, body
+    @injectUpdateIntoBody(node)
+
+    node.type = 'WhileStatement'
+    block =
+      type: 'BlockStatement'
+      body: [ node ]
+
+    if node.init
+      block.body.unshift
+        type: 'ExpressionStatement'
+        expression: node.init
+
+    return block
+
+  ###*
+  # Injects a ForStatement's update (eg, `i++`) into the body.
+  ###
+
+  injectUpdateIntoBody: (node) ->
+    if node.update
+      statement =
+        type: 'ExpressionStatement'
+        expression: node.update
+
+      # Ensure that the body is a BlockStatement with a body
+      if not node.body?
+        node.body ?= { type: 'BlockStatement', body: [] }
+      else if node.body.type isnt 'BlockStatement'
+        old = node.body
+        node.body = { type: 'BlockStatement', body: [ old ] }
+
+      node.body.body = node.body.body.concat([statement])
+      delete node.update
+
+# }}} -----------------------------------------------------------------------
+# {{{ BlockTransforms
+
+###**
+# BlockTransforms:
+# Flattens nested `BlockStatements`.
+###
+
+class BlockTransforms extends TransformerBase
+  BlockStatement: (node, parent) ->
+    if parent.type is 'BlockStatement'
+      parent.body.splice parent.body.indexOf(node), 1, node.body...
+      return
 
 # }}} -----------------------------------------------------------------------
 # {{{ FunctionTransforms
@@ -1138,20 +1194,6 @@ class Builder extends BuilderBase
 
     [ left, "\n", right ]
 
-  ForStatement: (node) ->
-    # init, test, update, body
-    @injectUpdateIntoBody(node)
-
-    init = if node.init
-      [ @walk(node.init), "\n", @indent() ]
-    else
-      []
-
-    if node.test
-      [ init, @WhileStatement(node) ]
-    else
-      [ init, @CoffeeLoopStatement(node) ]
-
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
       # @syntaxError node, "Using 'for..in' loops without 'var' can produce
@@ -1226,26 +1268,6 @@ class Builder extends BuilderBase
       if arg.type is "FunctionExpression"
         if not isLast
           arg._parenthesized = true
-
-  ###*
-  # Injects a ForStatement's update (eg, `i++`) into the body.
-  ###
-
-  injectUpdateIntoBody: (node) ->
-    if node.update
-      statement =
-        type: 'ExpressionStatement'
-        expression: node.update
-
-      # Ensure that the body is a BlockStatement with a body
-      if not node.body?
-        node.body ?= { type: 'BlockStatement', body: [] }
-      else if node.body.type isnt 'BlockStatement'
-        old = node.body
-        node.body = { type: 'BlockStatement', body: [ old ] }
-
-      node.body.body = node.body.body.concat([statement])
-      delete node.update
 
 # }}} -----------------------------------------------------------------------
 # {{{ debug
