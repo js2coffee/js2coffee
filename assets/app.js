@@ -3,7 +3,8 @@
   var defaultText = [
     'function add(x, y) {',
     '  // Welcome to the new js2coffee, now',
-    '  // rewritten to use esprima.',
+    '  // rewritten to use esprima, currently',
+    '  // in development.',
     '  return x + y;',
     '}'
   ].join("\n");
