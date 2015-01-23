@@ -23,7 +23,7 @@ read(args._, function (err, res) {
       if (args.ast) {
         if (!args.verbose)
           out.ast = scrub(out.ast);
-        process.stdout.write(inspect(out.ast));
+        console.log(inspect(out.ast));
       } else {
         process.stdout.write(out.code);
       }
