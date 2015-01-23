@@ -1273,4 +1273,11 @@ class Builder extends BuilderBase
 
 js2coffee.Builder = Builder
 
+###*
+# version : js2coffee.version
+# The version number
+###
+
+js2coffee.version = require('./package.json').version
+
 # vim:foldmethod=marker
