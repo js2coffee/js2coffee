@@ -11,6 +11,7 @@ BuilderBase = require('./lib/builder_base')
   inspect
   newline
   prependAll
+  quote
   replace
   space
 } = require('./lib/helpers')
@@ -443,14 +444,14 @@ class OtherTransforms extends TransformerBase
         arguments: [
           type: 'Literal'
           value: m[1]
-          raw: JSON.stringify(m[1])
+          raw: quote(m[1])
         ]
 
       if m[2]
         node.arguments.push
           type: 'Literal'
           value: m[2]
-          raw: JSON.stringify(m[2])
+          raw: quote(m[2])
 
       node
 
@@ -873,7 +874,10 @@ class Builder extends BuilderBase
     @paren space [ @walk(node.left), node.operator, @walk(node.right) ]
 
   Literal: (node) ->
-    [ node.raw ]
+    if typeof node.value is 'string'
+      [ quote(node.value) ]
+    else
+      [ node.raw ]
 
   MemberExpression: (node) ->
     right = if node.computed

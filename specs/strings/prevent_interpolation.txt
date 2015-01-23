@@ -1,0 +1,7 @@
+notes: """
+  Strings are defaulted to single quotes to prevent interpolation.
+"""
+----
+"#{a}"
+----
+'#{a}'

@@ -162,6 +162,20 @@ exports.replace = (node, newNode) ->
 exports.clone = (obj) ->
   JSON.parse JSON.stringify obj
 
+###*
+# quote() : quote(string)
+# Quotes a string with single quotes.
+#
+#     quote("hello")
+#     => "'hello'"
+###
+
+exports.quote = (str) ->
+  if typeof str is 'string'
+    re = JSON.stringify(str)
+    "'" + re.substr(1, re.length-2) + "'"
+  else
+    JSON.stringify(str)
 
 ###*
 # getPrecedence() : getPrecedence(node)

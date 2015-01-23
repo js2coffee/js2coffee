@@ -5,4 +5,4 @@ notes: """
 ----
 / /g
 ----
-RegExp " ", "g"
+RegExp ' ', 'g'

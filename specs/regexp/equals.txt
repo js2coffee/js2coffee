@@ -5,4 +5,4 @@ notes: """
 ----
 a(/=\s/)
 ----
-a RegExp("=\\s")
+a RegExp('=\\s')
