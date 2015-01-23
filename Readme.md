@@ -40,6 +40,14 @@ Small attempt at making a new js2coffee.
    Error messages now show a preview of the source where errors happen, such as 
    what you'd expect in CoffeeScriptRedux.
 
+## Docs
+
+ - [Specs](notes/Specs.md) - examples of how JavaScript compiles to CoffeeScript.
+
+ - [AST format](notes/AST.md) - technical description of the CoffeeScript AST format.
+
+ - [Special cases](notes/Special_cases.md) - a list of edge cases that js2coffee accounts for.
+
 ## Command line
 
 The command line utility accepts both filenames or stdin.
