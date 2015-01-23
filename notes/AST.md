@@ -19,26 +19,53 @@ About this document
 
 A few pointers on notation:
 
-- Array properties are denoted with `+`. (eg: expressions in an ArrayExpression)
+- Array properties are denoted with `[ ]`. (eg: expressions in an ArrayExpression)
 
 - Optional properties are denoted with `?`, meaning they can be `undefined` in
 some cases. (eg: argument of a ReturnStatement)
 
+Inspecting the syntax tree
+--------------------------
+
+In the command line, you can use the `--ast` option:
+
+```sh
+js2c file.coffee --ast
+```
+
+Programatically, just check the result's `ast` property:
+
+```js
+result = js2coffee.build(source);
+console.log(result.ast);
+```
+
+An example of an AST:
+
+```js
+{ type: 'Program',
+  body:
+   [ { type: 'ExpressionStatement',
+       expression:
+        { type: 'Identifier',
+          name: 'a' } } ],
+  comments: [] }
+```
 Nodes
 -----
 
-These are nodes seen in both CoffeeScript and JavaScript:
+These are nodes available in both CoffeeScript and JavaScript.
 
 ### Program
-the root node.
+The root node.
 
-   - `body` : Statement +
+   - `body` : [ Statement, ... ]
 
 ### BlockStatement
-a sequence of statements. Usually belongs to a loop like WhileStatement, or an 
-IfStatement, or some other.
+A sequence of statements. Usually belongs to a loop like WhileStatement, or an 
+[IfStatement], or some other.
 
-   - `body` : Statement +
+   - `body` : [ Statement, ... ]
 
 ### ExpressionStatement
 A statement with one expression in it.
@@ -78,7 +105,7 @@ Can have its argument missing (eg: `return`).
 A try block. Encompasses all `try`, `catch`, and `finally`.
 
    - `block` : BlockStatement (the *try*)
-   - `handlers` : CatchClause + ? (the *catch*)
+   - `handlers` : [ CatchClause, ... ] ? (the *catch*)
    - `finalizer` : BlockStatement ? (the *finally*)
 
 ### CatchClause
@@ -99,11 +126,11 @@ Just `this`.
 
 ### ArrayExpression
 
-   - `elements` : Expression *
+   - `elements` : [ Expression, ... ] ?
 
 ### ObjectExpression
 
-   - `properties` : Property *
+   - `properties` : [ Property, ... ] ?
    - `_braced` : Boolean (true if braced, eg `{ a: 1 }`)
 
 ### Property
@@ -116,7 +143,7 @@ Inside ObjectExpression.
 ### FunctionExpression
 (note: `id` is removed from function expressions.)
 
-   - `params` : Identifier +
+   - `params` : [ Identifier, ... ]
    - `body` : BlockStatement
    - `_parenthesized` : Boolean (true if parenthesized, eg `(-> ...)`)
 
@@ -130,14 +157,14 @@ available in JS.
 ### BinaryExpression
 
    - `left` : Expression
-   - `operator` : String (eg: "+")
+   - `operator` : String (eg: `+`)
    - `right` : Expression
 
 ### AssignmentExpression
 An assignment. Also covers shorthand like `+=`.
 
    - `left` : Expression
-   - `operator` : String (eg: "+=")
+   - `operator` : String (eg: `+=`)
    - `right` : Expression
 
 ### UpdateExpression
@@ -158,13 +185,13 @@ The ternary operator. (`if a then b else c`)
 Instanciation (eg: `new X()`).
 
    - `callee` : Expression (usually an Identifier)
-   - `arguments` : Expression +
+   - `arguments` : [ Expression, ... ]
 
 ### CallExpression
 A function call.
 
    - `callee` : Expression (usually an Identifier)
-   - `arguments` : Expression +
+   - `arguments` : [ Expression, ... ]
    - `_isStatement` : Boolean (true if it has no parentheses)
 
 ### MemberExpression
@@ -177,7 +204,7 @@ Scope resolution (eg: `this.foo`).
 ### SwitchStatement
 
    - `discriminant` : Expression
-   - `cases` : SwitchCase +
+   - `cases` : [ SwitchCase, ... ]
 
 ### SwitchCase
 A case inside a SwitchStatement. Then `test` is not present, it's the `else`.
@@ -202,7 +229,7 @@ These are CoffeeScript-specific AST types:
 ### CoffeeListExpression
 a comma-separated list (eg: `when a, b`).
 
-    - `expressions` : Expression +
+   - `expressions` : [ Expression, ... ]
 
 ### CoffeePrototypeExpression
 Prototype resolution operator. Similar to MemberExpression.
@@ -211,15 +238,46 @@ Prototype resolution operator. Similar to MemberExpression.
    - `property` : Expression (usually Identifier)
    - `computed` : Boolean (*true* if `a::[b]`)
 
+Examples:
+
+```coffee
+a::b
+
+# { type: 'CoffeePrototypeExpression',
+#   object: { type: 'Identifier', name: 'a' },
+#   property: { type: 'Identifier', name: 'b' } }
+```
+
 ### CoffeeLoopStatement
-A forever loop.
+A forever loop. Compiles to `loop`.
 
    - `body` : BlockStatement
+
+Examples:
+
+```coffee
+loop
+  a()
+  
+# { type: 'CoffeeLoopExpression',
+#   body: {
+#     type: 'BlockStatement',
+#     body: { ... } }
+```
 
 ### CoffeeEscapedExpression
 A backtick-wrapped JS expression.
 
    - `value` : the raw value
+
+Example:
+
+```coffee
+`undefined`
+
+# { type: 'CoffeeEscapedExpression',
+#   value: 'undefined' }
+```
 
 Only in JavaScript
 ------------------
@@ -228,7 +286,7 @@ These node types are not present in CoffeeScript ASTs, but are present in
 JavaScript ASTs.
 
 ### SequenceExpression
-turned into a sequence of ExpressionStatements.
+turned into a sequence of [ExpressionStatement]s.
 
 ### EmptyStatement
 removed from the tree.
@@ -258,3 +316,7 @@ converted to WhileStatement loops.
 converted to WhileStatement loops.
 
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
+
+
+[IfStatement]: #ifstatement
+[ExpressionStatement]: #expressionstatement
