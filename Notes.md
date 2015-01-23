@@ -21,7 +21,7 @@ Developer notes
    - [x] WhileStatement to CoffeeLoopStatement
    - [ ] DoWhileStatement to CoffeeLoopStatement
    - [ ] `unless` support for IfStatement
-   - [ ] ForStatement as a transformation to WhileStatement
+   - [x] ForStatement as a transformation to WhileStatement
    - [ ] ForInStatement ?
    - [ ] add extra `continue` (makeLoopBody)
 

@@ -449,9 +449,6 @@ class OtherTransforms extends TransformerBase
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer(node)
 
-  WhileStatement: (node) ->
-    @convertToLoopStatement(node)
-
   ArrayExpression: (node) ->
     @parenthesizeObjectsInElements(node)
 
@@ -478,21 +475,6 @@ class OtherTransforms extends TransformerBase
       if node.argument.type is 'ObjectExpression'
         node.argument._braced = true
     node
-
-  ###
-  # Converts a `while (true)` to a CoffeeLoopStatement.
-  ###
-
-  convertToLoopStatement: (node) ->
-    isLoop = not node.test? or
-      (node.test?.type is 'Literal' and node.test?.value is true)
-
-    if isLoop
-      replace node,
-        type: 'CoffeeLoopStatement'
-        body: node.body
-    else
-      node
 
   ###
   # Remove `{type: 'EmptyStatement'}` from the body.
@@ -686,10 +668,20 @@ clone = (obj) ->
 # {{{ LoopsTransforms
 
 class LoopTransforms extends TransformerBase
-  ForStatement: (node, parent) ->
+  ForStatement: (node) ->
     # init, test, update, body
     @injectUpdateIntoBody(node)
+    @convertForToWhile(node)
 
+  WhileStatement: (node) ->
+    @convertToLoopStatement(node)
+
+  ###
+  # Converts a `for (x;y;z) {a}` to `x; while(y) {a; z}`.
+  # Returns a `BlockStatement`.
+  ###
+
+  convertForToWhile: (node) ->
     node.type = 'WhileStatement'
     block =
       type: 'BlockStatement'
@@ -701,6 +693,21 @@ class LoopTransforms extends TransformerBase
         expression: node.init
 
     return block
+
+  ###
+  # Converts a `while (true)` to a CoffeeLoopStatement.
+  ###
+
+  convertToLoopStatement: (node) ->
+    isLoop = not node.test? or
+      (node.test?.type is 'Literal' and node.test?.value is true)
+
+    if isLoop
+      replace node,
+        type: 'CoffeeLoopStatement'
+        body: node.body
+    else
+      node
 
   ###*
   # Injects a ForStatement's update (eg, `i++`) into the body.
