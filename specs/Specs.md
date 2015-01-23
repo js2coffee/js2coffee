@@ -1480,6 +1480,30 @@ assert val == 2
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>Array newlines</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>controller('name', [
+  'a',
+  'b',
+  function (a, b) {
+    alert('ok');
+  },
+  'z'
+]);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>controller 'name', [
+  'a'
+  'b'
+  (a, b) ->
+    alert 'ok'
+  'z'
+]
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Booleans</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>true;
