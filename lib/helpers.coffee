@@ -154,3 +154,11 @@ exports.replace = (node, newNode) ->
   newNode.loc = node.loc
   newNode
 
+###*
+# clone() : clone(object)
+# Duplicates an object.
+###
+
+exports.clone = (obj) ->
+  JSON.parse JSON.stringify obj
+
