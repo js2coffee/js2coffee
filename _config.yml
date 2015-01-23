@@ -1,0 +1,6 @@
+exclude:
+  - Makefile
+  - README.md
+  - _/Gemfile
+  - _/Gemfile.lock
+  - CNAME
