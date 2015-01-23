@@ -16,7 +16,10 @@
       value: defaultText,
       theme: 'ambiance',
       mode: 'javascript',
-      tabSize: 2
+      tabSize: 2,
+      gutters: ["CodeMirror-lint-markers"],
+      lint: true,
+      autofocus: true
     });
 
     preview = CodeMirror(q('.code-box.right'), {

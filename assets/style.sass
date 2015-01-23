@@ -113,18 +113,15 @@ body
       opacity: 0.4
       margin-left: 10px
 
-  textarea, .CodeMirror, .CodeMirror.CodeMirror
+  textarea, .CodeMirror, 
     position: absolute
     top: 0
     left: 0
     height: 100%
     width: 100%
 
-    font-family: $monospace
     padding: 30px
     padding-top: 70px
-    background: transparent
-    box-shadow: none
 
   textarea
     color: $text
@@ -132,6 +129,29 @@ body
     border: 0
     overflow: auto
     resize: none
+
+/*
+ * codemirror customization
+ */
+
+.CodeMirror
+  &.CodeMirror.CodeMirror
+    font-family: $monospace
+    background: transparent
+    box-shadow: none
+
+  .CodeMirror-gutters.CodeMirror-gutters
+    background: transparent
+    border-right: 0
+    box-shadow: none
+
+  .CodeMirror-lint-marker-warning,
+  .CodeMirror-lint-marker-error,
+  .CodeMirror-lint-marker-multiple
+    opacity: 0.9
+    transform: scale(0.6) translate(5px, 5px)
+  .CodeMirror-lint-marker-multiple
+    opacity: 0
 
 /*
  * errors
