@@ -402,6 +402,25 @@ obj.two = ->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Nested functions in object</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>({
+  a: function () {
+    function b() { return c; }
+    b()
+  }
+})
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a: ->
+  b = ->
+    c
+  b()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Return object</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function fn() {
@@ -664,6 +683,23 @@ else
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>Anon invocation</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function ($) { return $; }(jQuery));
+(function ($) { return $; }());
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(($) ->
+  $
+) jQuery
+(($) ->
+  $
+)()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Array literals</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var arr1 = [];
@@ -862,6 +898,49 @@ console.log 'a = b'.match(re)
 -20.89889
 -424
 482934.00000001
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>For</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (x=0; !x<2; x++) { alert(1) }
+for (; !x<2; ) { alert(1) }
+for (;;++x) { alert(1) }
+for (;;) { alert(1) }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = 0
+while !x < 2
+  alert 1
+  x++
+while !x < 2
+  alert 1
+loop
+  alert 1
+  ++x
+loop
+  alert 1
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>For in</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (var x in y) { alert(1) }
+for (var key in obj) {}
+for (key in obj)
+    single_liner()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>for x of y
+  alert 1
+for key of obj
+  continue
+for key of obj
+  single_liner()
 </code></pre>
 </td>
 </tr>
@@ -1615,6 +1694,25 @@ b: 2
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Singleton with methods</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>App = {
+  start: function () { go(); },
+  stop: function () { halt(); }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>App =
+  start: ->
+    go()
+
+  stop: ->
+    halt()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Unusual identifiers</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>object = {
@@ -2099,6 +2197,21 @@ c and d
 <pre><code class='lang-coffee'>a.b = (arg) ->
   if arg
     cli.a = b
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Null check</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function ifNullChecks() {
+  if (x==null) { yep() }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>ifNullChecks = ->
+  if x == null
+    yep()
 </code></pre>
 </td>
 </tr>
