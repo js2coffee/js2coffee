@@ -1,3 +1,7 @@
+## v0.0.4 - January 23, 2015
+
+Pre-release update (improve errors).
+
 ## v0.0.3 - January 23, 2015
 
 Pre-release update (add `js2coffee.version`).
