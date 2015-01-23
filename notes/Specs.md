@@ -339,7 +339,7 @@ if (ok) {
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>name = ->
-  return "John"
+  'John'
 alert name()
 if ok
   a()
@@ -378,9 +378,9 @@ obj.two = function () {
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>obj.one = ->
-  return a()
+  a()
 obj.two = ->
-  return b()
+  b()
 </code></pre>
 </td>
 </tr>
@@ -397,7 +397,7 @@ obj.two = ->
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = ->
   b = ->
-    return c
+    c
 </code></pre>
 </td>
 </tr>
@@ -407,7 +407,7 @@ obj.two = ->
 <pre><code class='lang-js'>function fn() {
   if (x)
     return { a: 1, b: 2 };
-  return true
+  return true;
 }
 </code></pre>
 </td>
@@ -418,7 +418,7 @@ obj.two = ->
       a: 1
       b: 2
     }
-  return true
+  true
 </code></pre>
 </td>
 </tr>
@@ -426,13 +426,16 @@ obj.two = ->
 <th width='33%' valign='top'>Return statement</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function a () {
-  return b;
+  if (x) return b;
+  return c;
 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = ->
-  return b
+  if x
+    return b
+  c
 </code></pre>
 </td>
 </tr>
@@ -446,7 +449,7 @@ obj.two = ->
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>call ->
-  return true
+  true
 </code></pre>
 </td>
 </tr>
@@ -460,7 +463,7 @@ obj.two = ->
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>fn = ->
-  return true
+  true
 </code></pre>
 </td>
 </tr>
@@ -796,6 +799,23 @@ loop
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Empty function bodies</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>x = { v: function() { return 2; }, y: function(){}, z: function(){} };
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x =
+  v: ->
+    2
+
+  y: ->
+
+  z: ->
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Empty semicolon</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>2;;;3
@@ -815,8 +835,8 @@ console.log("a = b".match(re));
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>re = RegExp("=")
-console.log "a = b".match(re)
+<pre><code class='lang-coffee'>re = RegExp('=')
+console.log 'a = b'.match(re)
 </code></pre>
 </td>
 </tr>
@@ -888,6 +908,17 @@ a-- - a
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Or</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var a = 2 || {}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = 2 or {}
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Parenthesized new</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>(new Date).getTime()
@@ -895,6 +926,19 @@ a-- - a
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>(new Date).getTime()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Return function</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function() { return function() { return 2 }; })
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>->
+  ->
+    2
 </code></pre>
 </td>
 </tr>
@@ -944,6 +988,36 @@ switch x
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>This attribute</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function() {
+  return this.foo;
+})
+
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>->
+  @foo
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>This keyword</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function() {
+  return this;
+})
+
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>->
+  this
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Throw</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>try {
@@ -989,6 +1063,22 @@ a = ~2
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>`undefined`
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Var</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var x = 2;
+var y;
+var f = function() { return y };
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = 2
+y = undefined
+f = ->
+  y
 </code></pre>
 </td>
 </tr>
@@ -1544,15 +1634,15 @@ b: 2
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>object =
   a: b
-  "a.a": b
-  "a#a": b
-  "a a": b
+  'a.a': b
+  'a#a': b
+  'a a': b
   0: b
-  "0.a": b
+  '0.a': b
   $: b
   $$: b
   $a: b
-  "$a b": b
+  '$a b': b
 </code></pre>
 </td>
 </tr>
@@ -1613,6 +1703,17 @@ b: 2
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>(a instanceof b) c
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Logical operators</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(a || b) && (c || d)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(a or b) and (c or d)
 </code></pre>
 </td>
 </tr>
@@ -1683,7 +1784,7 @@ b: 2
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>RegExp " ", "g"
+<pre><code class='lang-coffee'>RegExp ' ', 'g'
 </code></pre>
 </td>
 </tr>
@@ -1694,7 +1795,7 @@ b: 2
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a RegExp("=\\s")
+<pre><code class='lang-coffee'>a RegExp('=\\s')
 </code></pre>
 </td>
 </tr>
@@ -1705,7 +1806,7 @@ b: 2
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>RegExp "=", "g"
+<pre><code class='lang-coffee'>RegExp '=', 'g'
 </code></pre>
 </td>
 </tr>
@@ -1864,7 +1965,7 @@ b()
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>alert "Hello world"
+<pre><code class='lang-coffee'>alert 'Hello world'
 </code></pre>
 </td>
 </tr>
@@ -1875,7 +1976,7 @@ b()
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a "hello", 2
+<pre><code class='lang-coffee'>a 'hello', 2
 </code></pre>
 </td>
 </tr>
@@ -1922,7 +2023,7 @@ b--
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a["node" + n]
+<pre><code class='lang-coffee'>a['node' + n]
 </code></pre>
 </td>
 </tr>
@@ -1933,7 +2034,7 @@ b--
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a["a-b"]
+<pre><code class='lang-coffee'>a['a-b']
 </code></pre>
 </td>
 </tr>
@@ -1944,7 +2045,7 @@ b--
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>@["#" + id]
+<pre><code class='lang-coffee'>@['#' + id]
 </code></pre>
 </td>
 </tr>
@@ -1959,6 +2060,19 @@ b--
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if a = m = match
   m()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Logical expressions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a || b;
+c && d;
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a or b
+c and d
 </code></pre>
 </td>
 </tr>
@@ -2024,7 +2138,7 @@ a.prototype = {}
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>fn = ->
-  return a == "b"
+  a == 'b'
 a = if x then y else fn
 </code></pre>
 </td>
@@ -2172,7 +2286,18 @@ c
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>""
+<pre><code class='lang-coffee'>''
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Prevent interpolation</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>"#{a}"
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>'#{a}'
 </code></pre>
 </td>
 </tr>
@@ -2183,7 +2308,7 @@ c
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>"hello"
+<pre><code class='lang-coffee'>'hello'
 </code></pre>
 </td>
 </tr>
@@ -2205,7 +2330,7 @@ c
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>"\n"
+<pre><code class='lang-coffee'>'\n'
 </code></pre>
 </td>
 </tr>

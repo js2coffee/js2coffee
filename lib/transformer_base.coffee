@@ -1,7 +1,7 @@
 {
   buildError
   clone
-} = require('./helpers')
+} = require('./helpers.coffee')
 
 extend = require('util')._extend
 

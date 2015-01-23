@@ -45,12 +45,12 @@ If you'd like to isolate a spec, edit the spec file to add `only: true`:
 Critical for compatibility:
 
  - [x] Ensure correct function orders
- - [ ] Add `return` at the end as needed
- - [ ] Remove extraneous `return`
+ - [x] Remove extraneous `return`
  - [x] `a(/=b/i)` should not compile to `a /=b/i`
- - [ ] Take care of operator precedence
- - [ ] Renaming variables in case of shadowing
- - [ ] Empty while
+ - [x] Take care of operator precedence
+ - [x] Renaming variables in case of shadowing
+ - [x] Empty while
+ - [ ] Add `return` at the end as needed
  - [ ] Continue in `for` loop
 
  Niceness:
@@ -60,12 +60,6 @@ Critical for compatibility:
  - [ ] `Math.floor(a / b)` => `a // b`
  - [ ] `function() { a }.bind(this)` => `=> a`
  - [x] Support a `case` without any code
- - [ ] Sequence of objects (`a('ok', {a:b}, ->)`)
+ - [x] Sequence of objects (`a('ok', {a:b}, ->)`)
  - [ ] Array of functions
-
-### Precendence rules
-
- - all expressions (CallExpression, NewExpression, ObjectExpression, ...)
- - IfExpression
- - `* /`
- - `+ -`
+ - [ ] Spaces around block comments and functions

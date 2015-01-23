@@ -1,6 +1,6 @@
 # {{{ Imports
-TransformerBase = require('./lib/transformer_base')
-BuilderBase = require('./lib/builder_base')
+TransformerBase = require('./lib/transformer_base.coffee')
+BuilderBase = require('./lib/builder_base.coffee')
 
 {
   buildError
@@ -14,7 +14,7 @@ BuilderBase = require('./lib/builder_base')
   quote
   replace
   space
-} = require('./lib/helpers')
+} = require('./lib/helpers.coffee')
 # }}}
 
 module.exports = js2coffee = (source, options) ->

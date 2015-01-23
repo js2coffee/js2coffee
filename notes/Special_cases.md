@@ -94,7 +94,7 @@ if (ok) {
 ```coffee
 # Output:
 name = ->
-  return "John"
+  'John'
 alert name()
 if ok
   a()
@@ -118,7 +118,7 @@ put braces around the object to make it work.
 function fn() {
   if (x)
     return { a: 1, b: 2 };
-  return true
+  return true;
 }
 ```
 
@@ -130,7 +130,7 @@ fn = ->
       a: 1
       b: 2
     }
-  return true
+  true
 ```
 
 ### Undefined in parameters
@@ -155,7 +155,7 @@ function fn (undefined) {
 ```coffee
 # Output:
 fn = ->
-  return true
+  true
 ```
 
 ## Loops
@@ -209,7 +209,7 @@ avoid parse errors.
 
 ```coffee
 # Output:
-RegExp " ", "g"
+RegExp ' ', 'g'
 ```
 
 ### Equals
@@ -224,7 +224,7 @@ a(/=\s/)
 
 ```coffee
 # Output:
-a RegExp("=\\s")
+a RegExp('=\\s')
 ```
 
 ## Shadowing
@@ -388,6 +388,22 @@ void 0
 ```coffee
 # Output:
 undefined
+```
+
+## Strings
+
+### Prevent interpolation
+
+Strings are defaulted to single quotes to prevent interpolation.
+
+```js
+// Input:
+"#{a}"
+```
+
+```coffee
+# Output:
+'#{a}'
 ```
 
 ## Switch
