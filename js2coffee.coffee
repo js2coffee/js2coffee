@@ -650,11 +650,25 @@ class FunctionTransforms extends TransformerBase
 # BuilderBase:
 # Traverses a JavaScript AST.
 #
-#     class MyWalker extends Walker
+# Provides an easy way to define visitors for each node type. Each visitor will
+# return an array of strings that the node is compiled into.
 #
-#     w = new MyWalker(ast)
+#     class MyBuilder extends BuilderBase
+#       BinaryExpression: (node) ->
+#         [ @walk(node.left), node.operator, @walk(node.right) ]
+#
+#       Literal: (node) ->
+#         [ node.raw ]
+#
+#     w = new MyBuilder(ast)
 #     w.run()
 #
+# If a `decorator` method is present, the results are wrapped in it first. This
+# is used to implement source maps.
+#
+#     class MyBuilder extends BuilderBase
+#       decorator: (result) ->
+#         dostuffwith(result)
 ###
 
 class BuilderBase
