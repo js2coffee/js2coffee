@@ -18,6 +18,14 @@ If you'd like to isolate a spec, edit the spec file to add `only: true`:
     ---
     x()
 
+### Building distribution
+
+The file `dist/js2coffee.js` is automatically built. Use `make` to build it.
+
+    make
+
+It is also ran as a pre-publish hook.
+
 ### References
 
 - [Esprima docs]

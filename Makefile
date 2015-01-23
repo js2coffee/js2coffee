@@ -16,4 +16,4 @@ notes/Special_cases.md: $(spec_files)
 dist: dist/js2coffee.js
 
 dist/js2coffee.js: js2coffee.coffee $(shell find lib)
-	$(browserify) -t coffeeify $< | $(uglify) -m > $@
+	$(browserify) -t coffeeify -s Js2coffee $< | $(uglify) -m > $@

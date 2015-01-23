@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "autotest": "mocha -R min -b --watch",
-    "prepublish": "mocha >/dev/null && mkdir -p dist && browserify -t coffeeify -s Js2coffee js2coffee.coffee | uglifyjs -m > dist/js2coffee.js"
+    "prepublish": "mocha >/dev/null && make -B dist"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
