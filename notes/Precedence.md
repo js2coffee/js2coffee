@@ -1,66 +1,81 @@
 Precedence levels
 -----------------
 
-## 1
+## 18
 
 - MemberExpression (`a.b` and `a[b]`)
 - CallExpression (`a(b)`)
+- NewExpression with args (`new X()`)
 
-## 2
+## 17
 
-- UnaryExpression (`++a`, `delete`, `!`)
-- NewExpression (`new a`)
-- void
+- NewExpression with no args (`new X`)
 
-## 3
+## 16
 
-- BinaryExpression multiplications (`* / %`)
-
-## 4
-
-- BinaryExpression additions (`+ -`)
-
-## 5
-
-- BinaryExpression bitshift (`<< >>`)
-
-## 6
-
-- BinaryExpression comparison (`> >= < <=`)
-- BinaryExpression instanceof (`a instanceof b`)
-
-## 7
-
-- BinaryExpression equality (`== === != !==`)
-
-## 8
-
-- BinaryExpression AND (`&`)
-
-## 9
-
-- BinaryExpression XOR (`^`)
-
-## 10
-
-- BinaryExpression OR (`|`)
-
-## 11
-
-- LogicalExpression and (`&&`)
-
-## 12
-
-- LogicalExpression or (`||`)
-
-## 13
-
-- ConditionalExpression (`a ? b : c`)
-
-## 14
-
-- AssignmentExpression (`a = 1`)
+- UpdateExpression suffix (`a++`)
 
 ## 15
 
+- UpdateExpression prefix (`++a`)
+- UnaryExpression (`+a`, `delete`, `!`)
+- NewExpression (`new a`)
+- void
+
+## 14
+
+- BinaryExpression multiplications (`* / %`)
+
+## 13
+
+- BinaryExpression additions (`+ -`)
+
+## 12
+
+- BinaryExpression bitshift (`<< >> >>>`)
+
+## 11
+
+- BinaryExpression comparison (`> >= < <=`)
+- BinaryExpression instanceof (`a instanceof b`)
+- BinaryExpression in (`a in b`)
+
+## 10
+
+- BinaryExpression equality (`== === != !==`)
+
+## 9
+
+- BinaryExpression AND (`&`)
+
+## 8
+
+- BinaryExpression XOR (`^`)
+
+## 7
+
+- BinaryExpression OR (`|`)
+
+## 6
+
+- LogicalExpression and (`&&`)
+
+## 5
+
+- LogicalExpression or (`||`)
+
+## 4
+
+- ConditionalExpression (`a ? b : c`)
+
+## 3
+
+- AssignmentExpression (`a = 1`)
+
+## 0
+
 - SequenceExpression (`a, b`)
+
+## Reference
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence

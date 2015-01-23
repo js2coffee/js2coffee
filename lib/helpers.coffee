@@ -179,46 +179,52 @@ exports.getPrecedence = (node) ->
     ops.indexOf(node.operator) > -1
 
   binExpressions =
-      '*': 3
-      '/': 3
-      '%': 3
-      '+': 4
-      '-': 4
-      '<<': 5
-      '>>': 5
-      '<=': 6
-      '<==': 6
-      '>=': 6
-      '>==': 6
-      'instanceof': 6
-      '==': 7
-      '===': 7
-      '!=': 7
-      '!==': 7
-      '&': 8
-      '^': 9
-      '|': 10
+      '*': 14
+      '/': 14
+      '%': 14
+      '+': 13
+      '-': 13
+      '<<':  12
+      '>>':  12
+      '>>>': 12
+      '<=':  11
+      '<==': 11
+      '>=':  11
+      '>==': 11
+      'in': 11
+      'instanceof': 11
+      '==': 10
+      '===': 10
+      '!=': 10
+      '!==': 10
+      '&': 9
+      '^': 8
+      '|': 7
     
     logExpressions =
-      '&&': 11
-      '||': 12
+      '&&': 6
+      '||': 5
 
   switch type
     when 'Literal', 'Identifier'
-      0
+      99
     when 'MemberExpression', 'CallExpression'
-      1
-    when 'UnaryExpression', 'NewExpression'
-      2
+      18
+    when 'NewExpression'
+      if node.arguments.length is 0 then 17 else 18
+    when 'UpdateExpression'
+      if node.prefix then 15 else 16
+    when 'UnaryExpression'
+      15
     when 'BinaryExpression'
       binExpressions[node.operator]
     when 'LogicalExpression'
       logExpressions[node.operator]
     when 'ConditionalExpression'
-      13
+      4
     when 'AssignmentExpression'
-      14
+      3
     when 'SequenceExpression'
-      15
+      0
     else
-      99
+      -1

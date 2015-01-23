@@ -11,18 +11,22 @@ describe 'Precedence', ->
         console.log node
       expect(result).eq(level)
 
-  test 'a * 2', 3
-  test 'a + 2', 4
-  test 'a << 2', 5
-  test 'a >= b', 6
-  test 'a instanceof b', 6
-  test 'a != b', 7
-  test 'a & b', 8
-  test 'a ^ b', 9
-  test 'a | b', 10
-  test 'a && b', 11
-  test 'a || b', 12
-  test 'void 0', 2
-  test 'a.b', 1
-  test 'a', 0
-  test '2', 0
+  test 'a * 2', 14
+  test 'a + 2', 13
+  test 'a << 2', 12
+  test 'a >= b', 11
+  test 'a instanceof b', 11
+  test 'a != b', 10
+  test 'a & b', 9
+  test 'a ^ b', 8
+  test 'a | b', 7
+  test 'a && b', 6
+  test 'a || b', 5
+  test 'void 0', 15
+  test '++a', 15
+  test '--a', 15
+  test 'a++', 16
+  test 'a--', 16
+  test 'a.b', 18
+  test 'a', 99
+  test '2', 99
