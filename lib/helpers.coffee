@@ -162,3 +162,62 @@ exports.replace = (node, newNode) ->
 exports.clone = (obj) ->
   JSON.parse JSON.stringify obj
 
+
+###*
+# getPrecedence() : getPrecedence(node)
+# Returns the precedence level
+#
+#     getPrecedence({ type: 'BinaryExpression', operator: '&' })
+#     => 8
+###
+
+exports.getPrecedence = (node) ->
+  type = node.type
+
+  isOper = (ops) ->
+    ops.indexOf(node.operator) > -1
+
+  binExpressions =
+      '*': 3
+      '/': 3
+      '%': 3
+      '+': 4
+      '-': 4
+      '<<': 5
+      '>>': 5
+      '<=': 6
+      '<==': 6
+      '>=': 6
+      '>==': 6
+      'instanceof': 6
+      '==': 7
+      '===': 7
+      '!=': 7
+      '!==': 7
+      '&': 8
+      '^': 9
+      '|': 10
+    
+    logExpressions =
+      '&&': 11
+      '||': 12
+
+  switch type
+    when 'Literal', 'Identifier'
+      0
+    when 'MemberExpression', 'CallExpression'
+      1
+    when 'UnaryExpression', 'NewExpression'
+      2
+    when 'BinaryExpression'
+      binExpressions[node.operator]
+    when 'LogicalExpression'
+      logExpressions[node.operator]
+    when 'ConditionalExpression'
+      13
+    when 'AssignmentExpression'
+      14
+    when 'SequenceExpression'
+      15
+    else
+      16

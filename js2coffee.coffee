@@ -100,6 +100,8 @@ js2coffee.transform = (ast, options = {}) ->
   # Moves named functions to the top of the scope.
   run [ FunctionTransforms ]
 
+  run [ PrecedenceTransforms ]
+
   # Everything else -- these can be done in one step without any side effects.
   run [
     LoopTransforms
@@ -702,6 +704,11 @@ class FunctionTransforms extends TransformerBase
           params: node.params
           body: node.body
       ]
+
+# }}} -----------------------------------------------------------------------
+# {{{ PrecedenceTransforms
+
+class PrecedenceTransforms extends TransformerBase
 
 # }}} -----------------------------------------------------------------------
 # {{{ Builder
