@@ -12,7 +12,7 @@ unsupported ones are removed.
 
 - Types supported in JS but not Coffee are removed, eg: `WithStatement`.
 
-Refer to the [Parser API spec] for the JavaScript version.
+Refer to the Mozilla's [Parser API spec] for the JavaScript version.
 
 About this document
 -------------------
@@ -21,7 +21,7 @@ A few pointers on notation:
 
 - Array properties are denoted with `[ ]`. (eg: expressions in an ArrayExpression)
 
-- Optional properties are denoted with `?`, meaning they can be `undefined` in
+- Optional properties are denoted with `*`, meaning they can be `undefined` in
 some cases. (eg: argument of a ReturnStatement)
 
 Inspecting the syntax tree
@@ -86,8 +86,8 @@ Just an identifier.
 A conditional. This encompasses both the `if` and `else` parts.
 
    - `test` : Expression
-   - `consequent` : BlockStatement
-   - `alternate` : BlockStatement ?
+   - `consequent` : [BlockStatement]
+   - `alternate` : [BlockStatement] *
 
 ### BreakStatement
 Just `break`, for breaking out of loops. No properties.
@@ -100,7 +100,7 @@ Just `continue`, for breaking out of loops. No properties.
 ### ReturnStatement
 Can have its argument missing (eg: `return`).
 
-   - `argument` : Expression ?
+   - `argument` : Expression *
 
 ### ThrowStatement
 
@@ -109,9 +109,9 @@ Can have its argument missing (eg: `return`).
 ### TryStatement
 A try block. Encompasses all `try`, `catch`, and `finally`.
 
-   - `block` : BlockStatement (the *try*)
+   - `block` : [BlockStatement] (the *try*)
    - `handlers` : [ CatchClause, ... ] ? (the *catch*)
-   - `finalizer` : BlockStatement ? (the *finally*)
+   - `finalizer` : [BlockStatement] ? (the *finally*)
 
 ### CatchClause
 A handler in a TryStatement. (eg: `catch err`)
@@ -131,11 +131,11 @@ Just `this`.
 
 ### ArrayExpression
 
-   - `elements` : [ Expression, ... ] ?
+   - `elements` : [ Expression, ... ] *
 
 ### ObjectExpression
 
-   - `properties` : [ Property, ... ] ?
+   - `properties` : [ [Property], ... ] *
    - `_braced` : Boolean (true if braced, eg `{ a: 1 }`)
 
 ### Property
@@ -209,14 +209,14 @@ Scope resolution (eg: `this.foo`).
 ### SwitchStatement
 
    - `discriminant` : Expression
-   - `cases` : [ SwitchCase, ... ]
+   - `cases` : [ [SwitchCase], ... ]
 
 ### SwitchCase
 A case inside a SwitchStatement. Then `test` is not present, it's the `else`.
    
    - `type` : ??
-   - `test` : Expression ?
-   - `consquent` : BlockStatement
+   - `test` : Expression *
+   - `consquent` : [BlockStatement]
 
 ### Identifier
 
@@ -239,7 +239,7 @@ a comma-separated list (eg: `when a, b`).
 ### CoffeePrototypeExpression
 Prototype resolution operator. Similar to MemberExpression.
 
-   - `object` : BlockStatement
+   - `object` : [BlockStatement]
    - `property` : Expression (usually Identifier)
    - `computed` : Boolean (*true* if `a::[b]`)
 
@@ -256,7 +256,7 @@ a::b
 ### CoffeeLoopStatement
 A forever loop. Compiles to `loop`.
 
-   - `body` : BlockStatement
+   - `body` : [BlockStatement]
 
 Examples:
 
@@ -297,13 +297,13 @@ turned into a sequence of [ExpressionStatement]s.
 removed from the tree.
 
 ### FunctionDeclaration
-converted into `a = ->` (assignment expression).
+converted into `a = ->` ([AssignmentExpression]).
 
 ### VariableDeclaration
-converted into `a = ->` (assignment expression).
+converted into `a = ->` ([AssignmentExpression]).
 
 ### VariableDeclarator
-converted into `a = ->` (assignment expression).
+converted into `a = ->` ([AssignmentExpression]).
 
 ### WithStatement
 throws an error; unsupported in CoffeeScript.
@@ -312,16 +312,21 @@ throws an error; unsupported in CoffeeScript.
 throws an error; unsupported in CoffeeScript.
 
 ### ForStatement
-converted to WhileStatement loops.
+Converted to [WhileStatement] loops.
 
 ### ForInStatement
-converted to WhileStatement loops.
+Converted to [WhileStatement] loops.
 
 ### DoWhileStatement
-converted to WhileStatement loops.
+Converted to [WhileStatement] loops.
 
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 
 
 [IfStatement]: #ifstatement
 [ExpressionStatement]: #expressionstatement
+[BlockStatement]: #blockstatement
+[WhileStatement]: #whilestatement
+[AssignmentExpression]: #assignmentexpression
+[Property]: #property
+[SwitchCase]: #switchcase
