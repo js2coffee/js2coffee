@@ -172,9 +172,15 @@ exports.clone = (obj) ->
 
 exports.quote = (str) ->
   if typeof str is 'string'
-    re = JSON.stringify(str)
-    re = re.substr(1, re.length - 2)
-    "'" + re.replace(/'/g, "\\'").replace(/\\"/g, '"') + "'"
+    # escape quotes
+    re = str
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\\"/g, '"')
+      .replace(/\n/g, '\\n')
+      .replace(/[\u2028-\u2029]/g, (x) -> "\\u#{x.charCodeAt(0).toString(16)}")
+    "'#{re}'"
+
   else
     JSON.stringify(str)
 
