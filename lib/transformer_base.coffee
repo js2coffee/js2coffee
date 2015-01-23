@@ -3,18 +3,22 @@
   clone
 } = require('./helpers')
 
+extend = require('util')._extend
+
 ###**
 # TransformerBase:
 # Base class of all transformation steps, such as [FunctionTransforms] and
 # [OtherTransforms]. This is a thin wrapper around *estraverse* to make things
 # easier, as well as to add extra features like scope tracking and more.
 #
-#     class MyTransform extends TransformBase
+#     class MyTransform extends TransformerBase
 #       Program: (node) ->
 #         return { replacementNodeHere }
 #
 #       FunctionDeclaration: (node) ->
 #         ...
+#
+#     TransformerBase.run ast, options, [ MyTransform ]
 #
 # From within the handlers, you can call some utility functions:
 #
@@ -48,8 +52,13 @@
 ###
 
 class TransformerBase
-  @run: (ast, options) ->
-    new this(ast, options).run()
+  @run: (ast, options, classes) ->
+    Xformer = class extends TransformerBase
+    
+    classes.forEach (klass) ->
+      extend(Xformer.prototype, klass.prototype)
+
+    new Xformer(ast, options).run()
 
   constructor: (@ast, @options) ->
     @scopes = []

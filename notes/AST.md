@@ -284,6 +284,16 @@ Example:
 #   value: 'undefined' }
 ```
 
+### BlockComment
+A `### ... ###` comment.
+
+   - `value` : String
+
+### LineComment
+A `# ...` comment.
+
+   - `value` : String
+
 Only in JavaScript
 ------------------
 

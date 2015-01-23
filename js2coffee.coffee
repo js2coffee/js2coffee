@@ -85,16 +85,23 @@ js2coffee.parseJS = (source, options = {}) ->
 ###
 
 js2coffee.transform = (ast, options = {}) ->
-  # Moves named functions to the top of the scope
-  FunctionTransforms.run(ast, options)
-  LoopTransforms.run(ast, options)
+  # Note that these transformations will need to be done in a few steps.
+  # The earlier steps (function, comment, etc) will make drastic modifications
+  # to the tree that the other transformations will need to pick up.
+  run = (classes) ->
+    TransformerBase.run(ast, options, classes)
 
-  # Injects comments into the AST as BlockComment and LineComment
-  CommentTransforms.run(ast, options) unless options.comments is false
+  # Injects comments into the AST as BlockComment and LineComment nodes.
+  unless options.comments is false
+    run [ CommentTransforms ]
 
-  # Everything else
-  OtherTransforms.run(ast, options)
-  BlockTransforms.run(ast, options)
+  # Moves named functions to the top of the scope.
+  run [ FunctionTransforms ]
+
+  # Everything else -- these can be done in one step without any side effects.
+  run [ LoopTransforms, SwitchTransforms, OtherTransforms ]
+  run [ BlockTransforms ]
+
   ast
 
 ###*
@@ -117,7 +124,9 @@ js2coffee.generate = (ast, options = {}) ->
 # CommentTransforms:
 # Injects comments as nodes in the AST. This takes the comments in the
 # `Program` node, finds list of expressions in bodies (eg, a BlockStatement's
-# `body`), and injects the comment nodes whenever relevant.
+# `body`), and injects the comment nodes wherever relevant.
+#
+# Comments will be injected as `BlockComment` and `LineComment` nodes.
 ###
 
 class CommentTransforms extends TransformerBase
@@ -217,6 +226,65 @@ class CommentTransforms extends TransformerBase
     node
 
 # }}} -----------------------------------------------------------------------
+# {{{ SwitchTransforms
+
+###*
+# SwitchTransforms:
+# Updates `SwitchCase`s to a more coffee-compliant AST. This means having
+# to remove `return`/`break` statements, and taking into account the
+# correct way of consolidating empty ccases.
+###
+
+class SwitchTransforms extends TransformerBase
+  SwitchStatement: (node) ->
+    @consolidateCases(node)
+
+  SwitchCase: (node) ->
+    @removeBreaksFromConsequents(node)
+
+  ###
+  # Consolidates empty cases into the next case. The case tests will then be
+  # made into a new node type, CoffeeListExpression, to represent
+  # comma-separated values. (`case x: case y: z()` => `case x, y: z()`)
+  ###
+
+  consolidateCases: (node) ->
+    list = []
+    toConsolidate = []
+    for kase, i in node.cases
+      # .type .test .consequent
+      if kase.type is 'SwitchCase'
+        toConsolidate.push(kase.test) if kase.test
+        if kase.consequent.length > 0
+          if kase.test
+            kase.test =
+              type: 'CoffeeListExpression'
+              expressions: toConsolidate
+          toConsolidate = []
+          list.push kase
+      else
+        list.push kase
+
+    node.cases = list
+    node
+
+  ###
+  # Removes `break` statements from consequents in a switch case.
+  # (eg, `case x: a(); break;` gets break; removed)
+  ###
+
+  removeBreaksFromConsequents: (node) ->
+    if node.test
+      idx = node.consequent.length-1
+      last = node.consequent[idx]
+      if last?.type is 'BreakStatement'
+        delete node.consequent[idx]
+        node.consequent.length -= 1
+      else if last?.type isnt 'ReturnStatement'
+        @syntaxError node, "No break or return statement found in a case"
+      node
+
+# }}} -----------------------------------------------------------------------
 # {{{ OtherTransforms
 
 ###*
@@ -231,12 +299,6 @@ class OtherTransforms extends TransformerBase
   FunctionExpression: (node, parent) ->
     super(node)
     @removeUndefinedParameter(node)
-
-  SwitchStatement: (node) ->
-    @consolidateCases(node)
-
-  SwitchCase: (node) ->
-    @removeBreaksFromConsequents(node)
 
   CallExpression: (node) ->
     @parenthesizeCallee(node)
@@ -419,32 +481,6 @@ class OtherTransforms extends TransformerBase
     node
 
   ###
-  # Consolidates empty cases into the next case. The case tests will then be
-  # made into a new node type, CoffeeListExpression, to represent
-  # comma-separated values. (`case x: case y: z()` => `case x, y: z()`)
-  ###
-
-  consolidateCases: (node) ->
-    list = []
-    toConsolidate = []
-    for kase, i in node.cases
-      # .type .test .consequent
-      if kase.type is 'SwitchCase'
-        toConsolidate.push(kase.test) if kase.test
-        if kase.consequent.length > 0
-          if kase.test
-            kase.test =
-              type: 'CoffeeListExpression'
-              expressions: toConsolidate
-          toConsolidate = []
-          list.push kase
-      else
-        list.push kase
-
-    node.cases = list
-    node
-
-  ###
   # Parenthesize function expressions if they're in the left-hand side of a
   # member expression (eg, `(-> x).toString()`).
   ###
@@ -453,22 +489,6 @@ class OtherTransforms extends TransformerBase
     if node.object.type is 'FunctionExpression'
       node.object._parenthesized = true
     node
-
-  ###
-  # Removes `break` statements from consequents in a switch case.
-  # (eg, `case x: a(); break;` gets break; removed)
-  ###
-
-  removeBreaksFromConsequents: (node) ->
-    if node.test
-      idx = node.consequent.length-1
-      last = node.consequent[idx]
-      if last?.type is 'BreakStatement'
-        delete node.consequent[idx]
-        node.consequent.length -= 1
-      else if last?.type isnt 'ReturnStatement'
-        @syntaxError node, "No break or return statement found in a case"
-      node
 
   ###
   # In an IIFE, ensure that the function expression is parenthesized (eg,
@@ -481,11 +501,15 @@ class OtherTransforms extends TransformerBase
       node
 
 # }}} -----------------------------------------------------------------------
-# {{{ LoopsTransforms
+# {{{ LoopTransforms
+
+###**
+# LoopTransforms:
+# Provides transformations for `while`, `for` and `do`.
+###
 
 class LoopTransforms extends TransformerBase
   ForStatement: (node) ->
-    # init, test, update, body
     @injectUpdateIntoBody(node)
     @convertForToWhile(node)
 
