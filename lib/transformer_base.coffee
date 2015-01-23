@@ -166,8 +166,8 @@ class TransformerBase
 
   syntaxError: (node, description) ->
     err = buildError(
-      lineNumber: node.loc?.start?.line,
-      column: node.loc?.start?.column,
+      start: node.loc?.start,
+      end: node.loc?.end,
       description: description
     , @options.source, @options.filename)
     throw err

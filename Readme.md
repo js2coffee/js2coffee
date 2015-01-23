@@ -71,8 +71,8 @@ try {
 
   e.message       // "index.js:3:1: Unexpected INDENT\n\n   3   var\n   ---^"
   e.description   // "Unexpected INDENT"
-  e.lineNumber    // 3
-  e.column        // 1
+  e.start         // { line: 1, column: 4 }
+  e.end           // { line: 1, column: 10 }
   e.sourcePreview // '...'
 
 }

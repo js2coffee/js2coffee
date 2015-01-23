@@ -12,6 +12,10 @@ describe 'Errors', ->
   it 'throws them properly', ->
     expect(err.message).include ':5:4: Unexpected token )'
 
+  it 'has start line/column', ->
+    expect(err.start.line).eql 5
+    expect(err.start.column).eql 4
+
 describe 'Error cases', ->
   it 'happens on "with" statements', ->
     expect ->

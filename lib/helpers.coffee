@@ -55,13 +55,23 @@ exports.prependAll = (list, prefix) ->
 #
 #     e =
 #       description: "Unexpected indentifier"
-#       lineNumber: 3
+#       start: { line: 3, column: 1 }
+#       end: { line: 3, column: 5 }
+#     err = buildError(e, code, "index.js")
+#
+# Or esprima-like:
+#
+#     e =
+#       description: "Unexpected indentifier"
+#       lineNumber: 3,
 #       column: 1
 #     err = buildError(e, code, "index.js")
 #
+# Output:
+#
 #     err.message       #=> "index.js:3:1: Unexpected indentifier\n..."
-#     err.lineNumber    #=> 3
-#     err.column        #=> 1
+#     err.start         #=> { line: 3, column: 1 }
+#     err.end           #=> { line: 3, column: 5 }
 #     err.description   #=> "Unexpected identifier"
 #     err.sourcePreview
 ###
@@ -69,27 +79,31 @@ exports.prependAll = (list, prefix) ->
 exports.buildError = (err, source, file = '') ->
   if err.js2coffee then return err
 
-  {lineNumber, column, description} = err
-  ln = lineNumber
+  {description} = err
+  line = err.start?.line ? err.lineNumber
+  column = err.start?.column ? err.column
 
-  heading = "#{file}:#{ln}:#{column}: #{description}"
+  heading = "#{file}:#{line}:#{column}: #{description}"
 
   # Build a source preview.
   lines = source.split("\n")
-  min = Math.max(ln-3, 0)
-  max = ln-1
+  min = Math.max(line-3, 0)
+  max = line-1
   digits = max.toString().length
+  length = 1
+  length = Math.max(err.end.column - err.start.column + 1, 1) if err.end
   pad = (s) -> Array(1 + digits - s.toString().length).join(" ") + s
-  source = lines[min..max].map (ln, i) -> "#{pad(1+i+min)}  #{ln}"
-  source.push Array(digits + 3).join(" ") + Array(column).join("-") + "^"
+  source = lines[min..max].map (line, i) -> "#{pad(1+i+min)}  #{line}"
+  source.push Array(digits + 3).join(" ") + Array(column).join("-") + Array(length).join("^")
   source = source.join("\n")
 
   message = heading + "\n\n" + source
 
+  _err = err
   err = new Error(message)
-  err.lineNumber    = lineNumber
-  err.column        = column
-  err.description   = description
+  err.description   = _err.description
+  err.start         = { line, column }
+  err.end           = _err.end
   err.sourcePreview = source
   err.js2coffee     = true
   err
