@@ -1,0 +1,12 @@
+----
+({
+  a: function () {
+    function b() { return c; }
+    b()
+  }
+})
+----
+a: ->
+  b = ->
+    c
+  b()

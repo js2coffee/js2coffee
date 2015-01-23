@@ -5,10 +5,10 @@ for (;;++x) { alert(1) }
 for (;;) { alert(1) }
 ----
 x = 0
-while not x < 2
+while !x < 2
   alert 1
   x++
-while not x < 2
+while !x < 2
   alert 1
 loop
   alert 1

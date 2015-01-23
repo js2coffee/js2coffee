@@ -689,15 +689,15 @@ class FunctionTransforms extends TransformerBase
     { type: 'EmptyStatement' }
 
   FunctionExpression: (node) ->
-    return unless node.id?
-    @ctx.prebody.push @buildFunctionDeclaration(node)
+    if node.id
+      @ctx.prebody.push @buildFunctionDeclaration(node)
     @pushStack(node.body)
     return
 
   FunctionExpressionExit: (node) ->
-    return unless node.id?
     @popStack()
-    { type: 'Identifier', name: node.id.name }
+    if node.id
+      { type: 'Identifier', name: node.id.name }
 
   ###
   # Returns a `a = -> ...` statement out of a FunctionDeclaration node.

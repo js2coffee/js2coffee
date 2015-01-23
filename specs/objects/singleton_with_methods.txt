@@ -1,0 +1,12 @@
+----
+App = {
+  start: function () { go(); },
+  stop: function () { halt(); }
+}
+----
+App =
+  start: ->
+    go()
+
+  stop: ->
+    halt()
