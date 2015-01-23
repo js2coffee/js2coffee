@@ -178,7 +178,8 @@ exports.quote = (str) ->
       .replace(/'/g, "\\'")
       .replace(/\\"/g, '"')
       .replace(/\n/g, '\\n')
-      .replace(/[\u2028-\u2029]/g, (x) -> "\\u#{x.charCodeAt(0).toString(16)}")
+      .replace(/[\u0000-\u0019\u00ad\u200b\u2028\u2029\ufeff]/g,
+        (x) -> "\\u#{x.charCodeAt(0).toString(16)}")
     "'#{re}'"
 
   else
