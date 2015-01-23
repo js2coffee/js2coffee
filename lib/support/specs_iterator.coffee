@@ -3,7 +3,7 @@ glob = require('glob')
 path = require('path')
 fs = require('fs')
 
-exports.root = "#{__dirname}/../specs"
+exports.root = "#{__dirname}/../../specs"
 
 exports.toName = (dirname) ->
   s = path.basename(dirname).replace(/_/g, ' ').trim()

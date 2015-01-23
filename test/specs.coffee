@@ -1,7 +1,6 @@
-require 'coffee-script/register'
 require './setup'
 
-{eachGroup} = require('../lib/specs_iterator')
+{eachGroup} = require('../lib/support/specs_iterator')
 
 eachGroup (group) ->
   run = if group.pending then xdescribe else describe
