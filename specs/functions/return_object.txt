@@ -14,7 +14,7 @@ notes: """
 function fn() {
   if (x)
     return { a: 1, b: 2 };
-  return true
+  return true;
 }
 ----
 fn = ->
@@ -23,4 +23,4 @@ fn = ->
       a: 1
       b: 2
     }
-  return true
+  true

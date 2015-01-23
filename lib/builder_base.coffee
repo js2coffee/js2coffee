@@ -35,6 +35,9 @@ class BuilderBase
     @path.push(node)
 
     type = undefined if typeof type isnt 'string'
+    if !node
+      console.log "OHSTAP"
+      console.log @path
     type or= node.type
     @ctx = { path: @path, type: type, parent: @path[@path.length-2] }
 

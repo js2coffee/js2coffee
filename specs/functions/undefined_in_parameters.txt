@@ -15,4 +15,4 @@ function fn (undefined) {
 }
 ----
 fn = ->
-  return true
+  true

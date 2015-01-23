@@ -7,6 +7,6 @@ obj.two = function () {
 };
 ----
 obj.one = ->
-  return a()
+  a()
 obj.two = ->
-  return b()
+  b()

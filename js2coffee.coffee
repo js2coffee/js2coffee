@@ -102,10 +102,10 @@ js2coffee.transform = (ast, options = {}) ->
   # Moves named functions to the top of the scope.
   run [ FunctionTransforms ]
 
-  run [ PrecedenceTransforms ]
-
   # Everything else -- these can be done in one step without any side effects.
   run [
+    ReturnTransforms
+    PrecedenceTransforms
     LoopTransforms
     SwitchTransforms
     MemberTransforms
@@ -714,6 +714,27 @@ class FunctionTransforms extends TransformerBase
           params: node.params
           body: node.body
       ]
+
+# }}} -----------------------------------------------------------------------
+# {{{ ReturnTransforms
+
+class ReturnTransforms extends TransformerBase
+  onScopeExit: (scope, ctx, subscope, subctx) ->
+    @unreturnify scope
+
+  ###
+  # Removes return statements
+  ###
+
+  unreturnify: (node, body = 'body') ->
+    if node[body].length > 0
+      idx = node[body].length-1
+      last = node[body][idx]
+
+      if last.type is 'ReturnStatement' and last.argument
+        node[body][idx] = replace last,
+          type: 'ExpressionStatement',
+          expression: last.argument
 
 # }}} -----------------------------------------------------------------------
 # {{{ PrecedenceTransforms

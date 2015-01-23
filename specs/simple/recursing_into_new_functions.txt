@@ -5,5 +5,5 @@ a = x ? y : function fn() {
 };
 ----
 fn = ->
-  return a == 'b'
+  a == 'b'
 a = if x then y else fn

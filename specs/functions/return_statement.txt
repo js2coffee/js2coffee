@@ -1,7 +1,10 @@
 ----
 function a () {
-  return b;
+  if (x) return b;
+  return c;
 }
 ----
 a = ->
-  return b
+  if x
+    return b
+  c

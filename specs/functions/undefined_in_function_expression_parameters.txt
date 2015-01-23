@@ -4,4 +4,4 @@ call(function (undefined) {
 });
 ----
 call ->
-  return true
+  true
