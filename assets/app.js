@@ -5,8 +5,15 @@
   CodeMirror.registerHelper("lint", "javascript", validator);
   function validator(text, options) {
     if (!error) return [];
-    var from = CodeMirror.Pos(error.lineNumber-1, error.column);
-    var to = CodeMirror.Pos(error.lineNumber-1, error.column+90);
+
+    var from, to;
+    from = CodeMirror.Pos(error.start.line-1, error.start.column);
+
+    if (error.end)
+      to = CodeMirror.Pos(error.end.line-1, error.end.column);
+    else
+      to = CodeMirror.Pos(error.start.line-1, error.start.column + 90);
+
     return [
       { from: from,
         to: to,

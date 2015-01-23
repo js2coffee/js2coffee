@@ -113,7 +113,7 @@ body
       opacity: 0.4
       margin-left: 10px
 
-  textarea, .CodeMirror, 
+  textarea, .CodeMirror
     position: absolute
     top: 0
     left: 0
@@ -122,6 +122,9 @@ body
 
     padding: 30px
     padding-top: 70px
+
+  &.left .CodeMirror
+    padding-left: 10px
 
   textarea
     color: $text
@@ -149,7 +152,7 @@ body
   .CodeMirror-lint-marker-error,
   .CodeMirror-lint-marker-multiple
     opacity: 0.9
-    transform: scale(0.6) translate(5px, 5px)
+    transform: scale(0.6) translate(3px, 2px)
   .CodeMirror-lint-marker-multiple
     opacity: 0
 
