@@ -890,7 +890,12 @@ class Builder extends BuilderBase
     @paren [ @walk(node.object), right ]
 
   LogicalExpression: (node) ->
-    @paren [ @walk(node.left), ' ', node.operator, ' ', @walk(node.right) ]
+    opers =
+      '||': 'or'
+      '&&': 'and'
+
+    oper = opers[node.operator]
+    @paren [ @walk(node.left), ' ', oper, ' ', @walk(node.right) ]
 
   ThisExpression: (node) ->
     if node._prefix
