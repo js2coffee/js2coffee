@@ -26,6 +26,12 @@ The file `dist/js2coffee.js` is automatically built. Use `make` to build it.
 
 It is also ran as a pre-publish hook.
 
+### New versions
+
+    vim History.md
+    bump *.json
+    npm publish && git release v0.1.2
+
 ### References
 
 - [Esprima docs]
