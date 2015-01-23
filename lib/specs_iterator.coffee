@@ -22,6 +22,7 @@ exports.toName = (dirname) ->
 #         spec.input
 #         spec.output
 #         spec.meta
+#         spec.pending
 ###
 
 exports.eachGroup = (fn) ->

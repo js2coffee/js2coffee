@@ -1,3 +1,11 @@
+###
+# delimit() : delimit(list, joiner)
+# Intersperses `joiner` into `list`. Used for things like adding indentations.
+#
+#     delimit( [a, b, c], X )
+#     => [a, X, b, X, c]
+###
+
 exports.delimit = (list, joiner) ->
   newlist = []
   for item, i in list
@@ -5,6 +13,15 @@ exports.delimit = (list, joiner) ->
     newlist.push(item)
   newlist
 
+###*
+# commaDelimit() : commaDelimit(list)
+# Turns an array of strings into a comma-separated list. Takes new lines into
+# account.
+#
+#     commaDelimit( [ 'a', 'b', 'c' ] )
+#     => 'a, b, c'
+###
+#
 exports.commaDelimit = (list) ->
   newlist = []
   for item, i in list
