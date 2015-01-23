@@ -1,3 +1,7 @@
+###
+# Generates spec notes (special_cases.md), invoked via a Makefile
+###
+
 {eachGroup} = require('./specs_iterator')
 
 eachGroup (group) ->
