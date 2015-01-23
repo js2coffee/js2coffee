@@ -11,7 +11,6 @@
   var editor, preview;
 
   ready(function () {
-    // new Behave({ textarea: $src, tabSize: 2 });
     editor = CodeMirror(q('.code-box.left'), {
       value: defaultText,
       theme: 'ambiance',
