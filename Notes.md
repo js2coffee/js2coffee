@@ -1,6 +1,23 @@
 Developer notes
 ===============
 
+### Running tests
+
+    npm test
+
+If you want to run pending specs as well:
+
+    ALL=1 npm test
+
+If you'd like to isolate a spec, edit the spec file to add `only: true`:
+
+    # specs/xxx/yyy.txt
+    only: true
+    ---
+    x()
+    ---
+    x()
+
 ### References
 
 - [Esprima docs]
