@@ -54,7 +54,7 @@ Previously, js2coffee 0.x did not account for this behavior properly.
 // Input:
 fn();
 (function fn () {
-  fn();
+  return fn();
 })(a);
 ```
 
@@ -243,6 +243,7 @@ Previously, this is unsupported in js2coffee 0.x.
 var val = 2;
 var fn = function () {
   var val = 1;
+  return;
 }
 fn();
 assert(val == 2);
@@ -254,6 +255,7 @@ val = 2
 fn = ->
   `var val`
   val = 1
+  return
 fn()
 assert val == 2
 ```

@@ -172,6 +172,7 @@ finally
 <pre><code class='lang-js'>run(function () {
   a();
   b();
+  return;
 });
 </code></pre>
 </td>
@@ -179,6 +180,7 @@ finally
 <pre><code class='lang-coffee'>run ->
   a()
   b()
+  return
 </code></pre>
 </td>
 </tr>
@@ -186,7 +188,7 @@ finally
 <th width='33%' valign='top'>Call with function indented</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (x) {
-  setTimeout(function() { go(); }, 300)
+  setTimeout(function() { return go(); }, 300)
 }
 </code></pre>
 </td>
@@ -202,7 +204,7 @@ finally
 <th width='33%' valign='top'>Call with function then object</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>box.on('click', function () {
-  go();
+  return go();
 }, { delay: 500, silent: true })
 </code></pre>
 </td>
@@ -230,7 +232,7 @@ finally
 <th width='33%' valign='top'>Call with object</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>box.on('click', { silent: true }, function () {
-  go();
+  return go();
 })
 </code></pre>
 </td>
@@ -244,7 +246,7 @@ finally
 <th width='33%' valign='top'>Call with param after function</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>setTimeout(function () {
-  work();
+  return work();
 }, 500);
 </code></pre>
 </td>
@@ -259,9 +261,9 @@ finally
 <th width='33%' valign='top'>Chaining</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>get().then(function () {
-  a();
+  return a();
 }).then(function () {
-  b();
+  return b();
 });
 </code></pre>
 </td>
@@ -277,7 +279,7 @@ finally
 <th width='33%' valign='top'>Expression with call</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>(function () {
-  go();
+  return go();
 }).call(this);
 </code></pre>
 </td>
@@ -293,12 +295,14 @@ finally
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>(function($) {
   go();
+  return;
 })(jQuery);
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>(($) ->
   go()
+  return
 ) jQuery
 </code></pre>
 </td>
@@ -308,7 +312,7 @@ finally
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>fn();
 (function fn () {
-  fn();
+  return fn();
 })(a);
 </code></pre>
 </td>
@@ -325,6 +329,27 @@ fn a
 ## Functions
 
 <table width='100%'>
+<tr>
+<th width='33%' valign='top'>Dont unpack returns in incomplete ifs</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  if (x)
+    return b();
+  else
+    c();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  if x
+    return b()
+  else
+    c()
+  return
+</code></pre>
+</td>
+</tr>
 <tr>
 <th width='33%' valign='top'>Function reordering</th>
 <td width='33%' valign='top'>
@@ -369,10 +394,10 @@ if ok
 <th width='33%' valign='top'>Multiple declarations</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function one() {
-  a();
+  return a();
 }
 function two() {
-  b();
+  return b();
 }
 </code></pre>
 </td>
@@ -417,6 +442,7 @@ obj.two = ->
 <pre><code class='lang-coffee'>a = ->
   b = ->
     c
+  return
 </code></pre>
 </td>
 </tr>
@@ -426,7 +452,7 @@ obj.two = ->
 <pre><code class='lang-js'>({
   a: function () {
     function b() { return c; }
-    b()
+    return b()
   }
 })
 </code></pre>
@@ -436,6 +462,21 @@ obj.two = ->
   b = ->
     c
   b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Prevent implicit returns</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  b();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  b()
+  return
 </code></pre>
 </td>
 </tr>
@@ -506,6 +547,64 @@ obj.two = ->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Unpacking returns</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  return b;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  b
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Unpacking returns in ifs</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  if (x)
+    return b();
+  else
+    return c();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  if x
+    b()
+  else
+    c()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Unpacking returns in ifs with elses</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  if (x)
+    return b();
+  else if (y)
+    return c();
+  else
+    return d();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  if x
+    b()
+  else if y
+    c()
+  else
+    d()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>With arguments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function a(b, c) { d(); }
@@ -514,6 +613,7 @@ obj.two = ->
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = (b, c) ->
   d()
+  return
 </code></pre>
 </td>
 </tr>
@@ -596,6 +696,7 @@ else
   if (a) { b(); }
   else if (b) { c(); }
   else { d(); }
+  return;
 }
 </code></pre>
 </td>
@@ -607,6 +708,7 @@ else
     c()
   else
     d()
+  return
 </code></pre>
 </td>
 </tr>
@@ -615,6 +717,7 @@ else
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function fn() {
   if (a) { b(); } else { c(); }
+  return;
 }
 </code></pre>
 </td>
@@ -624,6 +727,7 @@ else
     b()
   else
     c()
+  return
 </code></pre>
 </td>
 </tr>
@@ -684,6 +788,7 @@ else
 <pre><code class='lang-js'>function fn() {
   if (a) b();
   else c();
+  return;
 }
 </code></pre>
 </td>
@@ -693,6 +798,7 @@ else
     b()
   else
     c()
+  return
 </code></pre>
 </td>
 </tr>
@@ -1250,6 +1356,7 @@ f = ->
     b();
   } while (a);
   after();
+  return;
 }
 </code></pre>
 </td>
@@ -1260,6 +1367,7 @@ f = ->
     b()
     break unless a
   after()
+  return
 </code></pre>
 </td>
 </tr>
@@ -1580,12 +1688,14 @@ a.prototype
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a = new MyClass('left', function () {
   go();
+  return;
 })
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = new MyClass('left', ->
   go()
+  return
 )
 </code></pre>
 </td>
@@ -1595,12 +1705,14 @@ a.prototype
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a = new MyClass(function () {
   go();
+  return;
 }, 'left')
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = new MyClass((->
   go()
+  return
 ), 'left')
 </code></pre>
 </td>
@@ -1740,8 +1852,8 @@ b: 2
 <th width='33%' valign='top'>Singleton with methods</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>App = {
-  start: function () { go(); },
-  stop: function () { halt(); }
+  start: function () { go(); return; },
+  stop: function () { halt(); return; }
 }
 </code></pre>
 </td>
@@ -1749,9 +1861,11 @@ b: 2
 <pre><code class='lang-coffee'>App =
   start: ->
     go()
+    return
 
   stop: ->
     halt()
+    return
 </code></pre>
 </td>
 </tr>
@@ -1962,6 +2076,7 @@ b: 2
 <pre><code class='lang-js'>var val = 2;
 var fn = function () {
   var val = 1;
+  return;
 }
 fn();
 assert(val == 2);
@@ -1972,6 +2087,7 @@ assert(val == 2);
 fn = ->
   `var val`
   val = 1
+  return
 fn()
 assert val == 2
 </code></pre>
@@ -1990,6 +2106,7 @@ assert val == 2
   'b',
   function (a, b) {
     alert('ok');
+    return;
   },
   'z'
 ]);
@@ -2001,6 +2118,7 @@ assert val == 2
   'b'
   (a, b) ->
     alert 'ok'
+    return
   'z'
 ]
 </code></pre>
@@ -2045,12 +2163,14 @@ false
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a(function() {
   b();
+  return;
 });
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a ->
   b()
+  return
 </code></pre>
 </td>
 </tr>
@@ -2258,6 +2378,7 @@ c and d
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a.b = function (arg) {
   if (arg) cli.a = b;
+  return;
 };
 </code></pre>
 </td>
@@ -2265,6 +2386,7 @@ c and d
 <pre><code class='lang-coffee'>a.b = (arg) ->
   if arg
     cli.a = b
+  return
 </code></pre>
 </td>
 </tr>
@@ -2272,7 +2394,8 @@ c and d
 <th width='33%' valign='top'>Null check</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function ifNullChecks() {
-  if (x==null) { yep() }
+  if (x===null) { yep() }
+  return
 }
 </code></pre>
 </td>
@@ -2280,6 +2403,7 @@ c and d
 <pre><code class='lang-coffee'>ifNullChecks = ->
   if x == null
     yep()
+  return
 </code></pre>
 </td>
 </tr>
@@ -2691,6 +2815,7 @@ c
     default:
       return b();
   }
+  return
 }
 </code></pre>
 </td>
@@ -2701,6 +2826,7 @@ c
       return a()
     else
       return b()
+  return
 </code></pre>
 </td>
 </tr>
@@ -2772,6 +2898,36 @@ b = 2
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = undefined
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Warnings
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Equals</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a == b
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a == b
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Shadowing</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function add () { var add = 2; return }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>add = ->
+  `var add`
+  add = 2
+  return
 </code></pre>
 </td>
 </tr>
