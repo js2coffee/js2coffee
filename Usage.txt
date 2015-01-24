@@ -5,5 +5,11 @@ Options:
         --ast          prints the AST (for debugging)
     -V, --verbose      prints more AST stuff (used with --ast)
 
+Modes:
+        --compat       compatibility mode *
+                       (implement workarounds to keep full compatibility)
+
+Other options:
     -h, --help         print usage information
     -v, --version      show version info and exit
+
