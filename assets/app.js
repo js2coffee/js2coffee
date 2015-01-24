@@ -46,10 +46,10 @@ Editors.prototype = {
     this.$left  = q('.code-box.left');
     this.$right = q('.code-box.right');
     this.$popup = q('.code-box.popup');
-    this.editor  = this.initEditor();
-    this.preview = this.initPreview();
-    this.output = undefined;
-    this.error  = undefined;
+    this.editor   = this.initEditor();
+    this.preview  = this.initPreview();
+    this.warnings = undefined;
+    this.error    = undefined;
   },
 
   /*
@@ -98,12 +98,13 @@ Editors.prototype = {
   update: function () {
     var input = this.editor.getValue();
     var result = this.compile(input);
+    this.warnings = result.warnings;
+    this.error = result.error;
 
     if (!result.error) {
       this.preview.setValue(result.code);
       removeClass(this.$right, 'error');
     } else {
-      this.error = err;
       addClass(this.$right, 'error');
     }
   },
@@ -127,7 +128,10 @@ Editors.prototype = {
       if (!err.start) throw err;
     }
 
-    return { code: code, error: error, output: output };
+    return {
+      code: code,
+      error: error,
+      warnings: output && output.warnings };
   },
 };
 
@@ -150,16 +154,16 @@ function unsetFocus ($el) {
 CodeMirror.registerHelper("lint", "javascript", validator);
 function validator(text, options) {
   if (!view) return [];
-  return makeCmMessages(view.output, view.error);
+  return makeCmMessages(view.warnings, view.error);
 }
 
 /*
  * converts js2coffee errors into codemirror messages.
- * takes it `output` (return value of js2coffee()) and `error` (whatever
- * error it threw). returns an array.
+ * takes in `warnings` (from return value of js2coffee()) and `error`
+ * (whatever error it threw). returns an array.
  */
 
-function makeCmMessages (output, error) {
+function makeCmMessages (warnings, error) {
   return getErrors().concat(getWarnings());
 
   function getErrors() {
@@ -185,10 +189,10 @@ function makeCmMessages (output, error) {
   }
 
   function getWarnings() {
-    if (!output || !output.warnings || output.warnings.length === 0)
+    if (!warnings || warnings.length === 0)
       return [];
 
-    return output.warnings.map(function (warn) {
+    return warnings.map(function (warn) {
       var pos = getPosition(warn);
       return {
         from: pos.from, to: pos.to,
