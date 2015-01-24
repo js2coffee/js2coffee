@@ -98,6 +98,7 @@ body
     width: 50%
     height: 100%
     position: relative
+    z-index: 1
     float: left
     box-shadow: inset 0 0 0 black, $shadow
     transition: all 100ms linear
@@ -117,9 +118,8 @@ body
   &:not(.focus) .CodeMirror
     opacity: 0.75
 
-  &.error .CodeMirror
-    opacity: 0.2
-
+/* common */
+.code-box, .code-box-popup
   h3
     position: absolute
     top: 0
@@ -141,9 +141,7 @@ body
       color: mix(white, $bg, 20%)
       margin-left: 10px
 
-  textarea, .CodeMirror
-    cursor: text
-    transition: opacity 100ms linear
+  .CodeMirror
     position: absolute
     top: 0
     left: 0
@@ -152,22 +150,94 @@ body
 
     padding: 30px
     padding-top: 70px
-
-  &.left .CodeMirror
     padding-left: 10px
 
-  textarea
-    color: $text
-    margin: 0
+  &.error .CodeMirror
+    opacity: 0.2
+
+
+/*
+ * popup
+ */
+
+.code-box-popup
+  &
+    position: absolute
+    left: 0
+    top: 0
+    width: 50%
+    height: 100%
+    padding: 10px
+    transition: transform 250ms ease, opacity 250ms ease
+    transform: scale(1)
+    opacity: 1
+    z-index: 10
+
+  &.hide
+    transform: scale(0.98)
+    pointer-events: none
+    opacity: 0
+
+  .close-button
+    position: absolute
+    top: 0
+    right: 0
+    width: 64px
+    height: 64px
+    line-height: 64px
+    text-align: center
+    background: transparent
     border: 0
-    overflow: auto
-    resize: none
+    padding: 0
+    margin: 0
+    z-index: 10
+    cursor: pointer
+    color: mix($blue, $bg, 50%)
+    transition: color 100ms linear
+
+    &:hover
+      color: $green
+
+    &:before
+      +ion-icon('ios-close-outline', 32px)
+
+    &:hover:before
+      +ion-icon('ios-close', 32px)
+
+  .container
+    position: absolute
+    top: 15px
+    left: 15px
+    bottom: 15px
+    right: 15px
+    background: darken($bg, 5%)
+    box-shadow: 0 0 4px rgba(black, 0.1)
+    z-index: 5
+    border-radius: 3px
+    border: solid 1px $blue
+
+  h3
+    border-bottom: 0
+
+  h3 strong
+    color: $blue
+
+  h3 em
+    color: mix($blue, $bg, 50%)
+
+  .CodeMirror
+    padding-left: 30px
+    padding-top: 55px
 
 /*
  * codemirror customization
  */
 
 .CodeMirror
+  &
+    cursor: text
+    transition: opacity 100ms linear
+
   &.CodeMirror.CodeMirror
     font-family: $monospace
     background: transparent
@@ -186,7 +256,7 @@ body
   .CodeMirror-lint-marker-error
     background: transparent
     &:before
-      +ion-icon('android-cancel', 12px, $top: -1px)
+      +ion-icon('android-cancel', 12px, $top: -2px)
       color: $red
 
   .CodeMirror-lint-marker-warning
