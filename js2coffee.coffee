@@ -155,7 +155,8 @@ class CommentTransforms extends TransformerBase
   Program: (node) ->
     @comments = node.comments
     @updateCommentTypes()
-    @BlockStatement node
+    node.body = @addCommentsToList([0,Infinity], node.body)
+    node
 
   BlockStatement: (node) ->
     @injectComments(node, 'body')
