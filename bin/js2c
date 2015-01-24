@@ -25,6 +25,7 @@ read(args._, function (err, res) {
           out.ast = scrub(out.ast);
         console.log(inspect(out.ast));
       } else {
+        printWarnings(out.warnings);
         process.stdout.write(out.code);
       }
     } catch (err) {
@@ -61,4 +62,25 @@ function scrub(obj) {
   } else {
     return obj;
   }
+}
+
+/*
+ * heh
+ */
+
+function printWarnings (warnings) {
+  if (!warnings || warnings.length === 0)
+    return;
+
+  var comments = warnings.map(function (warn) {
+    var warn = '' +
+      warn.filename + ':' +
+      warn.start.line + ':' +
+      warn.start.column + ': ' +
+      warn.description;
+
+    warn = "\033[31m" + warn + "\033[0m";
+
+    console.warn(warn);
+  });
 }

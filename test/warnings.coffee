@@ -6,8 +6,7 @@ warnings = undefined
 describe 'Warnings', ->
   describe 'with no warnings', ->
     beforeEach ->
-      ast = js2coffee.parseJS('var a')
-      {ast, warnings} = js2coffee.transform(ast)
+      {ast, warnings} = js2coffee.build('var a')
 
     it 'produces an array', ->
       expect(warnings).be.an 'array'
@@ -15,11 +14,10 @@ describe 'Warnings', ->
     it 'produces an empty array', ->
       expect(warnings).have.length 0
 
-  describe 'with no warnings', ->
+  describe 'with 1 warning', ->
     beforeEach ->
       opts = { filename: 'x.js' }
-      ast = js2coffee.parseJS('function add() { var add }', opts)
-      {ast, warnings} = js2coffee.transform(ast, opts)
+      {ast, warnings} = js2coffee.build('function add() { var add }', opts)
 
     it 'produces an array', ->
       expect(warnings).be.an 'array'
