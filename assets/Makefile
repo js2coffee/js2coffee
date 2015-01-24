@@ -6,13 +6,15 @@ vendor.js: \
 	vendor/codemirror.js \
 	vendor/javascript.js \
 	vendor/coffeescript.js \
-	vendor/lint.js
+	vendor/lint.js \
+	vendor/simplescrollbars.js
 	cat $^ | uglifyjs -m > $@
 
 vendor.css: \
 	vendor/codemirror.css \
 	vendor/ambiance.css \
-	vendor/lint.css
+	vendor/lint.css \
+	vendor/simplescrollbars.css
 	cat $^ > $@
 
 vendor/codemirror.css:
@@ -29,3 +31,7 @@ vendor/coffeescript.js:
 	wget "http://codemirror.net/mode/coffeescript/coffeescript.js" -O $@
 vendor/lint.js:
 	wget "http://codemirror.net/addon/lint/lint.js" -O $@
+vendor/simplescrollbars.js:
+	wget "http://codemirror.net/addon/scroll/simplescrollbars.js" -O $@
+vendor/simplescrollbars.css:
+	wget "http://codemirror.net/addon/scroll/simplescrollbars.css" -O $@

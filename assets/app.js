@@ -63,6 +63,7 @@ Editors.prototype = {
       value: this.defaultText,
       theme: 'ambiance',
       mode: 'javascript',
+      scrollbarStyle: 'overlay',
       tabSize: 2,
       gutters: ["CodeMirror-lint-markers"],
       lint: true,
@@ -84,6 +85,7 @@ Editors.prototype = {
     var preview = CodeMirror(this.$right, {
       theme: 'ambiance',
       mode: 'coffeescript',
+      scrollbarStyle: 'overlay',
       gutters: ["CodeMirror-lint-markers"],
       lint: true,
       tabSize: 2
@@ -114,6 +116,7 @@ Editors.prototype = {
     var popup = CodeMirror(this.$popupIn, {
       theme: 'ambiance',
       mode: 'javascript',
+      scrollbarStyle: 'overlay',
       tabSize: 2
     });
 
@@ -282,12 +285,18 @@ function makeCmMessages (warnings, error) {
 
   function getPosition (error) {
     var from, to;
-    from = CodeMirror.Pos(error.start.line-1, error.start.column);
 
-    if (error.end)
-      to = CodeMirror.Pos(error.end.line-1, error.end.column);
-    else
+    if (error.start) {
+      from = CodeMirror.Pos(error.start.line-1, error.start.column);
       to = CodeMirror.Pos(error.start.line-1, error.start.column + 90);
+    } else {
+      from = CodeMirror.Pos(0, 0);
+      to = CodeMirror.Pos(0, 1);
+    }
+
+    if (error.end) {
+      to = CodeMirror.Pos(error.end.line-1, error.end.column);
+    }
 
     return { from: from, to: to };
   }

@@ -293,6 +293,18 @@ body
     color: $yellow
     margin-right: 12px
 
+.CodeMirror-overlayscroll-vertical,
+.CodeMirror-overlayscroll-horizontal
+  div
+    opacity: 0
+    transition: opacity 100ms linear
+    background: lighten($bg, 10%)
+
+.CodeMirror-focused, .CodeMirror:hover
+  .CodeMirror-overlayscroll-vertical,
+  .CodeMirror-overlayscroll-horizontal
+    div
+      opacity: 0.5
 
 /*
  * errors
