@@ -11,5 +11,4 @@ x = ->
   alert y()
   z = ->
     3
-
   return

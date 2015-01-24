@@ -1,0 +1,10 @@
+----
+io.on('data', function() { console.log('Received'); });
+this.on('data', function() { console.log('Received'); });
+----
+io.on 'data', ->
+  console.log 'Received'
+  return
+@on 'data', ->
+  console.log 'Received'
+  return
