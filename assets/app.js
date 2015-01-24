@@ -4,22 +4,46 @@
 
   CodeMirror.registerHelper("lint", "javascript", validator);
   function validator(text, options) {
-    if (!error) return [];
 
-    var from, to;
-    from = CodeMirror.Pos(error.start.line-1, error.start.column);
+    return getErrors().concat(getWarnings());
 
-    if (error.end)
-      to = CodeMirror.Pos(error.end.line-1, error.end.column);
-    else
-      to = CodeMirror.Pos(error.start.line-1, error.start.column + 90);
-
-    return [
-      { from: from,
-        to: to,
+    function getErrors() {
+      if (!error) return [];
+      var pos = getPosition(error);
+      return [{
+        from: pos.from,
+        to: pos.to,
         severity: 'error',
-        message: error.description }
-    ];
+        message: error.description
+      }];
+    }
+
+    function getPosition (error) {
+      var from, to;
+      from = CodeMirror.Pos(error.start.line-1, error.start.column);
+
+      if (error.end)
+        to = CodeMirror.Pos(error.end.line-1, error.end.column);
+      else
+        to = CodeMirror.Pos(error.start.line-1, error.start.column + 90);
+
+      return { from: from, to: to };
+    }
+
+    function getWarnings() {
+      console.log(output && output.warnings);
+      if (!output || !output.warnings || output.warnings.length === 0)
+        return [];
+
+      return output.warnings.map(function (warn) {
+        var pos = getPosition(warn);
+        return {
+          from: pos.from, to: pos.to,
+          severity: 'warning',
+          message: warn.description
+        };
+      });
+    }
   }
 
   var defaultText = [
