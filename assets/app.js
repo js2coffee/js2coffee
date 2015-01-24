@@ -92,8 +92,12 @@ Editors.prototype = {
 
     preview.on('focus', setFocus(this.$right));
     preview.on('blur',  unsetFocus(this.$right));
-    preview.on('focus', function () { focused = true; });
     preview.on('blur',  function () { focused = false; });
+    preview.on('focus', function () {
+      focused = true;
+      this.openPopup();
+      this.updateReverse();
+    }.bind(this));
     preview.on('changes', function () {
       if (!focused) return;
       this.openPopup();
@@ -112,6 +116,9 @@ Editors.prototype = {
       mode: 'javascript',
       tabSize: 2
     });
+
+    popup.on('focus', setFocus(this.$popup));
+    popup.on('blur',  unsetFocus(this.$popup));
 
     return popup;
   },

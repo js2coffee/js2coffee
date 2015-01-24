@@ -115,11 +115,11 @@ body
   &.focus.right h3
     border-bottom: solid 1px mix($blue, $bg, 10%)
 
+/* common */
+.code-box, .code-box-popup
   &:not(.focus) .CodeMirror
     opacity: 0.75
 
-/* common */
-.code-box, .code-box-popup
   h3
     position: absolute
     top: 0
@@ -169,12 +169,12 @@ body
     height: 100%
     padding: 10px
     transition: transform 250ms ease, opacity 250ms ease
-    transform: scale(1)
+    transform: scale(1) translate(0, 0)
     opacity: 1
     z-index: 10
 
   &.hide
-    transform: scale(0.98)
+    transform: scale(0.98) translate(10px, 0)
     pointer-events: none
     opacity: 0
 
@@ -204,6 +204,9 @@ body
     &:hover:before
       +ion-icon('ios-close', 32px)
 
+  &:not(.focus):not(.error) .CodeMirror
+    opacity: 0.9
+
   .container
     position: absolute
     top: 15px
@@ -215,6 +218,7 @@ body
     z-index: 5
     border-radius: 3px
     border: solid 1px $blue
+    border: solid 1px mix($blue, $bg, 50%)
 
   h3
     border-bottom: 0
