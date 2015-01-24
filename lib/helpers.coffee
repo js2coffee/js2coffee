@@ -264,3 +264,48 @@ exports.getPrecedence = (node) ->
       0
     else
       -1
+
+###*
+# lastStatement() : lastStatement(body)
+###
+
+exports.lastStatement = (body) ->
+  for i in [(body.length-1)..0]
+    node = body[i]
+    continue unless node
+    if node.type isnt 'BlockComment' and node.type isnt 'LineComment'
+      return node
+
+###*
+# getReturnStatements():
+# Returns the final return statements in a body.
+###
+
+exports.getReturnStatements = (body) ->
+  {getReturnStatements, lastStatement} = exports
+
+  # Find the last pertinent statement
+  if !body
+    return
+  else if body.length
+    node = lastStatement(body)
+  else
+    node = body
+
+  # See what it is, recurse as needed
+  if !node
+    [ ]
+  else if node.type is 'ReturnStatement'
+    [ node ]
+  else if node.type is 'BlockStatement'
+    getReturnStatements node.body
+  else if node.type is 'IfStatement' and node.consequent and node.alternate
+    cons = getReturnStatements(node.consequent)
+    alt  = getReturnStatements(node.alternate)
+
+    if cons.length > 0 and alt.length > 0
+      cons.concat(alt)
+    else
+      [ ]
+  else
+    [ ]

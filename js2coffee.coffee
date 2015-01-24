@@ -8,7 +8,9 @@ BuilderBase = require('./lib/builder_base.coffee')
   commaDelimit
   delimit
   getPrecedence
+  getReturnStatements
   inspect
+  lastStatement
   newline
   prependAll
   quote
@@ -183,8 +185,8 @@ class CommentTransforms extends TransformerBase
   # Injects comment nodes into a node list.
   ###
 
-  injectComments: (node, key) ->
-    node[key] = @addCommentsToList(node.range, node[key])
+  injectComments: (node, body = 'body') ->
+    node[body] = @addCommentsToList(node.range, node[body])
     node
 
   ###
@@ -202,17 +204,27 @@ class CommentTransforms extends TransformerBase
     left = range[0]
     right = range[1]
 
-    # look for comments in left..node.range[0]
-    for item, i in body
-      if item.range
-        newComments = @comments.filter (c) ->
-          c.range[0] >= left and c.range[1] <= item.range[0]
-        list = list.concat(newComments)
+    findComments = (left, right) =>
+      @comments.filter (c) ->
+        c.range[0] >= left and c.range[1] <= right
 
-      list.push item
+    if body.length > 0
+      # look for comments in left..item.range[0]
+      # (ie, before each item)
+      for item, i in body
+        if item.range
+          newComments = findComments(left, item.range[0])
+          list = list.concat(newComments)
 
-      if item.range
-        left = item.range[1]
+        list.push item
+
+        if item.range
+          left = item.range[1]
+
+    # look for the final one (also accounts for empty bodies)
+    newComments = findComments(left, right)
+    list = list.concat(newComments)
+
     list
 
   ###
@@ -804,7 +816,7 @@ class ReturnTransforms extends TransformerBase
 
   unreturnify: (node, body = 'body') ->
     if node[body].length > 0
-      returns = @getReturnStatements(node[body])
+      returns = getReturnStatements(node[body])
 
       # Prevent implicit returns by adding an extra `return`
       if returns.length is 0
@@ -820,33 +832,6 @@ class ReturnTransforms extends TransformerBase
             ret.expression = ret.argument
 
     return
-
-  ###
-  # Returns the final return statements in a body.
-  ###
-
-  getReturnStatements: (body) ->
-    if !body
-      return
-    else if body.length
-      node = body[body.length-1]
-    else
-      node = body
-
-    if node.type is 'ReturnStatement'
-      [ node ]
-    else if node.type is 'BlockStatement'
-      @getReturnStatements node.body
-    else if node.type is 'IfStatement' and node.consequent and node.alternate
-      cons = @getReturnStatements(node.consequent)
-      alt  = @getReturnStatements(node.alternate)
-
-      if cons.length > 0 and alt.length > 0
-        cons.concat(alt)
-      else
-        []
-    else
-      [ ]
 
 # }}} -----------------------------------------------------------------------
 # {{{ PrecedenceTransforms
