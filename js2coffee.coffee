@@ -1,5 +1,5 @@
 # {{{ Imports
-TransformerBase = require('./lib/transformer_base')
+TransformerBase = require('./lib/transforms/base')
 BuilderBase = require('./lib/builder_base')
 
 {
