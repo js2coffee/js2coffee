@@ -1,0 +1,11 @@
+----
+for (a; b; update++) {
+  if (true) continue;
+}
+----
+a
+while b
+  if true
+    update++
+    continue
+  update++

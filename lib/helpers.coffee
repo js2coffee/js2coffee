@@ -81,7 +81,7 @@ exports.buildError = (err, source, file = '') ->
 
   {description} = err
   line = err.start?.line ? err.lineNumber
-  column = err.start?.column ? err.column
+  column = err.start?.column ? (err.column - 1)
 
   heading = "#{file}:#{line}:#{column}: #{description}"
 
@@ -91,10 +91,10 @@ exports.buildError = (err, source, file = '') ->
   max = line-1
   digits = max.toString().length
   length = 1
-  length = Math.max(err.end.column - err.start.column + 1, 1) if err.end
+  length = Math.max(err.end.column - err.start.column, 1) if err.end
   pad = (s) -> Array(1 + digits - s.toString().length).join(" ") + s
   source = lines[min..max].map (line, i) -> "#{pad(1+i+min)}  #{line}"
-  source.push Array(digits + 3).join(" ") + Array(column+1).join(" ") + Array(length).join("^")
+  source.push Array(digits + 3).join(" ") + Array(column+1).join(" ") + Array(length+1).join("^")
   source = source.join("\n")
 
   message = heading + "\n\n" + source

@@ -10,11 +10,20 @@ describe 'Errors', ->
       err = e
 
   it 'throws them properly', ->
-    expect(err.message).include ':5:4: Unexpected token )'
+    expect(err.message).include ':5:3: Unexpected token )'
+
+  it 'has context lines', ->
+    expect(err.message).include '3  c'
+    expect(err.message).include '4  d'
+
+  it 'has error lines with highlight', ->
+    expect(err.message).include """
+      5  x())
+            ^"""
 
   it 'has start line/column', ->
     expect(err.start.line).eql 5
-    expect(err.start.column).eql 4
+    expect(err.start.column).eql 3
 
 describe 'Error cases', ->
   it 'happens on "with" statements', ->
