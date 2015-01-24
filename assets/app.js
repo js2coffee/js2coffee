@@ -13,8 +13,14 @@
     ' * rewritten to use esprima, currently',
     ' * in development.',
     ' */',
-    'function add(x, y) {',
-    '  return x + y;',
+    'function listen (el, event, handler) {',
+    '  if (el.addEventListener) {',
+    '    return el.addEventListener(event, handler);',
+    '  } else {',
+    '    return el.attachEvent("on" + event, function() {',
+    '      return handler.call(el);',
+    '    });',
+    '  }',
     '}'
   ].join("\n");
 
