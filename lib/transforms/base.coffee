@@ -3,8 +3,6 @@
   clone
 } = require('../helpers')
 
-extend = require('util')._extend
-
 ###**
 # TransformerBase:
 # Base class of all transformation steps, such as [FunctionTransforms] and
@@ -58,18 +56,23 @@ extend = require('util')._extend
 
 module.exports =
 class TransformerBase
-  @run: (ast, options, classes, ctx) ->
-    Xformer = class extends TransformerBase
-    
-    classes.forEach (klass) ->
-      extend(Xformer.prototype, klass.prototype)
 
+  ###
+  # Run multiple transformations
+  ###
+
+  @run: (ast, options, classes, ctx) ->
+    # Combine `classes` into one mega-class
+    Xformer = class extends TransformerBase
+    safeExtend Xformer, classes
+
+    # Run that
     xform = new Xformer(ast, options)
     result = xform.run()
 
+    # Collect warnings into `ctx`, then return
     ctx.warnings ?= []
     ctx.warnings = ctx.warnings.concat(xform.warnings)
-
     result
 
   constructor: (@ast, @options) ->
@@ -218,3 +221,19 @@ class TransformerBase
   FunctionExpressionExit: (node) ->
     @popStack()
     node
+
+###
+# Extends a class `dest`'s prototype with those from other classes in `classes`.
+# Throws an error if there's a clash.
+###
+
+safeExtend = (dest, classes) ->
+  added = {}
+  classes.forEach (klass) ->
+    for key, fn of klass::
+      if klass::hasOwnProperty(key)
+        if added[key] and key isnt 'constructor'
+          throw new Error("Conflict with member '#{key}'")
+        dest::[key] = fn
+        added[key] = true
+  dest
