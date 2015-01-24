@@ -1,0 +1,21 @@
+----
+function returns() {
+  if (x) {
+    if (y) {
+      return y
+    } else {
+      return x
+    }
+  } else {
+    return z
+  }
+}
+----
+returns = ->
+  if x
+    if y
+      y
+    else
+      x
+  else
+    z

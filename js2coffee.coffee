@@ -828,6 +828,8 @@ class ReturnTransforms extends TransformerBase
 
     if node.type is 'ReturnStatement'
       [ node ]
+    else if node.type is 'BlockStatement'
+      @getReturnStatements node.body
     else if node.type is 'IfStatement' and node.consequent and node.alternate
       cons = @getReturnStatements(node.consequent)
       alt  = @getReturnStatements(node.alternate)
