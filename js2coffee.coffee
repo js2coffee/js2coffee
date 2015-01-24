@@ -222,9 +222,16 @@ class CommentTransforms extends TransformerBase
 
   convertCommentPrefixes: (node) ->
     lines = node.value.split("\n")
+    inLevel = node.loc.start.column
+
     lines = lines.map (line, i) ->
       isTrailingSpace = i is lines.length-1 and line.match(/^\s*$/)
       isSingleLine = i is 0 and lines.length is 1
+
+      # If the first N characters are spaces, strip them
+      predent = line.substr(0, inLevel)
+      if predent.match(/^\s+$/)
+        line = line.substr(inLevel)
 
       if isTrailingSpace
         ''
@@ -1070,7 +1077,9 @@ class Builder extends BuilderBase
     [ "#", node.value, "\n" ]
 
   BlockComment: (node) ->
-    [ "###", node.value, "###\n" ]
+    lines = ('###' + node.value + '###').split("\n")
+
+    [ delimit(lines, [ "\n", @indent() ]), "\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
