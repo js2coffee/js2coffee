@@ -1,0 +1,7 @@
+----
+for (var i = 0; i < xxxxx; i++) {
+  action();
+}
+----
+for i in [0...xxxxx]
+  action()

@@ -11,6 +11,7 @@ eachGroup (group) ->
   console.log "<table width='100%'>"
 
   for spec in group.specs
+    continue if spec.meta.nodoc
     console.log """
       <tr>
       <th width='33%' valign='top'>#{spec.name}</th>
