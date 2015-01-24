@@ -4,46 +4,7 @@
 
   CodeMirror.registerHelper("lint", "javascript", validator);
   function validator(text, options) {
-
-    return getErrors().concat(getWarnings());
-
-    function getErrors() {
-      if (!error) return [];
-      var pos = getPosition(error);
-      return [{
-        from: pos.from,
-        to: pos.to,
-        severity: 'error',
-        message: error.description
-      }];
-    }
-
-    function getPosition (error) {
-      var from, to;
-      from = CodeMirror.Pos(error.start.line-1, error.start.column);
-
-      if (error.end)
-        to = CodeMirror.Pos(error.end.line-1, error.end.column);
-      else
-        to = CodeMirror.Pos(error.start.line-1, error.start.column + 90);
-
-      return { from: from, to: to };
-    }
-
-    function getWarnings() {
-      console.log(output && output.warnings);
-      if (!output || !output.warnings || output.warnings.length === 0)
-        return [];
-
-      return output.warnings.map(function (warn) {
-        var pos = getPosition(warn);
-        return {
-          from: pos.from, to: pos.to,
-          severity: 'warning',
-          message: warn.description
-        };
-      });
-    }
+    return makeCmMessages(output, error);
   }
 
   var defaultText = [
@@ -76,6 +37,10 @@
     });
 
     editor.on('change', update);
+    editor.on('focus', onfocus(q('.code-box.left')));
+    editor.on('blur',  onblur(q('.code-box.left')));
+    preview.on('focus', onfocus(q('.code-box.right')));
+    preview.on('blur',  onblur(q('.code-box.right')));
     update();
   });
 
@@ -91,6 +56,66 @@
       preview.setValue(kode);
     } catch (err) {
       error = err;
+    }
+  }
+
+  function onfocus ($el) {
+    return function () { addClass($el, 'focus'); };
+  }
+
+  function onblur ($el) {
+    return function () { removeClass($el, 'focus'); };
+  }
+
+  function setFocus (which) {
+
+    qa('.code-box').forEach(function ($el) {
+      removeClass($el, 'focus');
+    });
+    addClass(q('.code-box.'+which), 'focus');
+  }
+
+  /*
+   * converts js2coffee errors into codemirror messages
+   * returns an array
+   */
+
+  function makeCmMessages (output, error) {
+    return getErrors().concat(getWarnings());
+
+    function getErrors() {
+      if (!error) return [];
+      var pos = getPosition(error);
+      return [{
+        from: pos.from, to: pos.to, severity: 'error',
+        message: error.description
+      }];
+    }
+
+    function getPosition (error) {
+      var from, to;
+      from = CodeMirror.Pos(error.start.line-1, error.start.column);
+
+      if (error.end)
+        to = CodeMirror.Pos(error.end.line-1, error.end.column);
+      else
+        to = CodeMirror.Pos(error.start.line-1, error.start.column + 90);
+
+      return { from: from, to: to };
+    }
+
+    function getWarnings() {
+      if (!output || !output.warnings || output.warnings.length === 0)
+        return [];
+
+      return output.warnings.map(function (warn) {
+        var pos = getPosition(warn);
+        return {
+          from: pos.from, to: pos.to,
+          severity: 'warning',
+          message: warn.description
+        };
+      });
     }
   }
 
@@ -112,6 +137,10 @@
     return document.querySelector(query);
   }
 
+  function qa (query) {
+    return document.querySelectorAll(query);
+  }
+
   function on (el, event, handler) {
     if (el.addEventListener) {
       el.addEventListener(event, handler);
@@ -120,6 +149,24 @@
         handler.call(el);
       });
     }
+  }
+
+  function removeClass (el, className) {
+    if (el.classList) {
+      el.classList.remove(className);
+    } else {
+      var expr =
+        new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi');
+
+      el.className = el.className.replace(expr, ' ');
+    }
+  }
+
+  function addClass (el, className) {
+    if (el.classList)
+      el.classList.add(className);
+    else
+      el.className += ' ' + className;
   }
 
 })();

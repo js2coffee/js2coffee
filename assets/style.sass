@@ -12,6 +12,8 @@ $monospace: menlo, monospace
 $sans: 'source sans pro', sans-serif
 $red: #C0392B
 $yellow: #F1C40F
+$blue: #3498DB
+$green: #2ECC71
 
 *
   box-sizing: border-box
@@ -37,11 +39,11 @@ body
   color: $text
 
 .code-area
-  width: 80%
   height: 100%
   position: absolute
   top: 0
   left: 0
+  right: 200px
 
 /*
  * heh
@@ -50,7 +52,7 @@ body
 .toolbar
   background: lighten($bg, 1%)
   box-shadow: 0 0 4px rgba(black, 0.1)
-  width: 20%
+  width: 200px
   height: 100%
   position: absolute
   top: 0
@@ -73,15 +75,14 @@ body
     font-size: 1.5em
     text-align: center
     border: solid 2px lighten($bg, 5%)
-    padding: 30px 0
+    padding: 30px 10px
     border-radius: 3px
     margin-bottom: 15px
+    line-height: 1.2em
 
   h5
     font-weight: 400
-    text-transform: uppercase
-    font-size: 0.7em
-    letter-spacing: 1px
+    font-size: 0.9em
     color: #888
 
 /*
@@ -89,26 +90,43 @@ body
  */
 
 .code-box
+  $size: 2px
+  $shadow: inset (-2*$size) 0 ($size) (-1*$size) rgba(black, 0.1)
+
   &
     width: 50%
     height: 100%
     position: relative
     float: left
-    $size: 2px
-    box-shadow: inset (-2*$size) 0 ($size) (-1*$size) rgba(black, 0.1)
+    box-shadow: inset 0 0 0 black, $shadow
+    transition: all 100ms linear
+
+  &.left.focus
+    box-shadow: inset 0 3px 0 $green, $shadow
+  &.right.focus
+    box-shadow: inset 0 3px 0 $blue, $shadow
+
+  &.focus h3 strong
+    color: white
+  &.focus.left h3
+    border-bottom: solid 1px mix($green, $bg, 10%)
+  &.focus.right h3
+    border-bottom: solid 1px mix($blue, $bg, 10%)
+
+  &:not(.focus) .CodeMirror
+    opacity: 0.75
 
   h3
     position: absolute
     top: 0
     left: 30px
     right: 30px
-
     padding: 10px 0
     font-size: 0.8em
-    opacity: 0.5
-    border-bottom: solid 1px lighten($bg, 8%)
+    border-bottom: solid 1px lighten($bg, 3%)
 
     strong
+      color: mix(white, $bg, 50%)
       font-weight: 300
       text-transform: uppercase
       letter-spacing: 2px
@@ -116,10 +134,12 @@ body
     em
       font-style: normal
       font-weight: 400
-      opacity: 0.4
+      color: mix(white, $bg, 20%)
       margin-left: 10px
 
   textarea, .CodeMirror
+    cursor: text
+    transition: opacity 100ms linear
     position: absolute
     top: 0
     left: 0
