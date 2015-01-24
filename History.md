@@ -1,3 +1,7 @@
+## v0.0.7 - January 24, 2015
+
+Pre-release update (improved comments support).
+
 ## v0.0.6 - January 24, 2015
 
 Pre-release update (more warnings).
