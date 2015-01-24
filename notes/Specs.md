@@ -34,6 +34,26 @@
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>After block comment</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function x() {
+  return y;
+  /*
+   * hello
+   */
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = ->
+  y
+  ###
+  # hello
+  ###
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Block comments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a();
@@ -53,6 +73,28 @@ b()
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Block comments in blocks</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (x) {
+  /*
+   * hello
+   * world
+   */
+  y();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if x
+  ###
+  # hello
+  # world
+  ###
+  y()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Block comments with space</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a(); /* hi */
@@ -63,6 +105,66 @@ b();
 <pre><code class='lang-coffee'>a()
 ### hi ###
 b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Comment before function</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a()
+/*
+ * comment
+ */
+function x() {
+  return;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>###
+# comment
+###
+x = ->
+  return
+a()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Comments in if blocks</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (true) {
+  // yes
+} else {
+  // no
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if true
+  # yes
+else
+  # no
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Indented jsdoc comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (x) {
+  /**
+   * documentation here
+   */
+  y();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if x
+  ###*
+  # documentation here
+  ###
+  y()
 </code></pre>
 </td>
 </tr>
@@ -78,6 +180,144 @@ b();
 <pre><code class='lang-coffee'>a()
 # hello
 b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Line comments before function</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a()
+// one
+// two
+// three
+function x() {
+  return;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'># one
+# two
+# three
+x = ->
+  return
+a()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Multiple functions with multiple comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a()
+// one
+// two
+// three
+function x() {
+  return;
+}
+// four
+// five
+// six
+function y() {
+  return;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'># one
+# two
+# three
+x = ->
+  return
+# four
+# five
+# six
+y = ->
+  return
+a()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Program block comment after</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a();
+/*
+ * hello
+ */
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a()
+###
+# hello
+###
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Program block comment before</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/*
+ * hello
+ */
+a();
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>###
+# hello
+###
+a()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Program block comment sole</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/*
+ * hello
+ */
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>###
+# hello
+###
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Program with only comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>// hi
+// there
+/* world */
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'># hi
+# there
+### world ###
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Sole block comment</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn() {
+  /*
+   * hello
+   */
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  ###
+  # hello
+  ###
+  return
 </code></pre>
 </td>
 </tr>
@@ -605,6 +845,34 @@ obj.two = ->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Unpacking returns in nested ifs</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function returns() {
+  if (x) {
+    if (y) {
+      return y
+    } else {
+      return x
+    }
+  } else {
+    return z
+  }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>returns = ->
+  if x
+    if y
+      y
+    else
+      x
+  else
+    z
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>With arguments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function a(b, c) { d(); }
@@ -918,6 +1186,46 @@ y = 3
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Block comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/**
+API documentation
+*/
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>###*
+API documentation
+###
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Call statement</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function x() {
+  alert(2+2);
+  alert(y(10));
+}
+
+$.get({
+  ajax: true,
+  url: 'foo'
+});
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = ->
+  alert 2 + 2
+  alert y(10)
+  return
+$.get
+  ajax: true
+  url: 'foo'
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Crlf</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var x = 3
@@ -993,9 +1301,7 @@ loop
 <pre><code class='lang-coffee'>x =
   v: ->
     2
-
   y: ->
-
   z: ->
 </code></pre>
 </td>
@@ -1179,6 +1485,21 @@ a-- - a
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = 8 + 2 + 2
 2
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Single line else</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if ((x != 2) && (2)) { 2;2 } else true
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if x != 2 and 2
+  2
+  2
+else
+  true
 </code></pre>
 </td>
 </tr>
@@ -1862,7 +2183,6 @@ b: 2
   start: ->
     go()
     return
-
   stop: ->
     halt()
     return
@@ -2584,6 +2904,21 @@ c
 ## Special cases
 
 <table width='100%'>
+<tr>
+<th width='33%' valign='top'>Assignment in condition</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if ( (options = arguments[ i ]) !== null ) {
+  for (var x in y) { z(); }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if (options = arguments[i]) != null
+  for x of y
+    z()
+</code></pre>
+</td>
+</tr>
 <tr>
 <th width='33%' valign='top'>Unary and object expression</th>
 <td width='33%' valign='top'>
