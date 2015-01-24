@@ -18,7 +18,12 @@ extend = require('util')._extend
 #       FunctionDeclaration: (node) ->
 #         ...
 #
-#     TransformerBase.run ast, options, [ MyTransform ]
+#     ctx = {}
+#     TransformerBase.run ast, options, [ MyTransform ], ctx
+#
+#     # result:
+#     ast
+#     ctx.warnings
 #
 # From within the handlers, you can call some utility functions:
 #
@@ -52,17 +57,24 @@ extend = require('util')._extend
 ###
 
 class TransformerBase
-  @run: (ast, options, classes) ->
+  @run: (ast, options, classes, ctx) ->
     Xformer = class extends TransformerBase
     
     classes.forEach (klass) ->
       extend(Xformer.prototype, klass.prototype)
 
-    new Xformer(ast, options).run()
+    xform = new Xformer(ast, options)
+    result = xform.run()
+
+    ctx.warnings ?= []
+    ctx.warnings = ctx.warnings.concat(xform.warnings)
+
+    result
 
   constructor: (@ast, @options) ->
     @scopes = []
     @ctx = { vars: [] }
+    @warnings = []
 
   ###*
   # run():
@@ -171,6 +183,20 @@ class TransformerBase
       description: description
     , @options.source, @options.filename)
     throw err
+
+  ###*
+  # warn() : @warn(node, message)
+  # Add a warning
+  #
+  #     @warning node, "Variable was defined twice"
+  ###
+  
+  warn: (node, description) ->
+    @warnings.push
+      start: node.loc?.start
+      end: node.loc?.end
+      filename: @options.filename
+      description: description
 
   ###*
   # Defaults: these are default handlers that will automatially change `@scope`.

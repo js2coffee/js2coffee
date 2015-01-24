@@ -56,9 +56,9 @@ js2coffee.build = (source, options = {}) ->
   options.source = source
 
   ast = js2coffee.parseJS(source, options)
-  ast = js2coffee.transform(ast, options)
+  {ast, warnings} = js2coffee.transform(ast, options)
   {code, map} = js2coffee.generate(ast, options)
-  {code, ast, map}
+  {code, ast, map, warnings}
 
 ###*
 # parseJS() : js2coffee.parseJS(source, [options])
@@ -82,18 +82,21 @@ js2coffee.parseJS = (source, options = {}) ->
 # Mutates a given JavaScript syntax tree `ast` into a CoffeeScript AST.
 #
 #     ast = js2coffee.parseJS('var a = 2;')
-#     ast = js2coffee.transform(ast)
+#     result = js2coffee.transform(ast)
+#     result.ast
 #
 # This performs a few traversals across the tree using traversal classes
 # (TransformerBase subclasses).
 ###
 
 js2coffee.transform = (ast, options = {}) ->
+  ctx = {}
+
   # Note that these transformations will need to be done in a few steps.
   # The earlier steps (function, comment, etc) will make drastic modifications
   # to the tree that the other transformations will need to pick up.
   run = (classes) ->
-    TransformerBase.run(ast, options, classes)
+    TransformerBase.run(ast, options, classes, ctx)
 
   # Injects comments into the AST as BlockComment and LineComment nodes.
   unless options.comments is false
@@ -114,7 +117,7 @@ js2coffee.transform = (ast, options = {}) ->
     OtherTransforms ]
   run [ BlockTransforms ]
 
-  ast
+  { ast, warnings: ctx.warnings }
 
 ###*
 # generate() : js2coffee.generate(ast, [options])
@@ -534,6 +537,7 @@ class OtherTransforms extends TransformerBase
   addShadowingIfNeeded: (node) ->
     name = node.id.name
     if ~@ctx.vars.indexOf(name)
+      @warn node, "Variable '#{name}' has been shadowed"
       statement = replace node,
         type: 'ExpressionStatement'
         expression:
