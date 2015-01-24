@@ -27,13 +27,11 @@ module.exports = js2coffee = (source, options) ->
 # ~ filename (String): the filename, used in source maps and errors.
 # ~ comments (Boolean): set to `false` to disable comments.
 #
-# How it works:
+# Here's what it does:
 #
-# 1. It uses Esprima to convert the input into a JavaScript AST.
-# 2. It uses AST transformations (see [js2coffee.transform]) to mutate the AST
-#    into a CoffeeScript AST.
-# 3. It generates cofe (see [js2coffee.generate]) to compile the CoffeeScript
-#    AST into CoffeeScript code.
+# 1. Parse code into a JS AST (`.parseJS()`)
+# 2. Mutate the JS AST into a CoffeeScript AST (`.transform()`)
+# 3. Render the AST into CoffeeScript (`.generate()`)
 ###
 
 js2coffee.build = (source, options = {}) ->
@@ -48,6 +46,7 @@ js2coffee.build = (source, options = {}) ->
 ###*
 # parseJS() : js2coffee.parseJS(source, [options])
 # Parses JavaScript code into an AST via Esprima.
+# Returns a JavaScript AST. Throws an error if parsing can't continue.
 #
 #     try
 #       ast = js2coffee.parseJS('var a = 2;')
@@ -68,7 +67,9 @@ js2coffee.parseJS = (source, options = {}) ->
 #
 #     ast = js2coffee.parseJS('var a = 2;')
 #     result = js2coffee.transform(ast)
+#
 #     result.ast
+#     result.warnings
 #
 # This performs a few traversals across the tree using traversal classes
 # (TransformerBase subclasses).
@@ -83,12 +84,17 @@ js2coffee.transform = (ast, options = {}) ->
   run = (classes) ->
     TransformerBase.run(ast, options, classes, ctx)
 
+  comments = not (options.comments is false)
+
   # Injects comments into the AST as BlockComment and LineComment nodes.
-  unless options.comments is false
-    run [ require('./lib/transforms/comments') ]
+  run [
+    require('./lib/transforms/comments')
+  ] if comments
 
   # Moves named functions to the top of the scope.
-  run [ require('./lib/transforms/functions') ]
+  run [
+    require('./lib/transforms/functions')
+  ]
 
   # Everything else -- these can be done in one step without any side effects.
   run [
@@ -102,6 +108,9 @@ js2coffee.transform = (ast, options = {}) ->
     require('./lib/transforms/returns')
     require('./lib/transforms/switches')
   ]
+
+  # Consolidate nested blocks -- block nesting can be a side effect of the
+  # transformations above
   run [
     require('./lib/transforms/blocks')
   ]
