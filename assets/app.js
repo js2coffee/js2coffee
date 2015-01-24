@@ -47,10 +47,12 @@
   }
 
   var defaultText = [
+    '/*',
+    ' * Welcome to the new js2coffee, now',
+    ' * rewritten to use esprima, currently',
+    ' * in development.',
+    ' */',
     'function add(x, y) {',
-    '  // Welcome to the new js2coffee, now',
-    '  // rewritten to use esprima, currently',
-    '  // in development.',
     '  return x + y;',
     '}'
   ].join("\n");
