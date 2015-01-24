@@ -79,7 +79,7 @@ coffeeContent = js2coffee.build(jstContent, {show_src_lineno: true, indent: "   
 
 ## Known issues
 
-Js2coffee has some kown issues
+Js2coffee has some known issues
 
 - switch statements have always implict returns at the end of a function - [#250](https://github.com/rstacruz/js2coffee/pull/250)
 - some switch statements fail - [switch](https://github.com/rstacruz/js2coffee/issues?direction=desc&labels=switch-case&page=1&sort=updated&state=open)
