@@ -64,13 +64,13 @@ Critical for compatibility:
  - [x] Take care of operator precedence
  - [x] Renaming variables in case of shadowing
  - [x] Empty while
- - [ ] Add `return` at the end as needed
+ - [x] Add `return` at the end as needed
  - [ ] Continue in `for` loop
 
 Max compatibility mode:
 
  - [ ] --compat switch
- - [ ] Warnings
+ - [x] Warnings
  - [ ] Global variables escaped
  - [ ] double equals escaped
 

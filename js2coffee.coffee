@@ -18,6 +18,7 @@ BuilderBase = require('./lib/builder_base.coffee')
   prependAll
   quote
   replace
+  reservedWords
   space
 } = require('./lib/helpers.coffee')
 # }}}
@@ -493,8 +494,13 @@ class OtherTransforms extends TransformerBase
     @syntaxError node, "'with' is not supported in CoffeeScript"
 
   VariableDeclarator: (node) ->
+    @preventReservedWords(node.id, node.id?.name)
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer(node)
+
+  AssignmentExpression: (node) ->
+    @preventReservedWords(node.left, node.left?.name)
+    node
 
   ReturnStatement: (node) ->
     @parenthesizeObjectsInArgument(node)
@@ -506,6 +512,14 @@ class OtherTransforms extends TransformerBase
     if node.argument.type is 'ObjectExpression'
       node.argument._braced = true
     return
+
+  ###
+  # Catch usage of reserved words (eg, `off = 2`)
+  ###
+
+  preventReservedWords: (node, name) ->
+    if name and ~reservedWords.indexOf(name)
+      @syntaxError node, "'#{name}' is a reserved CoffeeScript keyword"
 
   ###
   # Fire warnings when '==' is used

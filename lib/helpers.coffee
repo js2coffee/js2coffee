@@ -311,7 +311,7 @@ exports.getReturnStatements = (body) ->
     [ ]
 
 ###*
-# joinLines():
+# joinLines() : joinLines(properties, indent)
 # Joins multiple tokens as lines. Takes trailing newlines into
 # account.
 #
@@ -331,6 +331,16 @@ exports.joinLines = (props, indent) ->
       newlist.push "\n"
 
   newlist
+
+###*
+# reservedWords
+###
+
+exports.reservedWords = [
+  'class'
+  'on'
+  'off'
+]
 
 exports.nextUntil = (body, node, fn) ->
   idx = body.indexOf(node)

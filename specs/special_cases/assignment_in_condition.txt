@@ -1,0 +1,8 @@
+----
+if ( (options = arguments[ i ]) !== null ) {
+  for (var x in y) { z(); }
+}
+----
+if (options = arguments[i]) != null
+  for x of y
+    z()
