@@ -8,7 +8,6 @@ App =
   start: ->
     go()
     return
-
   stop: ->
     halt()
     return

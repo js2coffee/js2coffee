@@ -310,6 +310,28 @@ exports.getReturnStatements = (body) ->
   else
     [ ]
 
+###*
+# joinLines():
+# Joins multiple tokens as lines. Takes trailing newlines into
+# account.
+#
+#     joinLines(["a\n", "b", "c"], "  ")
+#     => [ "  ", "a\n", "  ", "b", "\n", "  ", "c" ]
+###
+
+exports.joinLines = (props, indent) ->
+  newlist = []
+
+  for item, i in props
+    newlist.push(indent)
+    newlist.push(item)
+
+    isLast = (i isnt props.length-1)
+    if !item.toString().match(/\n$/) and isLast
+      newlist.push "\n"
+
+  newlist
+
 exports.nextUntil = (body, node, fn) ->
   idx = body.indexOf(node)
   for i in [idx+1..body.length]

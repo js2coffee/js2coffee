@@ -10,6 +10,7 @@ BuilderBase = require('./lib/builder_base.coffee')
   getPrecedence
   getReturnStatements
   inspect
+  joinLines
   lastStatement
   newline
   nextNonComment
@@ -1137,7 +1138,7 @@ class Builder extends BuilderBase
     else
       props = @indent =>
         props = node.properties.map(@walk)
-        prependAll(props, [ "\n", @indent() ])
+        [ "\n", joinLines(props, @indent()) ]
 
       if isBraced
         @paren [ "{", props, "\n", @indent(), "}" ]
@@ -1267,8 +1268,7 @@ class Builder extends BuilderBase
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
-      # @syntaxError node, "Using 'for..in' loops without 'var' can produce
-      # unexpected results"
+      # @warn node, "Using 'for..in' loops without 'var' can produce unexpected results"
       # node.left.name += '_'
       id = @walk(node.left)
       propagator = {
