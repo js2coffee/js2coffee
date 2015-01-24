@@ -5,6 +5,7 @@ controller('name', [
   'b',
   function (a, b) {
     alert('ok');
+    return;
   },
   'z'
 ]);
@@ -14,5 +15,6 @@ controller 'name', [
   'b'
   (a, b) ->
     alert 'ok'
+    return
   'z'
 ]

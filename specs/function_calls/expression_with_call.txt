@@ -1,6 +1,6 @@
 ----
 (function () {
-  go();
+  return go();
 }).call(this);
 ----
 (->

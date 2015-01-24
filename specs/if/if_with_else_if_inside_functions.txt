@@ -3,6 +3,7 @@ function fn() {
   if (a) { b(); }
   else if (b) { c(); }
   else { d(); }
+  return;
 }
 ----
 fn = ->
@@ -12,3 +13,4 @@ fn = ->
     c()
   else
     d()
+  return

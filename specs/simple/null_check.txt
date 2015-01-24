@@ -1,8 +1,10 @@
 ----
 function ifNullChecks() {
-  if (x==null) { yep() }
+  if (x===null) { yep() }
+  return
 }
 ----
 ifNullChecks = ->
   if x == null
     yep()
+  return

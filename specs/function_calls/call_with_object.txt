@@ -1,7 +1,7 @@
 todo: "Remove the braces on the object"
 ----
 box.on('click', { silent: true }, function () {
-  go();
+  return go();
 })
 ----
 box.on 'click', { silent: true }, ->

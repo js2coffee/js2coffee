@@ -1,0 +1,13 @@
+----
+function a() {
+  if (x)
+    return b();
+  else
+    return c();
+}
+----
+a = ->
+  if x
+    b()
+  else
+    c()

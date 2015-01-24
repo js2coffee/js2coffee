@@ -1,8 +1,10 @@
 ----
 (function($) {
   go();
+  return;
 })(jQuery);
 ----
 (($) ->
   go()
+  return
 ) jQuery

@@ -2,6 +2,7 @@
 function fn() {
   if (a) b();
   else c();
+  return;
 }
 ----
 fn = ->
@@ -9,3 +10,4 @@ fn = ->
     b()
   else
     c()
+  return

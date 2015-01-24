@@ -1,9 +1,9 @@
 ----
 function one() {
-  a();
+  return a();
 }
 function two() {
-  b();
+  return b();
 }
 ----
 one = ->

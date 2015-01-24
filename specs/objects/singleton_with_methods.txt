@@ -1,12 +1,14 @@
 ----
 App = {
-  start: function () { go(); },
-  stop: function () { halt(); }
+  start: function () { go(); return; },
+  stop: function () { halt(); return; }
 }
 ----
 App =
   start: ->
     go()
+    return
 
   stop: ->
     halt()
+    return

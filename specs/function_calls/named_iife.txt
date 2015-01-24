@@ -8,7 +8,7 @@ notes: """
 ----
 fn();
 (function fn () {
-  fn();
+  return fn();
 })(a);
 ----
 fn = ->

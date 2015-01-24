@@ -5,6 +5,7 @@ function fn() {
     b();
   } while (a);
   after();
+  return;
 }
 ----
 fn = ->
@@ -13,3 +14,4 @@ fn = ->
     b()
     break unless a
   after()
+  return

@@ -1,8 +1,8 @@
 ----
 get().then(function () {
-  a();
+  return a();
 }).then(function () {
-  b();
+  return b();
 });
 ----
 get().then(->

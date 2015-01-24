@@ -1,6 +1,6 @@
 ----
 setTimeout(function () {
-  work();
+  return work();
 }, 500);
 ----
 setTimeout (->

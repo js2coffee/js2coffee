@@ -1,6 +1,6 @@
 ----
 if (x) {
-  setTimeout(function() { go(); }, 300)
+  setTimeout(function() { return go(); }, 300)
 }
 ----
 if x

@@ -1,8 +1,10 @@
 ----
 a.b = function (arg) {
   if (arg) cli.a = b;
+  return;
 };
 ----
 a.b = (arg) ->
   if arg
     cli.a = b
+  return

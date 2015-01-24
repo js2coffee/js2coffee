@@ -1,6 +1,6 @@
 ----
 box.on('click', function () {
-  go();
+  return go();
 }, { delay: 500, silent: true })
 ----
 box.on 'click', (->

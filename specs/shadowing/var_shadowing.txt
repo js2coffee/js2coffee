@@ -10,6 +10,7 @@ notes: """
 var val = 2;
 var fn = function () {
   var val = 1;
+  return;
 }
 fn();
 assert(val == 2);
@@ -18,5 +19,6 @@ val = 2
 fn = ->
   `var val`
   val = 1
+  return
 fn()
 assert val == 2

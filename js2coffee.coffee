@@ -796,13 +796,47 @@ class ReturnTransforms extends TransformerBase
 
   unreturnify: (node, body = 'body') ->
     if node[body].length > 0
-      idx = node[body].length-1
-      last = node[body][idx]
+      returns = @getReturnStatements(node[body])
 
-      if last.type is 'ReturnStatement' and last.argument
-        node[body][idx] = replace last,
-          type: 'ExpressionStatement',
-          expression: last.argument
+      # Prevent implicit returns by adding an extra `return`
+      if returns.length is 0
+        node[body].push
+          type: 'ReturnStatement'
+
+      # Unpack the return statements, mutate them into
+      # expression statements if needed (`return x` => `x`)
+      else
+        returns.forEach (ret) ->
+          if ret.argument
+            ret.type = 'ExpressionStatement'
+            ret.expression = ret.argument
+
+    return
+
+  ###
+  # Returns the final return statements in a body.
+  ###
+
+  getReturnStatements: (body) ->
+    if !body
+      return
+    else if body.length
+      node = body[body.length-1]
+    else
+      node = body
+
+    if node.type is 'ReturnStatement'
+      [ node ]
+    else if node.type is 'IfStatement' and node.consequent and node.alternate
+      cons = @getReturnStatements(node.consequent)
+      alt  = @getReturnStatements(node.alternate)
+
+      if cons.length > 0 and alt.length > 0
+        cons.concat(alt)
+      else
+        []
+    else
+      [ ]
 
 # }}} -----------------------------------------------------------------------
 # {{{ PrecedenceTransforms
