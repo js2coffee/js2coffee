@@ -2,7 +2,7 @@ require 'coffee-script/register'
 require './setup'
 
 describe 'BuilderBase', ->
-  BuilderBase = require('../lib/builder_base')
+  BuilderBase = require('../lib/builder/base')
 
   it 'works', ->
     ast =
