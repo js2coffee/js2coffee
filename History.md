@@ -1,3 +1,7 @@
+## v0.0.9 - January 24, 2015
+
+Pre-release update (better esprima.parse error reporting).
+
 ## v0.0.8 - January 24, 2015
 
 Pre-release update (reserved keywords).
