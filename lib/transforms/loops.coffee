@@ -14,6 +14,22 @@ class LoopTransforms extends TransformerBase
   WhileStatement: (node) ->
     @convertToLoopStatement(node)
 
+  DoWhileStatement: (node) ->
+    block = node.body
+    body = block.body
+
+    body.push replace node.test,
+      type: 'IfStatement'
+      _postfix: true
+      _negative: true
+      test: node.test
+      consequent:
+        type: 'BreakStatement'
+
+    replace node,
+      type: 'CoffeeLoopStatement'
+      body: block
+
   ###
   # Converts a `for (x;y;z) {a}` to `x; while(y) {a; z}`.
   # Returns a `BlockStatement`.

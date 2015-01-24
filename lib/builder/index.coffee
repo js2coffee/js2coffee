@@ -203,7 +203,9 @@ class Builder extends BuilderBase
       if node.consequent.type isnt 'BlockStatement'
         consequent = @indent(consequent)
 
-      [ 'if ', test, "\n", consequent, els ]
+      word = if node._negative then 'unless' else 'if'
+
+      [ word, ' ', test, "\n", consequent, els ]
 
   BlockStatement: (node) ->
     @makeStatements(node, node.body)
@@ -322,11 +324,6 @@ class Builder extends BuilderBase
 
   CoffeeLoopStatement: (node) ->
     [ "loop", "\n", @makeLoopBody(node.body) ]
-
-  DoWhileStatement: (node) ->
-    @indent =>
-      breaker = @indent [ "break unless ", @walk(node.test), "\n" ]
-      [ "loop", "\n", @walk(node.body), breaker ]
 
   BreakStatement: (node) ->
     [ "break\n" ]

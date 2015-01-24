@@ -12,6 +12,7 @@ fn = ->
   before()
   loop
     b()
-    break unless a
+    unless a
+      break
   after()
   return

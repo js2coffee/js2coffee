@@ -97,6 +97,7 @@ A sequence of statements. Usually belongs to a loop like WhileStatement, or an
 [IfStatement], or some other.
 
    - `body` : [ [Statement], ... ]
+   - `_negative` : Boolean (`true` if it's `unless`)
 
 ### ExpressionStatement
 A statement with one expression in it.

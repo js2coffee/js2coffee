@@ -5,4 +5,5 @@ do {
 ----
 loop
   b()
-  break unless a
+  unless a
+    break
