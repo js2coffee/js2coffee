@@ -309,3 +309,14 @@ exports.getReturnStatements = (body) ->
       [ ]
   else
     [ ]
+
+exports.nextUntil = (body, node, fn) ->
+  idx = body.indexOf(node)
+  for i in [idx+1..body.length]
+    next = body[i]
+    return next if next?.type and fn(next)
+
+exports.nextNonComment = (body, node) ->
+  exports.nextUntil(body, node, (n) ->
+    n.type isnt 'BlockComment' and
+    n.type isnt 'LineComment')

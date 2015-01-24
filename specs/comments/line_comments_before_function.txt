@@ -1,0 +1,15 @@
+----
+a()
+// one
+// two
+// three
+function x() {
+  return;
+}
+----
+# one
+# two
+# three
+x = ->
+  return
+a()

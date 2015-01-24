@@ -1,0 +1,26 @@
+----
+a()
+// one
+// two
+// three
+function x() {
+  return;
+}
+// four
+// five
+// six
+function y() {
+  return;
+}
+----
+# one
+# two
+# three
+x = ->
+  return
+# four
+# five
+# six
+y = ->
+  return
+a()

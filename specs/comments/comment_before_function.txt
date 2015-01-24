@@ -1,0 +1,15 @@
+----
+a()
+/*
+ * comment
+ */
+function x() {
+  return;
+}
+----
+###
+# comment
+###
+x = ->
+  return
+a()

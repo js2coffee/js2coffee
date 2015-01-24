@@ -12,6 +12,8 @@ BuilderBase = require('./lib/builder_base.coffee')
   inspect
   lastStatement
   newline
+  nextNonComment
+  nextUntil
   prependAll
   quote
   replace
@@ -777,6 +779,12 @@ class FunctionTransforms extends TransformerBase
     @popStack(node)
     { type: 'EmptyStatement' }
 
+  LineComment: (node, parent) ->
+    @moveFunctionComments(node, parent)
+
+  BlockComment: (node, parent) ->
+    @moveFunctionComments(node, parent)
+
   FunctionExpression: (node) ->
     if node.id
       @ctx.prebody.push @buildFunctionDeclaration(node)
@@ -787,6 +795,23 @@ class FunctionTransforms extends TransformerBase
     @popStack()
     if node.id
       { type: 'Identifier', name: node.id.name }
+
+  ###
+  # If a comment is adjacent to a function,
+  # move them up as well together with the function.
+  ###
+
+  moveFunctionComments: (node, parent) ->
+    return unless parent.body
+    next = nextNonComment(parent.body, node)
+    return unless next
+
+    isFn = (next.type is 'FunctionExpression' and next.id)
+    isFn ||= (next.type is 'FunctionDeclaration')
+
+    if isFn
+      @ctx.prebody.push node
+      { type: 'EmptyStatement' }
 
   ###
   # Returns a `a = -> ...` statement out of a FunctionDeclaration node.
