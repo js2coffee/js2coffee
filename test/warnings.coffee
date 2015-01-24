@@ -26,7 +26,7 @@ describe 'Warnings', ->
       expect(warnings).have.length 1
 
     it 'complains about shadowing', ->
-      expect(warnings[0].description).match /Variable 'add'/
+      expect(warnings[0].description).match /'add'/
       expect(warnings[0].description).match /shadow/
 
     it 'has start marker', ->

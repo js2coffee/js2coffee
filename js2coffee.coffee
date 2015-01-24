@@ -456,6 +456,7 @@ class OtherTransforms extends TransformerBase
     @escapeUndefined(node)
 
   BinaryExpression: (node) ->
+    @warnAboutEquals(node)
     @updateBinaryExpression(node)
 
   UnaryExpression: (node) ->
@@ -482,6 +483,19 @@ class OtherTransforms extends TransformerBase
     if node.argument.type is 'ObjectExpression'
       node.argument._braced = true
     return
+
+  ###
+  # Fire warnings when '==' is used
+  ###
+
+  warnAboutEquals: (node) ->
+    op = node.operator
+    replacements = { '==': '===', '!=': '!==' }
+
+    if op is '==' or op is '!='
+      repl = replacements[op]
+      @warn node, "Operator '#{op}' is not supported in CoffeeScript, " +
+        "use '#{repl}' instead"
 
   ###
   # Accounts for regexps that start with an equal sign or space.
@@ -538,7 +552,7 @@ class OtherTransforms extends TransformerBase
   addShadowingIfNeeded: (node) ->
     name = node.id.name
     if ~@ctx.vars.indexOf(name)
-      @warn node, "Variable '#{name}' has been shadowed"
+      @warn node, "Variable shadowing ('#{name}') is not fully supported in CoffeeScript"
       statement = replace node,
         type: 'ExpressionStatement'
         expression:

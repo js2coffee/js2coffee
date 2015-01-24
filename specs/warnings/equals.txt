@@ -1,0 +1,7 @@
+warnings: [
+  /Operator '==' is not supported/
+]
+----
+a == b
+----
+a == b
