@@ -5,7 +5,7 @@ describe 'Precedence', ->
 
   test = (js, level) ->
     it "[#{level}] #{js}", ->
-      node = require('esprima').parse(js).body[0].expression
+      node = require('esprima-harmony').parse(js).body[0].expression
       result = getPrecedence(node)
       if result isnt level
         console.log node

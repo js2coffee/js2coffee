@@ -15,9 +15,8 @@
     "js2c": "./bin/js2c"
   },
   "dependencies": {
-    "esprima": "^1.2.2",
     "esprima-harmony": "^7001.1.0-dev-harmony-fb",
-    "estraverse": "^1.5.1",
+    "estraverse": "^1.9.1",
     "minimist": "^1.1.0",
     "read-input": "^0.2.0",
     "source-map": "^0.1.38"

@@ -30,7 +30,7 @@ class FunctionTransforms extends TransformerBase
 
   FunctionDeclarationExit: (node) ->
     @popStack(node)
-    { type: 'EmptyStatement' }
+    @remove()
 
   LineComment: (node, parent) ->
     @moveFunctionComments(node, parent)
@@ -64,7 +64,7 @@ class FunctionTransforms extends TransformerBase
 
     if isFn
       @ctx.prebody.push node
-      { type: 'EmptyStatement' }
+      @remove()
 
   ###
   # Returns a `a = -> ...` statement out of a FunctionDeclaration node.

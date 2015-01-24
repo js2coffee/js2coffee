@@ -23,11 +23,22 @@
 #     ast
 #     ctx.warnings
 #
+# Each visitor is a method with the node type as the name.
+#
+#     class MyTransform extends TransformerBase
+#       Literal: (node) ->
+#         # do stuff with `node`
+#         # return the replacement when done
+#
+#       FunctionDeclaration: (node) ->
+#         # do stuff with `node` too
+#
 # From within the handlers, you can call some utility functions:
 #
 #     @skip()
 #     @break()
 #     @syntaxError(node, "'with' is not supported")
+#     @warn(node, "warning goes here")
 #
 # You have access to these variables:
 #
@@ -35,9 +46,9 @@
 # ~ @node: The current node.
 # ~ @controller: The estraverse instance
 #
-# It also keeps track of scope. For every function body (eg:
-# FunctionExpression.body) it traverses to, you get a `@ctx` variable that is
-# only available from *within that scope* and the scopes below it.
+# It also keeps track of scope. For every function body it traverses into (eg:
+# FunctionExpression.body), you get a `@ctx` variable that is only available
+# from *within that scope* and the scopes below it.
 #
 # ~ @scope: the Node that is the current scope. This is usually a BlockStatement
 #   or a Program.
@@ -86,8 +97,7 @@ class TransformerBase
   # depending on the node type. This is also in change of changing `@depth`,
   # `@node`, `@controller` (etc) every step of the way.
   #
-  #     Transformer.run(ast)
-  #     # roughly equivalent to: new Transformer(ast).run()
+  #     new Transformer(ast).run()
   ###
 
   run: ->
@@ -138,8 +148,20 @@ class TransformerBase
     @controller?.skip()
 
   ###*
+  # remove():
+  # Removes a node from the tree.
+  #
+  #     class MyTransform extends TransformerBase
+  #       Identifier: ->
+  #         @remove()
+  ###
+  #
+  remove: ->
+    @controller?.remove()
+
+  ###*
   # estraverse():
-  # Returns `estraverse`.
+  # Returns `estraverse`. It's monkey-patched to work with CoffeeScript ASTs.
   #
   #     @estraverse().replace ast, ...
   ###
@@ -192,7 +214,7 @@ class TransformerBase
   # warn() : @warn(node, message)
   # Add a warning
   #
-  #     @warning node, "Variable was defined twice"
+  #     @warn node, "Variable was defined twice"
   ###
   
   warn: (node, description) ->

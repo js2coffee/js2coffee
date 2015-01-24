@@ -73,17 +73,15 @@ js2coffee.parseJS = (source, options = {}) ->
 #
 # This performs a few traversals across the tree using traversal classes
 # (TransformerBase subclasses).
+#
+# These transformations will need to be done in multiple passes. The earlier
+# steps (function, comment, etc) will make drastic modifications to the tree
+# that the other transformations will need to pick up.
 ###
 
 js2coffee.transform = (ast, options = {}) ->
   ctx = {}
-
-  # Note that these transformations will need to be done in a few steps.
-  # The earlier steps (function, comment, etc) will make drastic modifications
-  # to the tree that the other transformations will need to pick up.
-  run = (classes) ->
-    TransformerBase.run(ast, options, classes, ctx)
-
+  run = (classes) -> TransformerBase.run(ast, options, classes, ctx)
   comments = not (options.comments is false)
 
   # Injects comments into the AST as BlockComment and LineComment nodes.
