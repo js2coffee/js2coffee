@@ -471,6 +471,9 @@ class OtherTransforms extends TransformerBase
 
   FunctionExpression: (node, parent) ->
     super(node)
+    node.params.forEach (param) =>
+      @preventReservedWords(param)
+    @preventReservedWords(node.id)
     @removeUndefinedParameter(node)
 
   CallExpression: (node) ->
@@ -494,12 +497,12 @@ class OtherTransforms extends TransformerBase
     @syntaxError node, "'with' is not supported in CoffeeScript"
 
   VariableDeclarator: (node) ->
-    @preventReservedWords(node.id, node.id?.name)
+    @preventReservedWords(node.id)
     @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer(node)
 
   AssignmentExpression: (node) ->
-    @preventReservedWords(node.left, node.left?.name)
+    @preventReservedWords(node.left)
     node
 
   ReturnStatement: (node) ->
@@ -517,7 +520,8 @@ class OtherTransforms extends TransformerBase
   # Catch usage of reserved words (eg, `off = 2`)
   ###
 
-  preventReservedWords: (node, name) ->
+  preventReservedWords: (node) ->
+    name = node?.name
     if name and ~reservedWords.indexOf(name)
       @syntaxError node, "'#{name}' is a reserved CoffeeScript keyword"
 

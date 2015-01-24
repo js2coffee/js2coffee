@@ -36,3 +36,8 @@ describe 'Error cases', ->
     expect ->
       js2coffee('off = 2')
     .to.throw /'off' is a reserved CoffeeScript keyword/
+
+  it 'catches reserved words in function params', ->
+    expect ->
+      js2coffee('function x(off){}')
+    .to.throw /'off' is a reserved CoffeeScript keyword/
