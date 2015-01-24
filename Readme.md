@@ -1,46 +1,15 @@
 # js2coffee-redux
 
-Small attempt at making a new js2coffee.
+Compiles JavaScript into CoffeeScript. This is a rewrite of js2coffee 0.x,
+featuring a better parser ([Esprima]) and better features.
+
+[![](http://js2coffee.github.io/js2coffee-redux/assets/preview.png)](http://js2coffee.github.io/js2coffee-redux)
 
 [![Status](https://travis-ci.org/js2coffee/js2coffee-redux.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee-redux)  
 
-## Goals
-
- * ✓ __Use a new JS parser.__<br>
-   The new js2coffee is built upon Esprima, which uses the standardized 
-   ECMAScript Parser API.
-
- * __Cleaner repository.__<br>
-   [js2coffee/js2coffee] has way too much boilerplate and DocPad-related things 
-   in it. There should be no Cakefiles or anything, just package.json.
-
- * ✓ __Be fully browserify-compatible with minimal cruft.__<br>
-   Building a browesrify build is as easy as `browserify -t coffeeify .`.  
-   Everything will work with minimal fuzz.
-
- * __More maintainable.__<br>
-   Carefully think out the API and the structure of the repository so to 
-   minimize boilerplates and dependencies.
-
-## New features in js2coffee-redux
-
- - __Compatibility warnings.__<br>
-   Give warnings for things that may break, such as `==` being converted to 
-   `is`.
- 
- - ✓ __Source maps.__<br>
-   The new js2coffee website will feature a new editor that will allow you to 
-   see what each point of the source compiles to.
-
- - __More configurable options.__<br>
-   This will allow you to select if you would like `and` vs `&&`, or `is` vs
-   `===`, and so on.
-
- - ✓ __Better error messages.__<br>
-   Error messages now show a preview of the source where errors happen, such as 
-   what you'd expect in CoffeeScriptRedux.
-
 ## Docs
+
+ - [Goals](notes/Goals.md) - outline of the project's goals.
 
  - [Specs](notes/Specs.md) - examples of how JavaScript compiles to CoffeeScript.
 
@@ -57,32 +26,34 @@ $ js2c file.js [file2.js ...]
 $ ... | js2c
 ```
 
-## API
+## Programatic API
+
+Available via npm (`require('js2coffee')`), or via CDN in the browser:
+
+> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.7/dist/js2coffee.js`
 
 ```js
-  result = js2coffee.build(source);
+result = js2coffee.build(source);
 
-  result.code     // code string
-  result.ast      // transformed AST
-  result.map      // source map
-  result.warnings // array of warnings
+result.code     // code string
+result.ast      // transformed AST
+result.map      // source map
+result.warnings // array of warnings
 ```
 
-Errors:
+Errors are in this format:
 
 ```js
-try { ... } catch (e) {
-
+catch (e) {
   e.message       // "index.js:3:1: Unexpected INDENT\n\n   3   var\n   ---^"
   e.description   // "Unexpected INDENT"
   e.start         // { line: 1, column: 4 }
   e.end           // { line: 1, column: 10 }
   e.sourcePreview // '...'
-
 }
 ```
 
-Warnings:
+Warnings are in this format:
 
 ```js
 result.warnings.forEach((warn) => {
@@ -95,22 +66,13 @@ result.warnings.forEach((warn) => {
 
 ## How?
 
- - Still to be written in coffee-script. Just because.
- - Browserify builds should be invoked via `npm prepublish`.
- - Tests are still plain files (`spec/*` with `input.js`+`output.coffee`)
-   but invoked with a Mocha test runner. This allows us to reuse the same specs
-   as js2coffee almost as-is.
+ - Written in coffee-script. Just because.
+ - Browserify builds are invoked via `npm prepublish`.
+ - Tests are still plain files (text files in `specs/*`)
+   but invoked with a Mocha test runner.
+ - Reuses js2coffee-legacy specs whenever possible (`specs/legacy/`).
  - The stringifier class should be able to take an AST and produce a string 
  output with source maps.
-
-## Intentional deviations
-
-Some differences from legacy js2coffee are to be intended:
-
- - Postfix `if` statements will not be supported by default
- - ...
-
-[js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
 
 ## Thanks
 
@@ -129,3 +91,5 @@ Maintainers:
 
 [MIT]: http://mit-license.org/
 [contributors]: http://github.com/rstacruz/js2coffee/contributors
+[Esprima]: http://esprima.org/
+[js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
