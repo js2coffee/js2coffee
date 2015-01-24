@@ -101,9 +101,11 @@ Editors.prototype = {
       this.updateReverse();
     }.bind(this));
     preview.on('changes', function () {
-      if (!focused) return;
-      this.openPopup();
-      this.updateReverse();
+      setTimeout(function () {
+        if (!focused) return;
+        this.openPopup();
+        this.updateReverse();
+      }.bind(this), 0);
     }.bind(this));
 
     return preview;
