@@ -15,4 +15,4 @@ x = ->
   return
 $.get
   ajax: true
-  url: "foo"
+  url: 'foo'
