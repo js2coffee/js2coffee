@@ -29,7 +29,7 @@ It is also ran as a pre-publish hook.
 ### New versions
 
     vim History.md
-    bump *.json
+    bump *.json Readme.md
     npm publish && git release v0.1.2
 
 ### References
