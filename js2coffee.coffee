@@ -36,6 +36,7 @@ module.exports = js2coffee = (source, options) ->
 #     output.code
 #     output.ast
 #     output.map
+#     output.warnings
 #
 # All options are optional. Available options are:
 #

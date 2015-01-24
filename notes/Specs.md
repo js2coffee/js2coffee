@@ -4,7 +4,7 @@
 <tr>
 <th width='33%' valign='top'>Empty array</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = []
+<pre><code class='lang-js'>var a = []
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -15,7 +15,7 @@
 <tr>
 <th width='33%' valign='top'>Multiple items</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = [ 1, 2, 3, 4 ]
+<pre><code class='lang-js'>var a = [ 1, 2, 3, 4 ]
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2478,7 +2478,7 @@ c
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>!(toString: null).propertyIsEnumerable('string')
+<pre><code class='lang-coffee'>!{ toString: null }.propertyIsEnumerable('string')
 </code></pre>
 </td>
 </tr>
@@ -2539,6 +2539,19 @@ c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>'\n'
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Unicode</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>'\u2028'
+'\u2029'
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>'\u2028'
+'\u2029'
 </code></pre>
 </td>
 </tr>

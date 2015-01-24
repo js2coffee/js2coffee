@@ -60,14 +60,18 @@ $ ... | js2c
 ## API
 
 ```js
-try {
   result = js2coffee.build(source);
 
   result.code     // code string
   result.ast      // transformed AST
   result.map      // source map
+  result.warnings // array of warnings
+```
 
-} catch (e) {
+Errors:
+
+```js
+try { ... } catch (e) {
 
   e.message       // "index.js:3:1: Unexpected INDENT\n\n   3   var\n   ---^"
   e.description   // "Unexpected INDENT"
@@ -76,6 +80,17 @@ try {
   e.sourcePreview // '...'
 
 }
+```
+
+Warnings:
+
+```js
+result.warnings.forEach((warn) => {
+  warn.description   // "Variable 'x' defined twice
+  warn.start         // { line: 1, column: 4 }
+  warn.end           // { line: 1, column: 9 }
+  warn.filename      // "index.js"
+})
 ```
 
 ## How?
