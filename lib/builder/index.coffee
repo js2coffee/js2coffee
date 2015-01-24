@@ -408,6 +408,7 @@ class Builder extends BuilderBase
 
   makeLoopBody: (body) ->
     isBlock = body?.type is 'BlockStatement'
+    # TODO: move this transformation to the AST
     if not body or (isBlock and body.body.length is 0)
       @indent => [ @indent(), "continue\n" ]
     else if isBlock

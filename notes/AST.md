@@ -365,7 +365,7 @@ Converted to [WhileStatement] loops.
 Converted to [WhileStatement] loops.
 
 ### DoWhileStatement
-Converted to [WhileStatement] loops.
+Converted to [CoffeeLoopStatement] loops.
 
 ES6/Harmony
 -----------
@@ -394,3 +394,4 @@ For destructuring
 [WhileStatement]: #whilestatement
 [ThisExpression]: #thisexpression
 [ArrayExpression]: #arrayexpression
+[CoffeeLoopStatement]: #coffeeloopstatement

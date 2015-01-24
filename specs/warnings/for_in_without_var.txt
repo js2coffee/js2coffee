@@ -1,0 +1,9 @@
+warnings: [
+  /Using 'for..in' loops without 'var'/
+]
+----
+for (x in y) { z }
+----
+for x of y
+  `x = x`
+  z

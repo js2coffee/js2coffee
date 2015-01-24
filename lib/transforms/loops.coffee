@@ -11,16 +11,25 @@ class LoopTransforms extends TransformerBase
     @injectUpdateIntoBody(node)
     @convertForToWhile(node)
 
+  ForInStatement: (node) ->
+    @warnIfNoVar(node)
+
   WhileStatement: (node) ->
-    @convertToLoopStatement(node)
+    @convertWhileToLoop(node)
 
   DoWhileStatement: (node) ->
+    @convertDoWhileToLoop(node)
+
+  ###
+  # Converts `do { x } while (y)` to `loop\  x\  break unless y`.
+  ###
+
+  convertDoWhileToLoop: (node) ->
     block = node.body
     body = block.body
 
     body.push replace node.test,
       type: 'IfStatement'
-      _postfix: true
       _negative: true
       test: node.test
       consequent:
@@ -29,6 +38,16 @@ class LoopTransforms extends TransformerBase
     replace node,
       type: 'CoffeeLoopStatement'
       body: block
+
+  ###
+  # Produce a warning for `for (x in y)` where `x` is not `var x`.
+  ###
+
+  warnIfNoVar: (node) ->
+    if node.left.type isnt 'VariableDeclaration'
+      @warn node, "Using 'for..in' loops without " +
+        "'var' can produce unexpected results"
+    node
 
   ###
   # Converts a `for (x;y;z) {a}` to `x; while(y) {a; z}`.
@@ -52,7 +71,7 @@ class LoopTransforms extends TransformerBase
   # Converts a `while (true)` to a CoffeeLoopStatement.
   ###
 
-  convertToLoopStatement: (node) ->
+  convertWhileToLoop: (node) ->
     isLoop = not node.test? or
       (node.test?.type is 'Literal' and node.test?.value is true)
 
