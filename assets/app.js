@@ -118,10 +118,12 @@ Editors.prototype = {
 
   openPopup: function () {
     removeClass(this.$popup, 'hide');
+    removeClass(this.$right, 'error');
   },
 
   closePopup: function () {
     addClass(this.$popup, 'hide');
+    this.update();
     this.editor.focus();
   },
 
@@ -142,6 +144,10 @@ Editors.prototype = {
       addClass(this.$right, 'error');
     }
   },
+
+  /*
+   * compiles coffee to js into the popup pane
+   */
 
   updateReverse: function () {
     var input = this.preview.getValue();
