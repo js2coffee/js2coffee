@@ -31,92 +31,6 @@ class Builder extends BuilderBase
     @_indent = 0
 
   ###*
-  # indent():
-  # Indentation utility with 3 different functions.
-  #
-  # - `@indent(-> ...)` - adds an indent level.
-  # - `@indent([ ... ])` - adds indentation.
-  # - `@indent()` - returns the current indent level as a string.
-  #
-  # When invoked with a function, the indentation level is increased by 1, and
-  # the function is invoked. This is similar to escodegen's `withIndent`.
-  #
-  #     @indent =>
-  #       [ '...' ]
-  #
-  # The past indent level is passed to the function as the first argument.
-  #
-  #     @indent (indent) =>
-  #       [ indent, 'if', ... ]
-  #
-  # When invoked with an array, it will indent it.
-  #
-  #     @indent [ 'if...' ]
-  #     #=> [ '  ', [ 'if...' ] ]
-  #
-  # When invoked without arguments, it returns the current indentation as a
-  # string.
-  #
-  #     @indent()
-  ###
-
-  indent: (fn) ->
-    if typeof fn is "function"
-      previous = @indent()
-      @_indent += 1
-      result = fn(previous)
-      @_indent -= 1
-      result
-    else if fn
-      [ @indent(), fn ]
-    else
-      Array(@_indent + 1).join("  ")
-
-  ###*
-  # get():
-  # Returns the output of source-map.
-  ###
-
-  get: ->
-    @run().toStringWithSourceMap()
-
-  ###*
-  # decorator():
-  # Takes the output of each of the node visitors and turns them into
-  # a `SourceNode`.
-  ###
-
-  decorator: (node, output) ->
-    {SourceNode} = require("source-map")
-    new SourceNode(
-      node?.loc?.start?.line,
-      node?.loc?.start?.column,
-      @options.filename,
-      output)
-
-  ###*
-  # paren():
-  # Parenthesizes if the node's parenthesize flag is on.
-  ###
-
-  paren: (output) ->
-    node = @path[@path.length-1]
-    if node._parenthesized
-      [ '(', output, ')' ]
-    else
-      output
-
-  ###*
-  # onUnknownNode():
-  # Invoked when the node is not known. Throw an error.
-  ###
-
-  onUnknownNode: (node, ctx) ->
-    @syntaxError(node, "#{node.type} is not supported")
-
-  syntaxError: TransformerBase::syntaxError
-
-  ###*
   # visitors:
   # The visitors of each node.
   ###
@@ -465,3 +379,92 @@ class Builder extends BuilderBase
         if not isLast
           arg._parenthesized = true
 
+  ###
+  # Utilities
+  ###
+
+  ###*
+  # indent():
+  # Indentation utility with 3 different functions.
+  #
+  # - `@indent(-> ...)` - adds an indent level.
+  # - `@indent([ ... ])` - adds indentation.
+  # - `@indent()` - returns the current indent level as a string.
+  #
+  # When invoked with a function, the indentation level is increased by 1, and
+  # the function is invoked. This is similar to escodegen's `withIndent`.
+  #
+  #     @indent =>
+  #       [ '...' ]
+  #
+  # The past indent level is passed to the function as the first argument.
+  #
+  #     @indent (indent) =>
+  #       [ indent, 'if', ... ]
+  #
+  # When invoked with an array, it will indent it.
+  #
+  #     @indent [ 'if...' ]
+  #     #=> [ '  ', [ 'if...' ] ]
+  #
+  # When invoked without arguments, it returns the current indentation as a
+  # string.
+  #
+  #     @indent()
+  ###
+
+  indent: (fn) ->
+    if typeof fn is "function"
+      previous = @indent()
+      @_indent += 1
+      result = fn(previous)
+      @_indent -= 1
+      result
+    else if fn
+      [ @indent(), fn ]
+    else
+      Array(@_indent + 1).join("  ")
+
+  ###*
+  # get():
+  # Returns the output of source-map.
+  ###
+
+  get: ->
+    @run().toStringWithSourceMap()
+
+  ###*
+  # decorator():
+  # Takes the output of each of the node visitors and turns them into
+  # a `SourceNode`.
+  ###
+
+  decorator: (node, output) ->
+    {SourceNode} = require("source-map")
+    new SourceNode(
+      node?.loc?.start?.line,
+      node?.loc?.start?.column,
+      @options.filename,
+      output)
+
+  ###*
+  # paren():
+  # Parenthesizes if the node's parenthesize flag is on.
+  ###
+
+  paren: (output) ->
+    node = @path[@path.length-1]
+    if node._parenthesized
+      [ '(', output, ')' ]
+    else
+      output
+
+  ###*
+  # onUnknownNode():
+  # Invoked when the node is not known. Throw an error.
+  ###
+
+  onUnknownNode: (node, ctx) ->
+    @syntaxError(node, "#{node.type} is not supported")
+
+  syntaxError: TransformerBase::syntaxError
