@@ -366,6 +366,17 @@ Converted to [WhileStatement] loops.
 ### DoWhileStatement
 Converted to [WhileStatement] loops.
 
+ES6/Harmony
+-----------
+
+### ArrowFunctionExpression
+
+### ArrayPattern
+For destructuring
+
+### ObjectPattern
+For destructuring
+
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 
 [AssignmentExpression]: #assignmentexpression
