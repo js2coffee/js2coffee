@@ -1,0 +1,11 @@
+----
+if (true) {
+  // yes
+} else {
+  // no
+}
+----
+if true
+  # yes
+else
+  # no
