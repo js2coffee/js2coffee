@@ -629,7 +629,8 @@ class OtherTransforms extends TransformerBase
           if isLast
             node.params.pop()
           else
-            @syntaxError node, "undefined is not allowed in function parameters"
+            @syntaxError param,
+              "'undefined' is not allowed in function parameters"
     node
 
   ###

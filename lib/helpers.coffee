@@ -94,7 +94,7 @@ exports.buildError = (err, source, file = '') ->
   length = Math.max(err.end.column - err.start.column + 1, 1) if err.end
   pad = (s) -> Array(1 + digits - s.toString().length).join(" ") + s
   source = lines[min..max].map (line, i) -> "#{pad(1+i+min)}  #{line}"
-  source.push Array(digits + 3).join(" ") + Array(column).join("-") + Array(length).join("^")
+  source.push Array(digits + 3).join(" ") + Array(column+1).join(" ") + Array(length).join("^")
   source = source.join("\n")
 
   message = heading + "\n\n" + source
