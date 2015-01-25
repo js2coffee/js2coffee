@@ -1,0 +1,20 @@
+notes: """
+  Since CoffeeScript has no `for` loops, they
+  have to be converted to `while` loops. If
+  `continue` happens inside the loop, it needs
+  to re-run the update expression just before
+  it.
+"""
+----
+for (a; b; update++) {
+  if (x) continue;
+  d()
+}
+----
+a
+while b
+  if x
+    update++
+    continue
+  d()
+  update++

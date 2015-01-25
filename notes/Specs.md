@@ -1275,7 +1275,25 @@ do {
 loop
   console.log i
   i++
-  break unless i < 14
+  unless i < 14
+    break
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Dont unreserve property accessors</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>io.on('data', function() { console.log('Received'); });
+this.on('data', function() { console.log('Received'); });
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>io.on 'data', ->
+  console.log 'Received'
+  return
+@on 'data', ->
+  console.log 'Received'
+  return
 </code></pre>
 </td>
 </tr>
@@ -1396,6 +1414,53 @@ for key of obj
   continue
 for key of obj
   single_liner()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Function order</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var x = function() {
+    alert(y());
+    var z = function() { return 3; }
+    function y() { return 2; }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = ->
+  y = ->
+    2
+  alert y()
+  z = ->
+    3
+  return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Function property</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function (){}.apa);
+var f = function(){}.bind(this);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(->
+).apa
+f = (->
+).bind(this)
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Function with keyword</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function x() {}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = ->
 </code></pre>
 </td>
 </tr>
@@ -1537,6 +1602,17 @@ switch x
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Ternary</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a?b:c
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a then b else c
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>This attribute</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>(function() {
@@ -1664,7 +1740,8 @@ f = ->
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>loop
   b()
-  break unless a
+  unless a
+    break
 </code></pre>
 </td>
 </tr>
@@ -1686,7 +1763,8 @@ f = ->
   before()
   loop
     b()
-    break unless a
+    unless a
+      break
   after()
   return
 </code></pre>
@@ -1731,6 +1809,51 @@ f = ->
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>for x of y
   z()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>For with continue</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (a; b; update++) {
+  if (x) continue;
+  d()
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a
+while b
+  if x
+    update++
+    continue
+  d()
+  update++
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>For with continue with switch</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (a; b; update++) {
+  switch (x) {
+    case 1:
+      continue;
+      break;
+  }
+  d()
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a
+while b
+  switch x
+    when 1
+      update++
+      continue
+  d()
+  update++
 </code></pre>
 </td>
 </tr>
@@ -3249,6 +3372,19 @@ b = 2
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a == b
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>For in without var</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (x in y) { z }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>for x of y
+  `x = x`
+  z
 </code></pre>
 </td>
 </tr>

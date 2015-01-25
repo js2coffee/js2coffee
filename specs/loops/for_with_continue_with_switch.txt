@@ -1,0 +1,18 @@
+----
+for (a; b; update++) {
+  switch (x) {
+    case 1:
+      continue;
+      break;
+  }
+  d()
+}
+----
+a
+while b
+  switch x
+    when 1
+      update++
+      continue
+  d()
+  update++

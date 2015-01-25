@@ -50,11 +50,11 @@ It is also ran as a pre-publish hook.
  - [x] Move Comments to transformer
  - [x] Move For loops to transformer
    - [x] WhileStatement to CoffeeLoopStatement
-   - [ ] DoWhileStatement to CoffeeLoopStatement
-   - [ ] `unless` support for IfStatement
+   - [x] DoWhileStatement to CoffeeLoopStatement
+   - [x] `unless` support for IfStatement
    - [x] ForStatement as a transformation to WhileStatement
    - [ ] ForInStatement ?
-   - [ ] add extra `continue` (makeLoopBody)
+   - [x] add extra `continue`
 
 Critical for compatibility:
 
@@ -65,7 +65,7 @@ Critical for compatibility:
  - [x] Renaming variables in case of shadowing
  - [x] Empty while
  - [x] Add `return` at the end as needed
- - [ ] Continue in `for` loop
+ - [x] Continue in `for` loop
 
 Max compatibility mode:
 

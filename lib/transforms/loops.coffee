@@ -1,6 +1,10 @@
 { replace } = require('../helpers')
 TransformerBase = require('./base')
 
+insertBefore = (ref, body, node) ->
+  idx = body.indexOf(ref)
+  body.splice idx, 0, node
+
 ###
 # Provides transformations for `while`, `for` and `do`.
 ###
@@ -8,8 +12,17 @@ TransformerBase = require('./base')
 module.exports =
 class LoopTransforms extends TransformerBase
   ForStatement: (node) ->
+    # Keep track of the nesting of `for` loops
+    @_for ?= []
+    @_for.push node
+
     @injectUpdateIntoBody(node)
     @convertForToWhile(node)
+
+  ForStatementExit: (node) ->
+    _for = @_for.pop()
+    delete _for._update
+    node
 
   ForInStatement: (node) ->
     @warnIfNoVar(node)
@@ -19,6 +32,29 @@ class LoopTransforms extends TransformerBase
 
   DoWhileStatement: (node) ->
     @convertDoWhileToLoop(node)
+
+  ContinueStatement: (node, parent) ->
+    @injectUpdateIntoContinue(node, parent)
+
+  ###
+  # In a `for` loop with an update statement, inject the update just
+  # before the `continue`
+  ###
+
+  injectUpdateIntoContinue: (node, parent) ->
+    _for = @_for?[@_for.length-1]
+    return node unless _for?._update
+
+    @skip()
+
+    type: 'BlockStatement'
+    body: [
+      {
+        type: 'ExpressionStatement'
+        expression: _for._update
+      }
+      node
+    ]
 
   ###
   # Converts `do { x } while (y)` to `loop\  x\  break unless y`.
@@ -56,6 +92,7 @@ class LoopTransforms extends TransformerBase
 
   convertForToWhile: (node) ->
     node.type = 'WhileStatement'
+
     block =
       type: 'BlockStatement'
       body: [ node ]
@@ -65,7 +102,7 @@ class LoopTransforms extends TransformerBase
         type: 'ExpressionStatement'
         expression: node.init
 
-    return block
+    block
 
   ###
   # Converts a `while (true)` to a CoffeeLoopStatement.
@@ -100,4 +137,8 @@ class LoopTransforms extends TransformerBase
         node.body = { type: 'BlockStatement', body: [ old ] }
 
       node.body.body = node.body.body.concat([statement])
+
+      # leave it for `continue` to pick up
+      node._update = node.update
       delete node.update
+    node

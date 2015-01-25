@@ -176,6 +176,33 @@ while a
   continue
 ```
 
+### For with continue
+
+Since CoffeeScript has no `for` loops, they
+have to be converted to `while` loops. If
+`continue` happens inside the loop, it needs
+to re-run the update expression just before
+it.
+
+```js
+// Input:
+for (a; b; update++) {
+  if (x) continue;
+  d()
+}
+```
+
+```coffee
+# Output:
+a
+while b
+  if x
+    update++
+    continue
+  d()
+  update++
+```
+
 ### Simple for
 
 CoffeeScript has no `for` loop, so they are converted into `while` loops.
