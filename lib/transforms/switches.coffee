@@ -57,6 +57,8 @@ class SwitchTransforms extends TransformerBase
       if last?.type is 'BreakStatement'
         delete node.consequent[idx]
         node.consequent.length -= 1
+      else if last?.type is 'ContinueStatement'
+        # pass
       else if last?.type isnt 'ReturnStatement'
         @syntaxError node, "No break or return statement found in a case"
       node

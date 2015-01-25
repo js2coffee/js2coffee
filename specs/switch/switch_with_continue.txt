@@ -1,0 +1,12 @@
+----
+while (true) {
+  switch (x) {
+    case 1:
+      continue;
+  }
+}
+----
+loop
+  switch x
+    when 1
+      continue
