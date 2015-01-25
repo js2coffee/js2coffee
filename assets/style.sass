@@ -10,14 +10,14 @@
  * vars
  */
 
-$bg: #20242a
+$bg: lighten(#20242a, 2%)
 $text: #ddd
 $monospace: menlo, monospace
 $sans: 'source sans pro', sans-serif
 $red: #C0392B
 $yellow: #F1C40F
-$blue: #3498DB
-$green: #2ECC71
+$accent: #2ECC71
+$accent2: lighten(#E74C3C, 10%)
 
 /*
  * base
@@ -25,6 +25,8 @@ $green: #2ECC71
 
 *
   box-sizing: border-box
+
+= antialias
   text-rendering: optimizeLegibility
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
@@ -85,6 +87,7 @@ button:focus
  */
 
 .main-sidebar
+  +antialias()
   background: lighten($bg, 1%)
   box-shadow: 0 0 4px rgba(black, 0.1)
   width: 200px
@@ -126,28 +129,30 @@ button:focus
 
 .code-box
   $size: 2px
-  $shadow: inset (-2*$size) 0 ($size) (-1*$size) rgba(black, 0.1)
+  $shadow: inset -1px 0 0 rgba(black, 0.1), inset -2px 0 1px rgba(black, 0.05)
 
   &
     width: 50%
     height: 100%
     position: relative
-    z-index: 1
     float: left
     box-shadow: inset 0 0 0 black, $shadow
     transition: all 100ms linear
 
   &.left.focus
-    box-shadow: inset 0 3px 0 $green, $shadow
+    box-shadow: inset 0 3px 0 $accent, $shadow
+
   &.right.focus
-    box-shadow: inset 0 3px 0 $blue, $shadow
+    box-shadow: inset 0 3px 0 $accent2, $shadow
 
   &.focus h3 strong
     color: white
+
   &.focus.left h3
-    border-bottom: solid 1px mix($green, $bg, 10%)
+    border-bottom: solid 1px mix($accent, $bg, 10%)
+
   &.focus.right h3
-    border-bottom: solid 1px mix($blue, $bg, 10%)
+    border-bottom: solid 1px mix($accent2, $bg, 10%)
 
 /*
  * common
@@ -157,6 +162,7 @@ button:focus
     opacity: 0.75
 
   h3
+    +antialias()
     position: absolute
     top: 0
     left: 30px
@@ -229,11 +235,11 @@ button:focus
     margin: 0
     z-index: 10
     cursor: pointer
-    color: mix($blue, $bg, 50%)
+    color: mix($accent2, $bg, 50%)
     transition: color 100ms linear
 
     &:hover
-      color: $green
+      color: $accent2
 
     &:before
       +ion-icon('ios-close-outline', 32px)
@@ -262,17 +268,17 @@ button:focus
     box-shadow: 0 0 4px rgba(black, 0.1)
     z-index: 5
     border-radius: 3px
-    border: solid 1px $blue
-    border: solid 1px mix($blue, $bg, 50%)
+    border: solid 1px $accent2
+    border: solid 1px mix($accent2, $bg, 50%)
 
   h3
     border-bottom: 0
 
   h3 strong
-    color: $blue
+    color: $accent2
 
   h3 em
-    color: mix($blue, $bg, 50%)
+    color: mix($accent2, $bg, 50%)
 
   .CodeMirror
     padding-left: 30px
@@ -363,6 +369,7 @@ button:focus
 .code-toolbar
   &
     background: $bg
+    +antialias()
 
   .button
     margin-bottom: 10px
@@ -381,7 +388,7 @@ button:focus
     color: white
 
   .button:active
-    background: $green
+    background: $accent
     color: white
 
     &:before
@@ -389,7 +396,7 @@ button:focus
 
   .button:before
     margin-right: 8px
-    color: $green
+    color: $accent
     font-size: 14px
     position: relative
     top: -1px
