@@ -1,3 +1,7 @@
+## v0.0.12 - January 25, 2015
+
+* Fix `continue` inside a switch case
+
 ## v0.0.11 - January 25, 2015
 
 * Fix `continue` in `for` loop without initializer
