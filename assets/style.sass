@@ -131,16 +131,17 @@ a:hover, a:focus
     line-height: 1.2em
 
   .logo
+    // margin: -15px
     // border: solid 2px lighten($bg, 5%)
-    height: 130px
-    border-radius: 3px
+    // border-radius: 3px
+    // border-bottom: solid 1px rgba(black, 0.1)
+    height: 120px
     margin-bottom: 15px
-    background: url('./logo.svg') center center / 40% auto no-repeat
-    background-color: rgba(white, 0.02)
-    border-bottom: solid 1px rgba(black, 0.1)
+    background: url('./logo.svg') center center / 35% auto no-repeat
+    background-color: rgba(black, 0.05)
 
-  // .logo:hover
-  //   background-image: url('./logo-alt.svg')
+  .logo:hover
+    background-image: url('./logo-alt.svg')
 
   h5
     font-weight: 400
@@ -499,7 +500,7 @@ a:hover, a:focus
   &
     color: $litetext
 
-  &:not(:first-child)
+  &:not(:first-child):not(.first)
     border-top: solid 1px rgba($accent, 0.05)
     padding-top: 15px
 
@@ -560,3 +561,38 @@ a:hover, a:focus
     letter-spacing: 1px
     font-size: 0.9em
     font-weight: normal
+
+/*
+ *
+ */
+
+.section.ad-section
+  &
+    font-size: 0.9em
+    line-height: 1.4
+    border-top: 0
+
+  p
+    margin: 0
+    padding: 0
+
+  p.text
+    margin-top: 10px
+    &:first-line
+      color: $text
+
+  p.image
+    background: rgba(black, 0.1)
+    padding: 10px 5px
+
+  img
+    display: block
+    margin: 0 auto
+    width: 130px
+    height: 100px
+
+.section.share-section:last-child
+  border-top: 0
+  padding-top: 0
+  padding-bottom: 0
+  margin-bottom: 10px
