@@ -70,6 +70,8 @@ Editors.prototype = {
       }.bind(this));
     } else if (t = this.getTextFromHash()) {
       this.editor.setValue(t);
+    } else {
+      this.editor.setValue(this.defaultText);
     }
 
   },
