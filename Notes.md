@@ -42,6 +42,29 @@ It is also ran as a pre-publish hook.
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 [Esprima demo]: http://esprima.org/demo/parse.html# 
 
+## To do
+
+Max compatibility mode:
+
+ - [ ] --compat switch
+ - [ ] double equals escaped
+ - [x] Warnings
+ - [ ] Global variables escaped (!!)
+ - [ ] Shadowing of function names (pending/)
+
+Niceness:
+
+ - [x] Transform `.prototype.`
+ - [ ] `Math.pow(a,b)` => `a ** b`
+ - [ ] `Math.floor(a / b)` => `a // b`
+ - [ ] `function() { a }.bind(this)` => `=> a`
+ - [x] Support a `case` without any code
+ - [x] Sequence of objects (`a('ok', {a:b}, ->)`)
+ - [x] Array of functions
+ - [ ] Spaces around block comments and functions
+
+## Done
+
 ### Features to do
 
  - [x] Really think indentation through
@@ -66,21 +89,3 @@ Critical for compatibility:
  - [x] Empty while
  - [x] Add `return` at the end as needed
  - [x] Continue in `for` loop
-
-Max compatibility mode:
-
- - [ ] --compat switch
- - [x] Warnings
- - [ ] Global variables escaped
- - [ ] double equals escaped
-
- Niceness:
-
- - [x] Transform `.prototype.`
- - [ ] `Math.pow(a,b)` => `a ** b`
- - [ ] `Math.floor(a / b)` => `a // b`
- - [ ] `function() { a }.bind(this)` => `=> a`
- - [x] Support a `case` without any code
- - [x] Sequence of objects (`a('ok', {a:b}, ->)`)
- - [ ] Array of functions
- - [ ] Spaces around block comments and functions

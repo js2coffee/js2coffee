@@ -3,7 +3,7 @@ var args = require('../lib/cli')
   .helpfile(__dirname+'/../Usage.txt')
   .version(require('../package.json').version)
   .minimist({
-    boolean: ['ast', 'verbose'],
+    boolean: ['ast', 'verbose', 'compat'],
     alias: { h: 'help', v: 'version', V: 'verbose' }
   });
 
