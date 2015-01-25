@@ -124,6 +124,7 @@ Editors.prototype = {
       autofocus: true
     });
 
+    editor.setOption('extraKeys', this.getKeyMaps());
     editor.on('changes', this.update.bind(this));
     editor.on('focus', setFocus(this.$left));
     editor.on('blur',  unsetFocus(this.$left));
@@ -132,6 +133,25 @@ Editors.prototype = {
     }.bind(this));
 
     return editor;
+  },
+
+  /*
+   * keymaps for codemirror
+   */
+
+  getKeyMaps: function () {
+    return {
+      'Cmd-Enter': this.run.bind(this),
+      'Ctrl-Enter': this.run.bind(this),
+      'Cmd-Enter': this.link.bind(this),
+      'Ctrl-Enter': this.link.bind(this),
+      'Cmd-1': this.closePopup.bind(this),
+      'Cmd-2': this.openPopup.bind(this),
+      'Ctrl-1': this.closePopup.bind(this),
+      'Ctrl-2': this.openPopup.bind(this),
+      'Alt-1': this.closePopup.bind(this),
+      'Alt-2': this.openPopup.bind(this)
+    };
   },
 
   /*
@@ -158,6 +178,7 @@ Editors.prototype = {
     });
     var focused;
 
+    preview.setOption('extraKeys', this.getKeyMaps());
     preview.on('focus', setFocus(this.$right));
     preview.on('blur',  unsetFocus(this.$right));
     preview.on('blur',  function () { focused = false; });
@@ -198,9 +219,14 @@ Editors.prototype = {
     return popup;
   },
 
+  /*
+   * opens the popup
+   */
+
   openPopup: function () {
     removeClass(this.$popup, 'hide');
     removeClass(this.$right, 'error');
+    this.preview.focus();
   },
 
   closePopup: function () {
