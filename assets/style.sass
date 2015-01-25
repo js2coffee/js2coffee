@@ -55,6 +55,10 @@ button
   background: transparent
   display: inline-block
 
+button:active,
+button:focus
+  outline: 0
+
 /*
  * main area
  */
@@ -364,6 +368,13 @@ button
   .button:hover
     background: lighten($bg, 15%)
     color: white
+
+  .button:active
+    background: $green
+    color: white
+
+    &:before
+      color: white
 
   .button:before
     margin-right: 8px
