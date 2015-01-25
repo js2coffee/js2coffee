@@ -390,6 +390,23 @@ world()
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Switch default cases</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>switch (x) {
+  default:
+    a();
+  case b:
+    c();
+    break;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/default cases only allowed at the end/</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>With</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>with (x) { a(); }
