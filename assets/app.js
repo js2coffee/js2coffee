@@ -189,7 +189,9 @@ Editors.prototype = {
       'Ctrl-1': this.closePopup.bind(this),
       'Ctrl-2': this.openPopup.bind(this),
       'Alt-1': this.closePopup.bind(this),
-      'Alt-2': this.openPopup.bind(this)
+      'Alt-2': this.openPopup.bind(this),
+      'Ctrl-/': this.showShortcuts.bind(this),
+      'Cmd-/': this.showShortcuts.bind(this)
     };
   },
 
@@ -376,6 +378,33 @@ Editors.prototype = {
       code: code,
       error: error };
   },
+
+  showShortcuts: function () {
+    this.closePopup();
+    this.editor.setValue(this.getShortcutText());
+    setTimeout(function() {
+      this.run();
+    }.bind(this));
+  },
+
+  getShortcutText: function () {
+    var text = [
+      'alert([',
+      '  "Keyboard shortcuts:",',
+      '  "",',
+      '  "  Ctrl-/        - show keyboard shortcuts",',
+      '  "  Ctrl-K        - link",',
+      '  "  Ctrl-Enter    - run",',
+      '  "  Ctrl-1        - move to left pane (js)",',
+      '  "  Ctrl-2        - move to left pane (coffee)"',
+      '].join("\\n"));'
+    ].join("\n");
+
+    if (navigator.userAgent.match(/(OS X)|(Macintosh)/)) {
+      text = text.replace(/Ctrl-/g, '\u2318 ');
+    }
+    return text;
+  }
 };
 
 /*
