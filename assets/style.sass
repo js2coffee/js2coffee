@@ -222,9 +222,7 @@ button:focus
     top: 0
     right: 0
     width: 64px
-    height: 64px
-    line-height: 64px
-    text-align: center
+    height: 100%
     background: transparent
     border: 0
     padding: 0
@@ -239,9 +237,17 @@ button:focus
 
     &:before
       +ion-icon('ios-close-outline', 32px)
+      position: absolute
+      top: 0
+      left: 0
+      width: 64px
+      height: 64px
+      line-height: 64px
+      text-align: center
+      vertical-align: top
 
     &:hover:before
-      +ion-icon('ios-close', 32px)
+      @extend %ion-icon-ios-close
 
   &:not(.focus):not(.error) .CodeMirror
     opacity: 0.9
