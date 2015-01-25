@@ -61,6 +61,13 @@ button:active,
 button:focus
   outline: 0
 
+a, a:visited
+  color: #f0f0f0
+  text-decoration: none
+
+a:hover, a:focus
+  color: white
+
 /*
  * main area
  */
@@ -71,7 +78,7 @@ button:focus
     position: absolute
     top: 0
     left: 0
-    right: 200px
+    right: 180px
 
   .code-toolbar
     position: absolute
@@ -79,7 +86,7 @@ button:focus
     bottom: -10px
     padding: 15px
     padding-right: 0
-    width: 100px
+    width: 200px
     z-index: 10
 
 /*
@@ -90,17 +97,18 @@ button:focus
   +antialias()
   background: lighten($bg, 1%)
   box-shadow: 0 0 4px rgba(black, 0.1)
-  width: 200px
+  width: 180px
   height: 100%
   position: absolute
   top: 0
   right: 0
-  padding: 30px
+  padding: 15px
 
   .bottom
     position: absolute
     bottom: 0
-    padding: 30px
+    padding: 15px
+    padding-bottom: 0
     left: 0
 
   h1, h5
@@ -122,6 +130,58 @@ button:focus
     font-weight: 400
     font-size: 0.9em
     color: #888
+
+.links-list
+  &, li
+    margin: 0
+    padding: 0
+    list-style: none
+
+  &
+    margin: 15px 0
+
+  a
+    display: block
+    padding: 5px 15px
+    margin-left: -15px
+    margin-right: -15px
+    color: mix($text, $bg, 50%)
+    border-radius: 3px
+    font-size: 0.9em
+    transition: all 100ms linear
+
+  li
+    border-top: solid 1px rgba(white, 0.02)
+
+  &
+    border-bottom: solid 1px rgba(white, 0.02)
+
+  a:hover, a:focus
+    background: rgba($accent2, 0.03)
+    color: white
+    &:after
+      opacity: 1
+
+  a:active
+    background: rgba($accent2, 0.1)
+    color: white
+    &:after
+      opacity: 1
+
+  a:after
+    float: right
+    font-size: 14px
+    margin: 2px 5px 0 0
+    color: $accent2
+
+  a.github:after
+    +ion-icon('social-github')
+
+  a.coffeescript:after
+    +ion-icon('coffee', 16px)
+
+  a.issues:after
+    +ion-icon('log-out')
 
 /*
  * each code box
@@ -370,12 +430,15 @@ button:focus
   &
     background: $bg
     +antialias()
+    text-align: right
 
   .button
     margin-bottom: 10px
-    display: block
-    width: 100%
-    background: lighten($bg, 5%)
+    margin-left: 8px
+    display: inline-block
+    width: 80px
+    background: lighten($bg, 0%)
+    border: solid 1px lighten($bg, 5%)
     color: lighten($bg, 50%)
     border-radius: 4px
     height: 26px
@@ -384,12 +447,14 @@ button:focus
     transition: all 100ms linear
 
   .button:hover
+    border-color: transparent
     background: lighten($bg, 15%)
     color: white
 
   .button:active
     background: $accent
     color: white
+    transition: all 0 linear
 
     &:before
       color: white
