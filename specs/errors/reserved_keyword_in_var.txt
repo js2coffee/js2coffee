@@ -1,0 +1,3 @@
+error: /'off' is a reserved CoffeeScript keyword/
+----
+var off = 2

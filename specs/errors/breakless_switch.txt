@@ -1,0 +1,8 @@
+error: /No break or return statement found/
+----
+switch (x) {
+  case 1:
+    b();
+  case 2:
+    c();
+}

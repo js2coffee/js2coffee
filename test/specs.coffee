@@ -11,9 +11,17 @@ eachGroup (group) ->
     group.specs.forEach (spec) ->
       run = if (not nope and spec.meta?.pending) then xit else if spec.meta?.only then it.only else it
       run spec.name, do (spec) -> ->
+        # Test errors
+        if spec.meta.error
+          expect(->
+            result = js2coffee.build(spec.input)
+          ).to.throw spec.meta.error
+          return
+
         result = js2coffee.build(spec.input)
         expect(result.code).eql(spec.output)
 
+        # Test warnings
         if spec.meta.warnings
           descs = result.warnings.map((w) -> w.description).join(" ;; ")
           spec.meta.warnings.forEach (expected) ->

@@ -341,64 +341,63 @@ world()
 
 <table width='100%'>
 <tr>
-<th width='33%' valign='top'>No finally</th>
+<th width='33%' valign='top'>Breakless switch</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>try {
-  a();
-} catch (e) {
-  b();
+<pre><code class='lang-js'>switch (x) {
+  case 1:
+    b();
+  case 2:
+    c();
 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>try
-  a()
-catch e
-  b()
-</code></pre>
+<pre><code class='lang-coffee'>Error:
+/No break or return statement found/</code></pre>
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Try catch finally</th>
+<th width='33%' valign='top'>Reserved keyword</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>try {
-  a();
-} catch (e) {
-  b();
-} finally {
-  c();
-}
+<pre><code class='lang-js'>off = 2
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>try
-  a()
-catch e
-  b()
-finally
-  c()
-</code></pre>
+<pre><code class='lang-coffee'>Error:
+/'off' is a reserved CoffeeScript keyword/</code></pre>
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Try with indent</th>
+<th width='33%' valign='top'>Reserved keyword in params</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>if (x) {
-  try { a(); }
-  catch (e) { b(); }
-  finally { c(); }
-}
+<pre><code class='lang-js'>function x(off) {}
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if x
-  try
-    a()
-  catch e
-    b()
-  finally
-    c()
+<pre><code class='lang-coffee'>Error:
+/'off' is a reserved CoffeeScript keyword/</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Reserved keyword in var</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var off = 2
 </code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/'off' is a reserved CoffeeScript keyword/</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>With</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>with (x) { a(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/'with' is not supported/</code></pre>
 </td>
 </tr>
 </table>
@@ -3285,6 +3284,25 @@ c
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Switch with continue</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>while (true) {
+  switch (x) {
+    case 1:
+      continue;
+  }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>loop
+  switch x
+    when 1
+      continue
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Switch with return</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function fn () {
@@ -3306,6 +3324,72 @@ c
     else
       return b()
   return
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Try
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>No finally</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>try {
+  a();
+} catch (e) {
+  b();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>try
+  a()
+catch e
+  b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Try catch finally</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>try {
+  a();
+} catch (e) {
+  b();
+} finally {
+  c();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>try
+  a()
+catch e
+  b()
+finally
+  c()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Try with indent</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (x) {
+  try { a(); }
+  catch (e) { b(); }
+  finally { c(); }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if x
+  try
+    a()
+  catch e
+    b()
+  finally
+    c()
 </code></pre>
 </td>
 </tr>

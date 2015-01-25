@@ -1,3 +1,4 @@
+-R progress
 --compilers coffee:coffee-script/register
 --require mocha-clean/brief
 --watch-extensions txt
