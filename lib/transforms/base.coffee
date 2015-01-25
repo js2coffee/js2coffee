@@ -170,9 +170,9 @@ class TransformerBase
     @_estraverse ?= do ->
       es = require('estraverse')
       es.VisitorKeys.CoffeeEscapedExpression = []
-      es.VisitorKeys.CoffeeListExpression = []
-      es.VisitorKeys.CoffeePrototypeExpression = []
-      es.VisitorKeys.CoffeeLoopStatement = []
+      es.VisitorKeys.CoffeeListExpression = ['test', 'body']
+      es.VisitorKeys.CoffeePrototypeExpression = ['object', 'property', 'computed']
+      es.VisitorKeys.CoffeeLoopStatement = ['body']
       es.VisitorKeys.BlockComment = []
       es.VisitorKeys.LineComment = []
       es

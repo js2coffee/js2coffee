@@ -352,3 +352,19 @@ exports.nextNonComment = (body, node) ->
   exports.nextUntil(body, node, (n) ->
     n.type isnt 'BlockComment' and
     n.type isnt 'LineComment')
+
+###
+# isLoop() : isLoop(node)
+# Checks if a loop is forever
+###
+
+exports.isLoop = (node) ->
+  not node.test? or exports.isTruthy(node.test)
+
+###
+# isTruthy() : isTruthy(node)
+# Checks if a given node is truthy
+###
+
+exports.isTruthy = (node) ->
+  (node.type is 'Literal' and node.value)

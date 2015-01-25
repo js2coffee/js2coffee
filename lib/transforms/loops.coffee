@@ -1,9 +1,5 @@
-{ replace } = require('../helpers')
+{ replace, isLoop } = require('../helpers')
 TransformerBase = require('./base')
-
-insertBefore = (ref, body, node) ->
-  idx = body.indexOf(ref)
-  body.splice idx, 0, node
 
 ###
 # Provides transformations for `while`, `for` and `do`.
@@ -38,7 +34,10 @@ class LoopTransforms extends TransformerBase
 
   ###
   # In a `for` loop with an update statement, inject the update just
-  # before the `continue`
+  # before the `continue`.
+  #
+  # This replaces the ContinueStatement with a block that groups the
+  # update and continue together.
   ###
 
   injectUpdateIntoContinue: (node, parent) ->
@@ -91,28 +90,29 @@ class LoopTransforms extends TransformerBase
   ###
 
   convertForToWhile: (node) ->
-    node.type = 'WhileStatement'
+    node.type = if isLoop(node)
+      'CoffeeLoopStatement'
+    else
+      'WhileStatement'
 
-    block =
+    if node.init?
       type: 'BlockStatement'
-      body: [ node ]
-
-    if node.init
-      block.body.unshift
-        type: 'ExpressionStatement'
-        expression: node.init
-
-    block
+      body: [
+        {
+          type: 'ExpressionStatement'
+          expression: node.init
+        }
+        node
+      ]
+    else
+      node
 
   ###
   # Converts a `while (true)` to a CoffeeLoopStatement.
   ###
 
   convertWhileToLoop: (node) ->
-    isLoop = not node.test? or
-      (node.test?.type is 'Literal' and node.test?.value is true)
-
-    if isLoop
+    if isLoop(node)
       replace node,
         type: 'CoffeeLoopStatement'
         body: node.body
