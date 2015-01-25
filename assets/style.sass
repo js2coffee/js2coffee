@@ -6,6 +6,10 @@
 
 +ion-font()
 
+/*
+ * vars
+ */
+
 $bg: #20242a
 $text: #ddd
 $monospace: menlo, monospace
@@ -14,6 +18,10 @@ $red: #C0392B
 $yellow: #F1C40F
 $blue: #3498DB
 $green: #2ECC71
+
+/*
+ * base
+ */
 
 *
   box-sizing: border-box
@@ -24,7 +32,7 @@ $green: #2ECC71
 html
   background: $bg
 
-html, input, textarea, td
+html, input, textarea, td, button
   font-family: $sans
   line-height: 1.5
   font-size: 1em
@@ -39,18 +47,40 @@ body
   font-size: 14px
   color: $text
 
+button
+  cursor: pointer
+  margin: 0
+  padding: 0
+  border: 0
+  background: transparent
+  display: inline-block
+
+/*
+ * main area
+ */
+
 .code-area
-  height: 100%
-  position: absolute
-  top: 0
-  left: 0
-  right: 200px
+  &
+    height: 100%
+    position: absolute
+    top: 0
+    left: 0
+    right: 200px
+
+  .code-toolbar
+    position: absolute
+    right: 15px
+    bottom: -10px
+    padding: 15px
+    padding-right: 0
+    width: 100px
+    z-index: 10
 
 /*
  * heh
  */
 
-.toolbar
+.main-sidebar
   background: lighten($bg, 1%)
   box-shadow: 0 0 4px rgba(black, 0.1)
   width: 200px
@@ -115,7 +145,9 @@ body
   &.focus.right h3
     border-bottom: solid 1px mix($blue, $bg, 10%)
 
-/* common */
+/*
+ * common
+ */
 .code-box, .code-box-popup
   &:not(.focus) .CodeMirror
     opacity: 0.75
@@ -310,19 +342,38 @@ body
       opacity: 0.5
 
 /*
- * errors
+ * Yep
  */
 
-.error-display
-  position: absolute
-  z-index: 10
-  left: 0%
-  bottom: 0
-  margin: 0
-  padding: 30px
-  width: 50%
-  background: darken($bg, 2%)
-  color: mix($text, $bg, 60%)
+.code-toolbar
+  &
+    background: $bg
 
-  font-family: $monospace
-  font-size: 0.9em
+  .button
+    margin-bottom: 10px
+    display: block
+    width: 100%
+    background: lighten($bg, 5%)
+    color: lighten($bg, 50%)
+    border-radius: 4px
+    height: 26px
+    line-height: 26px
+    font-size: 0.9em
+    transition: all 100ms linear
+
+  .button:hover
+    background: lighten($bg, 15%)
+    color: white
+
+  .button:before
+    margin-right: 8px
+    color: $green
+    font-size: 14px
+
+  .button.run:before
+    +ion-icon('play')
+
+  .button.link:before
+    +ion-icon('link')
+
+   

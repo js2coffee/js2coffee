@@ -1,3 +1,4 @@
+/* jshint evil: true */
 ;(function () {
 
 window.App = {};
@@ -47,11 +48,62 @@ Editors.prototype = {
     this.$right   = q('.code-box.right');
     this.$popup   = q('.code-box-popup');
     this.$popupIn = q('.code-box-popup > .container');
+    this.$run     = q('[role~="run"]');
+    this.$link    = q('[role~="link"]');
     this.editor   = this.initEditor();
     this.preview  = this.initPreview();
     this.popup    = this.initPopup();
+    this.focused  = 'editor'; /* editor/preview */
     this.warnings = undefined;
     this.error    = undefined;
+
+    if (this.$run) {
+      on(this.$link, 'click', this.link.bind(this));
+      on(this.$run, 'click', this.run.bind(this));
+    }
+  },
+
+  /*
+   * link button
+   */
+
+  link: function () {
+    var val = this.val('editor');
+    val = encodeURIComponent(val);
+    window.location.hash = 'try:' + val;
+  },
+
+  /*
+   * run button
+   */
+
+  run: function () {
+    var val;
+
+    if (this.focused === 'editor') {
+      val = this.val('editor');
+    } else {
+      val = CoffeeScript.compile(this.val('preview'));
+    }
+
+    try {
+      new Function(val)();
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  /*
+   * returns the current editor
+   *
+   *     .val('editor')
+   *     .val('preview')
+   *     .val() // uses whatever is focused
+   */
+
+  val: function (pane) {
+    if (!pane) pane = this.focused;
+    return this[pane].getValue();
   },
 
   /*
@@ -59,8 +111,10 @@ Editors.prototype = {
    */
 
   initEditor: function () {
+    var text = this.getTextFromHash() || this.defaultText;
+
     var editor = CodeMirror(this.$left, {
-      value: this.defaultText,
+      value: text,
       theme: 'ambiance',
       mode: 'javascript',
       scrollbarStyle: 'overlay',
@@ -73,8 +127,20 @@ Editors.prototype = {
     editor.on('changes', this.update.bind(this));
     editor.on('focus', setFocus(this.$left));
     editor.on('blur',  unsetFocus(this.$left));
+    editor.on('focus', function () {
+      this.focused = 'editor';
+    }.bind(this));
 
     return editor;
+  },
+
+  /*
+   * returns text from the window hash
+   */
+
+  getTextFromHash: function () {
+    var m = window.location.hash.match(/^#try:(.*)$/);
+    if (m) return decodeURIComponent(m[1]);
   },
 
   /*
@@ -95,6 +161,9 @@ Editors.prototype = {
     preview.on('focus', setFocus(this.$right));
     preview.on('blur',  unsetFocus(this.$right));
     preview.on('blur',  function () { focused = false; });
+    preview.on('focus', function () {
+      this.focused = 'preview';
+    }.bind(this));
     preview.on('focus', function () {
       focused = true;
       this.openPopup();
