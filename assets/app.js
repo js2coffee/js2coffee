@@ -68,6 +68,7 @@ Editors.prototype = {
    */
 
   link: function () {
+    this.closePopup();
     var val = this.val('editor');
     val = encodeURIComponent(val);
     window.location.hash = 'try:' + val;
