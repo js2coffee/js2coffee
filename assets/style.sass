@@ -566,10 +566,15 @@ a:hover, a:focus
  */
 
 .section.ad-section
+  &:last-child
+    margin-bottom: 0
   &
     font-size: 0.9em
     line-height: 1.4
     border-top: 0
+    background: rgba(black, 0.1)
+    margin: 15px -15px
+    padding: 15px
 
   p
     margin: 0
@@ -577,12 +582,9 @@ a:hover, a:focus
 
   p.text
     margin-top: 10px
+    text-align: center
     &:first-line
       color: $text
-
-  p.image
-    background: rgba(black, 0.1)
-    padding: 10px 5px
 
   img
     display: block
