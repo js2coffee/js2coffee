@@ -15,9 +15,27 @@ module.exports =
 class SwitchTransforms extends TransformerBase
   SwitchStatement: (node) ->
     @consolidateCases(node)
+    @ensureLastCaseIsDefault(node)
 
   SwitchCase: (node) ->
     @removeBreaksFromConsequents(node)
+
+  ###
+  # Ensure that `default:` is only at the end.
+  ###
+
+  ensureLastCaseIsDefault: (node) ->
+    cases = node.cases.filter (c) ->
+      c.type is 'SwitchCase'
+
+    last = cases.length
+    for kase, i in cases
+      isLast = (i is last-1)
+      isDefault = not kase.test?
+
+      if isDefault and not isLast
+        @syntaxError kase, "default cases only allowed at the end"
+    node
 
   ###
   # Consolidates empty cases into the next case. The case tests will then be

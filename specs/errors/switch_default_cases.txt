@@ -1,0 +1,10 @@
+error: /default cases only allowed at the end/
+----
+switch (x) {
+  default:
+    a();
+  case b:
+    c();
+    break;
+}
+----
