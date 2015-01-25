@@ -114,18 +114,17 @@ Editors.prototype = {
   initPopup: function () {
     on(this.$popup.querySelector('.close-button'), 'click',
       this.closePopup.bind(this));
-    on(this.$popup, 'click',
-      this.closePopup.bind(this));
 
     var popup = CodeMirror(this.$popupIn, {
       theme: 'ambiance',
       mode: 'javascript',
       scrollbarStyle: 'overlay',
-      readOnly: 'nocursor',
+      readOnly: true,
       tabSize: 2
     });
 
-    popup.on('focus', this.closePopup.bind(this));
+    popup.on('focus', setFocus(this.$popup));
+    popup.on('blur',  unsetFocus(this.$popup));
 
     return popup;
   },
