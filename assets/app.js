@@ -144,8 +144,8 @@ Editors.prototype = {
     return {
       'Cmd-Enter': this.run.bind(this),
       'Ctrl-Enter': this.run.bind(this),
-      'Cmd-L': this.link.bind(this),
-      'Ctrl-L': this.link.bind(this),
+      'Cmd-K': this.link.bind(this),
+      'Ctrl-K': this.link.bind(this),
       'Cmd-1': this.closePopup.bind(this),
       'Cmd-2': this.openPopup.bind(this),
       'Ctrl-1': this.closePopup.bind(this),
