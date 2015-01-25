@@ -444,6 +444,8 @@ a:hover, a:focus
  */
 
 .code-toolbar
+  $height: 30px
+
   &
     background: $bg
     +antialias()
@@ -458,8 +460,8 @@ a:hover, a:focus
     border: solid 1px lighten($bg, 5%)
     color: lighten($bg, 50%)
     border-radius: 4px
-    height: 26px
-    line-height: 22px
+    height: $height
+    line-height: $height - 4px
     font-size: 0.9em
     transition: all 100ms linear
 
