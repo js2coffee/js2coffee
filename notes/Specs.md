@@ -1858,6 +1858,27 @@ while b
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>For with continue without init</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (;;c++) {
+  if (true) continue;
+  if (false) continue;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>loop
+  if true
+    c++
+    continue
+  if false
+    c++
+    continue
+  c++
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>For with if</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (condition)
