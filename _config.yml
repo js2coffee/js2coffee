@@ -5,3 +5,5 @@ exclude:
   - _/Gemfile
   - _/Gemfile.lock
   - CNAME
+  - .gitignore
+  - node_modules
