@@ -30,7 +30,7 @@ $ ... | js2c
 
 Available via npm (`require('js2coffee')`), or via CDN in the browser:
 
-> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.9/dist/js2coffee.js`
+> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.10/dist/js2coffee.js`
 
 ```js
 result = js2coffee.build(source);

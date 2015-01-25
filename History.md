@@ -1,3 +1,11 @@
+## v0.0.10 - January 25, 2015
+
+* Warn in `for..in` loops without var
+* Fix `continue` inside `for` loops with update statements (#4)
+* Big refactors
+* Refactor some looping stuff
+* Update estraverse
+
 ## v0.0.9 - January 24, 2015
 
 Pre-release update (better esprima.parse error reporting).
