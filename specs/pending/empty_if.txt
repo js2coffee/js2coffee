@@ -1,0 +1,9 @@
+notes: """
+CoffeeScript doesn't support `if` statements without any blocks, unless it has
+an else to go with it (even if the `else` is also empty).
+"""
+----
+if (x) {}
+----
+if x
+else
