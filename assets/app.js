@@ -1,4 +1,4 @@
-/* jshint evil: true */
+/* jshint evil: true, boss: true */
 ;(function () {
 
 window.App = {};
@@ -56,13 +56,24 @@ Editors.prototype = {
     this.focused  = 'editor'; /* editor/preview */
     this.warnings = undefined;
     this.error    = undefined;
+    this.bindEvents();
+    this.loadDefaultText();
+  },
 
+  bindEvents: function () {
     if (this.$run) {
       on(this.$link, 'click', this.link.bind(this));
       on(this.$run, 'click', this.run.bind(this));
     }
+  },
 
+  /*
+   * loads the text from the URL, or loads it from the defaults
+   */
+
+  loadDefaultText: function () {
     var t;
+
     if (t = this.getCoffeeTextFromHash()) {
       setTimeout(function () {
         this.openPopup();
@@ -73,11 +84,10 @@ Editors.prototype = {
     } else {
       this.editor.setValue(this.defaultText);
     }
-
   },
 
   /*
-   * link button
+   * link button: updates the URL to the state of the app
    */
 
   link: function () {
@@ -107,10 +117,20 @@ Editors.prototype = {
       val = CoffeeScript.compile(this.val('preview'));
     }
 
+    var stub;
+
     try {
+      stub = new LoggerStub('log');
       new Function(val)();
+      if (stub.messages.length) {
+        alert(stub.messages.join("\n"));
+      }
     } catch (e) {
+      stub.restore();
+      alert(e.message);
       console.error(e);
+    } finally {
+      stub.restore();
     }
   },
 
@@ -437,6 +457,33 @@ function makeCmMessages (warnings, error) {
     });
   }
 }
+
+/*
+ * stubs console.log
+ *
+ *     stub = new LoggerStub('log')
+ *     console.log("hi")
+ *     stub.messages //=> ["hi"]
+ *     stub.restore()
+ */
+
+function LoggerStub (prop) {
+  this.prop = prop;
+  this.old = console[prop];
+  this.messages = [];
+
+  console[prop] = function () {
+    var msg = [].slice.call(arguments).join(" ");
+    this.messages.push(msg);
+    return this.old.apply(console, arguments);
+  }.bind(this);
+}
+
+LoggerStub.prototype = {
+  restore: function () {
+    console[this.prop] = this.old;
+  }
+};
 
 /*
  * Helpers taken from npmjs.com/dom101
