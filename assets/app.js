@@ -61,6 +61,17 @@ Editors.prototype = {
       on(this.$link, 'click', this.link.bind(this));
       on(this.$run, 'click', this.run.bind(this));
     }
+
+    var t;
+    if (t = this.getCoffeeTextFromHash()) {
+      setTimeout(function () {
+        this.openPopup();
+        this.preview.setValue(t);
+      }.bind(this));
+    } else if (t = this.getTextFromHash()) {
+      this.editor.setValue(t);
+    }
+
   },
 
   /*
@@ -68,10 +79,17 @@ Editors.prototype = {
    */
 
   link: function () {
-    this.closePopup();
-    var val = this.val('editor');
-    val = encodeURIComponent(val);
-    window.location.hash = 'try:' + val;
+    var val;
+
+    if (this.focused === 'editor') {
+      val = this.val('editor');
+      val = encodeURIComponent(val);
+      window.location.hash = 'try:' + val;
+    } else {
+      val = this.val('preview');
+      val = encodeURIComponent(val);
+      window.location.hash = 'coffee/try:' + val;
+    }
   },
 
   /*
@@ -112,10 +130,8 @@ Editors.prototype = {
    */
 
   initEditor: function () {
-    var text = this.getTextFromHash() || this.defaultText;
-
     var editor = CodeMirror(this.$left, {
-      value: text,
+      value: '',
       theme: 'ambiance',
       mode: 'javascript',
       scrollbarStyle: 'overlay',
@@ -161,6 +177,11 @@ Editors.prototype = {
 
   getTextFromHash: function () {
     var m = window.location.hash.match(/^#try:(.*)$/);
+    if (m) return decodeURIComponent(m[1]);
+  },
+
+  getCoffeeTextFromHash: function () {
+    var m = window.location.hash.match(/^#coffee\/try:(.*)$/);
     if (m) return decodeURIComponent(m[1]);
   },
 
