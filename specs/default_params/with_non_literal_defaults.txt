@@ -1,0 +1,7 @@
+----
+function fn(param = (a + b())) {
+  return true
+}
+----
+fn = (param = a + b()) ->
+  true

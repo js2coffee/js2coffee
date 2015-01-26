@@ -14,16 +14,6 @@ unsupported ones are removed.
 
 Refer to the Mozilla's [Parser API spec] for the JavaScript version.
 
-About this document
--------------------
-
-A few pointers on notation:
-
-- Array properties are denoted with `[ ]`. (eg: expressions in an ArrayExpression)
-
-- Optional properties are denoted with `*`, meaning they can be `undefined` in
-some cases. (eg: argument of a ReturnStatement)
-
 Inspecting the syntax tree
 --------------------------
 
@@ -55,6 +45,17 @@ An example of an AST:
           _isStatement: true } } ],
   comments: [] }
 ```
+
+About this document
+-------------------
+
+A few pointers on notation:
+
+- Array properties are denoted with `[ ... ]`. (eg: `expressions` in an
+  [ArrayExpression])
+
+- Optional properties are denoted with `*`, meaning they can be `null` in
+  some cases. (eg: `argument` of a [ReturnStatement])
 
 Basic node types
 ----------------
@@ -170,8 +171,9 @@ Inside [ObjectExpression].
 ### FunctionExpression
 (note: `id` is removed from function expressions.)
 
-   - `params` : [ Identifier, ... ]
-   - `body` : BlockStatement
+   - `params` : [ [Identifier], ... ]
+   - `defaults` : [ [Identifier], ... ] ]
+   - `body` : [BlockStatement]
    - `_parenthesized` : Boolean (true if parenthesized, eg `(-> ...)`)
 
 ### UnaryExpression
@@ -179,34 +181,34 @@ A prefix expression. Note that this *operator* also be `not`, which is not
 available in JS.
 
    - `operator` : String (eg: "void", "!")
-   - `argument` : Expression
+   - `argument` : [Expression]
 
 ### BinaryExpression
 
-   - `left` : Expression
+   - `left` : [Expression]
    - `operator` : String (eg: `+`)
-   - `right` : Expression
+   - `right` : [Expression]
 
 ### AssignmentExpression
 An assignment. Also covers shorthand like `+=`.
 
-   - `left` : Expression
+   - `left` : [Identifier]
    - `operator` : String (eg: `+=`)
-   - `right` : Expression
+   - `right` : [Expression]
 
 ### UpdateExpression
 An increment or decrement. (`a++`)
 
    - `prefix` : Boolean
    - `operator` : String (eg: `++`)
-   - `argument` : Identifier (eg: `a`)
+   - `argument` : [Identifier] (eg: `a`)
 
 ### ConditionalExpression
 The ternary operator. (`if a then b else c`)
 
-  - `test` : Expression (the *if*)
-  - `consequent` : Expression (the *then*)
-  - `alternate` : Expression (the *else*)
+  - `test` : [Expression] (the *if*)
+  - `consequent` : [Expression] (the *then*)
+  - `alternate` : [Expression] (the *else*)
 
 ### NewExpression
 Instanciation (eg: `new X()`).

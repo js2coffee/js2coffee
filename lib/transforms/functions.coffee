@@ -79,6 +79,7 @@ class FunctionTransforms extends TransformerBase
         init:
           type: 'FunctionExpression'
           params: node.params
+          defaults: node.defaults
           body: node.body
       ]
 

@@ -201,7 +201,7 @@ class Builder extends BuilderBase
     [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
 
   FunctionExpression: (node, ctx) ->
-    params = @makeParams(node.params)
+    params = @makeParams(node.params, node.defaults)
 
     expr = @indent (i) =>
       [ params, "->\n", @walk(node.body) ]
@@ -305,9 +305,9 @@ class Builder extends BuilderBase
 
   ForInStatement: (node) ->
     if node.left.type isnt 'VariableDeclaration'
-      # @warn node, "Using 'for..in' loops without 'var' can produce unexpected results"
-      # node.left.name += '_'
       id = @walk(node.left)
+
+      # TODO: move this transformation to the lib/transforms/
       propagator = {
         type: 'ExpressionStatement'
         expression: { type: 'CoffeeEscapedExpression', raw: "#{id} = #{id}" }
@@ -322,7 +322,8 @@ class Builder extends BuilderBase
 
   makeLoopBody: (body) ->
     isBlock = body?.type is 'BlockStatement'
-    # TODO: move this transformation to the AST
+
+    # TODO: move this transformation to the lib/transforms/
     if not body or (isBlock and body.body.length is 0)
       @indent => [ @indent(), "continue\n" ]
     else if isBlock
@@ -364,9 +365,19 @@ class Builder extends BuilderBase
   # Builds parameters for a function list.
   ###
 
-  makeParams: (params) ->
+  makeParams: (params, defaults) ->
+    list = []
+
+    # Account for defaults ("function fn(a = b)")
+    for param, i in params
+      if defaults[i]
+        def = @walk(defaults[i])
+        list.push [@walk(param), ' = ', def]
+      else
+        list.push @walk(param)
+
     if params.length
-      [ '(', delimit(params.map(@walk), ', '), ') ']
+      [ '(', delimit(list, ', '), ') ']
     else
       []
 

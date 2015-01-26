@@ -1,0 +1,7 @@
+----
+function greet(name = 'Bob', age) {
+  return name;
+}
+----
+greet = (name = 'Bob', age) ->
+  name
