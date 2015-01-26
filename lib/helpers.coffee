@@ -215,6 +215,7 @@ exports.getPrecedence = (node) ->
     ops.indexOf(node.operator) > -1
 
   binExpressions =
+      '**': 17 # coffee-only
       '*': 14
       '/': 14
       '%': 14

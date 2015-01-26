@@ -1,0 +1,7 @@
+notes: """
+  CoffeeScript supports the `**` binary expression to calculate exponents.
+"""
+----
+Math.pow(2, 8)
+----
+2 ** 8

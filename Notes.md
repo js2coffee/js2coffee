@@ -55,7 +55,7 @@ Max compatibility mode:
 Niceness:
 
  - [x] Transform `.prototype.`
- - [ ] `Math.pow(a,b)` => `a ** b`
+ - [x] `Math.pow(a,b)` => `a ** b`
  - [ ] `Math.floor(a / b)` => `a // b`
  - [ ] `function() { a }.bind(this)` => `=> a`
  - [x] Support a `case` without any code

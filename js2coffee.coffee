@@ -96,6 +96,7 @@ js2coffee.transform = (ast, options = {}) ->
 
   # Everything else -- these can be done in one step without any side effects.
   run [
+    require('./lib/transforms/exponents')
     require('./lib/transforms/ifs')
     require('./lib/transforms/literals')
     require('./lib/transforms/loops')

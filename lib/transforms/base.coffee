@@ -254,8 +254,34 @@ safeExtend = (dest, classes) ->
   classes.forEach (klass) ->
     for key, fn of klass::
       if klass::hasOwnProperty(key)
+
         if added[key] and key isnt 'constructor'
-          throw new Error("Conflict with member '#{key}'")
-        dest::[key] = fn
+          dest::[key] = chain(dest::[key], fn)
+        else
+          dest::[key] = fn
+
         added[key] = true
   dest
+
+# Chains two Visitor functions together. Returns a function that will run the
+# `old` function, and feed its output node to the `new` function.
+#
+#     class X extends TransformBase
+#       CallExpression: (node) ->
+#
+#     class Y extends TransformBase
+#       CallExpression: (node) ->
+#
+#     fn = chain(X::CallExpression, Y::CallExpression)
+#
+chain = (old, noo) ->
+  (node, args...) ->
+    type = node.type
+    result = old.bind(this)(node, args...)
+
+    # If the `old` function modified the node type, don't continue.
+    # This is the case for eg, CallExpression turning into BinaryExpression
+    if result.type is type
+      result = noo.bind(this)(result, args...)
+
+    result
