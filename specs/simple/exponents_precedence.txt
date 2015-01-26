@@ -5,6 +5,7 @@ Math.pow(x++, 8)
 Math.pow(++y, 8)
 Math.pow(new X, 8)
 Math.pow(new X(2), 8)
+Math.pow(a < b, 8)
 ----
 (1 * 2) ** 8
 (!x) ** 8
@@ -12,3 +13,4 @@ x++ ** 8
 ++y ** 8
 new X ** 8
 new X(2) ** 8
+(a < b) ** 8
