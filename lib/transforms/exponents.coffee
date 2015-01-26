@@ -14,7 +14,8 @@ class ExponentTransforms extends TransformerBase
       node.callee?.object?.type is 'Identifier' and
       node.callee?.object?.name is 'Math' and
       node.callee?.property?.type is 'Identifier' and
-      node.callee?.property?.name is 'pow'
+      node.callee?.property?.name is 'pow' and
+      node.arguments?.length is 2
 
     return node unless isExponent
 

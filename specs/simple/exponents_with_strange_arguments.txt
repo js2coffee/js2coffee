@@ -1,0 +1,4 @@
+----
+a = Math.pow(2)
+----
+a = Math.pow(2)
