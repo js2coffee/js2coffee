@@ -1,12 +1,12 @@
 ----
-1 * Math.pow(2, 8)
+Math.pow(1 * 2, 8)
 Math.pow(x.y, 8)
 Math.pow(x++, 8)
 Math.pow(++y, 8)
 Math.pow(new X, 8)
 Math.pow(new X(2), 8)
 ----
-1 * 2 ** 8
+(1 * 2) ** 8
 x.y ** 8
 x++ ** 8
 ++y ** 8
