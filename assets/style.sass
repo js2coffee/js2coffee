@@ -447,7 +447,6 @@ a:hover, a:focus
   $height: 30px
 
   &
-    background: $bg
     +antialias()
     text-align: right
 
@@ -456,8 +455,9 @@ a:hover, a:focus
     margin-left: 8px
     display: inline-block
     width: 80px
-    background: lighten($bg, 0%)
-    border: solid 1px lighten($bg, 5%)
+    background: $bg
+    box-shadow: 0 0 0 4px $bg
+    border: solid 1px rgba(white, 0.1)
     color: lighten($bg, 50%)
     border-radius: 4px
     height: $height
