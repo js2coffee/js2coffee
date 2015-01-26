@@ -59,28 +59,13 @@ An example of an AST:
 Basic node types
 ----------------
 
-### Expression
-
-Usually ends in `Expression`.
-
-- [ObjectExpression]
-- [Identifier]
-- [AssignmentExpression]
-- [ThisExpression]
-- [ArrayExpression]
-- ...
-
 ### Statement
 
-Anything that ends in `Statement`.
+A block contains many statements. (eg, [IfStatement], [ExpressionStatement]).
 
-- [BlockStatement]
-- [ExpressionStatement]
-- [IfStatement]
-- [BreakStatement]
-- [ContinueStatement]
-- [SwitchStatement]
-- ...
+### Expression
+
+Fragments of a statement (eg, [ObjectExpression], [Identifier]).
 
 Node types
 ----------
@@ -137,14 +122,14 @@ Can have its argument missing (eg: `return`).
 A try block. Encompasses all `try`, `catch`, and `finally`.
 
    - `block` : [BlockStatement] (the *try*)
-   - `handlers` : [ CatchClause, ... ] ? (the *catch*)
-   - `finalizer` : [BlockStatement] ? (the *finally*)
+   - `handlers` : [ [CatchClause], ... ] * (the *catch*)
+   - `finalizer` : [BlockStatement] * (the *finally*)
 
 ### CatchClause
 A handler in a TryStatement. (eg: `catch err`)
 
-   - `param` : Identifier
-   - `body` : BlockStatement
+   - `param` : [Identifier]
+   - `body` : [BlockStatement]
 
 ### WhileStatement
 
@@ -226,33 +211,33 @@ The ternary operator. (`if a then b else c`)
 ### NewExpression
 Instanciation (eg: `new X()`).
 
-   - `callee` : Expression (usually an Identifier)
-   - `arguments` : [ Expression, ... ]
+   - `callee` : [Expression] (usually an Identifier)
+   - `arguments` : [ [Expression], ... ]
 
 ### CallExpression
 A function call.
 
-   - `callee` : Expression (usually an Identifier)
-   - `arguments` : [ Expression, ... ]
+   - `callee` : [Expression] (usually an [Identifier])
+   - `arguments` : [ [Expression], ... ]
    - `_isStatement` : Boolean (true if it has no parentheses)
 
 ### MemberExpression
 Scope resolution (eg: `this.foo`).
 
    - `computed` : Boolean (true if `a[b]`, false if `a.b`)
-   - `object` : Expression (left side)
-   - `property` : Expression (right side)
+   - `object` : [Expression] (left side)
+   - `property` : [Expression] (right side)
 
 ### SwitchStatement
 
-   - `discriminant` : Expression
+   - `discriminant` : [Expression]
    - `cases` : [ [SwitchCase], ... ]
 
 ### SwitchCase
 A case inside a SwitchStatement. Then `test` is not present, it's the `else`.
    
    - `type` : ??
-   - `test` : Expression *
+   - `test` : [Expression] *
    - `consquent` : [BlockStatement]
 
 ### Identifier
@@ -271,13 +256,13 @@ These are CoffeeScript-specific AST types:
 ### CoffeeListExpression
 a comma-separated list (eg: `when a, b`).
 
-   - `expressions` : [ Expression, ... ]
+   - `expressions` : [ [Expression], ... ]
 
 ### CoffeePrototypeExpression
 Prototype resolution operator. Similar to MemberExpression.
 
    - `object` : [BlockStatement]
-   - `property` : Expression (usually Identifier)
+   - `property` : [Expression] (usually [Identifier])
    - `computed` : Boolean (*true* if `a::[b]`)
 
 Examples:
@@ -395,18 +380,56 @@ For destructuring
 
 [Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 
-[AssignmentExpression]: #assignmentexpression
-[BlockStatement]: #blockstatement
-[BreakStatement]: #breakstatement
-[ExpressionStatement]: #expressionstatement
 [Expression]: #expression
+[Statement]: #statement
+[Program]: #program
+[BlockStatement]: #blockstatement
+[ExpressionStatement]: #expressionstatement
 [Identifier]: #identifier
 [IfStatement]: #ifstatement
-[Literal]: #literal
-[Property]: #property
-[Statement]: #statement
-[SwitchCase]: #switchcase
+[BreakStatement]: #breakstatement
+[ContinueStatement]: #continuestatement
+[SwitchStatement]: #switchstatement
+[ReturnStatement]: #returnstatement
+[ThrowStatement]: #throwstatement
+[TryStatement]: #trystatement
+[CatchClause]: #catchclause
 [WhileStatement]: #whilestatement
+[DebuggerStatement]: #debuggerstatement
 [ThisExpression]: #thisexpression
 [ArrayExpression]: #arrayexpression
+[ObjectExpression]: #objectexpression
+[Property]: #property
+[FunctionExpression]: #functionexpression
+[UnaryExpression]: #unaryexpression
+[BinaryExpression]: #binaryexpression
+[AssignmentExpression]: #assignmentexpression
+[UpdateExpression]: #updateexpression
+[ConditionalExpression]: #conditionalexpression
+[NewExpression]: #newexpression
+[CallExpression]: #callexpression
+[MemberExpression]: #memberexpression
+[SwitchStatement]: #switchstatement
+[SwitchCase]: #switchcase
+[Identifier]: #identifier
+[Literal]: #literal
+[CoffeeListExpression]: #coffeelistexpression
+[CoffeePrototypeExpression]: #coffeeprototypeexpression
 [CoffeeLoopStatement]: #coffeeloopstatement
+[CoffeeEscapedExpression]: #coffeeescapedexpression
+[CoffeeDoExpression]: #coffeedoexpression
+[BlockComment]: #blockcomment
+[LineComment]: #linecomment
+[SequenceExpression]: #sequenceexpression
+[EmptyStatement]: #emptystatement
+[FunctionDeclaration]: #functiondeclaration
+[VariableDeclaration]: #variabledeclaration
+[VariableDeclarator]: #variabledeclarator
+[WithStatement]: #withstatement
+[LabeledStatement]: #labeledstatement
+[ForStatement]: #forstatement
+[ForInStatement]: #forinstatement
+[DoWhileStatement]: #dowhilestatement
+[ArrowFunctionExpression]: #arrowfunctionexpression
+[ArrayPattern]: #arraypattern
+[ObjectPattern]: #objectpattern
