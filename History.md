@@ -1,3 +1,8 @@
+## v0.0.13 - January 26, 2015
+
+* Implement exponents (`Math.pow(a,b)` => `a ** b`)
+* Implement IIFEs (`(function(){k})()` => `do -> k`)
+
 ## v0.0.12 - January 25, 2015
 
 * Fix `continue` inside a switch case
