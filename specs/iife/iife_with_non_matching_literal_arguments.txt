@@ -1,0 +1,8 @@
+----
+(function () {
+  return true
+})(2);
+----
+(->
+  true
+) 2

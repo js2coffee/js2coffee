@@ -8,19 +8,40 @@ TransformerBase = require('./base')
 module.exports = class extends TransformerBase
 
   CallExpression: (node) ->
-    isIife =
-      node.callee?.type is 'FunctionExpression' and
-      node.callee?.id is null
+    valid =
+      isIife(node) and
+      isAllIdentifiers(node.arguments) and
+      sameArgs(node.callee.params, node.arguments)
 
-    return node unless isIife
-
-    sameArgs =
-      node.callee.params.map((p) -> p.name).join("/") is
-      node.arguments.map((p) -> p.name).join("/")
-
-    return node unless sameArgs
+    return node unless valid
 
     replace node,
       type: 'CoffeeDoExpression'
       function: node.callee
       arguments: node.arguments
+
+###
+# Helper: ensure all nodes in `args` are Identifiers
+###
+
+isAllIdentifiers = (args) ->
+  for arg in args
+    return false if arg.type isnt 'Identifier'
+  true
+
+###
+# Helper: ensure a CallExpression is an IIFE
+###
+
+isIife = (node) ->
+  node.callee?.type is 'FunctionExpression' and
+  node.callee?.id is null
+
+###
+# Helper: ensure argument names are the same
+###
+
+sameArgs = (left, right) ->
+  left.map((p) -> p.name).join("/") is
+    right.map((p) -> p.name).join("/")
+
