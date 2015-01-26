@@ -321,6 +321,21 @@ Example:
 #   value: 'undefined' }
 ```
 
+### CoffeeDoExpression
+Represents `do -> ...`.
+
+   - `function` : [FunctionExpression]
+
+Example:
+
+```coffee
+do -> ...
+
+# { type: 'CoffeeDoExpression'
+#   function: {
+#     type: 'FunctionExpression'
+#     body: { ... } } }
+```
 ### BlockComment
 A `### ... ###` comment.
 

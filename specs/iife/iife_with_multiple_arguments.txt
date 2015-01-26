@@ -1,0 +1,5 @@
+----
+(function(jQuery, window){ return true; })(jQuery, window)
+----
+do (jQuery, window) ->
+  true

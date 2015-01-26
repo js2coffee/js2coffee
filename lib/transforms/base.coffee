@@ -173,6 +173,7 @@ class TransformerBase
       es.VisitorKeys.CoffeeListExpression = ['test', 'body']
       es.VisitorKeys.CoffeePrototypeExpression = ['object', 'property', 'computed']
       es.VisitorKeys.CoffeeLoopStatement = ['body']
+      es.VisitorKeys.CoffeeDoExpression = ['function']
       es.VisitorKeys.BlockComment = []
       es.VisitorKeys.LineComment = []
       es

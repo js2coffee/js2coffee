@@ -62,6 +62,7 @@ Niceness:
  - [x] Sequence of objects (`a('ok', {a:b}, ->)`)
  - [x] Array of functions
  - [ ] Spaces around block comments and functions
+ - [ ] IIFE (`(function(){})()` => `do ->`)
 
 ## Done
 

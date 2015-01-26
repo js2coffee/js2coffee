@@ -339,6 +339,9 @@ class Builder extends BuilderBase
     else
       [ @walk(node.object), '::', @walk(node.property) ]
 
+  CoffeeDoExpression: (node) ->
+    space [ 'do', @walk(node.function) ]
+    
   ###*
   # makeSequence():
   # Builds a comma-separated sequence of nodes.

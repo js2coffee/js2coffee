@@ -98,6 +98,7 @@ js2coffee.transform = (ast, options = {}) ->
   run [
     require('./lib/transforms/exponents')
     require('./lib/transforms/ifs')
+    require('./lib/transforms/iife')
     require('./lib/transforms/literals')
     require('./lib/transforms/loops')
     require('./lib/transforms/members')
