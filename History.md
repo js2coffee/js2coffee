@@ -1,3 +1,10 @@
+## v0.0.15 - January 27, 2015
+
+* Transform `undefined` in compatibility mode
+* Add more reserved keywords
+* Handle blank ifs (`if (x){}`)
+* Escape fuctions in tests (`if (function(){}){}`)
+
 ## v0.0.14 - January 27, 2015
 
 * Implement `--compat` compatibility mode
