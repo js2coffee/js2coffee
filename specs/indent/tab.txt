@@ -1,0 +1,8 @@
+options: { indent: 'tab' }
+----
+if (condition) {
+  consequent();
+}
+----
+if condition
+	consequent()

@@ -1,0 +1,8 @@
+options: { indent: 8 }
+----
+if (condition) {
+  consequent();
+}
+----
+if condition
+        consequent()
