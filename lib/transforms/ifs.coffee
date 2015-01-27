@@ -53,19 +53,20 @@ module.exports = class extends TransformerBase
   ###
 
   handleBlankIfs: (node) ->
-    noBody = ->
-      ! node.consequent
-
-    emptyBodyBlock = ->
-      cons = node.consequent
-      result =
-        cons and
-        cons.type is 'BlockStatement' and
-        nonComments(cons.body).length is 0
-
-    if (noBody() or emptyBodyBlock()) and !node.alternate
+    if noBody(node) or emptyBodyBlock(node) and !node.alternate
       node.alternate =
         type: 'BlockStatement'
         body: []
 
     node
+
+noBody = (node) ->
+  ! node.consequent
+
+emptyBodyBlock = (node) ->
+  cons = node.consequent
+  result =
+    cons and
+    cons.type is 'BlockStatement' and
+    nonComments(cons.body).length is 0
+
