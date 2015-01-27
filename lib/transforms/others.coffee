@@ -24,12 +24,6 @@ module.exports = class extends TransformerBase
     @braceObjectBesideUnary(node)
     @updateVoidToUndefined(node)
 
-  LabeledStatement: (node, parent) ->
-    @warnAboutLabeledStatements(node, parent)
-
-  WithStatement: (node) ->
-    @syntaxError node, "'with' is not supported in CoffeeScript"
-
   VariableDeclarator: (node) ->
     @preventReservedWords(node.id)
     @addShadowingIfNeeded(node)
@@ -104,13 +98,6 @@ module.exports = class extends TransformerBase
       @skip()
     node
 
-  ###
-  # Produce warnings when using labels. It may be a JSON string being pasted,
-  # so produce a more helpful warning for that case.
-  ###
-
-  warnAboutLabeledStatements: (node, parent) ->
-    @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
 
   ###
   # Updates `void 0` UnaryExpressions to `undefined` Identifiers.

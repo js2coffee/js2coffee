@@ -109,6 +109,7 @@ js2coffee.transform = (ast, options = {}) ->
     require('./lib/transforms/precedence')
     require('./lib/transforms/returns')
     require('./lib/transforms/switches')
+    require('./lib/transforms/unsupported')
   ]
 
   # Consolidate nested blocks -- block nesting can be a side effect of the
