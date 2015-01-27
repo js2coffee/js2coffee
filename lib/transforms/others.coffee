@@ -6,18 +6,6 @@ TransformerBase = require('./base')
 ###
 
 module.exports = class extends TransformerBase
-  BlockStatementExit: (node) ->
-    @removeEmptyStatementsFromBody(node)
-
-  SwitchCaseExit: (node) ->
-    @removeEmptyStatementsFromBody(node, 'consequent')
-
-  SwitchStatementExit: (node) ->
-    @removeEmptyStatementsFromBody(node, 'cases')
-
-  ProgramExit: (node) ->
-    @removeEmptyStatementsFromBody(node, 'body')
-
   FunctionExpression: (node, parent) ->
     super(node)
     node.params.forEach (param) =>
@@ -87,17 +75,6 @@ module.exports = class extends TransformerBase
     node
 
   ###
-  # Remove `{type: 'EmptyStatement'}` from the body.
-  # Since estraverse doesn't support removing nodes from the AST, some filters
-  # replace nodes with 'EmptyStatement' nodes. This cleans that up.
-  ###
-
-  removeEmptyStatementsFromBody: (node, body = 'body') ->
-    node[body] = node[body].filter (n) ->
-      n.type isnt 'EmptyStatement'
-    node
-
-  ###
   # Adds a `var x` shadowing statement when encountering shadowed variables.
   # (See specs/shadowing/var_shadowing)
   ###
@@ -155,7 +132,6 @@ module.exports = class extends TransformerBase
     else
       node
 
-
   ###
   # Removes `undefined` from function parameters.
   # (`function (a, undefined) {}` => `(a) ->`)
@@ -184,4 +160,3 @@ module.exports = class extends TransformerBase
     if node.callee.type is 'FunctionExpression'
       node.callee._parenthesized = true
       node
-
