@@ -1,3 +1,9 @@
+## v0.0.14 - January 27, 2015
+
+* Implement `--compat` compatibility mode
+* Escape `==` on compatibility mode
+* Implement function defaults (`function x(a=b){}`)
+
 ## v0.0.13 - January 26, 2015
 
 * Implement exponents (`Math.pow(a,b)` => `a ** b`)
