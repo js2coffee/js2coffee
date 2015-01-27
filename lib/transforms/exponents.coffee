@@ -5,10 +5,9 @@ TransformerBase = require('./base')
 # Transforms `Math.pow(2,8)` into `2 ** 8`
 ###
 
-module.exports =
-class ExponentTransforms extends TransformerBase
-  CallExpression: (node) ->
+module.exports = class extends TransformerBase
 
+  CallExpression: (node) ->
     isExponent =
       node.callee?.type is 'MemberExpression' and
       node.callee?.object?.type is 'Identifier' and

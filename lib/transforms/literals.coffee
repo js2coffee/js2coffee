@@ -5,8 +5,7 @@ TransformerBase = require('./base')
 # Transforms strings, regexes, etc
 ###
 
-module.exports =
-class LiteralTransforms extends TransformerBase
+module.exports = class extends TransformerBase
 
   Literal: (node) ->
     @unpackRegexpIfNeeded(node)

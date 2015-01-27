@@ -5,8 +5,8 @@ TransformerBase = require('./base')
 # Provides transformations for `while`, `for` and `do`.
 ###
 
-module.exports =
-class LoopTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   ForStatement: (node) ->
     # Keep track of the nesting of `for` loops
     @_for ?= []

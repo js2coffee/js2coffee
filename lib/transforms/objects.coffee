@@ -4,8 +4,8 @@ TransformerBase = require('./base')
 # Mangles the AST with various CoffeeScript tweaks.
 ###
 
-module.exports =
-class ObjectTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   ArrayExpression: (node) ->
     @braceObjectsInElements(node)
 

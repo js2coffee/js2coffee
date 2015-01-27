@@ -5,8 +5,8 @@ TransformerBase = require('./base')
 # Fixes operator precedences
 ###
 
-module.exports =
-class PrecedenceTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   onEnter: (node, parent) ->
     return unless parent
 

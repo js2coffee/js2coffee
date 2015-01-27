@@ -11,8 +11,8 @@ TransformerBase = require('./base.coffee')
 #       when a then b()
 ###
 
-module.exports =
-class SwitchTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   SwitchStatement: (node) ->
     @consolidateCases(node)
     @ensureLastCaseIsDefault(node)

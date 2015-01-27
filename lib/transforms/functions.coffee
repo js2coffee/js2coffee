@@ -12,8 +12,8 @@ TransformerBase = require('./base')
 #   top of the scope.
 ###
 
-module.exports =
-class FunctionTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   onScopeEnter: (scope, ctx) ->
     # Keep a list of things to be prepended before the body
     ctx.prebody = []

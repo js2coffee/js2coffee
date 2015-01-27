@@ -6,6 +6,7 @@ TransformerBase = require('./base')
 ###
 
 module.exports = class extends TransformerBase
+
   FunctionExpression: (node, parent) ->
     super(node)
     node.params.forEach (param) =>
@@ -31,7 +32,7 @@ module.exports = class extends TransformerBase
 
   VariableDeclarator: (node) ->
     @preventReservedWords(node.id)
-    @addShadowingIfNeeded(node, node.id.name)
+    @addShadowingIfNeeded(node)
     @addExplicitUndefinedInitializer(node)
 
   AssignmentExpression: (node) ->
@@ -79,7 +80,8 @@ module.exports = class extends TransformerBase
   # (See specs/shadowing/var_shadowing)
   ###
 
-  addShadowingIfNeeded: (node, name) ->
+  addShadowingIfNeeded: (node) ->
+    name = node.id.name
     if ~@ctx.vars.indexOf(name)
       @warn node, "Variable shadowing ('#{name}') is not fully supported in CoffeeScript"
       statement = replace node,
@@ -130,6 +132,7 @@ module.exports = class extends TransformerBase
       replace node, type: 'CoffeeEscapedExpression', raw: 'undefined'
     else
       node
+
 
   ###
   # Removes `undefined` from function parameters.

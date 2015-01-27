@@ -8,7 +8,7 @@ TransformerBase = require('./base')
 # Comments will be injected as `BlockComment` and `LineComment` nodes.
 ###
 
-class CommentTransforms extends TransformerBase
+module.exports = class extends TransformerBase
   # Disable the stack-tracking for now
   ProgramExit: null
   FunctionExpression: null
@@ -117,5 +117,3 @@ class CommentTransforms extends TransformerBase
         line + "\n"
     node.value = lines.join("")
     node
-
-module.exports = CommentTransforms

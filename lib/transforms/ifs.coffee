@@ -6,6 +6,7 @@ TransformerBase = require('./base')
 ###
 
 module.exports = class extends TransformerBase
+
   IfStatement: (node) ->
     @handleBlankIfs(node)
     @parenthesizeConditionals(node)

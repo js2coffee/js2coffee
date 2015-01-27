@@ -10,7 +10,8 @@ TransformerBase = require('./base')
 #     function(){}.y    =>  (->).y
 ###
 
-class MemberTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   MemberExpression: (node) ->
     @transformThisToAtSign(node)
     @braceObjectOnLeft(node)
@@ -60,5 +61,3 @@ class MemberTransforms extends TransformerBase
     if node.object.type is 'FunctionExpression'
       node.object._parenthesized = true
     node
-
-module.exports = MemberTransforms

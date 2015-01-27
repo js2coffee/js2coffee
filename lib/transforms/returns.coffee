@@ -5,8 +5,8 @@ TransformerBase = require('./base')
 # Does transformations pertaining to `return` statements.
 ###
 
-module.exports =
-class ReturnTransforms extends TransformerBase
+module.exports = class extends TransformerBase
+
   onScopeExit: (scope, ctx, subscope, subctx) ->
     @unreturnify scope
 
