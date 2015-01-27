@@ -1,4 +1,3 @@
-{ escapeJs, replace } = require('../helpers')
 TransformerBase = require('./base')
 
 ###
@@ -31,7 +30,7 @@ module.exports = class extends TransformerBase
       node.operator is '!='
 
     if @options.compat and isIncompatible
-      escapeJs node
+      @escapeJs node
     else
       node
 

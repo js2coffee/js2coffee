@@ -36,6 +36,7 @@ module.exports = js2coffee = (source, options) ->
 
 js2coffee.build = (source, options = {}) ->
   options.filename ?= 'input.js'
+  options.indent ?= 2
   options.source = source
 
   ast = js2coffee.parseJS(source, options)

@@ -1,6 +1,8 @@
 {
   buildError
   clone
+  replace
+  toIndent
 } = require('../helpers')
 
 ###**
@@ -244,6 +246,14 @@ class TransformerBase
   FunctionExpressionExit: (node) ->
     @popStack()
     node
+
+  escapeJs: (node) ->
+    replace node,
+      type: 'CoffeeEscapedExpression'
+      raw: require('escodegen').generate node,
+        format:
+          indent:
+            style: toIndent(@options.indent)
 
 ###
 # Extends a class `dest`'s prototype with those from other classes in `classes`.

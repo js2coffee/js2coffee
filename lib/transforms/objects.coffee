@@ -8,6 +8,7 @@ module.exports = class extends TransformerBase
 
   ArrayExpression: (node) ->
     @braceObjectsInElements(node)
+    @catchEmptyArraySlots(node)
 
   ObjectExpression: (node, parent) ->
     @braceObjectInExpression(node, parent)
@@ -32,7 +33,19 @@ module.exports = class extends TransformerBase
 
   braceObjectsInElements: (node) ->
     for item in node.elements
-      if item.type is 'ObjectExpression'
+      if item?.type is 'ObjectExpression'
         item._braced = true
     node
 
+  catchEmptyArraySlots: (node) ->
+    if hasNullIn(node.elements)
+      if @options.compat
+        @escapeJs node
+      else
+        @syntaxError node, 'Empty array slots are not supported in CoffeeScript'
+
+hasNullIn = (elements) ->
+  for node in elements
+    if node is null
+      return true
+  false

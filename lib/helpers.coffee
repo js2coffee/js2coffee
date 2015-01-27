@@ -412,3 +412,9 @@ exports.nonComments = (body) ->
 exports.isComment = (node) ->
   node.type is 'LineComment' or
   node.type is 'BlockComment'
+
+exports.toIndent = (ind) ->
+  if typeof ind is 'string'
+    ind
+  else
+    Array(+ind + 1).join " "

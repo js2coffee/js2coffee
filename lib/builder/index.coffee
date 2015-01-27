@@ -5,6 +5,7 @@
   space
   delimit
   commaDelimit
+  toIndent
   joinLines
 } = require('../helpers')
 
@@ -437,7 +438,8 @@ class Builder extends BuilderBase
     else if fn
       [ @indent(), fn ]
     else
-      Array(@_indent + 1).join("  ")
+      tab = toIndent(@options.indent)
+      Array(@_indent + 1).join(tab)
 
   ###*
   # get():

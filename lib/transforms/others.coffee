@@ -1,4 +1,4 @@
-{ escapeJs, reservedWords, replace, quote } = require('../helpers')
+{ reservedWords, replace, quote } = require('../helpers')
 TransformerBase = require('./base')
 
 ###
@@ -32,7 +32,7 @@ module.exports = class extends TransformerBase
   AssignmentExpression: (node) ->
     if @isReservedIdentifier(node.left)
       if @options.compat
-        escapeJs node
+        @escapeJs node
       else
         @preventReservedWords(node.left)
     else
