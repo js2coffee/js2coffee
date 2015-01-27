@@ -1,0 +1,10 @@
+notes: """
+  CoffeeScript doesn't support `if` blocks that don't have anything in it (as
+  of CoffeeScript v1.8.0). To work around this, Js2coffee inserts an empty
+  `else` block along with it.
+"""
+----
+if (condition) {}
+----
+if condition
+else
