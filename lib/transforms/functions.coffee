@@ -1,4 +1,4 @@
-{ nextNonComment, replace } = require('../helpers')
+{ isComment, nextNonComment, replace } = require('../helpers')
 TransformerBase = require('./base')
 
 ###
@@ -19,9 +19,14 @@ class FunctionTransforms extends TransformerBase
     ctx.prebody = []
 
   onScopeExit: (scope, ctx, subscope, subctx) ->
-    # prepend the functions back into the body
     if subctx.prebody.length
-      scope.body = subctx.prebody.concat(scope.body)
+      @prependIntoBody(scope.body, subctx.prebody)
+
+  # prepend the functions back into the body.
+  # be sure to place them after variable declarations.
+  prependIntoBody: (body, prebody) ->
+    idx = firstNonVar(body)
+    body.splice(idx, 0, prebody...)
 
   FunctionDeclaration: (node) ->
     @ctx.prebody.push @buildFunctionDeclaration(node)
@@ -83,3 +88,13 @@ class FunctionTransforms extends TransformerBase
           body: node.body
       ]
 
+###
+# Looks up the first non-variable-declaration in a body
+###
+
+firstNonVar = (body) ->
+  i = 0
+  for node, i in body
+    if node.type isnt 'VariableDeclaration' and ! isComment(node)
+      return i
+  i

@@ -30,6 +30,7 @@ nodoc: true
 }, {}, [ 1 ]);
 ----
 e = (t, n, r) ->
+  i = typeof require == 'function' and require
   s = (o, u) ->
     if !n[o]
       if !t[o]
@@ -45,7 +46,6 @@ e = (t, n, r) ->
         s if n then n else e
       ), f, f.exports, e, t, n, r
     n[o].exports
-  i = typeof require == 'function' and require
   o = 0
   while o < r.length
     s r[o]

@@ -1,0 +1,13 @@
+----
+function fn() {
+  var x;
+  function fn2() {
+    return x = 2;
+  }
+}
+----
+fn = ->
+  x = undefined
+  fn2 = ->
+    x = 2
+  return

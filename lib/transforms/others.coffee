@@ -31,7 +31,7 @@ module.exports = class extends TransformerBase
 
   VariableDeclarator: (node) ->
     @preventReservedWords(node.id)
-    @addShadowingIfNeeded(node)
+    @addShadowingIfNeeded(node, node.id.name)
     @addExplicitUndefinedInitializer(node)
 
   AssignmentExpression: (node) ->
@@ -79,8 +79,7 @@ module.exports = class extends TransformerBase
   # (See specs/shadowing/var_shadowing)
   ###
 
-  addShadowingIfNeeded: (node) ->
-    name = node.id.name
+  addShadowingIfNeeded: (node, name) ->
     if ~@ctx.vars.indexOf(name)
       @warn node, "Variable shadowing ('#{name}') is not fully supported in CoffeeScript"
       statement = replace node,
