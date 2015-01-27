@@ -18,8 +18,13 @@ read(args._, function (err, res) {
 
   res.successes.forEach(function (file) {
     var data = file.data;
+    var options = {
+      filename: file.name || '[stdin]',
+      compat: args.compact
+    };
+
     try {
-      var out = js2coffee.build(data, { filename: file.name || '[stdin]' });
+      var out = js2coffee.build(data, options);
       if (args.ast) {
         if (!args.verbose)
           out.ast = scrub(out.ast);
@@ -29,9 +34,12 @@ read(args._, function (err, res) {
         process.stdout.write(out.code);
       }
     } catch (err) {
-      console.error(err.message);
-      if (!err.js2coffee)
+      if (!err.js2coffee) {
+        console.error(err.message);
         console.error(err.stack);
+      } else {
+        printError(err);
+      }
       process.exit(16);
     }
   });
@@ -73,14 +81,31 @@ function printWarnings (warnings) {
     return;
 
   var comments = warnings.map(function (warn) {
-    var warn = '' +
+    var msg = '' +
       warn.filename + ':' +
       warn.start.line + ':' +
       warn.start.column + ': ' +
+      c(34, '[warning] ') +
       warn.description;
 
-    warn = "\033[31m" + warn + "\033[0m";
-
-    console.warn(warn);
+    console.warn(msg);
   });
+}
+
+function printError (err) {
+  var msg = '' +
+    err.filename + ':' +
+    err.start.line + ':' +
+    err.start.column + ': ' +
+    c(31, '[error] ') +
+    err.description;
+
+  console.error(msg);
+}
+
+function c (color, str) {
+  if (process.stdout.isTTY)
+    return "\033[" + color + "m" + str + "\033[0m";
+  else
+    return str;
 }

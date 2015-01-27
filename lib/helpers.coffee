@@ -101,6 +101,7 @@ exports.buildError = (err, source, file = '') ->
 
   _err = err
   err = new Error(message)
+  err.filename      = file
   err.description   = _err.description
   err.start         = { line, column }
   err.end           = _err.end
