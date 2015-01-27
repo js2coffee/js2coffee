@@ -338,34 +338,42 @@ exports.joinLines = (props, indent) ->
 # reservedWords
 ###
 
-exports.reservedWords = [
+exports.reserved =
   # taken from COFFEE_KEYWORDS (lexer.coffee)
   # (also, don't check for 'undefined' because it's already explicitly
   # accounted for elsewhere)
-  'then'
-  'unless'
-  'until'
-  'loop'
-  'of'
-  'by'
-  'when'
+  keywords: [
+    'then', 'unless', 'until', 'loop', 'of', 'by', 'when' ]
+
+  # taken from RESERVED (lexer.coffee)
+  reserved: [
+    'case', 'default', 'function', 'var', 'void', 'with', 'const', 'let', 'enum'
+    'export', 'import', 'native', '__hasProp', '__extends', '__slice', '__bind'
+    '__indexOf', 'implements', 'interface', 'package', 'private', 'protected'
+    'public', 'static', 'yield' ]
+
   # taken from COFFEE_ALIAS_MAP (lexer.coffee)
-  'and'
-  'or'
-  'is'
-  'isnt'
-  'not'
-  'yes'
-  'no'
-  'on'
-  'off'
-]
+  aliases: [
+    'and', 'or', 'is', 'isnt', 'not', 'yes', 'no', 'on', 'off' ]
+
+exports.reservedWords =
+  exports.reserved.keywords.concat \
+  exports.reserved.reserved.concat \
+  exports.reserved.aliases
+
+###*
+# Next until
+###
 
 exports.nextUntil = (body, node, fn) ->
   idx = body.indexOf(node)
   for i in [idx+1..body.length]
     next = body[i]
     return next if next?.type and fn(next)
+
+###*
+# Next until a non-comment node
+###
 
 exports.nextNonComment = (body, node) ->
   exports.nextUntil(body, node, (n) ->
