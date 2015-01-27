@@ -1,4 +1,4 @@
-{ reservedWords, replace, quote } = require('../helpers')
+{ escapeJs, reservedWords, replace, quote } = require('../helpers')
 TransformerBase = require('./base')
 
 ###
@@ -47,8 +47,13 @@ module.exports = class extends TransformerBase
     @addExplicitUndefinedInitializer(node)
 
   AssignmentExpression: (node) ->
-    @preventReservedWords(node.left)
-    node
+    if @isReservedIdentifier(node.left)
+      if @options.compat
+        escapeJs node
+      else
+        @preventReservedWords(node.left)
+    else
+      node
 
   ReturnStatement: (node) ->
     @parenthesizeObjectsInArgument(node)
@@ -63,9 +68,12 @@ module.exports = class extends TransformerBase
   ###
 
   preventReservedWords: (node) ->
+    if @isReservedIdentifier(node)
+      @syntaxError node, "'#{node.name}' is a reserved CoffeeScript keyword"
+
+  isReservedIdentifier: (node) ->
     name = node?.name
-    if name and ~reservedWords.indexOf(name)
-      @syntaxError node, "'#{name}' is a reserved CoffeeScript keyword"
+    return name and ~reservedWords.indexOf(name)
 
   ###
   # Ensures that a ReturnStatement with an object ('return {a:1}') has a braced

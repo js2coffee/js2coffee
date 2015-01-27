@@ -1,0 +1,4 @@
+error: /'on' is a reserved CoffeeScript keyword/
+----
+on = 2
+----

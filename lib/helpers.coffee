@@ -395,3 +395,12 @@ exports.isLoop = (node) ->
 
 exports.isTruthy = (node) ->
   (node.type is 'Literal' and node.value)
+
+###
+# escapeJs()
+###
+
+exports.escapeJs = (node) ->
+  exports.replace node,
+    type: 'CoffeeEscapedExpression'
+    raw: require('escodegen').generate(node)

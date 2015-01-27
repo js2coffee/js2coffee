@@ -1,4 +1,4 @@
-{ reservedWords, replace, quote } = require('../helpers')
+{ escapeJs, replace } = require('../helpers')
 TransformerBase = require('./base')
 
 ###
@@ -30,13 +30,10 @@ module.exports = class extends TransformerBase
       node.operator is '==' or
       node.operator is '!='
 
-    return node unless @options.compat
-    return node unless isIncompatible
-
-    if @options.compat
-      replace node,
-        type: 'CoffeeEscapedExpression'
-        raw: require('escodegen').generate(node)
+    if @options.compat and isIncompatible
+      escapeJs node
+    else
+      node
 
   ###
   # Fire warnings when '==' is used
