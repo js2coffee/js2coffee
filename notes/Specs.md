@@ -341,6 +341,17 @@ world()
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>Assignment of reserved words</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>on = 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>`on = 2`
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Assignment of reserved words off</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>on = 2
@@ -352,13 +363,14 @@ world()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Assignment of reserved words on</th>
+<th width='33%' valign='top'>Equals</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>on = 2
+<pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>`on = 2`
+<pre><code class='lang-coffee'>if `a == b(c + 2)`
+  run()
 </code></pre>
 </td>
 </tr>
@@ -375,14 +387,13 @@ world()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Equals on</th>
+<th width='33%' valign='top'>Undefined</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
+<pre><code class='lang-js'>undefined
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if `a == b(c + 2)`
-  run()
+<pre><code class='lang-coffee'>`undefined`
 </code></pre>
 </td>
 </tr>
@@ -394,17 +405,6 @@ world()
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>undefined
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Undefined on</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>undefined
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>`undefined`
 </code></pre>
 </td>
 </tr>

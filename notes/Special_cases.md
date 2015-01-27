@@ -26,7 +26,7 @@ b()
 
 ## Compatibility mode
 
-### Assignment of reserved words on
+### Assignment of reserved words
 
 Certain keywords in CoffeeScript are not allowed. For instance, `on` is
 actually an alias for `false`.
@@ -47,7 +47,7 @@ on = 2
 `on = 2`
 ```
 
-### Equals on
+### Equals
 
 The `==` operator has no equivalent in CoffeeScript. If you use `==` in
 CoffeeScript, it will be compiled into `===`.
@@ -69,7 +69,7 @@ if `a == b(c + 2)`
   run()
 ```
 
-### Undefined on
+### Undefined
 
 It's possible for `undefined` to be redefined in JavaScript, eg, `var
 undefined = 2`. While this is undesirable and never recommended, Js2coffee
