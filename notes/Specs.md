@@ -337,6 +337,118 @@ world()
 </tr>
 </table>
 
+## Compat
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Assignment of reserved words off</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>on = 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/'on' is a reserved CoffeeScript keyword/</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Assignment of reserved words on</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>on = 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>`on = 2`
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Equals off</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a == b(c + 2)
+  run()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Equals on</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if `a == b(c + 2)`
+  run()
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Default params
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Mixed params</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function greet(greeting, name = 'Bob') {
+  return name;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>greet = (greeting, name = 'Bob') ->
+  name
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Mixed params 2</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function greet(name = 'Bob', age) {
+  return name;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>greet = (name = 'Bob', age) ->
+  name
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>With defaults</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function greet(name = 'Bob') {
+  return name;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>greet = (name = 'Bob') ->
+  name
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>With non literal defaults</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn(param = (a + b())) {
+  return true
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = (param = a + b()) ->
+  true
+</code></pre>
+</td>
+</tr>
+</table>
+
 ## Errors
 
 <table width='100%'>
@@ -628,6 +740,26 @@ if ok
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Functions after var</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn() {
+  var x;
+  function fn2() {
+    return x = 2;
+  }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  x = undefined
+  fn2 = ->
+    x = 2
+  return
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Functions in ternaries</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>_.propertyOf = function(obj) {
@@ -907,6 +1039,33 @@ obj.two = ->
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>Blank ifs</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+else
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Blank ifs with comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {
+  // pass
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+  # pass
+else
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Else if</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (a) {
@@ -1107,6 +1266,89 @@ else
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if x and (if a then b else c)
   d()
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Iife
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Iife</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function(){ return true; })()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>do ->
+  true
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Iife as an expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>$((function() { return true; })())
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>$ do ->
+  true
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Iife with arguments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function(jQuery){ return true; })(jQuery)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>do (jQuery) ->
+  true
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Iife with multiple arguments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function(jQuery, window){ return true; })(jQuery, window)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>do (jQuery, window) ->
+  true
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Iife with non matching arguments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function () {
+  return true
+})(a);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(->
+  true
+) a
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Iife with non matching literal arguments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function () {
+  return true
+})(2);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(->
+  true
+) 2
 </code></pre>
 </td>
 </tr>
@@ -2285,6 +2527,19 @@ d: 4
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Nesting into a single line</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>x = ({a: {b: {c: {d: e}}, f: {g: {h: i}}}})
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = a:
+  b: c: d: e
+  f: g: h: i
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Object with arrays</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a = {
@@ -2696,6 +2951,51 @@ false
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a()
 b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Exponents</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>Math.pow(2, 8)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>2 ** 8
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Exponents precedence</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>Math.pow(1 * 2, 8)
+Math.pow(!x, 8)
+Math.pow(x++, 8)
+Math.pow(++y, 8)
+Math.pow(new X, 8)
+Math.pow(new X(2), 8)
+Math.pow(a < b, 8)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(1 * 2) ** 8
+(!x) ** 8
+x++ ** 8
+++y ** 8
+new X ** 8
+new X(2) ** 8
+(a < b) ** 8
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Exponents with strange arguments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a = Math.pow(2)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = Math.pow(2)
 </code></pre>
 </td>
 </tr>

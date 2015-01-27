@@ -158,6 +158,25 @@ fn = ->
   true
 ```
 
+## If
+
+### Blank ifs
+
+CoffeeScript doesn't support `if` blocks that don't have anything in it (as
+of CoffeeScript v1.8.0). To work around this, Js2coffee inserts an empty
+`else` block along with it.
+
+```js
+// Input:
+if (condition) {}
+```
+
+```coffee
+# Output:
+if condition
+else
+```
+
 ## Loops
 
 ### Empty while
@@ -288,6 +307,20 @@ assert val == 2
 ```
 
 ## Simple
+
+### Exponents
+
+CoffeeScript supports the `**` binary expression to calculate exponents.
+
+```js
+// Input:
+Math.pow(2, 8)
+```
+
+```coffee
+# Output:
+2 ** 8
+```
 
 ### Nested function calls
 
