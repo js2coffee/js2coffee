@@ -339,7 +339,24 @@ exports.joinLines = (props, indent) ->
 ###
 
 exports.reservedWords = [
-  'class'
+  # taken from COFFEE_KEYWORDS (lexer.coffee)
+  # (also, don't check for 'undefined' because it's already explicitly
+  # accounted for elsewhere)
+  'then'
+  'unless'
+  'until'
+  'loop'
+  'of'
+  'by'
+  'when'
+  # taken from COFFEE_ALIAS_MAP (lexer.coffee)
+  'and'
+  'or'
+  'is'
+  'isnt'
+  'not'
+  'yes'
+  'no'
   'on'
   'off'
 ]
