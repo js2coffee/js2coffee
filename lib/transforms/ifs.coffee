@@ -9,7 +9,8 @@ module.exports = class extends TransformerBase
 
   IfStatement: (node) ->
     @handleBlankIfs(node)
-    @parenthesizeConditionals(node)
+    @parenthesizeConditionals(node.test)
+    node
 
   ConditionalExpression: (node, parent) ->
     @parenthesizeFunctions(node, parent)
@@ -35,11 +36,17 @@ module.exports = class extends TransformerBase
   ###
 
   parenthesizeConditionals: (node) ->
-    @estraverse().traverse node.test,
-      enter: (node, parent) ->
-        if node.type is 'ConditionalExpression'
-          node._parenthesized = true
-    node
+    specials = [
+      'ConditionalExpression'
+      'FunctionExpression'
+    ]
+
+    @estraverse().traverse node,
+      enter: (subnode, parent) ->
+        # Parenthesize the subnode itself
+        # `if (a === b?c:d)` => `if a == (if b then c else d)`
+        if ~specials.indexOf(subnode.type)
+          subnode._parenthesized = true
 
   ###
   # Ensure that empty ifs (`if (x){}`) get an else block.
