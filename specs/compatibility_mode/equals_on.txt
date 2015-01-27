@@ -1,0 +1,19 @@
+options: { compat: true }
+warnings: [
+  /Operator '==' is not supported in CoffeeScript/
+]
+notes: """
+  The `==` operator has no equivalent in CoffeeScript. If you use `==` in
+  CoffeeScript, it will be compiled into `===`.
+
+  As such, Js2coffee will throw a warning when `==` is used, but it will behave
+  like `===`.
+  
+  If compatibility mode ins on (`--compat`), it will be escaped in backticks so
+  to prevent any side effects.
+"""
+----
+if (a == b(c + 2)) { run(); }
+----
+if `a == b(c + 2)`
+  run()

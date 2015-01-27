@@ -115,11 +115,10 @@ module.exports = class extends TransformerBase
   ###
 
   escapeUndefined: (node) ->
-    if node.name is 'undefined'
+    if node.name is 'undefined' and @options.compat
       replace node, type: 'CoffeeEscapedExpression', raw: 'undefined'
     else
       node
-
 
   ###
   # Removes `undefined` from function parameters.

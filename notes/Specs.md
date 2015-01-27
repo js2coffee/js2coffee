@@ -337,7 +337,7 @@ world()
 </tr>
 </table>
 
-## Compat
+## Compatibility mode
 
 <table width='100%'>
 <tr>
@@ -383,6 +383,28 @@ world()
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if `a == b(c + 2)`
   run()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Undefined off</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>undefined
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>undefined
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Undefined on</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>undefined
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>`undefined`
 </code></pre>
 </td>
 </tr>
@@ -1084,6 +1106,24 @@ else if b
   y()
 else
   z()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Escaping if functions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a === function(){ return x(); }) {
+  b()
+  c()
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a == (->
+    x()
+  )
+  b()
+  c()
 </code></pre>
 </td>
 </tr>
@@ -1935,17 +1975,6 @@ a =~ 2;
 ~2 - 2
 ~2 + -1
 a = ~2
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Undefined</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>undefined
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>`undefined`
 </code></pre>
 </td>
 </tr>
@@ -3334,17 +3363,6 @@ c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>throw e
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Undefined</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>undefined
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>`undefined`
 </code></pre>
 </td>
 </tr>

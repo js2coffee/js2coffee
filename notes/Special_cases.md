@@ -24,6 +24,68 @@ a()
 b()
 ```
 
+## Compatibility mode
+
+### Assignment of reserved words on
+
+Certain keywords in CoffeeScript are not allowed. For instance, `on` is
+actually an alias for `false`.
+
+The CoffeeScript code `on = 2` will produce errors. As such, Js2coffee will
+throw an error if any of the CoffeeScript reserved keywords are used.
+
+If compatibility mode ins on (`--compat`), it will be escaped in backticks so
+to prevent any side effects.
+
+```js
+// Input:
+on = 2
+```
+
+```coffee
+# Output:
+`on = 2`
+```
+
+### Equals on
+
+The `==` operator has no equivalent in CoffeeScript. If you use `==` in
+CoffeeScript, it will be compiled into `===`.
+
+As such, Js2coffee will throw a warning when `==` is used, but it will behave
+like `===`.
+
+If compatibility mode ins on (`--compat`), it will be escaped in backticks so
+to prevent any side effects.
+
+```js
+// Input:
+if (a == b(c + 2)) { run(); }
+```
+
+```coffee
+# Output:
+if `a == b(c + 2)`
+  run()
+```
+
+### Undefined on
+
+It's possible for `undefined` to be redefined in JavaScript, eg, `var
+undefined = 2`. While this is undesirable and never recommended, Js2coffee
+will that using `undefined` will use whatever `undefined` is defined as.
+This is only available if compatibility mode is on (`--compat`).
+
+```js
+// Input:
+undefined
+```
+
+```coffee
+# Output:
+`undefined`
+```
+
 ## Function calls
 
 ### Call with multiple objects
@@ -412,25 +474,6 @@ this.run(this);
 ```coffee
 # Output:
 @run this
-```
-
-### Undefined
-
-It's possible for `undefined` to be redefined in JavaScript, eg, `var
-undefined = 2`. While this is undesirable and never recommended, Js2coffee
-ensures that using `undefined` will use whatever `undefined` is defined as.
-
-The backticks around it ensures that CoffeeScript will not compile
-`undefined` into `void 0`.
-
-```js
-// Input:
-undefined
-```
-
-```coffee
-# Output:
-`undefined`
 ```
 
 ### Void 0

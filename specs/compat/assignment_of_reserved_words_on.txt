@@ -1,5 +1,0 @@
-options: { compat: true }
-----
-on = 2
-----
-`on = 2`
