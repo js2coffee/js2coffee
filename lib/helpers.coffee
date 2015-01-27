@@ -275,7 +275,7 @@ exports.lastStatement = (body) ->
   for i in [(body.length-1)..0]
     node = body[i]
     continue unless node
-    if node.type isnt 'BlockComment' and node.type isnt 'LineComment'
+    if ! exports.isComment(node)
       return node
 
 ###*
@@ -404,3 +404,11 @@ exports.escapeJs = (node) ->
   exports.replace node,
     type: 'CoffeeEscapedExpression'
     raw: require('escodegen').generate(node)
+
+exports.nonComments = (body) ->
+  body.filter (n) ->
+    ! exports.isComment(n)
+
+exports.isComment = (node) ->
+  node.type is 'LineComment' or
+  node.type is 'BlockComment'

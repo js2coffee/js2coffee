@@ -1,3 +1,4 @@
+{ nonComments } = require('../helpers')
 TransformerBase = require('./base')
 
 ###
@@ -52,7 +53,7 @@ module.exports = class extends TransformerBase
       result =
         cons and
         cons.type is 'BlockStatement' and
-        cons.body.length is 0
+        nonComments(cons.body).length is 0
 
     if (noBody() or emptyBodyBlock()) and !node.alternate
       node.alternate =

@@ -1,0 +1,8 @@
+----
+if (condition) {
+  // pass
+}
+----
+if condition
+  # pass
+else
