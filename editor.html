@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>js2coffee editor</title>
+  <link rel="stylesheet" type="text/css" href="editor.css">
+</head>
+<body>
+
+<div id="editor-wrapper">
+  <pre id="editor1" class="editor">/**
+ * Multiline Documentation
+ */
+
+var foobar = function(callback) {
+    setTimeout(function() {
+        // trigger callback after 1000ms
+        callback();
+    }, 1000);
+};
+
+var foo = {
+    key: {
+      nestedKey: 'value'
+    },
+    array: [1],
+    nestedArray: [1, 2, ['2a', ['2a-I']]]
+}
+
+foobar(function() {
+    alert(foo.array);
+});</pre>
+  <pre id="editor2" class="editor">###
+Multiline Documentation
+###
+foobar = (callback) ->
+  setTimeout (->
+
+    # trigger callback after 1000ms
+    callback()
+  ), 1000
+
+foo =
+  key:
+    nestedKey: "value"
+
+  array: [1]
+  nestedArray: [
+    1
+    2
+    [
+      "2a"
+      ["2a-I"]
+    ]
+  ]
+
+foobar ->
+  alert foo.array</pre>
+</div>
+<div id="infobox" style="display:none">
+  <div class="infobox-content"></div>
+  <div class="arrow-wrapper">
+    <div class="arrow-down"></div>
+  </div>
+</div>
+
+<script src="./ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="./ace/token_tooltip.js" type="text/javascript" charset="utf-8"></script>
+<script src="./editor.js" type="text/javascript" charset="utf-8"></script>
+
+</body>
+</html>

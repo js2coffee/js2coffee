@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#editor-wrapper {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: white;
+    width: 95%;
+    margin: 0 auto;
+    border: 1px solid #e6e4e0;
+}
+
+#editor1 {
+  left: 0;
+  right: 50%;
+}
+#editor2 {
+  left: 50%;
+  right: 0;
+}
+.editor {
+  position: absolute !important;
+  background: white;
+  bottom: 0;
+  top: 0;
+  margin: 0;
+}
+#infobox {
+  position: absolute;
+  top: 0;
+  right: 2.5%;
+  width: auto;
+  z-index: 5;
+}
+.infobox-content {
+  background: #d77d2d;
+  text-align: right;
+  padding: 10px;
+}
+.arrow-wrapper {
+  width: 100%;
+}
+.arrow-down {
+  width: 0px;
+  height: 0px;
+  border-left: 0px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 17px solid #d77d2d;
+}
