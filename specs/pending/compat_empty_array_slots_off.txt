@@ -1,0 +1,3 @@
+error: /Empty array slots are not supported in CoffeeScript/
+----
+[, 0]
