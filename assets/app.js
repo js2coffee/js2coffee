@@ -74,6 +74,7 @@ Editors.prototype = {
     }
 
     on(this.$compat, 'change', this.update.bind(this));
+    on(this.$compat, 'change', this.closePopup.bind(this));
   },
 
   /*
