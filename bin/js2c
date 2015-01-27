@@ -4,6 +4,7 @@ var args = require('../lib/cli')
   .version(require('../package.json').version)
   .minimist({
     boolean: ['ast', 'verbose', 'compat'],
+    string: ['indent'],
     alias: { h: 'help', v: 'version', V: 'verbose' }
   });
 
@@ -20,7 +21,8 @@ read(args._, function (err, res) {
     var data = file.data;
     var options = {
       filename: file.name || '[stdin]',
-      compat: args.compat
+      compat: args.compat,
+      indent: args.indent
     };
 
     try {

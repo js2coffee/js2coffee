@@ -414,7 +414,9 @@ exports.isComment = (node) ->
   node.type is 'BlockComment'
 
 exports.toIndent = (ind) ->
-  if typeof ind is 'string'
+  if ind is 'tab'
+    "\t"
+  else if typeof ind is 'string' and "#{+ind}" isnt ind
     ind
   else
     Array(+ind + 1).join " "

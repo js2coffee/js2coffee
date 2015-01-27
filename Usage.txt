@@ -4,6 +4,8 @@ Usage:
 Options:
         --ast          prints the AST (for debugging)
     -V, --verbose      prints more AST stuff (used with --ast)
+        --indent N     indent by N spaces (default: 2)
+        --indent tab   indent by tabs
 
 Modes:
         --compat       compatibility mode *
