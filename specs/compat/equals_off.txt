@@ -1,0 +1,8 @@
+warnings: [
+  /Operator '==' is not supported in CoffeeScript/
+]
+----
+if (a == b(c + 2)) { run(); }
+----
+if a == b(c + 2)
+  run()

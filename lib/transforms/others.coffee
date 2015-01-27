@@ -5,8 +5,7 @@ TransformerBase = require('./base')
 # Mangles the AST with various CoffeeScript tweaks.
 ###
 
-module.exports =
-class OtherTransforms extends TransformerBase
+module.exports = class extends TransformerBase
   BlockStatementExit: (node) ->
     @removeEmptyStatementsFromBody(node)
 
@@ -31,10 +30,6 @@ class OtherTransforms extends TransformerBase
 
   Identifier: (node) ->
     @escapeUndefined(node)
-
-  BinaryExpression: (node) ->
-    @warnAboutEquals(node)
-    @updateBinaryExpression(node)
 
   UnaryExpression: (node) ->
     @braceObjectBesideUnary(node)
@@ -71,19 +66,6 @@ class OtherTransforms extends TransformerBase
     name = node?.name
     if name and ~reservedWords.indexOf(name)
       @syntaxError node, "'#{name}' is a reserved CoffeeScript keyword"
-
-  ###
-  # Fire warnings when '==' is used
-  ###
-
-  warnAboutEquals: (node) ->
-    op = node.operator
-    replacements = { '==': '===', '!=': '!==' }
-
-    if op is '==' or op is '!='
-      repl = replacements[op]
-      @warn node, "Operator '#{op}' is not supported in CoffeeScript, " +
-        "use '#{repl}' instead"
 
   ###
   # Ensures that a ReturnStatement with an object ('return {a:1}') has a braced
@@ -165,17 +147,6 @@ class OtherTransforms extends TransformerBase
     else
       node
 
-  ###
-  # Updates binary expressions to their CoffeeScript equivalents.
-  ###
-
-  updateBinaryExpression: (node) ->
-    dict =
-      '===': '=='
-      '!==': '!='
-    op = node.operator
-    if dict[op] then node.operator = dict[op]
-    node
 
   ###
   # Removes `undefined` from function parameters.

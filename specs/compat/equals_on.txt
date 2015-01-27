@@ -1,0 +1,6 @@
+options: { compat: true }
+----
+if (a == b(c + 2)) { run(); }
+----
+if `a == b(c + 2)`
+  run()

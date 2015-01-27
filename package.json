@@ -15,6 +15,7 @@
     "js2c": "./bin/js2c"
   },
   "dependencies": {
+    "escodegen": "^1.6.0",
     "esprima-harmony": "^7001.1.0-dev-harmony-fb",
     "estraverse": "^1.9.1",
     "minimist": "^1.1.0",

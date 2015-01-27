@@ -20,7 +20,7 @@ read(args._, function (err, res) {
     var data = file.data;
     var options = {
       filename: file.name || '[stdin]',
-      compat: args.compact
+      compat: args.compat
     };
 
     try {

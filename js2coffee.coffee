@@ -103,6 +103,7 @@ js2coffee.transform = (ast, options = {}) ->
     require('./lib/transforms/loops')
     require('./lib/transforms/members')
     require('./lib/transforms/objects')
+    require('./lib/transforms/binary')
     require('./lib/transforms/others')
     require('./lib/transforms/precedence')
     require('./lib/transforms/returns')
