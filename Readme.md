@@ -17,13 +17,15 @@ featuring a better parser ([Esprima]) and better features.
 
  - [Special cases](notes/Special_cases.md) - a list of edge cases that js2coffee accounts for.
 
+ - [Migration guide](notes/Migration_guide.md) - guide for migrating from 0.x.
+
 ## Command line
 
 The command line utility accepts both filenames or stdin.
 
 ```sh
 $ js2c file.js [file2.js ...]
-$ ... | js2c
+$ cat file.js | js2c
 ```
 
 ## Programatic API

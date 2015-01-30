@@ -5,7 +5,7 @@ var args = require('../lib/cli')
   .minimist({
     boolean: ['ast', 'verbose', 'compat'],
     string: ['indent'],
-    alias: { h: 'help', v: 'version', V: 'verbose' }
+    alias: { h: 'help', v: 'version', V: 'verbose', i: 'indent' }
   });
 
 var read = require('read-input');
