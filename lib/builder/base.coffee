@@ -132,7 +132,8 @@ wreplace = (node, options = {}, fn) ->
 
     for i in range
       child = node.children[i]
-      if child.children
+      if !child
+      else if child.children
         walk child, options, fn
       else if child isnt ''
         try

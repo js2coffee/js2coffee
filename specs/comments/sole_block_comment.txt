@@ -6,7 +6,9 @@ function fn() {
 }
 ----
 fn = ->
+
   ###
   # hello
   ###
+
   return

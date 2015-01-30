@@ -106,9 +106,9 @@ class Builder extends BuilderBase
     if alt?.type is 'IfStatement'
       els = @indent [ "else ", @walk(node.alternate, 'IfStatement') ]
     else if alt?.type is 'BlockStatement'
-      els = @indent (i) => [ i, "else\n", @walk(node.alternate) ]
+      els = @indent (i) => [ i, "else", "\n", @walk(node.alternate) ]
     else if alt?
-      els = @indent (i) => [ i, "else\n", @indent(@walk(node.alternate)) ]
+      els = @indent (i) => [ i, "else", "\n", @indent(@walk(node.alternate)) ]
     else
       els = []
 
@@ -135,13 +135,13 @@ class Builder extends BuilderBase
     lines = ('###' + node.value + '###').split("\n")
     output = [ delimit(lines, [ "\n", @indent() ]), "\n" ]
 
-    [ "\n", output, "\n", "\n" ]
+    [ "\n", @indent(), output, "\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
       space [ "return", [ @walk(node.argument), "\n" ] ]
     else
-      [ "return\n" ]
+      [ "return", "\n" ]
 
   ArrayExpression: (node) ->
     items = node.elements.length
@@ -155,7 +155,7 @@ class Builder extends BuilderBase
       @indent (indent) =>
         elements = node.elements.map (e) => newline @walk(e)
         contents = prependAll(elements, @indent())
-        [ "[\n", contents, indent, "]" ]
+        [ "[", "\n", contents, indent, "]" ]
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
@@ -206,7 +206,7 @@ class Builder extends BuilderBase
     params = @makeParams(node.params, node.defaults)
 
     expr = @indent (i) =>
-      [ params, "->\n", @walk(node.body) ]
+      [ params, "->", "\n", @walk(node.body) ]
 
     if node._parenthesized
       [ "(", expr, @indent(), ")" ]
@@ -242,20 +242,20 @@ class Builder extends BuilderBase
     [ "loop", "\n", @makeLoopBody(node.body) ]
 
   BreakStatement: (node) ->
-    [ "break\n" ]
+    [ "break", "\n" ]
 
   ContinueStatement: (node) ->
-    [ "continue\n" ]
+    [ "continue", "\n" ]
 
   DebuggerStatement: (node) ->
-    [ "debugger\n" ]
+    [ "debugger", "\n" ]
 
   TryStatement: (node) ->
     # block, guardedHandlers, handlers [], finalizer
-    _try = @indent => [ "try\n", @walk(node.block) ]
+    _try = @indent => [ "try", "\n", @walk(node.block) ]
     _catch = prependAll(node.handlers.map(@walk), @indent())
     _finally = if node.finalizer?
-      @indent (indent) => [ indent, "finally\n", @walk(node.finalizer) ]
+      @indent (indent) => [ indent, "finally", "\n", @walk(node.finalizer) ]
     else
       []
 
@@ -327,7 +327,7 @@ class Builder extends BuilderBase
 
     # TODO: move this transformation to the lib/transforms/
     if not body or (isBlock and body.body.length is 0)
-      @indent => [ @indent(), "continue\n" ]
+      @indent => [ @indent(), "continue", "\n" ]
     else if isBlock
       @indent => @walk(body)
     else
