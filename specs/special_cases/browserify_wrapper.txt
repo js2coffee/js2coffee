@@ -31,6 +31,7 @@ nodoc: true
 ----
 ((t, n, r) ->
   i = typeof require == 'function' and require
+
   s = (o, u) ->
     if !n[o]
       if !t[o]
@@ -46,6 +47,7 @@ nodoc: true
         s if n then n else e
       ), f, f.exports, e, t, n, r
     n[o].exports
+
   o = 0
   while o < r.length
     s r[o]

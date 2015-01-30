@@ -10,6 +10,8 @@ function x() {
 # one
 # two
 # three
+
 x = ->
   return
+
 a()

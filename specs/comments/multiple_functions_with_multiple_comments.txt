@@ -16,11 +16,15 @@ function y() {
 # one
 # two
 # three
+
 x = ->
   return
+
 # four
 # five
 # six
+
 y = ->
   return
+
 a()

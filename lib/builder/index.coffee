@@ -44,7 +44,17 @@ class Builder extends BuilderBase
     newline @walk(node.expression)
 
   AssignmentExpression: (node) ->
-    @paren space [ @walk(node.left), node.operator, @walk(node.right) ]
+    re = @paren space [
+      @walk(node.left)
+      node.operator
+      @walk(node.right)
+    ]
+
+    # Space out 'a = ->'
+    if node.right.type is 'FunctionExpression'
+      re = [ "\n", @indent(), re, "\n" ]
+
+    re
 
   Identifier: (node) ->
     [ node.name ]
@@ -195,12 +205,19 @@ class Builder extends BuilderBase
 
     space [ [@walk(node.key), ":"], @walk(node.value) ]
 
+  # TODO: convert VariableDeclaration into AssignmentExpression
   VariableDeclaration: (node) ->
     declarators = node.declarations.map(@walk)
     delimit(declarators, @indent())
 
   VariableDeclarator: (node) ->
-    [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
+    re = [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
+
+    # Space out 'a = ->'
+    if node.init.type is 'FunctionExpression'
+      re = [ "\n", @indent(), re, "\n" ]
+
+    re
 
   FunctionExpression: (node, ctx) ->
     params = @makeParams(node.params, node.defaults)

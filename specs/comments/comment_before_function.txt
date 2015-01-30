@@ -13,4 +13,5 @@ function x() {
 
 x = ->
   return
+
 a()
