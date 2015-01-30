@@ -66,16 +66,6 @@ result.warnings.forEach((warn) => {
 })
 ```
 
-## How?
-
- - Written in coffee-script. Just because.
- - Browserify builds are invoked via `npm prepublish`.
- - Tests are still plain files (text files in `specs/*`)
-   but invoked with a Mocha test runner.
- - Reuses js2coffee-legacy specs whenever possible (`specs/legacy/`).
- - The stringifier class should be able to take an AST and produce a string 
- output with source maps.
-
 ## Thanks
 
 **js2coffee** © 2012+, Rico Sta. Cruz. Released under the [MIT] License.<br>
