@@ -14,4 +14,4 @@ describe 'BuilderBase', ->
       Identifier: (node) -> node.value
 
     output = new MyWalker(ast).run()
-    expect(output).eql 'hi'
+    expect(output.toString()).eql 'hi'

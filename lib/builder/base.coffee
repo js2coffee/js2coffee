@@ -24,7 +24,7 @@
 ###
 
 class BuilderBase
-  constructor: (@root, @options) ->
+  constructor: (@root, @options={}) ->
     @path = []
 
   run: ->
@@ -114,6 +114,8 @@ stripMid = (node) ->
   wreplace node, {}, (n) ->
     if n is "\n"
       streak += 1
+    else if n.match(/^\s*$/)
+      # pass
     else
       streak = 0
 
