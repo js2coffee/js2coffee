@@ -62,10 +62,12 @@ out == "alert 'hello'"
 
 /* 2.0+ */
 out.code     == "alert 'hello'"
-out.warnings = [...]
-out.ast      = { /* abstract syntax tree */ }
-out.map      = { /* source map data */ }
+out.warnings == [...]
+out.ast      == { /* abstract syntax tree */ }
+out.map      == { /* source map data */ }
 ```
+
+The error format has also changed. See the [Readme](../Readme.md) for more info.
 
 ## Web distribution
 
