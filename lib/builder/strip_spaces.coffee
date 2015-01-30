@@ -7,31 +7,64 @@ stripSpaces = (node) ->
   node = stripPre(node)
   node = stripPost(node)
   node = stripMid(node)
+  node = stripIndents(node)
   node
+
+###
+# Strip lines that only have indents
+###
+
+stripIndents = (node) ->
+  step = 0
+  indent = null
+
+  replace node, {}, (str) ->
+    # Wait for "\n"
+    if step is 0 or step is 1 and str.match(newLine)
+      step = 1
+      str
+
+    # Followed by spaces (supress it)
+    else if step is 1 and str.match(/^[ \t]+$/)
+      indent = str
+      step = 2
+      ""
+
+    # Then merge the spaces into the next tode
+    else if step is 2
+      step = 1
+      if str.match(newLine)
+        str
+      else
+        indent + str
+
+    else
+      step = 0
+      str
 
 ###
 # Strip beginning newlines.
 ###
 
 stripPre = (node) ->
-  replace node, {}, (n) ->
-    if n.match(newLine)
+  replace node, {}, (str) ->
+    if str.match(newLine)
       ""
     else
       @break()
-      n
+      str
 
 ###
 # Strip ending newlines.
 ###
 
 stripPost = (node) ->
-  replace node, reverse: true, (n) ->
-    if n.match(newLine)
+  replace node, reverse: true, (str) ->
+    if str.match(newLine)
       ""
     else
       @break()
-      "#{n}\n"
+      "#{str}\n"
 
 ###
 # Strip triple new lines.
@@ -51,7 +84,13 @@ stripMid = (node) ->
     if streak >= 3 then "" else n
 
 ###
-# walk and replace
+# Walk and replace.
+#
+#     replace node, {}, (str) ->
+#       if str is "true"
+#         "replacement"
+#       else
+#         str
 ###
 
 replace = (node, options = {}, fn) ->
