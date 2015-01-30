@@ -333,7 +333,10 @@ class Builder extends BuilderBase
       @indent => [ @indent(), @walk(body) ]
 
   CoffeeEscapedExpression: (node) ->
-    [ '`', node.raw, '`' ]
+    if node._parenthesized
+      [ '(`', node.raw, '`)' ]
+    else
+      [ '`', node.raw, '`' ]
 
   CoffeePrototypeExpression: (node) ->
     if node.computed

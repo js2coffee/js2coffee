@@ -363,6 +363,31 @@ world()
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Empty array slots</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>[, 0]
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>`[
+  ,
+  0
+]`
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Empty array slots off</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>[, 0]
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/Empty array slots are not supported in CoffeeScript/</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Equals</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
@@ -383,6 +408,37 @@ world()
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if a == b(c + 2)
   run()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Named function expressions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var x = function fn() {
+  return fn;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = `function fn() {
+  return fn;
+}`
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Named function expressions off</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var x = function fn() {
+  return fn;
+};
+alert(typeof x())
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = ->
+  fn
+alert typeof x()
 </code></pre>
 </td>
 </tr>
@@ -697,23 +753,6 @@ world()
 </code></pre>
 </td>
 </tr>
-<tr>
-<th width='33%' valign='top'>Named iife</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>fn();
-(function fn () {
-  return fn();
-})(a);
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>fn = ->
-  fn()
-fn()
-fn a
-</code></pre>
-</td>
-</tr>
 </table>
 
 ## Functions
@@ -835,6 +874,20 @@ obj.two = function () {
   a()
 obj.two = ->
   b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Named function expressions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var x = function fn() {
+  return fn;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>x = ->
+  fn
 </code></pre>
 </td>
 </tr>
@@ -1128,6 +1181,33 @@ else
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Escaping if functions with indent</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (1) {
+  if (2) {
+    if (3) {
+      if (a === function(){ return x(); }) {
+        b()
+        c()
+      }
+    }
+  }
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if 1
+  if 2
+    if 3
+      if a == (->
+          x()
+        )
+        b()
+        c()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>If blocks</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (a) {
@@ -1389,6 +1469,53 @@ else
 <pre><code class='lang-coffee'>(->
   true
 ) 2
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Indent
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Spaces 4</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {
+  consequent();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+    consequent()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Spaces 8</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {
+  consequent();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+        consequent()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Tab</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {
+  consequent();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
+	consequent()
 </code></pre>
 </td>
 </tr>
@@ -3251,9 +3378,9 @@ a.prototype = {}
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>fn = ->
+<pre><code class='lang-coffee'>a = if x then y else (->
   a == 'b'
-a = if x then y else fn
+)
 </code></pre>
 </td>
 </tr>

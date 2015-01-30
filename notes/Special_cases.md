@@ -69,6 +69,50 @@ if `a == b(c + 2)`
   run()
 ```
 
+### Named function expressions
+
+Named function expressions are not supported in CoffeeScript.
+
+If compatibility mode is on (`--compat`), they will be escaped into backticks.
+
+```js
+// Input:
+var x = function fn() {
+  return fn;
+}
+```
+
+```coffee
+# Output:
+x = `function fn() {
+  return fn;
+}`
+```
+
+### Named function expressions off
+
+Named function expressions are not supported in CoffeeScript.
+
+If compatibility mode is off (`--compat`), they will be treated like any
+other function expression, but may behave unexpectedly. In this example,
+the `typeof` will return `'undefined'` in CoffeeScript instead of the
+expected `'function'`.
+
+```js
+// Input:
+var x = function fn() {
+  return fn;
+};
+alert(typeof x())
+```
+
+```coffee
+# Output:
+x = ->
+  fn
+alert typeof x()
+```
+
 ### Undefined
 
 It's possible for `undefined` to be redefined in JavaScript, eg, `var
@@ -102,30 +146,6 @@ a({ one: 1 }, { two: 2 })
 ```coffee
 # Output:
 a { one: 1 }, two: 2
-```
-
-### Named iife
-
-Named function expressions should be extracted to the top of the scope to
-maintain compatibility. This pattern is commonly seen in browserify's
-boilerplate code.
-
-Previously, js2coffee 0.x did not account for this behavior properly.
-
-```js
-// Input:
-fn();
-(function fn () {
-  return fn();
-})(a);
-```
-
-```coffee
-# Output:
-fn = ->
-  fn()
-fn()
-fn a
 ```
 
 ## Functions

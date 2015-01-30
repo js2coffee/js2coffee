@@ -4,6 +4,6 @@ a = x ? y : function fn() {
   return a === "b";
 };
 ----
-fn = ->
+a = if x then y else (->
   a == 'b'
-a = if x then y else fn
+)

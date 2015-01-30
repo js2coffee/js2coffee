@@ -55,7 +55,7 @@ console.log(module.exports);
   define = undefined
   module = undefined
   exports = undefined
-  e = (t, n, r) ->
+  ((t, n, r) ->
     i = typeof require == 'function' and require
     s = (o, u) ->
       if !n[o]
@@ -80,7 +80,7 @@ console.log(module.exports);
       s r[o]
       o++
     s
-  e({ 1: [
+  )({ 1: [
     (require, module, exports) ->
       module.exports = 'hello'
       return

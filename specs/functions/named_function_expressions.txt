@@ -1,0 +1,8 @@
+warnings: [ /Named function expressions/ ]
+----
+var x = function fn() {
+  return fn;
+}
+----
+x = ->
+  fn

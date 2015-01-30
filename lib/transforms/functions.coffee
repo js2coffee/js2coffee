@@ -44,15 +44,19 @@ module.exports = class extends TransformerBase
     @moveFunctionComments(node, parent)
 
   FunctionExpression: (node) ->
-    if node.id
-      @ctx.prebody.push @buildFunctionDeclaration(node)
     @pushStack(node.body)
     return
 
   FunctionExpressionExit: (node) ->
     @popStack()
     if node.id
-      { type: 'Identifier', name: node.id.name }
+      if @options.compat
+        @escapeJs node, parenthesized: true
+      else
+        @warn node, "Named function expressions are not supported in CoffeeScript"
+        node
+    else
+      node
 
   ###
   # If a comment is adjacent to a function,

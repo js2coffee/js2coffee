@@ -1,0 +1,14 @@
+options: { compat: true }
+notes: """
+  Named function expressions are not supported in CoffeeScript.
+
+  If compatibility mode is on (`--compat`), they will be escaped into backticks.
+"""
+----
+var x = function fn() {
+  return fn;
+}
+----
+x = (`function fn() {
+  return fn;
+}`)

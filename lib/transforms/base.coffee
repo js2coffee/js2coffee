@@ -247,9 +247,10 @@ class TransformerBase
     @popStack()
     node
 
-  escapeJs: (node) ->
+  escapeJs: (node, options = {}) ->
     replace node,
       type: 'CoffeeEscapedExpression'
+      _parenthesized: options.parenthesized
       raw: require('escodegen').generate node,
         format:
           indent:

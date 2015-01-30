@@ -81,7 +81,7 @@ exports.buildError = (err, source, file = '') ->
 
   {description} = err
   line = err.start?.line ? err.lineNumber
-  column = err.start?.column ? (err.column - 1)
+  column = err.start?.column ? (err.column && (err.column - 1)) ? 0
 
   heading = "#{file}:#{line}:#{column}: #{description}"
 

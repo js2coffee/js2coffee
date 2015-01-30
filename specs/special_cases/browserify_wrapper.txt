@@ -1,5 +1,5 @@
 nodoc: true
-# Browserify wrapper
+# Browserify wrapper. does NOT work unless its in compatibility mode
 ----
 (function e(t, n, r) {
     function s(o, u) {
@@ -29,7 +29,7 @@ nodoc: true
     }, {} ]
 }, {}, [ 1 ]);
 ----
-e = (t, n, r) ->
+((t, n, r) ->
   i = typeof require == 'function' and require
   s = (o, u) ->
     if !n[o]
@@ -51,7 +51,7 @@ e = (t, n, r) ->
     s r[o]
     o++
   s
-e { 1: [
+) { 1: [
   (require, module, exports) ->
     console.log 'hello'
     return
