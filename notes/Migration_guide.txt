@@ -66,3 +66,13 @@ out.warnings = [...]
 out.ast      = { /* abstract syntax tree */ }
 out.map      = { /* source map data */ }
 ```
+
+## Web distribution
+
+The web distribution is now officially supported using the
+[rawgit.com](http://rawgit.com) CDN. The previous versions in js2coffee.org
+will no longer be supported.
+
+    http://cdn.rawgit.com/js2coffee/js2coffee/v[VERSION]/dist/js2coffee.js
+
+See the [Readme](../Readme.md) file for the link to the latest version.
