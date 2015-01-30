@@ -1,4 +1,4 @@
-# js2coffee-redux
+# <img src="http://js2.coffee/assets/logo-white.svg" width="200">
 
 Compiles JavaScript into CoffeeScript. This is a rewrite of js2coffee 0.x,
 featuring a better parser ([Esprima]) and better features.
