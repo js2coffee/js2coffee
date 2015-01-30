@@ -1,3 +1,9 @@
+## v0.0.16 - January 31, 2015
+
+* Add spaces
+* Implement `--indent`
+* Support empty array slots (`[,0]`)
+
 ## v0.0.15 - January 27, 2015
 
 * Transform `undefined` in compatibility mode
