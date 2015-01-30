@@ -133,8 +133,9 @@ class Builder extends BuilderBase
 
   BlockComment: (node) ->
     lines = ('###' + node.value + '###').split("\n")
+    output = [ delimit(lines, [ "\n", @indent() ]), "\n" ]
 
-    [ delimit(lines, [ "\n", @indent() ]), "\n" ]
+    [ "\n", output, "\n", "\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
@@ -443,28 +444,6 @@ class Builder extends BuilderBase
     else
       tab = toIndent(@options.indent)
       Array(@_indent + 1).join(tab)
-
-  ###*
-  # get():
-  # Returns the output of source-map.
-  ###
-
-  get: ->
-    @run().toStringWithSourceMap()
-
-  ###*
-  # decorator():
-  # Takes the output of each of the node visitors and turns them into
-  # a `SourceNode`.
-  ###
-
-  decorator: (node, output) ->
-    {SourceNode} = require("source-map")
-    new SourceNode(
-      node?.loc?.start?.line,
-      node?.loc?.start?.column,
-      @options.filename,
-      output)
 
   ###*
   # paren():
