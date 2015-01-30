@@ -47,6 +47,7 @@
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>x = ->
   y
+
   ###
   # hello
   ###
@@ -65,9 +66,11 @@ b();
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a()
+
 ###
 # hello
 ###
+
 b()
 </code></pre>
 </td>
@@ -86,10 +89,12 @@ b()
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if x
+
   ###
   # hello
   # world
   ###
+
   y()
 </code></pre>
 </td>
@@ -103,7 +108,9 @@ b();
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a()
+
 ### hi ###
+
 b()
 </code></pre>
 </td>
@@ -124,6 +131,7 @@ function x() {
 <pre><code class='lang-coffee'>###
 # comment
 ###
+
 x = ->
   return
 a()
@@ -161,9 +169,11 @@ else
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if x
+
   ###*
   # documentation here
   ###
+
   y()
 </code></pre>
 </td>
@@ -249,6 +259,7 @@ a()
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a()
+
 ###
 # hello
 ###
@@ -268,6 +279,7 @@ a();
 <pre><code class='lang-coffee'>###
 # hello
 ###
+
 a()
 </code></pre>
 </td>
@@ -298,6 +310,7 @@ a()
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'># hi
 # there
+
 ### world ###
 </code></pre>
 </td>
@@ -314,9 +327,11 @@ a()
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>fn = ->
+
   ###
   # hello
   ###
+
   return
 </code></pre>
 </td>
@@ -420,9 +435,9 @@ world()
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>x = `function fn() {
+<pre><code class='lang-coffee'>x = (`function fn() {
   return fn;
-}`
+}`)
 </code></pre>
 </td>
 </tr>
@@ -3501,6 +3516,58 @@ c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>undefined
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Spacing
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Block comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/*
+ * hello
+ */
+there();
+/*
+ * world
+ */
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>###
+# hello
+###
+
+there()
+
+###
+# world
+###
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Collapsing extra newlines</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>/*
+ * hello
+ */
+/*
+ * world
+ */
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>###
+# hello
+###
+
+###
+# world
+###
 </code></pre>
 </td>
 </tr>

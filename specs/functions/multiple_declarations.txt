@@ -8,5 +8,6 @@ function two() {
 ----
 one = ->
   a()
+
 two = ->
   b()

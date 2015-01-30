@@ -20,6 +20,7 @@ if (ok) {
 ----
 name = ->
   'John'
+
 alert name()
 if ok
   a()

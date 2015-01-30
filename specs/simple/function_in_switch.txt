@@ -10,6 +10,7 @@ for(i = 0; i <5; ++i) {
 ----
 foo = ->
   2
+
 i = 0
 while i < 5
   switch i

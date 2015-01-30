@@ -18,9 +18,11 @@ b();
 ```coffee
 # Output:
 a()
+
 ###
 # hello
 ###
+
 b()
 ```
 
@@ -84,16 +86,16 @@ var x = function fn() {
 
 ```coffee
 # Output:
-x = `function fn() {
+x = (`function fn() {
   return fn;
-}`
+}`)
 ```
 
 ### Named function expressions off
 
 Named function expressions are not supported in CoffeeScript.
 
-If compatibility mode is off (`--compat`), they will be treated like any
+If compatibility mode is **off**, they will be treated like any
 other function expression, but may behave unexpectedly. In this example,
 the `typeof` will return `'undefined'` in CoffeeScript instead of the
 expected `'function'`.

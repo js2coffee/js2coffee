@@ -1,3 +1,5 @@
+stripSpaces = require('./strip_spaces')
+
 ###
 # BuilderBase:
 # Traverses a JavaScript AST.
@@ -24,7 +26,7 @@
 ###
 
 class BuilderBase
-  constructor: (@root, @options) ->
+  constructor: (@root, @options={}) ->
     @path = []
 
   run: ->
@@ -53,5 +55,29 @@ class BuilderBase
 
     @path.splice(oldLength)
     out
+
+  ###*
+  # get():
+  # Returns the output of source-map.
+  ###
+
+  get: ->
+    node = @run()
+    node = stripSpaces(node)
+    node.toStringWithSourceMap()
+
+  ###*
+  # decorator():
+  # Takes the output of each of the node visitors and turns them into
+  # a `SourceNode`.
+  ###
+
+  decorator: (node, output) ->
+    {SourceNode} = require("source-map")
+    new SourceNode(
+      node?.loc?.start?.line,
+      node?.loc?.start?.column,
+      @options.filename,
+      output)
 
 module.exports = BuilderBase

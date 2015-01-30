@@ -7,7 +7,9 @@ if (x) {
 }
 ----
 if x
+
   ###*
   # documentation here
   ###
+
   y()

@@ -8,5 +8,6 @@ obj.two = function () {
 ----
 obj.one = ->
   a()
+
 obj.two = ->
   b()

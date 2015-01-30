@@ -44,7 +44,17 @@ class Builder extends BuilderBase
     newline @walk(node.expression)
 
   AssignmentExpression: (node) ->
-    @paren space [ @walk(node.left), node.operator, @walk(node.right) ]
+    re = @paren space [
+      @walk(node.left)
+      node.operator
+      @walk(node.right)
+    ]
+
+    # Space out 'a = ->'
+    if node.right.type is 'FunctionExpression'
+      re = [ "\n", @indent(), re, "\n" ]
+
+    re
 
   Identifier: (node) ->
     [ node.name ]
@@ -106,9 +116,9 @@ class Builder extends BuilderBase
     if alt?.type is 'IfStatement'
       els = @indent [ "else ", @walk(node.alternate, 'IfStatement') ]
     else if alt?.type is 'BlockStatement'
-      els = @indent (i) => [ i, "else\n", @walk(node.alternate) ]
+      els = @indent (i) => [ i, "else", "\n", @walk(node.alternate) ]
     else if alt?
-      els = @indent (i) => [ i, "else\n", @indent(@walk(node.alternate)) ]
+      els = @indent (i) => [ i, "else", "\n", @indent(@walk(node.alternate)) ]
     else
       els = []
 
@@ -133,14 +143,15 @@ class Builder extends BuilderBase
 
   BlockComment: (node) ->
     lines = ('###' + node.value + '###').split("\n")
+    output = [ delimit(lines, [ "\n", @indent() ]), "\n" ]
 
-    [ delimit(lines, [ "\n", @indent() ]), "\n" ]
+    [ "\n", @indent(), output, "\n" ]
 
   ReturnStatement: (node) ->
     if node.argument
       space [ "return", [ @walk(node.argument), "\n" ] ]
     else
-      [ "return\n" ]
+      [ "return", "\n" ]
 
   ArrayExpression: (node) ->
     items = node.elements.length
@@ -154,7 +165,7 @@ class Builder extends BuilderBase
       @indent (indent) =>
         elements = node.elements.map (e) => newline @walk(e)
         contents = prependAll(elements, @indent())
-        [ "[\n", contents, indent, "]" ]
+        [ "[", "\n", contents, indent, "]" ]
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length
@@ -194,18 +205,25 @@ class Builder extends BuilderBase
 
     space [ [@walk(node.key), ":"], @walk(node.value) ]
 
+  # TODO: convert VariableDeclaration into AssignmentExpression
   VariableDeclaration: (node) ->
     declarators = node.declarations.map(@walk)
     delimit(declarators, @indent())
 
   VariableDeclarator: (node) ->
-    [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
+    re = [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
+
+    # Space out 'a = ->'
+    if node.init.type is 'FunctionExpression'
+      re = [ "\n", @indent(), re, "\n" ]
+
+    re
 
   FunctionExpression: (node, ctx) ->
     params = @makeParams(node.params, node.defaults)
 
     expr = @indent (i) =>
-      [ params, "->\n", @walk(node.body) ]
+      [ params, "->", "\n", @walk(node.body) ]
 
     if node._parenthesized
       [ "(", expr, @indent(), ")" ]
@@ -241,20 +259,20 @@ class Builder extends BuilderBase
     [ "loop", "\n", @makeLoopBody(node.body) ]
 
   BreakStatement: (node) ->
-    [ "break\n" ]
+    [ "break", "\n" ]
 
   ContinueStatement: (node) ->
-    [ "continue\n" ]
+    [ "continue", "\n" ]
 
   DebuggerStatement: (node) ->
-    [ "debugger\n" ]
+    [ "debugger", "\n" ]
 
   TryStatement: (node) ->
     # block, guardedHandlers, handlers [], finalizer
-    _try = @indent => [ "try\n", @walk(node.block) ]
+    _try = @indent => [ "try", "\n", @walk(node.block) ]
     _catch = prependAll(node.handlers.map(@walk), @indent())
     _finally = if node.finalizer?
-      @indent (indent) => [ indent, "finally\n", @walk(node.finalizer) ]
+      @indent (indent) => [ indent, "finally", "\n", @walk(node.finalizer) ]
     else
       []
 
@@ -326,7 +344,7 @@ class Builder extends BuilderBase
 
     # TODO: move this transformation to the lib/transforms/
     if not body or (isBlock and body.body.length is 0)
-      @indent => [ @indent(), "continue\n" ]
+      @indent => [ @indent(), "continue", "\n" ]
     else if isBlock
       @indent => @walk(body)
     else
@@ -443,28 +461,6 @@ class Builder extends BuilderBase
     else
       tab = toIndent(@options.indent)
       Array(@_indent + 1).join(tab)
-
-  ###*
-  # get():
-  # Returns the output of source-map.
-  ###
-
-  get: ->
-    @run().toStringWithSourceMap()
-
-  ###*
-  # decorator():
-  # Takes the output of each of the node visitors and turns them into
-  # a `SourceNode`.
-  ###
-
-  decorator: (node, output) ->
-    {SourceNode} = require("source-map")
-    new SourceNode(
-      node?.loc?.start?.line,
-      node?.loc?.start?.column,
-      @options.filename,
-      output)
 
   ###*
   # paren():

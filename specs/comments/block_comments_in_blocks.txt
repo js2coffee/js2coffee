@@ -8,8 +8,10 @@ if (x) {
 }
 ----
 if x
+
   ###
   # hello
   # world
   ###
+
   y()

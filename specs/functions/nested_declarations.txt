@@ -6,6 +6,8 @@ function a () {
 }
 ----
 a = ->
+
   b = ->
     c
+
   return

@@ -8,6 +8,8 @@ function fn() {
 ----
 fn = ->
   x = undefined
+
   fn2 = ->
     x = 2
+
   return
