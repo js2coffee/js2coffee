@@ -31,3 +31,7 @@ eachGroup (group) ->
               expect(descs).match expected
             else
               expect(descs).include expected
+        else
+          if result.warnings.length > 0
+            result.warnings.forEach (w) ->
+              throw new Error "Unexpected warning: #{w.description}"

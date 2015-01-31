@@ -6,6 +6,6 @@ notes: """
   the same thing, `this`.
 """
 ----
-a = this;
+var a = this;
 ----
 a = this

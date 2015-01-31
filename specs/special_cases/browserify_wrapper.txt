@@ -1,4 +1,5 @@
 nodoc: true
+warnings: [ /Named function expressions are not supported/ ]
 # Browserify wrapper. does NOT work unless its in compatibility mode
 ----
 (function e(t, n, r) {

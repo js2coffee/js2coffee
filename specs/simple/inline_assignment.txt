@@ -1,7 +1,10 @@
 ----
+var a, m;
 if (a = m = match) {
   m();
 }
 ----
+a = undefined
+m = undefined
 if a = m = match
   m()

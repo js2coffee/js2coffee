@@ -6,6 +6,7 @@ notes: """
   the `typeof` will return `'undefined'` in CoffeeScript instead of the
   expected `'function'`.
 """
+warnings: [ /Named function expressions/ ]
 ----
 var x = function fn() {
   return fn;

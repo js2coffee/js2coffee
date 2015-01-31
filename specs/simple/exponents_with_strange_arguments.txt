@@ -1,4 +1,4 @@
 ----
-a = Math.pow(2)
+var a = Math.pow(2)
 ----
 a = Math.pow(2)

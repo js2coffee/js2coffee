@@ -1,0 +1,10 @@
+warnings: [ /Assignment of global variable 'a'/ ]
+----
+function fn () {
+  a = 2;
+  return;
+}
+----
+fn = ->
+  a = 2
+  return
