@@ -1,7 +1,7 @@
 ---
 ---
 
-@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400')
+@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700')
 @import 'ionicons'
 
 +ion-font()
@@ -643,6 +643,10 @@ a:hover, a:focus
     opacity: 1
     pointer-events: auto
 
+/*
+ * the button
+ */
+
 .announcement-banner
   &
     width: 100%
@@ -654,7 +658,7 @@ a:hover, a:focus
     position: relative
     z-index: 5
     background-color: $bg
-    background: linear-gradient(to bottom, rgba($bg, 0.0), $bg 10%)
+    background: linear-gradient(to bottom, rgba($bg, 0.5), $bg 10%)
     padding: 15px 30px
     color: $litetext
 
@@ -674,13 +678,16 @@ a:hover, a:focus
     border-radius: 50%
     margin-right: 15px
 
+    color: $accent2
+    background: transparent
+
   .icon:before
     @include ion-icon('android-arrow-up')
-    font-size: 24px
-    color: $accent2
+    font-size: 20px
 
   .title
     color: mix($text, $bg, 50%)
+    font-weight: normal
     margin-right: 15px
 
   .title:before
@@ -740,10 +747,10 @@ a:hover, a:focus
 
   .heading
     color: $text
-    font-weight: bold
+    font-weight: normal
     margin-bottom: 10px
     padding: 0
-    font-size: 1.1em
+    font-size: 1.3em
     border-bottom: solid 1px rgba(white, 0.1)
     padding-bottom: 10px
 
@@ -755,8 +762,11 @@ a:hover, a:focus
     font-size: 16px
     margin-right: 10px
 
+  .title
+    font-weight: normal
+
   .date
-    font-size: 0.8em
+    font-size: 0.6em
     color: $litetext
     text-transform: uppercase
     letter-spacing: 1px
@@ -815,3 +825,34 @@ a:hover, a:focus
 
   .code-area, .main-sidebar
     display: none
+
+/*
+ *
+ */
+
+.faux-addressbar
+  margin: 20px auto
+  border: solid 1px rgba(white, 0.1)
+  border-radius: 4px
+  padding: 10px 15px
+  text-align: left
+  font-size: 0.8em
+  display: block
+  max-width: 250px
+
+  font-family: $monospace
+
+  &, &:visited
+    color: $text
+
+  &:before
+    +ion-icon('android-globe')
+    font-size: 16px
+    margin-right: 5px
+    opacity: 0.3
+
+    position: relative
+    top: -1px
+    color: $accent2
+
+
