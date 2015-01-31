@@ -2,7 +2,7 @@
 
 Compile JavaScript into CoffeeScript.
 
-[![](http://js2.coffee/assets/preview.png)](http://js2coffee.github.io/js2coffee-redux)
+[![](http://js2.coffee/assets/preview.png)](http://js2.coffee)
 
 [![Status](https://travis-ci.org/js2coffee/js2coffee.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee)  
 
