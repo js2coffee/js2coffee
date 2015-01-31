@@ -5,7 +5,7 @@ Short guide to migrating from 0.x to 2.0.
 
 ## Command line API
 
-In general, most common usage will continue to work.
+Most common usage patterns will continue to work:
 
 ```sh
 js2coffee file.js
@@ -13,7 +13,8 @@ js2coffee file.js > output.coffee
 cat file.js | js2coffee
 ```
 
-(-) The following options have been deprecated:
+:heavy_minus_sign:
+The following options have been deprecated and will no longer work:
 
  * `--no-comments` (disables comments) - comments are always enabled.
 
@@ -27,31 +28,30 @@ cat file.js | js2coffee
 
  * `-i4` (indent 4 spacs) - now changed to `-i 4` or `--indent 4`
 
-(+) The `--indent` will now accept new ways to indent:
+:heavy_plus_sign:
+The `--indent` will now accept new ways to indent:
 
  * `--indent "    "` - indent by 4 spaces (compatible with js2coffee 0.x)
  * `--indent 4` - indent by 4 spaces
  * `--indent tab` - indent by tab
 
-(~) The other options continue to work:
-
- * `--version`
-
 ## JavaScript API (`js2cofee.build()`)
 
-The `js2coffee.build()` invocation remains largely the same:
+`js2coffee.build()` invocation remains the same:
 
 ```js
 js2coffee.build("alert('hello')");
 js2coffee.build("alert('hello')", { indent: '    ' });
 ```
 
-(-) Some options have been deprecated:
+:heavy_minus_sign:
+Some options have been deprecated and will no longer work:
 
- * `single_quotes` - deprecated
- * `no_comments` - deprecated
- * `show_src_lineno` - deprecated
+ * `single_quotes`
+ * `no_comments`
+ * `show_src_lineno`
 
+:wavy_dash:
 The return value of `js2coffee.build()` has changed:
 
 ```js
@@ -67,6 +67,7 @@ out.ast      == { /* abstract syntax tree */ }
 out.map      == { /* source map data */ }
 ```
 
+:wavy_dash:
 The error format has also changed. See the [Readme](../Readme.md) for more info.
 
 ## Web distribution
