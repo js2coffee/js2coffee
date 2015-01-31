@@ -1,6 +1,13 @@
+## v0.0.17
+
+* Documentation
+* Fix indentation of closing parenthesis
+* Add global variable assignment warnings
+* Escape global variable assignments in compat mode
+
 ## v0.0.16 - January 31, 2015
 
-* Add spaces
+* Add spaces around block comments
 * Implement `--indent`
 * Support empty array slots (`[,0]`)
 
