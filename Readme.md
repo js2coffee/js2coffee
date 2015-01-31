@@ -32,8 +32,8 @@ Also available via CDN (`window.js2coffee`):
 The command line utility accepts both filenames or stdin.
 
 ```sh
-$ js2c file.js [file2.js ...]
-$ cat file.js | js2c
+$ js2coffee file.js [file2.js ...]
+$ cat file.js | js2coffee
 ```
 
 <br>
@@ -108,4 +108,3 @@ Maintainers:
 [MIT]: http://mit-license.org/
 [contributors]: http://github.com/rstacruz/js2coffee/contributors
 [Esprima]: http://esprima.org/
-[js2coffee/js2coffee]: https://github.com/js2coffee/js2coffee
