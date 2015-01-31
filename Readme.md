@@ -2,9 +2,9 @@
 
 Compile JavaScript into CoffeeScript.
 
-[![](http://js2coffee.github.io/js2coffee-redux/assets/preview.png)](http://js2coffee.github.io/js2coffee-redux)
+[![](http://js2.coffee/assets/preview.png)](http://js2coffee.github.io/js2coffee-redux)
 
-[![Status](https://travis-ci.org/js2coffee/js2coffee-redux.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee-redux)  
+[![Status](https://travis-ci.org/js2coffee/js2coffee.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee)  
 
 This 2.0 release is a complete rewrite featuring a better parser ([Esprima]). See the [migration guide](notes/Migration_guide.md) for instructions on how to update from 0.x.
 
@@ -23,7 +23,7 @@ js2coffee --help
 
 Also available via CDN (`window.js2coffee`):
 
-> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.17/dist/js2coffee.js`
+> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee/v2.0.0/dist/js2coffee.js`
 
 <br>
 

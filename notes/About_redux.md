@@ -1,3 +1,6 @@
+js2coffee 2.0 (previously known as js2coffee-redux) is a ground-up rewrite of
+js2coffee. Here are the goals set early in the project:
+
 ## Goals
 
  * ✓ __Use a new JS parser.__<br>

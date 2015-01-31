@@ -1,8 +1,15 @@
 {
-  "name": "js2coffee-redux",
-  "version": "0.0.17",
+  "name": "js2coffee",
+  "version": "2.0.0",
   "description": "",
+  "homepage": "http://js2.coffee",
   "main": "index.js",
+  "keywords": [
+    "javascript",
+    "coffeescript",
+    "language",
+    "compiler"
+  ],
   "scripts": {
     "test": "mocha",
     "autotest": "mocha -R min -b --watch",
@@ -10,6 +17,13 @@
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/js2coffee/js2coffee/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/js2coffee/js2coffee.git"
+  },
   "browser": "js2coffee.coffee",
   "bin": {
     "js2c": "./bin/js2c"
