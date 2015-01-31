@@ -95,7 +95,7 @@ x = (`function fn() {
 
 Named function expressions are not supported in CoffeeScript.
 
-If compatibility mode is **off**, they will be treated like any
+If compatibility mode is off (`--compat`), they will be treated like any
 other function expression, but may behave unexpectedly. In this example,
 the `typeof` will return `'undefined'` in CoffeeScript instead of the
 expected `'function'`.
@@ -112,6 +112,7 @@ alert(typeof x())
 # Output:
 x = ->
   fn
+
 alert typeof x()
 ```
 
@@ -179,6 +180,7 @@ if (ok) {
 # Output:
 name = ->
   'John'
+
 alert name()
 if ok
   a()
@@ -376,16 +378,18 @@ var fn = function () {
   return;
 }
 fn();
-assert(val == 2);
+assert(val === 2);
 ```
 
 ```coffee
 # Output:
 val = 2
+
 fn = ->
   `var val`
   val = 1
   return
+
 fn()
 assert val == 2
 ```
@@ -457,7 +461,7 @@ the same thing, `this`.
 
 ```js
 // Input:
-a = this;
+var a = this;
 ```
 
 ```coffee

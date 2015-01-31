@@ -134,6 +134,7 @@ function x() {
 
 x = ->
   return
+
 a()
 </code></pre>
 </td>
@@ -209,8 +210,10 @@ function x() {
 <pre><code class='lang-coffee'># one
 # two
 # three
+
 x = ->
   return
+
 a()
 </code></pre>
 </td>
@@ -237,13 +240,17 @@ function y() {
 <pre><code class='lang-coffee'># one
 # two
 # three
+
 x = ->
   return
+
 # four
 # five
 # six
+
 y = ->
   return
+
 a()
 </code></pre>
 </td>
@@ -453,6 +460,7 @@ alert(typeof x())
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>x = ->
   fn
+
 alert typeof x()
 </code></pre>
 </td>
@@ -809,6 +817,7 @@ if (ok) {
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>name = ->
   'John'
+
 alert name()
 if ok
   a()
@@ -829,8 +838,10 @@ if ok
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>fn = ->
   x = undefined
+
   fn2 = ->
     x = 2
+
   return
 </code></pre>
 </td>
@@ -839,7 +850,7 @@ if ok
 <th width='33%' valign='top'>Functions in ternaries</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>_.propertyOf = function(obj) {
-  return obj == null ? (x && function(){}) : function(key) {
+  return obj === null ? (x && function(){}) : function(key) {
     return obj[key];
   };
 };
@@ -868,6 +879,7 @@ function two() {
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>one = ->
   a()
+
 two = ->
   b()
 </code></pre>
@@ -887,6 +899,7 @@ obj.two = function () {
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>obj.one = ->
   a()
+
 obj.two = ->
   b()
 </code></pre>
@@ -918,8 +931,10 @@ obj.two = ->
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = ->
+
   b = ->
     c
+
   return
 </code></pre>
 </td>
@@ -937,8 +952,10 @@ obj.two = ->
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a: ->
+
   b = ->
     c
+
   b()
 </code></pre>
 </td>
@@ -1119,6 +1136,59 @@ obj.two = ->
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = (b, c) ->
   d()
+  return
+</code></pre>
+</td>
+</tr>
+</table>
+
+## Globals
+
+<table width='100%'>
+<tr>
+<th width='33%' valign='top'>Global assignment</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn () {
+  a = 2;
+  return;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  a = 2
+  return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Global assignment compat</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn () {
+  a = 2;
+  return;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  `a = 2`
+  return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>In function params</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn(x) {
+  x = 2;
+  return
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = (x) ->
+  x = 2
   return
 </code></pre>
 </td>
@@ -1603,7 +1673,7 @@ a ^= 0
 <tr>
 <th width='33%' valign='top'>Bitwise shift</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>value = ((value & 255) << 16) | (value & 65280) | ((value & 16711680) >>> 16);
+<pre><code class='lang-js'>var value = ((value & 255) << 16) | (value & 65280) | ((value & 16711680) >>> 16);
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -1617,7 +1687,8 @@ a ^= 0
 <pre><code class='lang-js'>x = 2
 
 
-y = 3</code></pre>
+y = 3
+</code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>x = 2
@@ -1659,6 +1730,7 @@ $.get({
   alert 2 + 2
   alert y(10)
   return
+
 $.get
   ajax: true
   url: 'foo'
@@ -1869,11 +1941,15 @@ for key of obj
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>x = ->
+
   y = ->
     2
+
   alert y()
+
   z = ->
     3
+
   return
 </code></pre>
 </td>
@@ -1996,7 +2072,7 @@ a-- - a
 <tr>
 <th width='33%' valign='top'>Single line else</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>if ((x != 2) && (2)) { 2;2 } else true
+<pre><code class='lang-js'>if ((x !== 2) && (2)) { 2;2 } else true
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2106,7 +2182,7 @@ catch x
 +1 -1;
 ~2 - 2;
 ~2+-1;
-a =~ 2;
+var a =~ 2;
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2131,6 +2207,7 @@ var f = function() { return y };
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>x = 2
 y = undefined
+
 f = ->
   y
 </code></pre>
@@ -2547,7 +2624,7 @@ a.prototype
 <tr>
 <th width='33%' valign='top'>New operator</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = new B
+<pre><code class='lang-js'>var a = new B
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2558,7 +2635,7 @@ a.prototype
 <tr>
 <th width='33%' valign='top'>New operator with arguments</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = new B(x,y);
+<pre><code class='lang-js'>var a = new B(x,y);
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2569,7 +2646,7 @@ a.prototype
 <tr>
 <th width='33%' valign='top'>New with complex callee</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = new (require('foo'))(b)
+<pre><code class='lang-js'>var a = new (require('foo'))(b)
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2580,7 +2657,7 @@ a.prototype
 <tr>
 <th width='33%' valign='top'>New with function expression</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = new MyClass('left', function () {
+<pre><code class='lang-js'>var a = new MyClass('left', function () {
   go();
   return;
 })
@@ -2597,7 +2674,7 @@ a.prototype
 <tr>
 <th width='33%' valign='top'>New with function expression and string</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = new MyClass(function () {
+<pre><code class='lang-js'>var a = new MyClass(function () {
   go();
   return;
 }, 'left')
@@ -2619,7 +2696,7 @@ a.prototype
 <tr>
 <th width='33%' valign='top'>Arrray of objects</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>list = [
+<pre><code class='lang-js'>var list = [
   { a: 1, b: 1 },
   { a: 2, b: 2 },
 ]
@@ -2700,7 +2777,7 @@ d: 4
 <tr>
 <th width='33%' valign='top'>Nesting into a single line</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>x = ({a: {b: {c: {d: e}}, f: {g: {h: i}}}})
+<pre><code class='lang-js'>var x = ({a: {b: {c: {d: e}}, f: {g: {h: i}}}})
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2735,7 +2812,7 @@ d: 4
 <tr>
 <th width='33%' valign='top'>Simple object</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = { b: 2 }
+<pre><code class='lang-js'>var a = { b: 2 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -2985,15 +3062,17 @@ var fn = function () {
   return;
 }
 fn();
-assert(val == 2);
+assert(val === 2);
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>val = 2
+
 fn = ->
   `var val`
   val = 1
   return
+
 fn()
 assert val == 2
 </code></pre>
@@ -3162,7 +3241,7 @@ new X(2) ** 8
 <tr>
 <th width='33%' valign='top'>Exponents with strange arguments</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = Math.pow(2)
+<pre><code class='lang-js'>var a = Math.pow(2)
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -3195,7 +3274,7 @@ new X(2) ** 8
 <tr>
 <th width='33%' valign='top'>Function in switch</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>for(i = 0; i <5; ++i) {
+<pre><code class='lang-js'>for(var i = 0; i <5; ++i) {
    switch(i) {
      case 1:
        function foo() { return 2; }
@@ -3208,6 +3287,7 @@ new X(2) ** 8
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>foo = ->
   2
+
 i = 0
 while i < 5
   switch i
@@ -3227,6 +3307,26 @@ b--
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a++
 b--
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Indentation of parentheses</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (w) {
+  x(y(function() {
+    return true
+  }));
+  z()
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if w
+  x y(->
+    true
+  )
+  z()
 </code></pre>
 </td>
 </tr>
@@ -3289,13 +3389,16 @@ b--
 <tr>
 <th width='33%' valign='top'>Inline assignment</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>if (a = m = match) {
+<pre><code class='lang-js'>var a, m;
+if (a = m = match) {
   m();
 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if a = m = match
+<pre><code class='lang-coffee'>a = undefined
+m = undefined
+if a = m = match
   m()
 </code></pre>
 </td>
@@ -3387,7 +3490,7 @@ a.prototype = {}
 <tr>
 <th width='33%' valign='top'>Recursing into new functions</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = x ? y : function fn() {
+<pre><code class='lang-js'>var a = x ? y : function () {
   return a === "b";
 };
 </code></pre>
@@ -3416,7 +3519,7 @@ a.prototype = {}
 <tr>
 <th width='33%' valign='top'>Scientific notation</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = -1.21e3;
+<pre><code class='lang-js'>var a = -1.21e3;
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -3456,7 +3559,7 @@ c
 <tr>
 <th width='33%' valign='top'>Standalone this</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>a = this;
+<pre><code class='lang-js'>var a = this;
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -3579,13 +3682,15 @@ there()
 <tr>
 <th width='33%' valign='top'>Assignment in condition</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>if ( (options = arguments[ i ]) !== null ) {
+<pre><code class='lang-js'>var options;
+if ( (options = arguments[ i ]) !== null ) {
   for (var x in y) { z(); }
 }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if (options = arguments[i]) != null
+<pre><code class='lang-coffee'>options = undefined
+if (options = arguments[i]) != null
   for x of y
     z()
 </code></pre>
