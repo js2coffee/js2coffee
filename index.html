@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+---
+---
+<!doctype html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -43,19 +45,7 @@
   <script src='assets/app.js'></script>
 </head>
 <body>
-  <div class='mobile-view'>
-    <a href='http://github.com/js2coffee/js2coffee' class='js2c-logo'></a>
-    <a href='http://npmjs.com/js2coffee' class='code-example'>
-      npm install -g js2coffee
-    </a>
-    <p>
-      A JavaScript to CoffeeScript compiler. Open this site, <b>js2.coffee</b>,
-      in your computer for a demo.
-    </p>
-    <p>
-      <iframe src="support/github-btn.html?user=js2coffee&repo=js2coffee&type=star&size=large&count=true" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-    </p>
-  </div>
+  {% include mobile-view.html %}
 
   <div class='code-area'>
     <div class='code-box left'>
@@ -75,60 +65,10 @@
       <button class='button run' role='run'>Run</button>
     </div>
     <div class='announcement-box'>
-      <div class='announcement-dialog'>
-        <button class='close-button'></button>
-        <h3 class='heading'>
-          <strong class='title'>js2coffee 2.0 has been released</strong>
-          <span class='date'>Feb 1, 2015</span>
-        </h3>
-        <p>
-          js2coffee has been rewritten from the ground up.
-          Be sure to check the <a href=''>migration guide</a> if you've been
-          using it since 0.x.
-        </p>
-      </div>
-      <button class='announcement-banner'>
-        <i class='icon'></i>
-        <strong class='title'>js2coffee 2.0 has been released</strong>
-        <span class='date'>Feb 1, 2015</span>
-        <span class='expando'></span>
-      </button>
+      {% include announcements.html %}
     </div>
   </div>
-  <div class='main-sidebar'>
-    <!-- <h1>js2coffee</h1> -->
-    <a href='http://github.com/js2coffee/js2coffee' class='js2c-logo'></a>
-    <a href='http://npmjs.com/js2coffee' class='code-example'>
-      npm install -g js2coffee
-    </a>
 
-    <div class='section'>
-      <label class='checkbox-row'>
-        <input type='checkbox' role='compat'></input>
-        <span>Compatibility mode</span>
-      </label>
-    </div>
-
-    <div class='section'>
-      JavaScript to
-      <a href='http://coffeescript.org'>CoffeeScript</a> compiler. This is v2.0
-      that's under development.
-    </div>
-
-    <div class='bottom'>
-      <ul class='links-list'>
-        <li>
-          <a class='github' href='https://github.com/js2coffee/js2coffee'>Source code</a>
-        </li>
-        <li>
-          <a class='issues' href='https://github.com/js2coffee/js2coffee/issues'>Report issues</a>
-        </li>
-      </ul>
-
-      <div class='section share-section'>
-        <iframe src="support/github-btn.html?user=js2coffee&repo=js2coffee&type=star&size=large&count=true" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-      </div>
-    </div>
-  </div>
+  {% include sidebar.html %}
 </body>
 </html>

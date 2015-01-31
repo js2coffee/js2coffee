@@ -1,7 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+---
+---
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>js2coffee-redux [m]</title>
     <link rel='stylesheet' href='assets/vendor.css'>
     <link rel='stylesheet' href='assets/style.css'>
@@ -11,6 +13,8 @@
     <script src='assets/app.js'></script>
 </head>
 <body>
+  {% include mobile-view.html %}
+
   <div class='code-area'>
     <div class='code-box left'>
       <h3><strong>JavaScript</strong> <em>Type here</em></h3>
@@ -28,20 +32,14 @@
       <button class='button link' role='link'>Link</button>
       <button class='button run' role='run'>Run</button>
     </div>
-  </div>
-  <div class='main-sidebar'>
-    <!-- <h1>js2coffee</h1> -->
-    <a href='http://github.com/js2coffee/js2coffee-redux' class='js2c-logo'></a>
-    <a href='http://npmjs.com/js2coffee' class='code-example'>
-      Master branch
-    </a>
-    <div class='section'>
-      <label class='checkbox-row'>
-        <input type='checkbox' role='compat'></input>
-        <span>Compatibility mode</span>
-      </label>
+    <div class='announcement-box'>
+      <button class='announcement-banner'>
+        <i class='icon'></i>
+        <strong class='title'>Using the 'master' branch</strong>
+      </button>
     </div>
-
   </div>
+
+  {% include sidebar.html %}
 </body>
 </html>
