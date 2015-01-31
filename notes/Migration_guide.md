@@ -29,7 +29,7 @@ The following options have been deprecated and will no longer work:
  * `-i4` (indent 4 spacs) - now changed to `-i 4` or `--indent 4`
 
 :heavy_plus_sign:
-The `--indent` will now accept new ways to indent:
+The `--indent` option will now accept new ways to indent:
 
  * `--indent "    "` - indent by 4 spaces (compatible with js2coffee 0.x)
  * `--indent 4` - indent by 4 spaces
