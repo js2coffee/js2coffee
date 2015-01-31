@@ -41,7 +41,6 @@ module.exports = class extends TransformerBase
         if @options.compat
           @escapeJs node
         else
-          console.log @ctx.vars
           @warn node, "Assignment of global variable '#{node.left.name}'"
           node
 

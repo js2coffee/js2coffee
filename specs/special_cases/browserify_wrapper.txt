@@ -44,6 +44,7 @@ warnings: [ /Named function expressions are not supported/ ]
         throw new Error('Cannot find module \'' + o + '\'')
       f = n[o] = exports: {}
       t[o][0].call f.exports, ((e) ->
+        `var n`
         n = t[o][1][e]
         s if n then n else e
       ), f, f.exports, e, t, n, r
