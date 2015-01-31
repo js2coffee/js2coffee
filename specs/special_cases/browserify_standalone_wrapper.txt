@@ -1,4 +1,5 @@
 nodoc: true
+warnings: [ /Named function expressions are not supported/ ]
 # Browserify standalone wrapper (browserify -s aoeu)
 ----
 !function(e) {
@@ -72,6 +73,7 @@ console.log(module.exports);
 
         l = n[o] = exports: {}
         t[o][0].call l.exports, ((e) ->
+          `var n`
           n = t[o][1][e]
           s if n then n else e
         ), l, l.exports, e, t, n, r

@@ -1,6 +1,6 @@
 # this pattern was observed in EventEmitter2.
 ----
-a = x ? y : function fn() {
+var a = x ? y : function () {
   return a === "b";
 };
 ----

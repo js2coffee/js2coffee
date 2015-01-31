@@ -1,4 +1,4 @@
 ----
-a = new B(x,y);
+var a = new B(x,y);
 ----
 a = new B(x, y)

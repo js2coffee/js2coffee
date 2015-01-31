@@ -1,5 +1,5 @@
 ----
-a = new MyClass('left', function () {
+var a = new MyClass('left', function () {
   go();
   return;
 })

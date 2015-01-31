@@ -6,6 +6,7 @@ notes: """
 
   [coffee-script#712]: https://github.com/jashkenas/coffee-script/issues/712
 """
+warnings: [ /Variable shadowing.*not fully supported/ ]
 ----
 var val = 2;
 var fn = function () {
@@ -13,7 +14,7 @@ var fn = function () {
   return;
 }
 fn();
-assert(val == 2);
+assert(val === 2);
 ----
 val = 2
 

@@ -1,3 +1,4 @@
+warnings: [ /loops without 'var'/ ]
 ----
 for (var x in y) { alert(1) }
 for (var key in obj) {}

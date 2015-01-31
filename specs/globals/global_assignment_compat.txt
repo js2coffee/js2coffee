@@ -1,0 +1,10 @@
+options: { compat: true }
+----
+function fn () {
+  a = 2;
+  return;
+}
+----
+fn = ->
+  `a = 2`
+  return

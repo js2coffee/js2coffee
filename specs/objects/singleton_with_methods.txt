@@ -1,3 +1,4 @@
+warnings: [ /global variable/ ]
 ----
 App = {
   start: function () { go(); return; },

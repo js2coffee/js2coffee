@@ -1,3 +1,4 @@
+warnings: [ /global variable/ ]
 ----
 for (x=0; !x<2; x++) { alert(1) }
 for (; !x<2; ) { alert(1) }

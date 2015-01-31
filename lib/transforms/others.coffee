@@ -10,6 +10,7 @@ module.exports = class extends TransformerBase
   FunctionExpression: (node, parent) ->
     super(node)
     node.params.forEach (param) =>
+      @ctx.vars.push param.name if param.type is 'Identifier'
       @preventReservedWords(param)
     @preventReservedWords(node.id)
     @removeUndefinedParameter(node)
@@ -35,6 +36,14 @@ module.exports = class extends TransformerBase
         @escapeJs node
       else
         @preventReservedWords(node.left)
+
+    else if node.left.type is 'Identifier' and @ctx.vars.indexOf(node.left.name) is -1
+        if @options.compat
+          @escapeJs node
+        else
+          @warn node, "Assignment of global variable '#{node.left.name}'"
+          node
+
     else
       node
 
