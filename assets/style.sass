@@ -855,4 +855,41 @@ a:hover, a:focus
     top: -1px
     color: $accent2
 
+/*
+ *
+ */
 
+.share-buttons
+  > *
+    vertical-align: top
+    margin-right: 10px
+
+/*
+ *
+ */
+
+.share-button
+  display: inline-block
+  height: 30px
+  line-height: 30px
+  padding: 0 10px
+  background: darken($bg, 7%)
+  border-radius: 4px
+  color: $litetext
+  transition: all 100ms linear
+
+  &:before
+    margin-right: 9px
+    position: relative
+    top: -1px
+    font-size: 16px
+
+  &.twitter:before
+    +ion-icon('social-twitter-outline')
+    color: dodgerblue
+
+  &.twitter:focus,
+  &.twitter:hover
+    background: dodgerblue
+    &, &:before
+      color: white
