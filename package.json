@@ -1,7 +1,7 @@
 {
   "name": "js2coffee",
   "version": "2.0.0",
-  "description": "",
+  "description": "JavaScript to CoffeeScript compiler",
   "homepage": "http://js2.coffee",
   "main": "index.js",
   "keywords": [
