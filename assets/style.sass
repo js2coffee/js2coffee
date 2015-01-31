@@ -658,6 +658,8 @@ a:hover, a:focus
     padding: 15px 30px
     color: $litetext
 
+    white-space: nowrap
+
   &, .title, .expando
     transition: all 100ms linear
 
@@ -776,7 +778,7 @@ a:hover, a:focus
 
   &
     max-width: 350px
-    margin: 30px auto
+    margin: auto
     padding: 15px
     text-align: center
     color: $litetext
@@ -798,7 +800,16 @@ a:hover, a:focus
     position: relative
     left: 20px
 
-@media (max-width: 480px)
+@media (max-width: 768px)
+  html, body
+    height: 100%
+
+  body
+    display: -webkit-box
+    display: -webkit-flex
+    display: -ms-flexbox
+    display: flex
+
   .mobile-view
     display: block
 
