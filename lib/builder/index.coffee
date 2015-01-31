@@ -109,7 +109,7 @@ class Builder extends BuilderBase
     if node._isStatement and hasArgs
       space [ callee, list ]
     else
-      [ callee, '(', list, ')' ]
+      [ callee, @paren(list, true) ]
 
   IfStatement: (node) ->
     alt = node.alternate
@@ -464,13 +464,19 @@ class Builder extends BuilderBase
 
   ###*
   # paren():
-  # Parenthesizes if the node's parenthesize flag is on.
+  # Parenthesizes if the node's parenthesize flag is on (or `parenthesized` is
+  # true)
   ###
 
-  paren: (output) ->
-    node = @path[@path.length-1]
-    if node._parenthesized
-      [ '(', output, ')' ]
+  paren: (output, parenthesized) ->
+    parenthesized ?= @path[@path.length-1]?._parenthesized
+    isBlock = output.toString().match /\n$/
+
+    if parenthesized
+      if isBlock
+        [ '(', output, @indent(), ')' ]
+      else
+        [ '(', output, ')' ]
     else
       output
 
