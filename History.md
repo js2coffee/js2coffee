@@ -1,9 +1,10 @@
-
 ## v2.0.0 - February 2, 2014
 
-Full rewrite that features the Esprima parser.  Check the [migration
-guide](notes/Migration_guide.md) for information on what's changed from v0 to
-v2.0.
+Full rewrite that features the Esprima parser. This release resolves *way* too
+many issues to count (at least 30).
+
+Check the [migration guide](notes/Migration_guide.md) for information on what's
+changed from v0 to v2.0.
 
 ----
 
