@@ -1,0 +1,9 @@
+----
+function fn(x) {
+  x = 2;
+  return
+}
+----
+fn = (x) ->
+  x = 2
+  return
