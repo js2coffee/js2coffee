@@ -1,23 +1,31 @@
-# <img src="http://js2.coffee/assets/logo-white.svg" width="200">
+# <img src="http://js2.coffee/assets/logo-white.svg" width="250">
 
-Compiles JavaScript into CoffeeScript. This is a rewrite of js2coffee 0.x,
-featuring a better parser ([Esprima]) and better features.
+Compile JavaScript into CoffeeScript.
 
 [![](http://js2coffee.github.io/js2coffee-redux/assets/preview.png)](http://js2coffee.github.io/js2coffee-redux)
 
 [![Status](https://travis-ci.org/js2coffee/js2coffee-redux.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee-redux)  
 
-## Docs
+This 2.0 release is a complete rewrite featuring a better parser ([Esprima]). See the [migration guide](notes/Migration_guide.md) for instructions on how to update from 0.x.
 
- - [Goals](notes/Goals.md) - outline of the project's goals.
+<br>
 
- - [Specs](notes/Specs.md) - examples of how JavaScript compiles to CoffeeScript.
+## Install
 
- - [AST format](notes/AST.md) - technical description of the CoffeeScript AST format.
+Available on npm and bower.
 
- - [Special cases](notes/Special_cases.md) - a list of edge cases that js2coffee accounts for.
+```sh
+npm install --global js2coffee
+js2coffee --help
+```
 
- - [Migration guide](notes/Migration_guide.md) - guide for migrating from 0.x.
+[![npm version](http://img.shields.io/npm/v/js2coffee.svg?style=flat)](https://npmjs.org/package/js2coffee "View this project on npm")
+
+Also available via CDN (`window.js2coffee`):
+
+> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.16/dist/js2coffee.js`
+
+<br>
 
 ## Command line
 
@@ -28,11 +36,11 @@ $ js2c file.js [file2.js ...]
 $ cat file.js | js2c
 ```
 
-## Programatic API
+<br>
 
-Available via npm (`require('js2coffee')`), or via CDN in the browser:
+## JavaScript API
 
-> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee-redux/v0.0.16/dist/js2coffee.js`
+Available via npm (`require('js2coffee')`), or via CDN in the browser (as `window.js2coffee`):
 
 ```js
 result = js2coffee.build(source);
@@ -65,6 +73,22 @@ result.warnings.forEach((warn) => {
   warn.filename      // "index.js"
 })
 ```
+
+<br>
+
+## Docs
+
+ - [Migration guide](notes/Migration_guide.md) - guide for migrating from 0.x.
+
+ - [Goals](notes/Goals.md) - outline of the project's goals.
+
+ - [Specs](notes/Specs.md) - examples of how JavaScript compiles to CoffeeScript.
+
+ - [AST format](notes/AST.md) - technical description of the CoffeeScript AST format.
+
+ - [Special cases](notes/Special_cases.md) - a list of edge cases that js2coffee accounts for.
+
+<br>
 
 ## Thanks
 
