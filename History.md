@@ -1,6 +1,6 @@
-## [redux] v0.0.17
+## [redux] v0.0.17 - January 31, 2015
 
-* Documentation
+* Improve documentation
 * Fix indentation of closing parenthesis
 * Add global variable assignment warnings
 * Escape global variable assignments in compat mode
