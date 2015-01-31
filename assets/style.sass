@@ -72,6 +72,17 @@ a:hover, a:focus
   color: white
 
 /*
+ * mixins
+ */
+
+= black-box
+  background: darken($bg, 5%)
+  box-shadow: 0 0 4px rgba(black, 0.1)
+  border-radius: 3px
+  border: solid 1px $accent2
+  border: solid 1px mix($accent2, $bg, 50%)
+
+/*
  * main area
  */
 
@@ -300,38 +311,6 @@ a:hover, a:focus
     pointer-events: none
     opacity: 0
 
-  .close-button
-    position: absolute
-    top: 0
-    right: 0
-    width: 64px
-    height: 100%
-    background: transparent
-    border: 0
-    padding: 0
-    margin: 0
-    z-index: 10
-    cursor: pointer
-    color: mix($accent2, $bg, 50%)
-    transition: color 100ms linear
-
-    &:hover
-      color: $accent2
-
-    &:before
-      +ion-icon('ios-close-outline', 32px)
-      position: absolute
-      top: 0
-      left: 0
-      width: 64px
-      height: 64px
-      line-height: 64px
-      text-align: center
-      vertical-align: top
-
-    &:hover:before
-      @extend %ion-icon-ios-close
-
   &:not(.focus):not(.error) .CodeMirror
     opacity: 0.9
 
@@ -341,12 +320,8 @@ a:hover, a:focus
     left: 15px
     bottom: 15px
     right: 15px
-    background: darken($bg, 5%)
-    box-shadow: 0 0 4px rgba(black, 0.1)
     z-index: 5
-    border-radius: 3px
-    border: solid 1px $accent2
-    border: solid 1px mix($accent2, $bg, 50%)
+    +black-box
 
   h3
     border-bottom: 0
@@ -360,6 +335,43 @@ a:hover, a:focus
   .CodeMirror
     padding-left: 30px
     padding-top: 55px
+
+/*
+ * close
+ */
+
+.close-button
+  position: absolute
+  top: 0
+  right: 0
+  width: 64px
+  height: 100%
+  background: transparent
+  border: 0
+  padding: 0
+  margin: 0
+  z-index: 10
+  cursor: pointer
+  color: mix($accent2, $bg, 50%)
+  transition: color 100ms linear
+
+  &:hover
+    color: $accent2
+
+  &:before
+    +ion-icon('ios-close-outline', 32px)
+    position: absolute
+    top: 0
+    left: 0
+    width: 64px
+    height: 64px
+    line-height: 64px
+    text-align: center
+    vertical-align: top
+
+  &:hover:before
+    @extend %ion-icon-ios-close
+
 
 /*
  * codemirror customization
@@ -604,11 +616,28 @@ a:hover, a:focus
  */
 
 .announcement-box
-  position: absolute
-  left: 0
-  bottom: 0
-  width: 50%
-  padding-right: 15px
+  &
+    position: absolute
+    left: 0
+    bottom: 0
+    width: 50%
+    padding-right: 15px
+    transition: all 250ms ease
+
+  &.expanded
+    transform: translate(0, 50px)
+
+  .announcement-dialog
+    margin: 15px 15px 5px 30px
+    opacity: 0
+    pointer-events: none
+    display: none
+    transition: opacity 250ms ease
+
+  .announcement-dialog.visible
+    display: block
+    opacity: 1
+    pointer-events: auto
 
 .announcement-banner
   &
@@ -661,6 +690,7 @@ a:hover, a:focus
 
   .expando
     display: inline-block
+    opacity: 0
     width: 30px
     height: 20px
     line-height: 20px - 4px
@@ -685,3 +715,49 @@ a:hover, a:focus
     .expando
       color: $accent2
       border-color: $accent2
+
+/*
+ *
+ */
+
+.announcement-dialog
+  position: relative
+  +black-box
+  padding: 0 15px
+  padding-right: 64px
+  height: 50%
+  color: $litetext
+  line-height: 1.5
+
+  p, h2, h3
+    margin: 15px 0
+
+  .heading
+    color: $text
+    font-weight: bold
+    margin-bottom: 10px
+    padding: 0
+    font-size: 1.1em
+    border-bottom: solid 1px rgba(white, 0.1)
+    padding-bottom: 10px
+
+  .heading + p
+    margin-top: 0
+
+  .heading:before
+    +ion-icon('ios-chatboxes-outline')
+    font-size: 16px
+    margin-right: 10px
+
+  .date
+    font-size: 0.8em
+    color: $litetext
+    text-transform: uppercase
+    letter-spacing: 1px
+    margin-left: 10px
+
+  a, a:visited
+    color: mix($litetext, $text, 50%)
+
+  a:hover, a:focus
+    color: $text

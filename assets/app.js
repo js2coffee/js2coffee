@@ -6,6 +6,8 @@ var view;
 
 ready(function () {
   App.view = view = new Editors();
+  App.announcement = new AnnouncementView(q('.announcement-box'));
+  
   view.update();
 });
 
@@ -536,6 +538,36 @@ LoggerStub.prototype = {
 };
 
 /*
+ * ANnouncements
+ */
+
+function AnnouncementView (el) {
+  this.el = el;
+  this.$banner = el.querySelector('.announcement-banner');
+  this.$dialog = el.querySelector('.announcement-dialog');
+  this.$close = el.querySelector('.close-button');
+  this.visible = false;
+  this.bindEvents();
+}
+
+AnnouncementView.prototype = {
+  bindEvents: function () {
+    on(this.$banner, 'click', this.toggle.bind(this));
+    on(this.$close, 'click', this.toggle.bind(this));
+  },
+
+  toggle: function (e) {
+    e.preventDefault();
+
+    this.visible = ! this.visible;
+    var active = this.visible;
+    toggleClass(this.el, 'expanded', active);
+    toggleClass(this.$dialog, 'visible', active);
+    toggleClass(this.$banner, 'collapsed', ! active);
+  }
+};
+
+/*
  * Helpers taken from npmjs.com/dom101
  */
 
@@ -583,6 +615,12 @@ function addClass (el, className) {
     el.classList.add(className);
   else
     el.className += ' ' + className;
+}
+
+function toggleClass (el, className, value) {
+  return value ?
+    addClass(el, className) :
+    removeClass(el, className);
 }
 
 })();
