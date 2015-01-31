@@ -141,16 +141,6 @@ a:hover, a:focus
     margin-bottom: 15px
     line-height: 1.2em
 
-  .logo
-    // margin: -15px
-    // border: solid 2px lighten($bg, 5%)
-    // border-radius: 3px
-    // border-bottom: solid 1px rgba(black, 0.1)
-    display: block
-    margin-top: 4px
-    height: 40px
-    background: url('./logo.svg') center center / 85% auto no-repeat
-
   h5
     font-weight: 400
     font-size: 0.9em
@@ -158,6 +148,20 @@ a:hover, a:focus
 
   .section
     margin: 15px 0
+
+/*
+ * logo
+ */
+
+.js2c-logo
+  display: block
+  margin-top: 4px
+  height: 40px
+  background: url('./logo.svg') center center / 85% auto no-repeat
+
+/*
+ * links list
+ */
 
 .links-list
   &, li
@@ -761,3 +765,42 @@ a:hover, a:focus
 
   a:hover, a:focus
     color: $text
+
+/*
+ * mobile
+ */
+
+.mobile-view
+  &
+    display: none
+
+  &
+    max-width: 350px
+    margin: 30px auto
+    padding: 15px
+    text-align: center
+    color: $litetext
+
+  .js2c-logo,
+  .code-example
+    max-width: 250px
+    margin-left: auto
+    margin-right: auto
+
+  p
+    margin: 30px 0 15px 0
+
+  b
+    color: mix($text, $litetext, 50%)
+    border-bottom: solid 1px rgba(white, 0.2)
+
+  iframe  
+    position: relative
+    left: 20px
+
+@media (max-width: 480px)
+  .mobile-view
+    display: block
+
+  .code-area, .main-sidebar
+    display: none
