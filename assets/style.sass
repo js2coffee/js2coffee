@@ -621,6 +621,7 @@ a:hover, a:focus
 
 .announcement-box
   &
+    +antialias()
     position: absolute
     left: 0
     bottom: 0
@@ -877,6 +878,10 @@ a:hover, a:focus
   border-radius: 4px
   color: $litetext
   transition: all 100ms linear
+  font-size: 0.9em
+  font-weight: bold
+  font-family: sans-serif
+  +antialias()
 
   &:before
     margin-right: 9px
