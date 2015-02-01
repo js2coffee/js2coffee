@@ -80,13 +80,17 @@ result.warnings.forEach((warn) => {
 
  - [Migration guide](notes/Migration_guide.md) - guide for migrating from 0.x.
 
- - [Goals](notes/Goals.md) - outline of the project's goals.
-
- - [Specs](notes/Specs.md) - examples of how JavaScript compiles to CoffeeScript.
+ - [Hacking guide](notes/Hacking.md) - want to contribute? here are tips to get you started.
 
  - [AST format](notes/AST.md) - technical description of the CoffeeScript AST format.
 
  - [Special cases](notes/Special_cases.md) - a list of edge cases that js2coffee accounts for.
+
+ - [Compatibility mode](notes/Special_cases.md#compatibilitymode) - list of tweaks that compatibility mode (`--compat`) addresses.
+
+ - [Goals](notes/Goals.md) - outline of the project's goals.
+
+ - [Specs](notes/Specs.md) - examples of how JavaScript compiles to CoffeeScript.
 
 <br>
 

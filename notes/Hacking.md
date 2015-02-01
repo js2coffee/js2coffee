@@ -1,3 +1,13 @@
+## Setting up a local instance
+
+All you need is Node.js.
+
+```sh
+git clone https://github.com/js2coffee/js2coffee
+cd js2coffee
+npm install
+```
+
 ## Builds
 
 Browserify builds (`dist/js2coffee.js`) are invoked via `npm prepublish`.
