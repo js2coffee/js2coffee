@@ -8,16 +8,50 @@ cd js2coffee
 npm install
 ```
 
-## Builds
+## Running tests
 
-Browserify builds (`dist/js2coffee.js`) are invoked via `npm prepublish`.
+Once you start hacking, periodically run tests.
 
-## Tests
+    npm test
 
-Tests are still plain files (text files in `specs/*`) but invoked with a Mocha
-test runner.
+If you want to run pending specs as well:
 
-## How it works
+    ALL=1 npm test
+
+If you'd like to isolate a spec, edit the spec file to add `only: true`:
+
+    # specs/xxx/yyy.txt
+    only: true
+    ---
+    x()
+    ---
+    x()
+
+## Building distribution
+
+The file `dist/js2coffee.js` is automatically built. Use `make` to build it.
+
+    make
+
+It is also ran as a pre-publish hook.
+
+## New versions
+
+    vim History.md
+    bump *.json Readme.md
+    npm publish && git release v0.1.2
+
+## References
+
+- [Esprima docs]
+- [Parser API spec]
+- [Esprima demo]
+
+[Esprima docs]: http://esprima.org/doc/index.html#ast
+[Parser API spec]: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
+[Esprima demo]: http://esprima.org/demo/parse.html# 
+
+# How it works
 
 Check out comments in `js2coffee.js` for an overiew.
 
