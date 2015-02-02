@@ -7,7 +7,7 @@ Compile JavaScript into CoffeeScript.
 [![Status](https://travis-ci.org/js2coffee/js2coffee.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee)  
 
 This 2.0 release is a complete rewrite featuring a better parser ([Esprima]).
-See [what's new in 2.0](notes/New_in_2.0.md) for an overview of new features
+See **[what's new in 2.0](notes/New_in_2.0.md)** for an overview of new features
 and consult the [migration guide](notes/Migration_guide.md) for info on
 updating from 0.x.
 
