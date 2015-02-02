@@ -4,10 +4,21 @@
 released February 1, 2015 and features a new parser, [Esprima], replacing the
 aging Narcissus build that has been in use since 2011.
 
-New features
-------------
+----
 
-### Warnings and errors
+## New web editor
+
+![](http://js2.coffee/assets/screenshots/js2coffee.png)
+
+The editor has been rebuilt and redesigned. It now features a new easy-to-use
+editor based on [CodeMirror].
+
+It also now lives in a new URL, [js2.coffee](http://js2.coffee), migrating away
+from the old `js2coffee.org`.
+
+----
+
+## Warnings and errors
 
 ![](http://js2.coffee/assets/screenshots/warnings.png)
 
@@ -21,7 +32,9 @@ See this
 [demo](http://js2.coffee/#try:alert%28function%20namedExpr%28%29{}%29%3B%0A%0Afunction%20fn%28%29%20{%0A%20%20if%20%28a%20%3D%3D%20b%29%20{%0A%20%20%20%20a%20%3D%20false%3B%0A%20%20}%0A})
 for a few more.
 
-### AST mode
+----
+
+## AST mode
 
 ![](http://js2.coffee/assets/screenshots/ast.png)
 
@@ -29,11 +42,15 @@ The js2coffee compiler now produces a CoffeeScript AST (abstract syntax tree) be
 rendering your input into code. The command-line client features an `--ast`
 mode which lets you inspect the generated CoffeeScript AST.
 
-### Source maps
+----
+
+## Source maps
 
 Source maps are now generated. More info on this soon.
 
-### Compatibility mode
+----
+
+## Compatibility mode
 
 Js2coffee now features a *compatibility mode* (`--compat`) to improve
 reliability over generated CoffeeScript code (at the slight expense of elegance).
@@ -43,7 +60,9 @@ Try this
 [demo](http://js2.coffee/#try:alert%28function%20cube%28n%29{%0A%20%20return%20Math.pow%28n%2C%203%29%3B%0A}%29%3B)
 — toggle the *compatibility mode* checkbox and see what happens.
 
-### Improved API
+----
+
+## Improved API
 
 The API has remained largely compatible with the 0.x series, but with
 improvements. The JavaScript API also reports the AST tree, source maps and
@@ -59,25 +78,18 @@ The 2.0 release closes a [lot of bugs][issues], including:
  * Variable scoping issues ([#219])
  * and many [more][issues]
 
-New web editor
---------------
+----
 
-![](http://js2.coffee/assets/screenshots/js2coffee.png)
-
-The editor has been rebuilt and redesigned. It now features a new easy-to-use
-editor based on [CodeMirror].
-
-It also now lives in a new URL, [js2.coffee](http://js2.coffee), migrating away
-from the old `js2coffee.org`.
-
-### Linking and sharing
+## Linking and sharing
 
 ![](http://js2.coffee/assets/screenshots/linking.png)
 
 You can show share your JavaScript and CoffeeScript snippets—perfect for
 collaborating with coworkers or answering at StackOverflow.
 
-### CoffeeScript preview pane
+----
+
+## CoffeeScript preview pane
 
 ![](http://js2.coffee/assets/screenshots/preview.png)
 
