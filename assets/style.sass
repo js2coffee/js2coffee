@@ -774,7 +774,14 @@ a:hover, a:focus
     margin-left: 10px
 
   a, a:visited
-    color: mix($litetext, $text, 50%)
+    color: mix($litetext, $text, 25%)
+
+  a:after
+    +ion-icon('ios-redo')
+    font-size: 12px
+    opacity: 0.5
+    color: $accent
+    margin: 0 6px 0 4px
 
   a:hover, a:focus
     color: $text
@@ -882,6 +889,10 @@ a:hover, a:focus
   font-weight: bold
   font-family: sans-serif
   +antialias()
+
+  &.twitter:after
+    display: none
+    content: none
 
   &:before
     margin-right: 9px
