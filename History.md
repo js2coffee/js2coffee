@@ -1,10 +1,12 @@
 ## v2.0.0 - February 2, 2014
 
-Full rewrite that features the Esprima parser. This release resolves *way* too
-many issues to count (at least 30).
+Full rewrite that features the Esprima parser. This release resolves a lot of issues,
+a lot of which are tracked with the ["fixed in 2.0"][fixed] label.
 
 Check the [migration guide](notes/Migration_guide.md) for information on what's
 changed from v0 to v2.0.
+
+[fixed]: https://github.com/js2coffee/js2coffee/issues?q=label%3A%22fixed+in+2.0%22+is%3Aclosed
 
 ----
 
