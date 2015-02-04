@@ -787,7 +787,8 @@ a:hover, a:focus
     color: $text
 
 /*
- * mobile
+ * Mobile view:
+ * `.mobile-view` - info message for mobile visitors.
  */
 
 .mobile-view
@@ -835,20 +836,22 @@ a:hover, a:focus
     display: none
 
 /*
- *
+ * Faux addressbar:
+ * `.faux-addressbar` - used to display the site address in the mobile view.
  */
 
 .faux-addressbar
-  margin: 20px auto
-  border: solid 1px rgba(white, 0.1)
-  border-radius: 4px
-  padding: 10px 15px
-  text-align: left
-  font-size: 0.8em
-  display: block
-  max-width: 250px
+  &
+    margin: 20px auto
+    border: solid 1px rgba(white, 0.1)
+    border-radius: 4px
+    padding: 10px 15px
+    text-align: left
+    font-size: 0.8em
+    display: block
+    max-width: 250px
 
-  font-family: $monospace
+    font-family: $monospace
 
   &, &:visited
     color: $text
@@ -864,7 +867,8 @@ a:hover, a:focus
     color: $accent2
 
 /*
- *
+ * Share buttons:
+ * `.share-buttons` - where github/tweet buttons are
  */
 
 .share-buttons
@@ -873,22 +877,27 @@ a:hover, a:focus
     margin-right: 10px
 
 /*
+ * Share button:
+ * `.share-button` - a tweet button.
  *
+ *     a.share-button.twitter
+ *       | Tweet
  */
 
 .share-button
-  display: inline-block
-  height: 30px
-  line-height: 30px
-  padding: 0 10px
-  background: darken($bg, 7%)
-  border-radius: 4px
-  color: $litetext
-  transition: all 100ms linear
-  font-size: 0.9em
-  font-weight: bold
-  font-family: sans-serif
-  +antialias()
+  &
+    display: inline-block
+    height: 30px
+    line-height: 30px
+    padding: 0 10px
+    background: darken($bg, 7%)
+    border-radius: 4px
+    color: $litetext
+    transition: all 100ms linear
+    font-size: 0.9em
+    font-weight: bold
+    font-family: sans-serif
+    +antialias()
 
   &.twitter:after
     display: none
