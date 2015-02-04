@@ -1,9 +1,6 @@
-## To do
+## Dependencies
 
-- [x] Share
-- [x] Run
-- [x] Reverse compile
-- [x] Keyboard shortcuts
-- [ ] Keyboard shortcuts help text
-- [ ] "About js2coffee" spiel
-- [ ] Proper link to GitHub
+3rd-party dependencies are managed by `npm` and are compiled into `assets/vendor.{css,js}`.
+
+    npm install
+    make -B

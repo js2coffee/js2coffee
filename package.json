@@ -1,0 +1,29 @@
+{
+  "name": "js2coffee-site",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "base58": "^0.1.0",
+    "codemirror": "^4.12.0",
+    "punycode": "^1.3.2",
+    "watch": "^0.13.0"
+  },
+  "devDependencies": {
+    "uglify-js": "^2.4.16"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "make -B"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/js2coffee/js2coffee.git"
+  },
+  "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/js2coffee/js2coffee/issues"
+  },
+  "homepage": "https://github.com/js2coffee/js2coffee"
+}
