@@ -181,6 +181,8 @@ Editors.prototype = {
       mode: 'javascript',
       scrollbarStyle: 'overlay',
       tabSize: 2,
+      autoCloseBrackets: true,
+      matchBrackets: true,
       gutters: ["CodeMirror-lint-markers"],
       lint: true,
       autofocus: true
@@ -243,7 +245,9 @@ Editors.prototype = {
       scrollbarStyle: 'overlay',
       gutters: ["CodeMirror-lint-markers"],
       lint: true,
-      tabSize: 2
+      tabSize: 2,
+      autoCloseBrackets: true,
+      matchBrackets: true
     });
     var focused;
 
@@ -279,7 +283,9 @@ Editors.prototype = {
       mode: 'javascript',
       scrollbarStyle: 'overlay',
       readOnly: true,
-      tabSize: 2
+      tabSize: 2,
+      autoCloseBrackets: true,
+      matchBrackets: true
     });
 
     popup.on('focus', setFocus(this.$popup));

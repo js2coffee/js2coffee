@@ -27,5 +27,7 @@ assets/vendor.js: \
 	node_modules/codemirror/mode/javascript/javascript.js \
 	node_modules/codemirror/mode/coffeescript/coffeescript.js \
 	node_modules/codemirror/addon/lint/lint.js \
+	node_modules/codemirror/addon/edit/closebrackets.js \
+	node_modules/codemirror/addon/edit/matchbrackets.js \
 	node_modules/codemirror/addon/scroll/simplescrollbars.js
 	cat $^ | $(uglifyjs) -m > $@
