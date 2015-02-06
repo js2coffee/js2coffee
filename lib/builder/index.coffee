@@ -60,7 +60,10 @@ class Builder extends BuilderBase
     [ node.name ]
 
   UnaryExpression: (node) ->
-    if (/^[a-z]+$/i).test(node.operator)
+    isNestedUnary = -> node.argument.type is 'UnaryExpression'
+    isWord = -> (/^[a-z]+$/i).test(node.operator)
+
+    if isNestedUnary() or isWord()
       @paren [ node.operator, ' ', @walk(node.argument) ]
     else
       @paren [ node.operator, @walk(node.argument) ]
