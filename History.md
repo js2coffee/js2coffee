@@ -1,3 +1,7 @@
+## v2.0.1 - unreleased
+
+- Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0
+
 ## v2.0.0 - February 2, 2014
 
 Full rewrite that features the Esprima parser. This release resolves a lot of issues,
