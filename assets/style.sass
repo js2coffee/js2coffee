@@ -11,6 +11,7 @@
  */
 
 $bg: lighten(#20242a, 2%)
+$sidebar-bg: lighten($bg, 1%)
 $text: #ddd
 $litetext: mix($text, $bg, 35%)
 $monospace: menlo, monospace
@@ -109,7 +110,7 @@ a:hover, a:focus
 
 .main-sidebar
   +antialias()
-  background: lighten($bg, 1%)
+  background: $sidebar-bg
   box-shadow: 0 0 4px rgba(black, 0.1)
   width: $sidebar-width
   height: 100%
@@ -581,7 +582,7 @@ a:hover, a:focus
  *
  */
 
-.ad-section
+.section.section.ad-section
   &:last-child
     margin-bottom: 0
 
@@ -589,23 +590,49 @@ a:hover, a:focus
     font-size: 0.9em
     line-height: 1.4
     border-top: 0
-    background: rgba(black, 0.1)
-    margin: 15px -15px
+    margin: 0 -15px 15px -15px
     padding: 15px
+    padding-top: 0
+    min-height: 200px
 
-  p
+  a
+    display: block
     margin: 0
     padding: 0
-
-  p.text
-    margin-top: 10px
-    text-align: center
-    &:first-line
+    color: $litetext
+    transition: color 100ms linear
+    cursor: pointer
+    &:hover
       color: $text
+
+  .carbon-img
+    text-align: left
+    background-color: rgba(black, 0.1)
+    box-shadow: inset 1px 1px 1px rgba(black, 0.1)
+    border-radius: 4px
+    padding: 20px
+    transition: background-color 100ms linear
+
+    img
+      box-shadow: 0 2px 3px rgba(black, 0.4)
+      border-radius: 2px
+      background: $bg
+      height: 100px
+      width: 130px
+
+    &:hover
+      background-color: rgba(mix($accent, black, 20%), 0.1)
+      box-shadow: inset 1px 1px 1px rgba(black, 0.2)
+
+  .carbon-text
+    margin-top: 10px
+    color: mix($text, $litetext, 50%)
+
+  .carbon-poweredby
+    color: $litetext
 
   img
     display: block
-    margin: 0 auto
     width: 130px
     height: 100px
 

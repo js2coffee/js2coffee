@@ -7,7 +7,7 @@ all: \
 	assets/vendor.js
 
 start: bundle
-	${bundle} exec jekyll serve --safe --drafts --watch --port ${PORT}
+	${bundle} exec jekyll serve --safe --drafts --watch --port 92831 & ./node_modules/.bin/serveur _site -R -p ${PORT}
 
 build: bundle
 	${bundle} exec jekyll build --safe
