@@ -1,0 +1,23 @@
+# https://github.com/js2coffee/js2coffee/issues/347
+----
+a-b-c;
+
+(a-b)-c;
+(a+b)-c;
+(a-b)+c;
+(a+b)+c;
+
+a-(b-c);
+a-(b+c);
+a+(b-c);
+a+(b+c);
+----
+a - b - c
+a - b - c
+a + b - c
+a - b + c
+a + b + c
+a - (b - c)
+a - b + c
+a + b - c
+a + b + c

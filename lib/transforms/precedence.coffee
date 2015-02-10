@@ -20,9 +20,17 @@ module.exports = class extends TransformerBase
     prec = getPrecedence(node)
     return if prec is -1
 
-    # Ensure that the precedence calls for it (eg, + inside a /)
-    return unless prec < getPrecedence(parent)
+    # Ensure that the precedence calls for it (eg, + inside a /).
+    # Make special care for intransitive operations (`a-(b-c)` vs `(a-b)-c`).
+    if isIntransitive(parent) and isIntransitive(node) and parent.right is node
+      return unless prec <= getPrecedence(parent)
+    else
+      return unless prec < getPrecedence(parent)
 
     node._parenthesized = true
     return
+
+isIntransitive = (node) ->
+  op = node.operator
+  node.type is 'BinaryExpression' and (op is '-' or op is '/')
 

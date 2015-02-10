@@ -28,5 +28,5 @@ describe 'Precedence', ->
   test 'a++', 16
   test 'a--', 16
   test 'a.b', 18
-  test 'a', 99
-  test '2', 99
+  # test 'a', 99
+  # test '2', 99
