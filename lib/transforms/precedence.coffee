@@ -22,24 +22,30 @@ module.exports = class extends TransformerBase
 
     # Ensure that the precedence calls for it (eg, + inside a /).
     parenthesize =
-      isIntransitiveOperation(parent, node) or
+      isIntransitiveSubtraction(parent, node) or
+      isIntransitiveDivision(parent, node) or
       nonTailingTernary(parent, node) or
       prec < getPrecedence(parent)
 
     if parenthesize
       node._parenthesized = true
 
-# special case for intransitive operations (`a-(b-c)` vs `(a-b)-c`).
-isIntransitiveOperation = (parent, node) ->
-  isIntransitive(parent) and
-  isIntransitive(node) and
+# special case for subtraction intransitivity (`a-(b-c)` vs `(a-b)-c`).
+isIntransitiveSubtraction = (parent, node) ->
+  isOperation(parent, '-') and
+  isOperation(node, '-') and
+  parent.right is node
+
+# special case for division intransitivity (`a*(b/c)` vs `(a*b)/c`).
+isIntransitiveDivision = (parent, node) ->
+  isOperation(parent, '/') and
+  (isOperation(node, '/') or isOperation(node, '*')) and
   parent.right is node
 
 # special case for ternary operators where `node` isn't the `else`.
 # (`a?b?c:d:e` vs `a?b:c?d:e`)
-isIntransitive = (node) ->
-  op = node.operator
-  node.type is 'BinaryExpression' and (op is '-' or op is '/')
+isOperation = (node, op) ->
+  node.type is 'BinaryExpression' and node.operator is op
 
 nonTailingTernary = (parent, node) ->
   parent.type is 'ConditionalExpression' and
