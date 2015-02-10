@@ -21,16 +21,27 @@ module.exports = class extends TransformerBase
     return if prec is -1
 
     # Ensure that the precedence calls for it (eg, + inside a /).
-    # Make special care for intransitive operations (`a-(b-c)` vs `(a-b)-c`).
-    if isIntransitive(parent) and isIntransitive(node) and parent.right is node
-      return unless prec <= getPrecedence(parent)
-    else
-      return unless prec < getPrecedence(parent)
+    parenthesize =
+      isIntransitiveOperation(parent, node) or
+      nonTailingTernary(parent, node) or
+      prec < getPrecedence(parent)
 
-    node._parenthesized = true
-    return
+    if parenthesize
+      node._parenthesized = true
 
+# special case for intransitive operations (`a-(b-c)` vs `(a-b)-c`).
+isIntransitiveOperation = (parent, node) ->
+  isIntransitive(parent) and
+  isIntransitive(node) and
+  parent.right is node
+
+# special case for ternary operators where `node` isn't the `else`.
+# (`a?b?c:d:e` vs `a?b:c?d:e`)
 isIntransitive = (node) ->
   op = node.operator
   node.type is 'BinaryExpression' and (op is '-' or op is '/')
 
+nonTailingTernary = (parent, node) ->
+  parent.type is 'ConditionalExpression' and
+  node.type is 'ConditionalExpression' and
+  parent.alternate isnt node

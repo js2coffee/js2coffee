@@ -1,0 +1,5 @@
+# https://github.com/js2coffee/js2coffee/issues/345
+----
+a ? b ? c : d : e
+----
+if a then (if b then c else d) else e
