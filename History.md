@@ -1,9 +1,13 @@
+## v2.0.2 - unreleased
+
+- Fix nesting division operators (eg: `a / (b * c)`) [#348]
+
 ## v2.0.1 - February 10, 2014
 
-- Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0 (#343)
-- Fix multiple unary operators not being spaced properly (eg: `a - - - b`) (#339)
-- Fix nesting minus operators (eg: `a - (b - c)`) (#347)
-- Fix nesting ternary operators (eg: `a ? (b ? c : d) e`) (#345)
+- Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0 [#343]
+- Fix multiple unary operators not being spaced properly (eg: `a - - - b`) [#339]
+- Fix nesting subtraction operators (eg: `a - (b - c)`) [#347]
+- Fix nesting ternary operators (eg: `a ? (b ? c : d) e`) [#345]
 
 ## v2.0.0 - February 2, 2014
 
