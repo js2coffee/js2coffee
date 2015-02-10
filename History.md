@@ -2,6 +2,7 @@
 
 - Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0 (#343)
 - Fix issue with multiple unary operators (#339)
+- Fix issue with multiple minus operators (#347)
 
 ## v2.0.0 - February 2, 2014
 
