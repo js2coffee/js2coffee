@@ -2945,7 +2945,36 @@ b: 2
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Intransitive operations minus</th>
+<th width='33%' valign='top'>Intransitive operations division</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a/b/c;
+
+(a/b)/c;
+(a*b)/c;
+(a/b)*c;
+(a*b)*c;
+
+a/(b/c);
+a/(b*c);
+a*(b/c);
+a*(b*c);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a / b / c
+a / b / c
+a * b / c
+a / b * c
+a * b * c
+a / (b / c)
+a / (b * c)
+a * b / c
+a * b * c
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Intransitive operations subtraction</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a-b-c;
 
@@ -2992,6 +3021,28 @@ a + b + c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>new X(new Y)
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Nested ternary</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a ? b : c ? d : e
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a then b else if c then d else e
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Nested ternary 2</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a ? b ? c : d : e
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a then (if b then c else d) else e
 </code></pre>
 </td>
 </tr>
