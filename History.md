@@ -1,8 +1,9 @@
-## v2.0.1 - unreleased
+## v2.0.1 - February 10, 2014
 
 - Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0 (#343)
-- Fix issue with multiple unary operators (#339)
-- Fix issue with multiple minus operators (#347)
+- Fix multiple unary operators not being spaced properly (eg: `a - - - b`) (#339)
+- Fix nesting minus operators (eg: `a - (b - c)`) (#347)
+- Fix nesting ternary operators (eg: `a ? (b ? c : d) e`) (#345)
 
 ## v2.0.0 - February 2, 2014
 
