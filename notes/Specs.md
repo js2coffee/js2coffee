@@ -2945,6 +2945,35 @@ b: 2
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Intransitive operations minus</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a-b-c;
+
+(a-b)-c;
+(a+b)-c;
+(a-b)+c;
+(a+b)+c;
+
+a-(b-c);
+a-(b+c);
+a+(b-c);
+a+(b+c);
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a - b - c
+a - b - c
+a + b - c
+a - b + c
+a + b + c
+a - (b - c)
+a - b + c
+a + b - c
+a + b + c
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Logical operators</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>(a || b) && (c || d)
@@ -3413,6 +3442,17 @@ c && d;
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a or b
 c and d
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Multiple unary operators</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>0 + - + - - 1
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>0 + - + - -1
 </code></pre>
 </td>
 </tr>
