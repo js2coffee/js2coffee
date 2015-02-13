@@ -1,6 +1,7 @@
 ## v2.0.2 - unreleased
 
 - Fix nesting division operators (eg: `a / (b * c)`) [#348]
+- Add 'coffee-script' as a hard dependency [#351]
 
 ## v2.0.1 - February 10, 2014
 
