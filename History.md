@@ -1,16 +1,20 @@
-## v2.0.2 - unreleased
+## v2.0.3 - Feb 14, 2015
+
+- Remove 'coffee-script' as hard dependency, just use pre-built distribution [#351]
+
+## v2.0.2 - Feb 13, 2015
 
 - Fix nesting division operators (eg: `a / (b * c)`) [#348]
 - Add 'coffee-script' as a hard dependency [#351]
 
-## v2.0.1 - February 10, 2014
+## v2.0.1 - February 10, 2015
 
 - Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0 [#343]
 - Fix multiple unary operators not being spaced properly (eg: `a - - - b`) [#339]
 - Fix nesting subtraction operators (eg: `a - (b - c)`) [#347]
 - Fix nesting ternary operators (eg: `a ? (b ? c : d) e`) [#345]
 
-## v2.0.0 - February 2, 2014
+## v2.0.0 - February 2, 2015
 
 Full rewrite that features the Esprima parser. This release resolves a lot of issues,
 a lot of which are tracked with the ["fixed in 2.0"][fixed] label.
