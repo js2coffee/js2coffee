@@ -9,7 +9,7 @@ var args = require('../lib/cli')
   });
 
 var read = require('read-input');
-var js2coffee = require('../index');
+var js2coffee = require('../dist/js2coffee');
 
 read(args._, function (err, res) {
   if (err) {
