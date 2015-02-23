@@ -84,10 +84,11 @@ function printWarnings (warnings) {
 
   var comments = warnings.map(function (warn) {
     var msg = '' +
-      warn.filename + ':' +
-      warn.start.line + ':' +
-      warn.start.column + ': ' +
-      c(34, '[warning] ') +
+      warn.filename + ':'+ warn.start.line + ':'
+    if (warn.start)
+      msg += warn.start.line + ':' +
+        warn.start.column + ': '
+    msg += c(34, '[warning] ') +
       warn.description;
 
     console.warn(msg);
