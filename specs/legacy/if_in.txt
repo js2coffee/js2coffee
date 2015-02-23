@@ -1,0 +1,6 @@
+----
+if (key in obj)
+    single_liner()
+----
+if key of obj
+  single_liner()
