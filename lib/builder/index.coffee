@@ -70,7 +70,9 @@ class Builder extends BuilderBase
 
   # Operator (+)
   BinaryExpression: (node) ->
-    @paren space [ @walk(node.left), node.operator, @walk(node.right) ]
+    operator = node.operator
+    operator = 'of' if operator is 'in'
+    @paren space [ @walk(node.left), operator, @walk(node.right) ]
 
   Literal: (node) ->
     if typeof node.value is 'string'
