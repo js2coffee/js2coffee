@@ -1,4 +1,4 @@
-# <img src="http://js2.coffee/assets/logo-white.svg" width="250">
+# <img src="http://js2.coffee/assets/logo-white.svg" width="250" alt="js2coffee">
 
 Compile JavaScript into CoffeeScript.
 
