@@ -33,7 +33,6 @@ module.exports = class extends TransformerBase
 # special case for subtraction intransitivity (`a-(b-c)` vs `(a-b)-c`).
 isIntransitiveSubtraction = (parent, node) ->
   isOperation(parent, '-') and
-  isOperation(node, '-') and
   parent.right is node
 
 # special case for division intransitivity (`a*(b/c)` vs `(a*b)/c`).
