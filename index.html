@@ -1,6 +1,7 @@
 ---
 ---
 <!doctype html>
+{% assign timestamp = site.time | date: "%Y%m%d%H%M%S" %}
 <html>
 <head>
   <meta charset="UTF-8">
@@ -24,7 +25,7 @@
   <meta name="twitter:image" content="http://js2.coffee/assets/preview.png">
 
   <!-- ua -->
-  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
   <!-- viewport -->
   <meta name='viewport' content='width=device-width'>
@@ -32,17 +33,19 @@
   <!-- favicon -->
   <link rel="icon" type="image/png" href="/assets/favicon-32.png">
 
-  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+
+  {% include polyfills.html %}
 
   <!-- css -->
-  <link rel='stylesheet' href='assets/vendor.css'>
-  <link rel='stylesheet' href='assets/style.css'>
+  <link rel='stylesheet' href='assets/vendor.css?t={{ timestamp }}'>
+  <link rel='stylesheet' href='assets/style.css?t={{ timestamp }}'>
 
   <!-- js -->
   <script src="{{ site.data.js.js2coffee.url | replace: '%s', site.data.js.js2coffee.version }}"></script>
   <script src="{{ site.data.js.coffeescript.url | replace: '%s', site.data.js.coffeescript.version }}"></script>
-  <script src='assets/vendor.js'></script>
-  <script src='assets/app.js'></script>
+  <script src='assets/vendor.js?t={{ timestamp }}'></script>
+  <script src='assets/app.js?t={{ timestamp }}'></script>
 </head>
 <body>
   {% include mobile-view.html %}
