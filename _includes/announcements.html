@@ -1,23 +1,12 @@
 <div class='announcement-dialog'>
   <button class='close-button'></button>
   <h3 class='heading'>
-    <strong class='title'>js2coffee 2.0 is out!</strong>
-    <span class='date'>Feb 1, 2015</span>
+    <strong class='title'>{{ site.data.announcement.title }}</strong>
+    <span class='date'>{{ site.data.announcement.date }}</span>
   </h3>
-  <p>
-    <a href='https://github.com/js2coffee/js2coffee/blob/master/notes/New_in_2.0.md'>Check out the new
-      features</a> of js2coffee 2.0!
-  </p>
-  <p>
-    js2coffee has been rewritten from the ground up featuring a new parser based on Esprima.
-    Feel free to <a href='https://github.com/js2coffee/js2coffee/issues'>report
-    any issues</a> you encounter and contribute patches.
-  </p>
-  <p>
-    Moving from v0.3? Be sure to check the <a
-      href='https://github.com/js2coffee/js2coffee/blob/master/notes/Migration_guide.md'>migration
-    guide</a>.
-  </p>
+
+  {{ site.data.announcement.body | markdownify }}
+
   <p class='share-buttons'>
     <a class='share-button twitter' href='http://twitter.com/share?url=http://js2.coffee/&amp;text=js2coffee 2.0 - javascript to coffeescript compiler, rewritten!' target='_blank'>Tweet</a>
     {% include github-button.html %}
@@ -28,8 +17,8 @@
 
 <button class='announcement-banner'>
   <i class='icon'></i>
-  <strong class='title'>js2coffee 2.0 is out!</strong>
-  <span class='date'>Feb 1, 2015</span>
+  <strong class='title'>{{ site.data.announcement.title }}</strong>
+  <span class='date'>{{ site.data.announcement.date }}</span>
   <span class='expando'></span>
 </button>
 

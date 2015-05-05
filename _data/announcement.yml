@@ -1,0 +1,12 @@
+title: js2coffee v2.0.4 released
+date: May 5, 2015
+body: |-
+  See the [changelog] for details. Feel free to report any [issues] you encounter.
+
+  [xxx]: js2coffee v2.0 is a rewrite that was released Feb 2015. Coming from the old v0.x? See [new features][new] and [migration guide][migration].
+  
+  [changelog]: https://github.com/js2coffee/js2coffee/blob/master/History.md
+  [issues]: https://github.com/js2coffee/js2coffee/issues
+  [new]: https://github.com/js2coffee/js2coffee/blob/master/notes/New_in_2.0.md
+  [migration]: https://github.com/js2coffee/js2coffee/blob/master/notes/Migration_guide.md
+

@@ -2,12 +2,14 @@ PORT ?= 3000
 bundle := env BUNDLE_GEMFILE=./_/Gemfile bundle
 uglifyjs := node_modules/.bin/uglifyjs
 
+default: start
+
 all: \
 	assets/vendor.css \
 	assets/vendor.js
 
 start: bundle
-	${bundle} exec jekyll serve --safe --drafts --watch --port 92831 & ./node_modules/.bin/serveur _site -R -p ${PORT}
+	${bundle} exec jekyll build --safe --drafts --watch & ./node_modules/.bin/serveur _site -R -p ${PORT}
 
 build: bundle
 	${bundle} exec jekyll build --safe
