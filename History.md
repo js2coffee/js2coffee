@@ -1,6 +1,8 @@
 ## [v2.0.4] - May 5, 2015
 
 - Fix `a - (b + c)` incorrectly dropping parentheses ([#373])
+- `if (x in y)` now translates to `x of y` instead of `in` ([@snowyu], [#355])
+- Fix "Cannot read property 'line' of undefined" errors ([@snowyu], [#356])
 
 ## [v2.0.3] - Feb 14, 2015
 
@@ -354,3 +356,6 @@ Initial version.
 [v2.0.3]: https://github.com/js2coffee/js2coffee/compare/v2.0.2...v2.0.3
 [v2.0.2]: https://github.com/js2coffee/js2coffee/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/js2coffee/js2coffee/compare/v2.0.0...v2.0.1
+[#355]: https://github.com/js2coffee/js2coffee/issues/355
+[#356]: https://github.com/js2coffee/js2coffee/issues/356
+[@snowyu]: https://github.com/snowyu
