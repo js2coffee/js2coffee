@@ -93,30 +93,8 @@ Editors.prototype = {
   getOptions: function () {
     return {
       compat: this.$compat.checked,
-      indent: this.getIndentStyle()
+      indent: q('[role~="indent"]:checked').value
     };
-  },
-
-  /*
-   * gets the indent style from the radio group
-   */
-
-  getIndentStyle: function () {
-    var indentStyle,
-      indentSelection = q('[role~="indent"]:checked');
-
-    switch(indentSelection.id) {
-      case '4spaces':
-        indentStyle = 4;
-        break;
-      case 'tabs':
-        indentStyle = '\t';
-        break;
-      default:
-        indentStyle = 2;
-    }
-
-    return indentStyle;
   },
 
   /*
