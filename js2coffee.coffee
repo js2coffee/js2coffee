@@ -57,7 +57,7 @@ js2coffee.build = (source, options = {}) ->
 
 js2coffee.parseJS = (source, options = {}) ->
   try
-    Esprima = require('esprima-fb')
+    Esprima = require('esprima')
     Esprima.parse(source, loc: true, range: true, comment: true)
   catch err
     throw buildError(err, source, options.filename)
