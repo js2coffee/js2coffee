@@ -110,7 +110,7 @@ Editors.prototype = {
         indentStyle = 4;
         break;
       case 'tabs':
-        indentStyle = "\t";
+        indentStyle = '\t';
         break;
       default:
         indentStyle = 2;
