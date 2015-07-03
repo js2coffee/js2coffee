@@ -1981,6 +1981,19 @@ f = (->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>If in</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (key in obj)
+    single_liner()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if key of obj
+  single_liner()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Increment decrement</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a++;
@@ -2996,7 +3009,7 @@ a + b - c
 a - b + c
 a + b + c
 a - (b - c)
-a - b + c
+a - (b + c)
 a + b - c
 a + b + c
 </code></pre>
