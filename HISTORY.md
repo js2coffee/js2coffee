@@ -1,10 +1,10 @@
-## [v2.0.5] - Jul  3, 2015
+## [v2.1.0] - Jul  3, 2015
 
 - [#383] - Update Esprima version. ([@ariya])
 
 [#383]: https://github.com/js2coffee/js2coffee/issues/383
 [@ariya]: https://github.com/ariya
-[v2.0.5]: https://github.com/js2coffee/js2coffee/compare/v2.0.4...v2.0.5
+[v2.1.0]: https://github.com/js2coffee/js2coffee/compare/v2.0.4...v2.1.0
 
 ## [v2.0.4] - May 5, 2015
 
