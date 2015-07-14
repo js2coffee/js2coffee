@@ -31,7 +31,7 @@ b()
 ### Assignment of reserved words
 
 Certain keywords in CoffeeScript are not allowed. For instance, `on` is
-actually an alias for `false`.
+actually an alias for `true`.
 
 The CoffeeScript code `on = 2` will produce errors. As such, Js2coffee will
 throw an error if any of the CoffeeScript reserved keywords are used.
