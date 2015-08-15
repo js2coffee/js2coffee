@@ -7,7 +7,7 @@ module.exports = class extends TransformerBase
   ###
 
   LabeledStatement: (node, parent) ->
-    @syntaxError node, "Labeled statements are not supported in CoffeeScirpt"
+    @syntaxError node, "Labeled statements are not supported in CoffeeScript"
 
   WithStatement: (node) ->
     @syntaxError node, "'with' is not supported in CoffeeScript"
