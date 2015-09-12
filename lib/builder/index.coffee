@@ -141,7 +141,13 @@ class Builder extends BuilderBase
     @makeStatements(node, node.body)
 
   makeStatements: (node, body) ->
-    prependAll(body.map(@walk), @indent())
+    walked = body.map(@walk)
+    ret = []
+    for item, i in walked
+      if body[i].type isnt "BlockStatement"
+        ret.push @indent()
+      ret.push item
+    ret
 
   LineComment: (node) ->
     [ "#", node.value, "\n" ]
