@@ -27,3 +27,30 @@ loop
 """
     expect(out).equals(expected)
 
+  it 'inserts var statements into correct scope', ->
+    out = js2coffee """
+var a = 0;
+var foo = function () {
+  var b = function () {
+    return 0;
+  };
+  var a = 1;
+};
+"""
+
+    expected = """
+a = 0
+
+foo = ->
+  `var a`
+
+  b = ->
+    0
+
+  a = 1
+  return
+
+"""
+    expect(out).equals(expected)
+
+

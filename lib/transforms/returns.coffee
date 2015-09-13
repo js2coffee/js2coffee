@@ -8,7 +8,7 @@ TransformerBase = require('./base')
 module.exports = class extends TransformerBase
 
   onScopeExit: (scope, ctx, subscope, subctx) ->
-    @unreturnify scope
+    @unreturnify subscope
 
   ###
   # Removes return statements

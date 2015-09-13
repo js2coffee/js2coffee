@@ -188,7 +188,7 @@ class TransformerBase
 
   pushStack: (node) ->
     [ oldScope, oldCtx ] = [ @scope, @ctx ]
-    @scopes.push [ node, @ctx ]
+    @scopes.push [ @scope , @ctx ]
     @ctx = clone(@ctx)
     @scope = node
     @onScopeEnter?(@scope, @ctx, oldScope, oldCtx)
