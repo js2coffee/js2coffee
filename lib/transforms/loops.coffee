@@ -95,12 +95,15 @@ module.exports = class extends TransformerBase
     else
       'WhileStatement'
 
-    if node.init?
+    i = node.init
+    delete node.init
+
+    if i?
       type: 'BlockStatement'
       body: [
         {
           type: 'ExpressionStatement'
-          expression: node.init
+          expression: i
         }
         node
       ]
