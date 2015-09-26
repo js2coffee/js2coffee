@@ -15,6 +15,11 @@ module.exports = class extends TransformerBase
     @preventReservedWords(node.id)
     @removeUndefinedParameter(node)
 
+  FunctionExpressionExit: (node) ->
+    super(node)
+    node.body.body.splice(0, 0, (node.body.shadows ? [])...)
+    node
+
   CallExpression: (node) ->
     @parenthesizeCallee(node)
 
@@ -92,7 +97,8 @@ module.exports = class extends TransformerBase
         expression:
           type: 'CoffeeEscapedExpression'
           raw: "var #{name}"
-      @scope.body = [ statement ].concat(@scope.body)
+      @scope.shadows ?= []
+      @scope.shadows.push(statement)
     else
       @ctx.vars.push name
 

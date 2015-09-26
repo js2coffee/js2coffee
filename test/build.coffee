@@ -8,6 +8,7 @@ describe 'build()', ->
     expect(out.map).be.an('object')
     expect(out.code).be.a('string')
 
+
   it 'indents nested blocks correctly', ->
     out = js2coffee """
 while (true) {
@@ -48,6 +49,27 @@ foo = ->
     0
 
   a = 1
+  return
+
+"""
+
+  it "doesn't drop loop init statements immediately after variable shadowing", ->
+    out = js2coffee("""
+var a, b = 0;
+(function () {
+  var a;
+  for (b = 1;;) {
+  }
+})();
+""")
+    expected = """a = undefined
+b = 0
+do ->
+  `var a`
+  a = undefined
+  b = 1
+  loop
+    continue
   return
 
 """
