@@ -75,4 +75,7 @@ do ->
 """
     expect(out).equals(expected)
 
-
+  it "outputs correct unicode escape sequences", ->
+    out = js2coffee("\"\\u0010\"\n")
+    expected = "\'\\u0010\'\n"
+    expect(out).equals(expected)
