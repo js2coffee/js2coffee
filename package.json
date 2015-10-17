@@ -33,7 +33,7 @@
     "esprima": "^2.5.0",
     "estraverse": "^1.9.1",
     "minimist": "^1.1.0",
-    "read-input": "^0.2.0",
+    "read-input": "^0.3.1",
     "source-map": "^0.1.38"
   },
   "devDependencies": {
