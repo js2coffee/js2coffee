@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "browserify": "11.2.0",
-    "chai": "^1.9.1",
+    "chai": "^3.4.0",
     "coffee-script": "^1.8.0",
     "coffeeify": "^1.0.0",
     "coffeelint": "^1.6.0",
