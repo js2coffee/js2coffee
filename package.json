@@ -34,7 +34,7 @@
     "estraverse": "^4.1.1",
     "minimist": "^1.1.0",
     "read-input": "^0.3.1",
-    "source-map": "^0.1.38"
+    "source-map": "^0.5.1"
   },
   "devDependencies": {
     "browserify": "11.2.0",
