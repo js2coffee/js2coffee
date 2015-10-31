@@ -123,7 +123,7 @@ Can have its argument missing (eg: `return`).
 A try block. Encompasses all `try`, `catch`, and `finally`.
 
    - `block` : [BlockStatement] (the *try*)
-   - `handlers` : [ [CatchClause], ... ] * (the *catch*)
+   - `handler` : [CatchClause] * (the *catch*)
    - `finalizer` : [BlockStatement] * (the *finally*)
 
 ### CatchClause

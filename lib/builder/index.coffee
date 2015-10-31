@@ -273,9 +273,9 @@ class Builder extends BuilderBase
     [ "debugger", "\n" ]
 
   TryStatement: (node) ->
-    # block, guardedHandlers, handlers [], finalizer
+    # block, handler, finalizer
     _try = @indent => [ "try", "\n", @walk(node.block) ]
-    _catch = prependAll(node.handlers.map(@walk), @indent())
+    _catch = @indent (indent) => [ indent, @walk(node.handler) ]
     _finally = if node.finalizer?
       @indent (indent) => [ indent, "finally", "\n", @walk(node.finalizer) ]
     else
@@ -284,7 +284,7 @@ class Builder extends BuilderBase
     [ _try, _catch, _finally ]
 
   CatchClause: (node) ->
-    @indent => [ "catch ", @walk(node.param), "\n", @walk(node.body) ]
+    [ "catch ", @walk(node.param), "\n", @walk(node.body) ]
 
   ThrowStatement: (node) ->
     [ "throw ", @walk(node.argument), "\n" ]
