@@ -42,7 +42,7 @@
     "coffee-script": "^1.8.0",
     "coffeeify": "^1.0.0",
     "coffeelint": "^1.6.0",
-    "glob": "^4.0.5",
+    "glob": "^6.0.1",
     "js-yaml": "^3.2.1",
     "mocha": "^2.1.0",
     "mocha-clean": "^0.4.0",
