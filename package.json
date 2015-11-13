@@ -45,7 +45,7 @@
     "glob": "^6.0.1",
     "js-yaml": "^3.2.1",
     "mocha": "^2.1.0",
-    "mocha-clean": "^0.4.0",
+    "mocha-clean": "^1.0.0",
     "uglify-js": "^2.4.16",
     "underscore": "^1.7.0"
   }
