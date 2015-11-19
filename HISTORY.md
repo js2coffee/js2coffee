@@ -1,3 +1,6 @@
+## [v2.1.1] - Nov  19, 2015
+- Require coffee-script 1.9.0 to support supports ES6 generators like the 'yield' keyword
+
 ## [v2.1.0] - Jul  3, 2015
 
 - [#383] - Update Esprima version. ([@ariya])
