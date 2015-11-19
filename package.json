@@ -1,6 +1,6 @@
 {
   "name": "js2coffee",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "JavaScript to CoffeeScript compiler",
   "homepage": "http://js2.coffee",
   "main": "dist/js2coffee.js",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "browserify": "12.0.1",
     "chai": "^3.4.0",
-    "coffee-script": "^1.8.0",
+    "coffee-script": "^1.9.0",
     "coffeeify": "^1.0.0",
     "coffeelint": "^1.6.0",
     "glob": "^6.0.1",
