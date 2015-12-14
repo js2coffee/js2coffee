@@ -541,7 +541,7 @@ Strings are defaulted to single quotes to prevent interpolation.
 
 ### Case consolidation
 
-CoffeeScript doesn't supprot adding `when` clauses that are empty, as you
+CoffeeScript doesn't support adding `when` clauses that are empty, as you
 probably would in JavaScript. Js2coffee will consolidate empty `case` clauses
 together to make things more readable.
 
@@ -568,7 +568,7 @@ switch a
 
 ### Case consolidation with default
 
-CoffeeScript doesn't supprot adding `when` clauses that are empty, as you
+CoffeeScript doesn't support adding `when` clauses that are empty, as you
 probably would in JavaScript. When an empty `case` is used just before
 `default:`, it is effectively useless and is stripped away.
 

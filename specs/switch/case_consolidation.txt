@@ -1,5 +1,5 @@
 notes: """
-  CoffeeScript doesn't supprot adding `when` clauses that are empty, as you
+  CoffeeScript doesn't support adding `when` clauses that are empty, as you
   probably would in JavaScript. Js2coffee will consolidate empty `case` clauses
   together to make things more readable.
 """
