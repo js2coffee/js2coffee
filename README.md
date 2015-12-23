@@ -26,7 +26,7 @@ js2coffee --help
 
 Also available via CDN (`window.js2coffee`):
 
-> [](#version) `http://cdn.rawgit.com/js2coffee/js2coffee/v2.1.0/dist/js2coffee.js`
+> [](#version) `//cdn.rawgit.com/js2coffee/js2coffee/v2.1.0/dist/js2coffee.js`
 
 <br>
 
