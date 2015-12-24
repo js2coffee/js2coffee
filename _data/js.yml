@@ -1,6 +1,6 @@
 js2coffee:
-  url: http://cdn.rawgit.com/js2coffee/js2coffee/v%s/dist/js2coffee.js
+  url: //cdn.rawgit.com/js2coffee/js2coffee/v%s/dist/js2coffee.js
   version: 2.1.0
 coffeescript:
-  url: http://cdn.rawgit.com/jashkenas/coffeescript/%s/extras/coffee-script.js
+  url: //cdn.rawgit.com/jashkenas/coffeescript/%s/extras/coffee-script.js
   version: 1.9.2
