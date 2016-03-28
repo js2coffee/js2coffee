@@ -123,4 +123,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  RedCloth
   github-pages
+
+BUNDLED WITH
+   1.10.6
