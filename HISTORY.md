@@ -1,4 +1,12 @@
-## [v2.1.0] - Jul  3, 2015
+## [v2.2.0]
+> Apr  2, 2016
+
+- [#397] - Fix cases of blocks not indenting properly ([@rianhunter])
+
+[v2.2.0]: https://github.com/js2coffee/js2coffee/compare/v2.1.0...v2.2.0
+
+## [v2.1.0]
+> Jul  3, 2015
 
 - [#383] - Update Esprima version. ([@ariya])
 
@@ -6,29 +14,34 @@
 [@ariya]: https://github.com/ariya
 [v2.1.0]: https://github.com/js2coffee/js2coffee/compare/v2.0.4...v2.1.0
 
-## [v2.0.4] - May 5, 2015
+## [v2.0.4]
+> May 5, 2015
 
 - Fix `a - (b + c)` incorrectly dropping parentheses ([#373])
 - `if (x in y)` now translates to `x of y` instead of `in` ([@snowyu], [#355])
 - Fix "Cannot read property 'line' of undefined" errors ([@snowyu], [#356])
 
-## [v2.0.3] - Feb 14, 2015
+## [v2.0.3]
+> Feb 14, 2015
 
 - Remove 'coffee-script' as hard dependency, just use pre-built distribution ([#351])
 
-## [v2.0.2] - Feb 13, 2015
+## [v2.0.2]
+> Feb 13, 2015
 
 - Fix nesting division operators (eg: `a / (b * c)`) ([#348])
 - Add 'coffee-script' as a hard dependency ([#351])
 
-## [v2.0.1] - February 10, 2015
+## [v2.0.1]
+> Feb 10, 2015
 
 - Upgrade from `esprima-harmony` to `esprima-fb` v10001.1.0 ([#343])
 - Fix multiple unary operators not being spaced properly (eg: `a - - - b`) ([#339])
 - Fix nesting subtraction operators (eg: `a - (b - c)`) ([#347])
 - Fix nesting ternary operators (eg: `a ? (b ? c : d) e`) ([#345])
 
-## v2.0.0 - February 2, 2015
+## v2.0.0
+> Feb 2, 2015
 
 Full rewrite that features the Esprima parser. This release resolves a lot of issues,
 a lot of which are tracked with the ["fixed in 2.0"][fixed] label.
@@ -367,3 +380,5 @@ Initial version.
 [#355]: https://github.com/js2coffee/js2coffee/issues/355
 [#356]: https://github.com/js2coffee/js2coffee/issues/356
 [@snowyu]: https://github.com/snowyu
+[#397]: https://github.com/js2coffee/js2coffee/issues/397
+[@rianhunter]: https://github.com/rianhunter
