@@ -188,13 +188,17 @@ exports.clone = (obj) ->
 exports.quote = (str) ->
   if typeof str is 'string'
     # escape quotes
+    format_char_code = (char) ->
+      ret = char.charCodeAt(0).toString(16)
+      ret = ("0" for [0...(4 - ret.length)]).join('') + ret
+      "\\u" + ret
     re = str
       .replace(/\\/g, '\\\\')
       .replace(/'/g, "\\'")
       .replace(/\\"/g, '"')
       .replace(/\n/g, '\\n')
       .replace(/[\u0000-\u0019\u00ad\u200b\u2028\u2029\ufeff]/g,
-        (x) -> "\\u#{x.charCodeAt(0).toString(16)}")
+        format_char_code)
     "'#{re}'"
 
   else

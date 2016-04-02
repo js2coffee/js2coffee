@@ -20,7 +20,7 @@ module.exports = class extends TransformerBase
 
   onScopeExit: (scope, ctx, subscope, subctx) ->
     if subctx.prebody.length
-      @prependIntoBody(scope.body, subctx.prebody)
+      @prependIntoBody(subscope.body, subctx.prebody)
 
   # prepend the functions back into the body.
   # be sure to place them after variable declarations.
