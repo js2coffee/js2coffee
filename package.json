@@ -5,9 +5,9 @@
   "main": "index.js",
   "dependencies": {
     "base58": "^0.1.0",
-    "codemirror": "^4.12.0",
-    "punycode": "^1.3.2",
-    "watch": "^0.13.0"
+    "codemirror": "5.13.2",
+    "punycode": "1.4.1",
+    "watch": "0.17.1"
   },
   "devDependencies": {
     "serveur": "^1.1.4",
