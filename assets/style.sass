@@ -578,6 +578,16 @@ a:hover, a:focus
     letter-spacing: 1px
     font-size: 0.9em
     font-weight: normal
+    
+/*
+ *
+ */
+
+.radio-row
+  @extend .checkbox-row 
+
+  input[type="radio"]:checked + span
+    color: $text
 
 /*
  *
