@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "escodegen": "^1.6.0",
-    "esprima": "^2.5.0",
+    "esprima": "^3.0.0",
     "estraverse": "^4.1.1",
     "minimist": "^1.1.0",
     "read-input": "^0.3.1",
