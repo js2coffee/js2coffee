@@ -15,7 +15,7 @@ updating from 0.x.
 
 ## Install
 
-Available on npm and bower.
+Available on npm and browser.
 
 ```sh
 npm install --global js2coffee
