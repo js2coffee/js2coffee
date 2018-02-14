@@ -1,0 +1,11 @@
+----
+try {
+  a();
+} finally {
+  c();
+}
+----
+try
+  a()
+finally
+  c()

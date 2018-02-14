@@ -71,26 +71,6 @@ if `a == b(c + 2)`
   run()
 ```
 
-### Named function expressions
-
-Named function expressions are not supported in CoffeeScript.
-
-If compatibility mode is on (`--compat`), they will be escaped into backticks.
-
-```js
-// Input:
-var x = function fn() {
-  return fn;
-}
-```
-
-```coffee
-# Output:
-x = (`function fn() {
-  return fn;
-}`)
-```
-
 ### Named function expressions off
 
 Named function expressions are not supported in CoffeeScript.
@@ -114,6 +94,26 @@ x = ->
   fn
 
 alert typeof x()
+```
+
+### Named function expressions
+
+Named function expressions are not supported in CoffeeScript.
+
+If compatibility mode is on (`--compat`), they will be escaped into backticks.
+
+```js
+// Input:
+var x = function fn() {
+  return fn;
+}
+```
+
+```coffee
+# Output:
+x = (`function fn() {
+  return fn;
+}`)
 ```
 
 ### Undefined
@@ -539,33 +539,6 @@ Strings are defaulted to single quotes to prevent interpolation.
 
 ## Switch
 
-### Case consolidation
-
-CoffeeScript doesn't support adding `when` clauses that are empty, as you
-probably would in JavaScript. Js2coffee will consolidate empty `case` clauses
-together to make things more readable.
-
-```js
-// Input:
-switch (a) {
-  case one:
-  case two:
-    b();
-    break;
-  default:
-    c();
-}
-```
-
-```coffee
-# Output:
-switch a
-  when one, two
-    b()
-  else
-    c()
-```
-
 ### Case consolidation with default
 
 CoffeeScript doesn't support adding `when` clauses that are empty, as you
@@ -588,6 +561,33 @@ switch (a) {
 # Output:
 switch a
   when one
+    b()
+  else
+    c()
+```
+
+### Case consolidation
+
+CoffeeScript doesn't support adding `when` clauses that are empty, as you
+probably would in JavaScript. Js2coffee will consolidate empty `case` clauses
+together to make things more readable.
+
+```js
+// Input:
+switch (a) {
+  case one:
+  case two:
+    b();
+    break;
+  default:
+    c();
+}
+```
+
+```coffee
+# Output:
+switch a
+  when one, two
     b()
   else
     c()
