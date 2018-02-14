@@ -281,11 +281,8 @@ class Builder extends BuilderBase
   TryStatement: (node) ->
     # block, handler, finalizer
     _try = @indent => [ "try", "\n", @walk(node.block) ]
-    _catch = @indent (indent) => [ indent, @walk(node.handler) ]
-    _finally = if node.finalizer?
-      @indent (indent) => [ indent, "finally", "\n", @walk(node.finalizer) ]
-    else
-      []
+    _catch = if node.handler then @indent (indent) => [ indent, @walk(node.handler) ] else []
+    _finally = if node.finalizer then @indent (indent) => [ indent, "finally", "\n", @walk(node.finalizer) ] else []
 
     [ _try, _catch, _finally ]
 

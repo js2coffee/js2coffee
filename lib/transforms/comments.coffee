@@ -19,6 +19,9 @@ module.exports = class extends TransformerBase
     @updateCommentTypes()
     node.body = @addCommentsToList([0,Infinity], node.body)
     node
+  
+  ObjectExpression: (node) ->
+    @injectComments(node, 'properties')
 
   BlockStatement: (node) ->
     @injectComments(node, 'body')

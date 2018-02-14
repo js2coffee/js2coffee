@@ -55,27 +55,6 @@
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Block comments</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a();
-/*
- * hello
- */
-b();
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a()
-
-###
-# hello
-###
-
-b()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Block comments in blocks</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (x) {
@@ -110,6 +89,27 @@ b();
 <pre><code class='lang-coffee'>a()
 
 ### hi ###
+
+b()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Block comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a();
+/*
+ * hello
+ */
+b();
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a()
+
+###
+# hello
+###
 
 b()
 </code></pre>
@@ -180,21 +180,6 @@ else
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Line comments</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a();
-// hello
-b();
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a()
-# hello
-b()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Line comments before function</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a()
@@ -215,6 +200,21 @@ x = ->
   return
 
 a()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Line comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a();
+// hello
+b();
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a()
+# hello
+b()
 </code></pre>
 </td>
 </tr>
@@ -323,6 +323,22 @@ a()
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Property comments</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>({
+// comment
+name: "aaaaa"
+})
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'># comment
+
+name: 'aaaaa'
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Sole block comment</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function fn() {
@@ -363,6 +379,17 @@ world()
 
 <table width='100%'>
 <tr>
+<th width='33%' valign='top'>Assignment of reserved words off</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>on = 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/'on' is a reserved CoffeeScript keyword/</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Assignment of reserved words</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>on = 2
@@ -374,14 +401,14 @@ world()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Assignment of reserved words off</th>
+<th width='33%' valign='top'>Empty array slots off</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>on = 2
+<pre><code class='lang-js'>[, 0]
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>Error:
-/'on' is a reserved CoffeeScript keyword/</code></pre>
+/Empty array slots are not supported in CoffeeScript/</code></pre>
 </td>
 </tr>
 <tr>
@@ -399,29 +426,6 @@ world()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Empty array slots off</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>[, 0]
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>Error:
-/Empty array slots are not supported in CoffeeScript/</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Equals</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if `a == b(c + 2)`
-  run()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Equals off</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
@@ -434,17 +438,14 @@ world()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Named function expressions</th>
+<th width='33%' valign='top'>Equals</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>var x = function fn() {
-  return fn;
-}
+<pre><code class='lang-js'>if (a == b(c + 2)) { run(); }
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>x = (`function fn() {
-  return fn;
-}`)
+<pre><code class='lang-coffee'>if `a == b(c + 2)`
+  run()
 </code></pre>
 </td>
 </tr>
@@ -466,13 +467,17 @@ alert typeof x()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Undefined</th>
+<th width='33%' valign='top'>Named function expressions</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>undefined
+<pre><code class='lang-js'>var x = function fn() {
+  return fn;
+}
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>`undefined`
+<pre><code class='lang-coffee'>x = (`function fn() {
+  return fn;
+}`)
 </code></pre>
 </td>
 </tr>
@@ -487,25 +492,22 @@ alert typeof x()
 </code></pre>
 </td>
 </tr>
+<tr>
+<th width='33%' valign='top'>Undefined</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>undefined
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>`undefined`
+</code></pre>
+</td>
+</tr>
 </table>
 
 ## Default params
 
 <table width='100%'>
-<tr>
-<th width='33%' valign='top'>Mixed params</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>function greet(greeting, name = 'Bob') {
-  return name;
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>greet = (greeting, name = 'Bob') ->
-  name
-</code></pre>
-</td>
-</tr>
 <tr>
 <th width='33%' valign='top'>Mixed params 2</th>
 <td width='33%' valign='top'>
@@ -516,6 +518,20 @@ alert typeof x()
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>greet = (name = 'Bob', age) ->
+  name
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Mixed params</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function greet(greeting, name = 'Bob') {
+  return name;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>greet = (greeting, name = 'Bob') ->
   name
 </code></pre>
 </td>
@@ -570,17 +586,6 @@ alert typeof x()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Reserved keyword</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>off = 2
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>Error:
-/'off' is a reserved CoffeeScript keyword/</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Reserved keyword in params</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function x(off) {}
@@ -595,6 +600,17 @@ alert typeof x()
 <th width='33%' valign='top'>Reserved keyword in var</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var off = 2
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>Error:
+/'off' is a reserved CoffeeScript keyword/</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Reserved keyword</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>off = 2
 </code></pre>
 </td>
 <td width='33%' valign='top'>
@@ -1042,40 +1058,6 @@ obj.two = ->
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Unpacking returns</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>function a() {
-  return b;
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a = ->
-  b
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Unpacking returns in ifs</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>function a() {
-  if (x)
-    return b();
-  else
-    return c();
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a = ->
-  if x
-    b()
-  else
-    c()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Unpacking returns in ifs with elses</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function a() {
@@ -1096,6 +1078,26 @@ obj.two = ->
     c()
   else
     d()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Unpacking returns in ifs</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  if (x)
+    return b();
+  else
+    return c();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  if x
+    b()
+  else
+    c()
 </code></pre>
 </td>
 </tr>
@@ -1128,6 +1130,20 @@ obj.two = ->
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Unpacking returns</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function a() {
+  return b;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = ->
+  b
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>With arguments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function a(b, c) { d(); }
@@ -1146,22 +1162,6 @@ obj.two = ->
 
 <table width='100%'>
 <tr>
-<th width='33%' valign='top'>Global assignment</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>function fn () {
-  a = 2;
-  return;
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>fn = ->
-  a = 2
-  return
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Global assignment compat</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function fn () {
@@ -1173,6 +1173,22 @@ obj.two = ->
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>fn = ->
   `a = 2`
+  return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Global assignment</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>function fn () {
+  a = 2;
+  return;
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>fn = ->
+  a = 2
   return
 </code></pre>
 </td>
@@ -1199,18 +1215,6 @@ obj.two = ->
 
 <table width='100%'>
 <tr>
-<th width='33%' valign='top'>Blank ifs</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>if (condition) {}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if condition
-else
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Blank ifs with comments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (condition) {
@@ -1221,6 +1225,18 @@ else
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if condition
   # pass
+else
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Blank ifs</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (condition) {}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if condition
 else
 </code></pre>
 </td>
@@ -1244,24 +1260,6 @@ else if b
   y()
 else
   z()
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>Escaping if functions</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>if (a === function(){ return x(); }) {
-  b()
-  c()
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if a == (->
-    x()
-  )
-  b()
-  c()
 </code></pre>
 </td>
 </tr>
@@ -1293,6 +1291,24 @@ else
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Escaping if functions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a === function(){ return x(); }) {
+  b()
+  c()
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a == (->
+    x()
+  )
+  b()
+  c()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>If blocks</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (a) {
@@ -1319,21 +1335,6 @@ else
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if a
   b()
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>If with else</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>if (a) { b(); }
-else { c(); }
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if a
-  b()
-else
-  c()
 </code></pre>
 </td>
 </tr>
@@ -1376,6 +1377,21 @@ else
   else
     c()
   return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>If with else</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a) { b(); }
+else { c(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a
+  b()
+else
+  c()
 </code></pre>
 </td>
 </tr>
@@ -1451,18 +1467,6 @@ else
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Ternary in if</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>if (a ? b : c) { d(); }
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if (if a then b else c)
-  d()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Ternary in if and binary</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (x && (a ? b : c)) { d(); }
@@ -1474,23 +1478,23 @@ else
 </code></pre>
 </td>
 </tr>
+<tr>
+<th width='33%' valign='top'>Ternary in if</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>if (a ? b : c) { d(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if (if a then b else c)
+  d()
+</code></pre>
+</td>
+</tr>
 </table>
 
 ## Iife
 
 <table width='100%'>
-<tr>
-<th width='33%' valign='top'>Iife</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>(function(){ return true; })()
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>do ->
-  true
-</code></pre>
-</td>
-</tr>
 <tr>
 <th width='33%' valign='top'>Iife as an expression</th>
 <td width='33%' valign='top'>
@@ -1554,6 +1558,18 @@ else
 <pre><code class='lang-coffee'>(->
   true
 ) 2
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Iife</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function(){ return true; })()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>do ->
+  true
 </code></pre>
 </td>
 </tr>
@@ -1810,18 +1826,6 @@ this.on('data', function() { console.log('Received'); });
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Empty function</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>(function($) {})()
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>(($) ->
-)()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Empty function bodies</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>x = { v: function() { return 2; }, y: function(){}, z: function(){} };
@@ -1833,6 +1837,18 @@ this.on('data', function() { console.log('Received'); });
     2
   y: ->
   z: ->
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Empty function</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>(function($) {})()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>(($) ->
+)()
 </code></pre>
 </td>
 </tr>
@@ -1887,6 +1903,25 @@ console.log 'a = b'.match(re)
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>For in</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (var x in y) { alert(1) }
+for (var key in obj) {}
+for (key in obj)
+    single_liner()
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>for x of y
+  alert 1
+for key of obj
+  continue
+for key of obj
+  single_liner()
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>For</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>for (x=0; !x<2; x++) { alert(1) }
@@ -1907,25 +1942,6 @@ loop
   ++x
 loop
   alert 1
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>For in</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>for (var x in y) { alert(1) }
-for (var key in obj) {}
-for (key in obj)
-    single_liner()
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>for x of y
-  alert 1
-for key of obj
-  continue
-for key of obj
-  single_liner()
 </code></pre>
 </td>
 </tr>
@@ -2249,22 +2265,6 @@ f = ->
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Do while</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>do {
-  b();
-} while (a)
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>loop
-  b()
-  unless a
-    break
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Do while with other statements</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>function fn() {
@@ -2286,6 +2286,22 @@ f = ->
       break
   after()
   return
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Do while</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>do {
+  b();
+} while (a)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>loop
+  b()
+  unless a
+    break
 </code></pre>
 </td>
 </tr>
@@ -2332,26 +2348,6 @@ f = ->
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>For with continue</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>for (a; b; update++) {
-  if (x) continue;
-  d()
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a
-while b
-  if x
-    update++
-    continue
-  d()
-  update++
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>For with continue with switch</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>for (a; b; update++) {
@@ -2394,6 +2390,26 @@ while b
     c++
     continue
   c++
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>For with continue</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>for (a; b; update++) {
+  if (x) continue;
+  d()
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a
+while b
+  if x
+    update++
+    continue
+  d()
+  update++
 </code></pre>
 </td>
 </tr>
@@ -2534,18 +2550,6 @@ while b
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>While</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>while (condition) { a(); }
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>while condition
-  a()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>While with break</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>while (condition) {
@@ -2575,6 +2579,18 @@ while b
 <pre><code class='lang-coffee'>if true
   while a
     continue
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>While</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>while (condition) { a(); }
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>while condition
+  a()
 </code></pre>
 </td>
 </tr>
@@ -2635,17 +2651,6 @@ a.prototype
 
 <table width='100%'>
 <tr>
-<th width='33%' valign='top'>New operator</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>var a = new B
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a = new B
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>New operator with arguments</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var a = new B(x,y);
@@ -2657,6 +2662,17 @@ a.prototype
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>New operator</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var a = new B
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = new B
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>New with complex callee</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var a = new (require('foo'))(b)
@@ -2664,23 +2680,6 @@ a.prototype
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a = new (require('foo'))(b)
-</code></pre>
-</td>
-</tr>
-<tr>
-<th width='33%' valign='top'>New with function expression</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>var a = new MyClass('left', function () {
-  go();
-  return;
-})
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a = new MyClass('left', ->
-  go()
-  return
-)
 </code></pre>
 </td>
 </tr>
@@ -2698,6 +2697,23 @@ a.prototype
   go()
   return
 ), 'left')
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>New with function expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>var a = new MyClass('left', function () {
+  go();
+  return;
+})
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a = new MyClass('left', ->
+  go()
+  return
+)
 </code></pre>
 </td>
 </tr>
@@ -2914,17 +2930,6 @@ b: 2
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Binary expressions</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a | b ^ c & d
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a | b ^ c & d
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Binary expressions with parens</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>((a | b) ^ c) & d
@@ -2932,6 +2937,17 @@ b: 2
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>((a | b) ^ c) & d
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Binary expressions</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a | b ^ c & d
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a | b ^ c & d
 </code></pre>
 </td>
 </tr>
@@ -3038,17 +3054,6 @@ a + b + c
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Nested ternary</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a ? b : c ? d : e
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if a then b else if c then d else e
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Nested ternary 2</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a ? b ? c : d : e
@@ -3056,6 +3061,17 @@ a + b + c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if a then (if b then c else d) else e
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Nested ternary</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a ? b : c ? d : e
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a then b else if c then d else e
 </code></pre>
 </td>
 </tr>
@@ -3120,17 +3136,6 @@ a + b + c
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Equals</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a(/=\s/)
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a RegExp('=\\s')
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Equals with flag</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>/=/g
@@ -3138,6 +3143,17 @@ a + b + c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>RegExp '=', 'g'
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Equals</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a(/=\s/)
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a RegExp('=\\s')
 </code></pre>
 </td>
 </tr>
@@ -3276,16 +3292,6 @@ false
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Empty statement</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>;;
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'></code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Empty statement with other statements</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a();;;b()
@@ -3298,14 +3304,13 @@ b()
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Exponents</th>
+<th width='33%' valign='top'>Empty statement</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>Math.pow(2, 8)
+<pre><code class='lang-js'>;;
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>2 ** 8
-</code></pre>
+<pre><code class='lang-coffee'></code></pre>
 </td>
 </tr>
 <tr>
@@ -3343,13 +3348,13 @@ new X(2) ** 8
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Function call</th>
+<th width='33%' valign='top'>Exponents</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>alert("Hello world");
+<pre><code class='lang-js'>Math.pow(2, 8)
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>alert 'Hello world'
+<pre><code class='lang-coffee'>2 ** 8
 </code></pre>
 </td>
 </tr>
@@ -3361,6 +3366,17 @@ new X(2) ** 8
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>a 'hello', 2
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Function call</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>alert("Hello world");
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>alert 'Hello world'
 </code></pre>
 </td>
 </tr>
@@ -3436,17 +3452,6 @@ b--
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Index resolution</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a[2]
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a[2]
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Index resolution of expression</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a["node" + n]
@@ -3469,13 +3474,24 @@ b--
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Index resolution with this</th>
+<th width='33%' valign='top'>Index resolution witH this</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>this["#" + id]
 </code></pre>
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>@['#' + id]
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Index resolution</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a[2]
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a[2]
 </code></pre>
 </td>
 </tr>
@@ -3632,19 +3648,6 @@ a.prototype = {}
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Sequence expression</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a,b,c
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a
-b
-c
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Sequence expression with indent</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>if (x) {
@@ -3661,6 +3664,19 @@ c
 </td>
 </tr>
 <tr>
+<th width='33%' valign='top'>Sequence expression</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a,b,c
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>a
+b
+c
+</code></pre>
+</td>
+</tr>
+<tr>
 <th width='33%' valign='top'>Standalone this</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>var a = this;
@@ -3672,17 +3688,6 @@ c
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Ternary operator</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>a ? b : c
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>if a then b else c
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Ternary operator nesting</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>a ? b : c ? d : e
@@ -3690,6 +3695,17 @@ c
 </td>
 <td width='33%' valign='top'>
 <pre><code class='lang-coffee'>if a then b else if c then d else e
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Ternary operator</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>a ? b : c
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>if a then b else c
 </code></pre>
 </td>
 </tr>
@@ -3901,28 +3917,6 @@ if (options = arguments[i]) != null
 
 <table width='100%'>
 <tr>
-<th width='33%' valign='top'>Case consolidation</th>
-<td width='33%' valign='top'>
-<pre><code class='lang-js'>switch (a) {
-  case one:
-  case two:
-    b();
-    break;
-  default:
-    c();
-}
-</code></pre>
-</td>
-<td width='33%' valign='top'>
-<pre><code class='lang-coffee'>switch a
-  when one, two
-    b()
-  else
-    c()
-</code></pre>
-</td>
-</tr>
-<tr>
 <th width='33%' valign='top'>Case consolidation with default</th>
 <td width='33%' valign='top'>
 <pre><code class='lang-js'>switch (a) {
@@ -3945,13 +3939,11 @@ if (options = arguments[i]) != null
 </td>
 </tr>
 <tr>
-<th width='33%' valign='top'>Switch</th>
+<th width='33%' valign='top'>Case consolidation</th>
 <td width='33%' valign='top'>
-<pre><code class='lang-js'>switch (obj) {
-  case 'one':
-    a();
-    break;
-  case 'two':
+<pre><code class='lang-js'>switch (a) {
+  case one:
+  case two:
     b();
     break;
   default:
@@ -3960,10 +3952,8 @@ if (options = arguments[i]) != null
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>switch obj
-  when 'one'
-    a()
-  when 'two'
+<pre><code class='lang-coffee'>switch a
+  when one, two
     b()
   else
     c()
@@ -4065,6 +4055,32 @@ if (options = arguments[i]) != null
 </code></pre>
 </td>
 </tr>
+<tr>
+<th width='33%' valign='top'>Switch</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>switch (obj) {
+  case 'one':
+    a();
+    break;
+  case 'two':
+    b();
+    break;
+  default:
+    c();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>switch obj
+  when 'one'
+    a()
+  when 'two'
+    b()
+  else
+    c()
+</code></pre>
+</td>
+</tr>
 </table>
 
 ## Try
@@ -4105,6 +4121,24 @@ catch e
   a()
 catch e
   b()
+finally
+  c()
+</code></pre>
+</td>
+</tr>
+<tr>
+<th width='33%' valign='top'>Try finally</th>
+<td width='33%' valign='top'>
+<pre><code class='lang-js'>try {
+  a();
+} finally {
+  c();
+}
+</code></pre>
+</td>
+<td width='33%' valign='top'>
+<pre><code class='lang-coffee'>try
+  a()
 finally
   c()
 </code></pre>
