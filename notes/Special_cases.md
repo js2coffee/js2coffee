@@ -36,7 +36,7 @@ actually an alias for `true`.
 The CoffeeScript code `on = 2` will produce errors. As such, Js2coffee will
 throw an error if any of the CoffeeScript reserved keywords are used.
 
-If compatibility mode ins on (`--compat`), it will be escaped in backticks so
+If compatibility mode is on (`--compat`), it will be escaped in backticks so
 to prevent any side effects.
 
 ```js
