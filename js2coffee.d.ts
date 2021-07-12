@@ -9,7 +9,7 @@ type IObject = Record<string, unknown>;
  * @param {string} source JavaScript code to compile. In order to compile JSON as CSON, you must wrap the string in
  * parentheses like so: `(...)`.
  * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
- * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+ * @param {boolean} [options.bare=false] Whether to omit a top-level IIFE safety wrapper.
  * @param {boolean} [options.comments=true] Whether to keep comments in the output.
  * @param {boolean} [options.compat=false] Compatibility mode with JS.
  * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
@@ -26,7 +26,7 @@ declare namespace js2coffee {
 	 * @param {string} source JavaScript code to compile. In order to compile JSON as CSON, you must wrap the string in
 	 * parentheses like so: `(...)`.
 	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
-	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.bare=false] Whether to omit a top-level IIFE safety wrapper.
 	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
 	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
 	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
@@ -49,7 +49,7 @@ declare namespace js2coffee {
 	 * @param {string} source JavaScript code to compile. In order to compile JSON as CSON,
 	 * you must wrap the string in parentheses like so: `(...)`.
 	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
-	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.bare=false] Whether to omit a top-level IIFE safety wrapper.
 	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
 	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
 	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
@@ -65,7 +65,7 @@ declare namespace js2coffee {
 	 *
 	 * @param {IJS2CoffeeAST} JavaScript AST in ESTree format.
 	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
-	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.bare=false] Whether to omit a top-level IIFE safety wrapper.
 	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
 	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
 	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
@@ -81,7 +81,7 @@ declare namespace js2coffee {
 	 *
 	 * @param {IJS2CoffeeAST} ast Transformed CoffeeScript AST in ESTree format.
 	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
-	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.bare=false] Whether to omit a top-level IIFE safety wrapper.
 	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
 	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
 	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
@@ -128,7 +128,7 @@ declare namespace js2coffee {
 	/**
 	 * JS2Coffee compiler options.
 	 *
-	 * @member bare Whether to add a top-level IIFE safety wrapper.
+	 * @member bare Whether to omit a top-level IIFE safety wrapper.
 	 * @member comments Whether to keep comments in the output.
 	 * @member compat Compatibility mode with JS.
 	 * @member filename File name for JS script to compile to CoffeeScript.
