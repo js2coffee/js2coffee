@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import { Node, BaseNode, Program } from "estree";
-import { builtinModules } from "module";
 import { CodeWithSourceMap } from "source-map";
 
 type IObject = Record<string, unknown>;
