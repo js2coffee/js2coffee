@@ -151,7 +151,7 @@ declare namespace js2coffee {
 	 * @extends {estree.Node}
 	 * @member {CoffeeNodeType} type ESTree node types for JavaScript or CoffeeScript AST nodes.
 	 */
-		interface CoffeeNode extends Omit<Node, "type"> {
+	interface CoffeeNode extends Omit<Node, "type"> {
 		type: Node["type"] | CoffeeNodeType;
 	}
 
