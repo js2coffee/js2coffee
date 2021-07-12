@@ -28,7 +28,9 @@
   "bin": {
     "js2coffee": "./bin/js2coffee"
   },
+  "types": "./js2coffee.d.ts",
   "dependencies": {
+    "@types/estree": "^0.0.50",
     "escodegen": "^1.6.0",
     "esprima": "^2.5.0",
     "estraverse": "^4.1.1",
