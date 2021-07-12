@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import { Node, BaseNode, Program } from "estree";
+import { builtinModules } from "module";
 import { CodeWithSourceMap } from "source-map";
 
 type IObject = Record<string, unknown>;
@@ -312,8 +313,8 @@ export interface IJS2CoffeeTransform {
  *
  * @member {IJS2CoffeeAST} ast Abstract syntax tree for CoffeeScript output.
  * @member {string} code Compiled CoffeeScript code.
- * @member {source-map#CodeWithSourceMap} map CoffeeScript code with source map
- * (see `source-map` NPM module typings for `CodeWithSourceMap`).
+ * @member {sourceMap#CodeWithSourceMap} map CoffeeScript code with source map
+ * (see `CodeWithSourceMap` definition in `source-map`).
  * @member {IJS2CoffeeWarnings} warnings Collection of syntax warnings.
  */
 export interface IJS2CoffeeBuild {
@@ -324,18 +325,9 @@ export interface IJS2CoffeeBuild {
 }
 
 /**
- * Collection of helper functions used to parse JavaScript in JS2Coffee.
- *
- * @type {IJS2CoffeeHelpers}
- */
-export let helpers: IJS2CoffeeHelpers;
-
-/**
- * Compiles JavaScript into CoffeeScript.
- *
  * @param {string} source JavaScript code to compile. In order to compile JSON as CSON, you must wrap the string in
  * parentheses like so: `(...)`.
- * @param options {IJS2CoffeeOptions} JS2Coffee compiler options.
+ * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
  * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
  * @param {boolean} [options.comments=true] Whether to keep comments in the output.
  * @param {boolean} [options.compat=false] Compatibility mode with JS.
@@ -343,57 +335,75 @@ export let helpers: IJS2CoffeeHelpers;
  * @param {number} [options.indent=2] Indentation character(s) used in the compiler output.
  * @param {string} [options.source] The source code itself - always overwritten by
  * `source`.
- * @return {IJS2CoffeeBuild} Build output in CoffeeScript.
+ * @returns {string} Compiled CoffeeScript code.
  */
-export function build(source: string, options?: IJS2CoffeeOptions): IJS2CoffeeBuild;
+export function js2coffee(source: string, options?: IJS2CoffeeOptions): string;
 
-/**
- * Compiles JavaScript into a ESTree-style CoffeeScript AST. The AST has the following custom types exclusive to
- * JS2Coffee:
- * - `CoffeeDoExpression`
- * - `CoffeeEscapedExpression`
- * - `CoffeeListExpression`
- * - `CoffeeLoopStatement`
- * - `CoffeePrototypeExpression`
- *
- * @param {string} source JavaScript code to compile. In order to compile JSON as CSON,
- * you must wrap the string in parentheses like so: `(...)`.
- * @param options {IJS2CoffeeOptions} JS2Coffee compiler options.
- * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
- * @param {boolean} [options.comments=true] Whether to keep comments in the output.
- * @param {boolean} [options.compat=false] Compatibility mode with JS.
- * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
- * @param {number} [options.indent=2] Indentation character(s) used in the compiler output.
- * @param {string} [options.source] The source code itself - always overwritten by
- * `source`.
- * @return {IJS2CoffeeBuild} Build output in CoffeeScript.
- */
-export function parseJS(source: string, options?: IJS2CoffeeOptions): IJS2CoffeeAST;
-export function transform(ast: Program, options?: IJS2CoffeeOptions): IJS2CoffeeTransform;
-export function generate(ast: Program, options?: IJS2CoffeeOptions): CodeWithSourceMap;
+export namespace js2coffee {
+	/**
+	 * Collection of helper functions used to parse JavaScript in JS2Coffee.
+	 *
+	 * @type {IJS2CoffeeHelpers}
+	 */
+	export let helpers: IJS2CoffeeHelpers;
 
-/**
- * JS2Coffee API.
- *
- * @param {string} source JavaScript code to compile. In order to compile JSON as CSON, you must wrap the string in
- * parentheses like so: `(...)`.
- * @param options {IJS2CoffeeOptions} JS2Coffee compiler options.
- * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
- * @param {boolean} [options.comments=true] Whether to keep comments in the output.
- * @param {boolean} [options.compat=false] Compatibility mode with JS.
- * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
- * @param {number} [options.indent=2] Indentation character(s) used in the compiler output.
- * @param {string} [options.source] The source code itself - always overwritten by
- * `source`.
- * @return {IJS2CoffeeBuild} Build output in CoffeeScript.
- */
-export default function(source: string, options?: IJS2CoffeeOptions): IJS2CoffeeBuild;
+	/**
+	 * @param {string} source JavaScript code to compile. In order to compile JSON as CSON, you must wrap the string in
+	 * parentheses like so: `(...)`.
+	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
+	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
+	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
+	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
+	 * @param {number} [options.indent=2] Indentation character(s) used in the compiler output.
+	 * @param {string} [options.source] The source code itself - always overwritten by
+	 * `source`.
+	 * @returns {IJS2CoffeeBuild} Build output in CoffeeScript.
+	 */
+	export function build(source: string, options?: IJS2CoffeeOptions): IJS2CoffeeBuild;
 
-/**
- * Version number. Type defintions are written for JS2Coffee v1.9.2.
- *
- * @member {string}
- */
-export let version: string;
+	/**
+	 * Compiles JavaScript into a ESTree-style CoffeeScript AST. The AST has the following custom types exclusive to
+	 * JS2Coffee:
+	 * - `CoffeeDoExpression`
+	 * - `CoffeeEscapedExpression`
+	 * - `CoffeeListExpression`
+	 * - `CoffeeLoopStatement`
+	 * - `CoffeePrototypeExpression`
+	 *
+	 * @param {string} source JavaScript code to compile. In order to compile JSON as CSON,
+	 * you must wrap the string in parentheses like so: `(...)`.
+	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
+	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
+	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
+	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
+	 * @param {number} [options.indent=2] Indentation character(s) used in the compiler output.
+	 * @param {string} [options.source] The source code itself - always overwritten by
+	 * `source`.
+	 * @returns {IJS2CoffeeBuild} Build output in CoffeeScript.
+	 */
+	export function parseJS(source: string, options?: IJS2CoffeeOptions): IJS2CoffeeAST;
+	/**
+	 * Mutates a given JavaScript syntax tree `ast` into a CoffeeScript AST.
+	 *
+	 * @param {IJS2CoffeeAST} ast 
+	 * @param {IJS2CoffeeOptions} [options] JS2Coffee compiler options.
+	 * @param {boolean} [options.bare=false] Whether to add a top-level IIFE safety wrapper.
+	 * @param {boolean} [options.comments=true] Whether to keep comments in the output.
+	 * @param {boolean} [options.compat=false] Compatibility mode with JS.
+	 * @param {string} [options.filename=index.js] File name for JS script to compile to CoffeeScript.
+	 * @param {number} [options.indent=2] Indentation character(s) used in the compiler output.
+	 * @param {string} [options.source] The source code itself - always overwritten by
+	 * `source`.
+	 */
+	export function transform(ast: IJS2CoffeeAST, options?: IJS2CoffeeOptions): IJS2CoffeeTransform;
+	export function generate(ast: IJS2CoffeeTransform, options?: IJS2CoffeeOptions): CodeWithSourceMap;
 
-export as namespace js2coffee;
+	/**
+	 * Version number. Type defintions are written for JS2Coffee v1.9.2.
+	 *
+	 * @member {string}
+	 */
+	export let version: string;	
+}
