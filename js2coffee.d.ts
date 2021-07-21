@@ -1,8 +1,6 @@
 import { Node, BaseNode, Program } from "estree";
 import { CodeWithSourceMap } from "source-map";
 
-type IObject = Record<string, unknown>;
-
 /**
  * JS2Coffee API.
  *
@@ -238,7 +236,7 @@ declare namespace js2coffee {
 		 * @param {object} obj Object to clone.
 		 * @returns Deep copy of object.
 		 */
-		clone(obj: IObject): IObject;
+		clone(obj: object): object;
 		/**
 		 * Turns an array of strings into a comma-separated list.
 		 * Takes new lines into account.
