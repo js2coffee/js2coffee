@@ -7,7 +7,7 @@ var view;
 ready(function () {
   App.view = view = new Editors();
   App.announcement = new AnnouncementView(q('.announcement-box'));
-  
+
   view.update();
 });
 
@@ -56,6 +56,7 @@ Editors.prototype = {
 
     // switches
     this.$compat  = q('[role~="compat"]');
+    this.$indents = qa('[role~="indent"]');
 
     // editors
     this.editor   = this.initEditor();
@@ -78,6 +79,11 @@ Editors.prototype = {
 
     on(this.$compat, 'change', this.update.bind(this));
     on(this.$compat, 'change', this.closePopup.bind(this));
+
+    for (var i = 0; i < this.$indents.length; i++) {
+        on(this.$indents[i], 'change', this.update.bind(this));
+    }
+
   },
 
   /*
@@ -86,7 +92,8 @@ Editors.prototype = {
 
   getOptions: function () {
     return {
-      compat: this.$compat.checked
+      compat: this.$compat.checked,
+      indent: q('[role~="indent"]:checked').value
     };
   },
 
@@ -347,7 +354,7 @@ Editors.prototype = {
 
   /*
    * compiles code from js to coffee.
-   * returns the code (output js), error (Error object, if any), and output 
+   * returns the code (output js), error (Error object, if any), and output
    * of js2coffee() (used later for warnings).
    */
 
