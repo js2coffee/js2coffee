@@ -1,4 +1,3 @@
-PORT ?= 3000
 bundle := env BUNDLE_GEMFILE=./_/Gemfile bundle
 uglifyjs := node_modules/.bin/uglifyjs
 
@@ -9,7 +8,8 @@ all: \
 	assets/vendor.js
 
 start: bundle
-	${bundle} exec jekyll build --safe --drafts --watch & ./node_modules/.bin/serveur _site -R -p ${PORT}
+	mkdir -p _site
+	npm exec concurrently "${bundle} exec jekyll build --safe --drafts --watch" "npm exec serve _site"
 
 build: bundle
 	${bundle} exec jekyll build --safe
