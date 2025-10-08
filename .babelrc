@@ -1,0 +1,15 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "ie": "10"
+      },
+      "modules": false,
+      "useBuiltIns": false,
+      "loose": true
+    }]
+  ],
+  "comments": true,
+  "sourceMaps": true,
+  "retainLines": true
+}

@@ -4,9 +4,33 @@ Compile JavaScript into CoffeeScript.
 
 [![](http://js2.coffee/assets/screenshots/js2coffee.png)](http://js2.coffee)
 
-[![Status](https://travis-ci.org/js2coffee/js2coffee.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee)  
+[![Status](https://travis-ci.org/js2coffee/js2coffee.svg?branch=master)](https://travis-ci.org/js2coffee/js2coffee)
 
-This 2.0 release is a complete rewrite featuring a better parser ([Esprima]).
+## ThatsNice.org Fork
+
+This is a fork of the original [js2coffee](https://github.com/js2coffee/js2coffee) project,
+maintained by ThatsNice.org to extend support for modern JavaScript (ES5 through ES.Next).
+
+The original 2.0 release uses [Esprima] 2.5 which supports ES5 and partial ES6 (ES2015).
+This fork adds [Babel] as a preprocessing step to transpile modern JavaScript syntax
+down to a version that the existing js2coffee transforms can handle.
+
+### Modernization Strategy
+
+The modernization approach uses a two-stage pipeline:
+
+1. **Stage 1: Babel Preprocessing** - Modern JavaScript (ES.Next) → ES5/ES6 subset
+2. **Stage 2: js2coffee Transform** - ES5/ES6 subset → CoffeeScript
+
+This strategy preserves the battle-tested js2coffee transformation logic while
+enabling support for modern JavaScript features including async/await, optional
+chaining, nullish coalescing, class fields, and more.
+
+See **[TODO.md](TODO.md)** for the implementation roadmap.
+
+### Original js2coffee 2.0
+
+The base 2.0 release is a complete rewrite featuring a better parser ([Esprima]).
 See **[what's new in 2.0](notes/New_in_2.0.md)** for an overview of new features
 and consult the [migration guide](notes/Migration_guide.md) for info on
 updating from 0.x.
@@ -102,7 +126,7 @@ result.warnings.forEach((warn) => {
 **js2coffee** © 2012+, Rico Sta. Cruz. Released under the [MIT] License.<br>
 Authored by Rico Sta. Cruz with help from co-maintainers and contributors ([list][contributors]).
 
-Maintainers:
+Original Maintainers:
 
  * Rico Sta. Cruz ([@rstacruz](https://github.com/rstacruz)) —
    [ricostacruz.com](http://ricostacruz.com) · twitter [@rstacruz](https://twitter.com/rstacruz)
@@ -112,6 +136,11 @@ Maintainers:
  * Benjamin Lupton ([@balupton](https://github.com/balupton)) —
    [balupton.com](http://balupton.com) · twitter [@balupton](https://twitter.com/balupton)
 
+ThatsNice.org Fork Maintainer:
+
+ * Robert de Forest ([@thatsnice](https://github.com/thatsnice)) — [ThatsNice.org](https://thatsnice.org) · js2coffee@thatsnice.org
+
 [MIT]: http://mit-license.org/
 [contributors]: http://github.com/rstacruz/js2coffee/contributors
 [Esprima]: http://esprima.org/
+[Babel]: https://babeljs.io/

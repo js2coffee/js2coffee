@@ -1,8 +1,9 @@
-TransformerBase = require('./lib/transforms/base')
-BuilderBase = require('./lib/builder/base')
-Builder = require('./lib/builder')
+TransformerBase = require './lib/transforms/base'
+BuilderBase     = require './lib/builder/base'
+Builder         = require './lib/builder'
+Preprocessor    = require './lib/preprocessor'
 
-{ buildError } = require('./lib/helpers')
+{ buildError } = require './lib/helpers'
 
 ###*
 # # Js2coffee API
@@ -26,22 +27,28 @@ module.exports = js2coffee = (source, options) ->
 #
 # ~ filename (String): the filename, used in source maps and errors.
 # ~ comments (Boolean): set to `false` to disable comments.
+# ~ babel (Boolean): set to `false` to disable Babel preprocessing, `true` to force it.
+#                    Defaults to auto-detection of modern JavaScript syntax.
+# ~ babelConfig (Object): custom Babel configuration (presets, plugins, etc.)
 #
 # Here's what it does:
 #
-# 1. Parse code into a JS AST (`.parseJS()`)
-# 2. Mutate the JS AST into a CoffeeScript AST (`.transform()`)
-# 3. Render the AST into CoffeeScript (`.generate()`)
+# 1. Preprocess modern JavaScript with Babel (`.preprocess()`) - optional, auto-detected
+# 2. Parse code into a JS AST (`.parseJS()`)
+# 3. Mutate the JS AST into a CoffeeScript AST (`.transform()`)
+# 4. Render the AST into CoffeeScript (`.generate()`)
 ###
 
 js2coffee.build = (source, options = {}) ->
   options.filename ?= 'input.js'
-  options.indent ?= 2
-  options.source = source
+  options.indent   ?= 2
+  options.source    = source
 
-  ast = js2coffee.parseJS(source, options)
-  {ast, warnings} = js2coffee.transform(ast, options)
-  {code, map} = js2coffee.generate(ast, options)
+  preprocessed = Preprocessor.preprocess source, options
+
+  ast = js2coffee.parseJS preprocessed, options
+  {ast, warnings} = js2coffee.transform ast, options
+  {code, map} = js2coffee.generate ast, options
   {code, ast, map, warnings}
 
 ###*

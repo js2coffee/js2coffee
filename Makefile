@@ -1,6 +1,6 @@
 spec_files := $(shell find specs)
 browserify := ./node_modules/.bin/browserify
-uglify := ./node_modules/.bin/uglifyjs
+uglify     := ./node_modules/.bin/terser
 
 all: \
 	notes/Specs.md \

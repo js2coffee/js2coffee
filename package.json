@@ -8,7 +8,11 @@
     "javascript",
     "coffeescript",
     "language",
-    "compiler"
+    "compiler",
+    "es6",
+    "es2015",
+    "esnext",
+    "transpiler"
   ],
   "scripts": {
     "test": "mocha",
@@ -22,13 +26,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/js2coffee/js2coffee.git"
+    "url": "https://github.com/thatsnice/js2coffee.git"
   },
   "browser": "js2coffee.coffee",
   "bin": {
     "js2coffee": "./bin/js2coffee"
   },
   "dependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "escodegen": "^1.6.0",
     "esprima": "^2.5.0",
     "estraverse": "^4.1.1",
@@ -46,7 +52,7 @@
     "js-yaml": "^3.2.1",
     "mocha": "^2.1.0",
     "mocha-clean": "^1.0.0",
-    "uglify-js": "^2.4.16",
+    "terser": "^5.36.0",
     "underscore": "^1.7.0"
   }
 }
