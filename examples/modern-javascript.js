@@ -1,5 +1,3 @@
-// FILENAME: { js2coffee/examples/modern-javascript.js }
-//
 // Example demonstrating ES.Next JavaScript that can now be
 // transpiled to CoffeeScript via Babel preprocessing
 //

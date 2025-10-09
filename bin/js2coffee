@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+
+// Register CoffeeScript for source file support
+require('coffee-script/register');
+
 var args = require('../lib/cli')
   .helpfile(__dirname+'/../Usage.txt')
   .version(require('../package.json').version)
@@ -9,7 +13,8 @@ var args = require('../lib/cli')
   });
 
 var read = require('read-input');
-var js2coffee = require('../dist/js2coffee');
+// Use source files directly for full Babel support
+var js2coffee = require(__dirname + '/../js2coffee.coffee');
 
 read(args._, function (err, res) {
   if (err) {
@@ -83,13 +88,13 @@ function printWarnings (warnings) {
     return;
 
   var comments = warnings.map(function (warn) {
-    var msg = '' +
-      warn.filename + ':'+ warn.start.line + ':'
-    if (warn.start)
+    var msg = warn.filename + ':';
+    if (warn.start) {
       msg += warn.start.line + ':' +
-        warn.start.column + ': '
+             warn.start.column + ': ';
+    }
     msg += c(34, '[warning] ') +
-      warn.description;
+           warn.description;
 
     console.warn(msg);
   });

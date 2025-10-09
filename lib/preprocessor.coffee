@@ -1,5 +1,3 @@
-# FILENAME: { js2coffee/lib/preprocessor.coffee }
-
 { buildError } = require './helpers'
 
 ###*
@@ -15,7 +13,9 @@ module.exports = class Preprocessor
     return source unless @shouldPreprocess source, options
 
     try
-      babel       = require '@babel/core'
+      # Require Babel from js2coffee's node_modules, not CWD
+      babelPath   = require.resolve '@babel/core', paths: [__dirname + '/..']
+      babel       = require babelPath
       babelConfig = @getBabelConfig options
 
       result = babel.transformSync source,
@@ -34,7 +34,9 @@ module.exports = class Preprocessor
       # If Babel fails, return original source and let Esprima handle it
       if err.code is 'BABEL_PARSE_ERROR'
         throw buildError err, source, options.filename
-      # For other Babel errors, just return the source
+      # For other Babel errors (like module not found), log and return source
+      if process.env.DEBUG_BABEL
+        console.error '[preprocessor] Babel error:', err.message
       source
 
   @shouldPreprocess: (source, options) ->
@@ -77,9 +79,11 @@ module.exports = class Preprocessor
       presets:       @getDefaultPresets()
 
   @getDefaultPresets: ->
+    # Use absolute path to preset so it works regardless of CWD
+    presetPath = require.resolve '@babel/preset-env', paths: [__dirname + '/..']
     [
       [
-        '@babel/preset-env'
+        presetPath
         targets:      { ie: '10' }
         modules:      false
         useBuiltIns:  false

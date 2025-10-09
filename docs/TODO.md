@@ -55,7 +55,7 @@ According to the Esprima 2.5.0 changelog, supported ES6 features include:
 
 ## Implementation Phases
 
-### Phase 0: Research & Planning ✓
+### Phase 0: Research & Planning ✓ COMPLETE
 
 - [x] Analyze current js2coffee architecture
 - [x] Research Babel transpilation options
@@ -63,7 +63,66 @@ According to the Esprima 2.5.0 changelog, supported ES6 features include:
 - [x] Document modernization strategy
 - [x] Create implementation roadmap
 
-### Phase 1: Development Environment Setup
+### Phase 0.5: CoffeeScript 2.x Migration 🔥 HIGH PRIORITY
+
+**Goal:** Migrate codebase from deprecated `coffee-script@1.x` to modern `coffeescript@2.x`
+
+**Why This Matters:**
+- The original project was likely abandoned due to this migration burden
+- `coffee-script` package deprecated in 2017, no security updates
+- CoffeeScript 2.x has better ES6+ support and modern features
+- Blocking full modernization of the project
+
+**Migration Blockers Identified:**
+- ~180 test failures when attempting direct upgrade
+- Breaking syntax changes in CoffeeScript 2.x:
+  - Stricter `super` call requirements (must include explicit arguments)
+  - Class inheritance pattern changes
+  - More restrictive indentation/syntax rules
+
+**Implementation Tasks:**
+
+- [ ] Audit all class constructors for `super` calls
+  - Create inventory of all classes using inheritance
+  - Document current `super` usage patterns
+  - Plan migration strategy for each case
+
+- [ ] Create CoffeeScript 2.x compatibility transform script
+  - Automated tool to update `super` → `super(args...)`
+  - Handle class inheritance patterns systematically
+  - Preserve formatting and comments
+
+- [ ] Incremental migration strategy
+  - Start with leaf classes (no subclasses)
+  - Work up inheritance hierarchy
+  - Test each migration step independently
+
+- [ ] Update build tooling for CoffeeScript 2.x
+  - Update `coffeeify` or switch to modern alternative
+  - Test browserify build process
+  - Verify dist bundle generation
+
+- [ ] Fix all test failures systematically
+  - Categorize failures by type
+  - Fix common patterns first
+  - Document edge cases and special handling
+
+- [ ] Update documentation
+  - Note CoffeeScript version requirement
+  - Document any syntax changes affecting users
+  - Update contribution guidelines
+
+**Success Criteria:**
+- All 321+ tests passing with `coffeescript@^2.7.0`
+- No deprecated dependencies
+- Build process working
+- Documentation updated
+
+**Estimated Effort:** High - This is a foundational modernization task
+
+**Dependencies:** None - This can (and should) be done before or parallel to other phases
+
+### Phase 1: Development Environment Setup ✓ COMPLETE
 
 **Goal:** Prepare the development environment for Babel integration
 
@@ -360,14 +419,16 @@ According to the Esprima 2.5.0 changelog, supported ES6 features include:
 
 ## Known Challenges
 
-### 1. Source Map Preservation
+### 1. Line Number Preservation (Not Full Source Maps)
 
-**Challenge:** Maintaining accurate source maps through two transformation stages
+**Note:** Full source maps are unnecessary for js2coffee's use case. Users convert `.js` → `.coffee` once and then maintain the CoffeeScript going forward. They never need to map back to the original JavaScript.
 
-**Approach:**
-- Research Babel source map options
-- Chain source maps correctly
-- Test with complex nested structures
+**What we need instead:**
+- Approximate line number preservation during conversion (via Babel's `retainLines: true`)
+- Helpful for debugging conversion issues by comparing input/output side-by-side
+- Good enough for one-time conversion process
+
+**Current status:** ✅ Already implemented via Babel config
 
 ### 2. Error Message Quality
 
@@ -409,11 +470,23 @@ According to the Esprima 2.5.0 changelog, supported ES6 features include:
 
 ### Post-Release Improvements
 
+- [ ] **Browser Bundle Support** (DEFERRED)
+  - Current status: Babel too large to bundle with browserify
+  - Options to explore: Lighter Babel build, pre-compilation, alternative bundlers
+  - Tests created but marked as `describe.skip` for future work
+  - Use case: js2coffee.github.io online converter
+  - Priority: LOW (Node.js CLI is primary use case)
+
+- [ ] **TypeScript → CoffeeScript pipeline** (HIGH VALUE)
+  - Document TypeScript → JavaScript → CoffeeScript conversion workflow
+  - Test with real TypeScript codebases
+  - Position as "escape hatch" from TypeScript complexity
+  - Enable TypeScript users to migrate to CoffeeScript's simplicity
+
 - [ ] Optional Esprima v4+ upgrade path
 - [ ] Direct Babel AST to CoffeeScript translation (skip Esprima)
-- [ ] TypeScript support via Babel
 - [ ] JSX/React support
-- [ ] Flow type annotation support
+- [ ] Flow type annotation support (strip types)
 - [ ] Advanced optimization passes
 - [ ] Plugin system for custom transformations
 - [ ] Web service API for online conversions
@@ -507,12 +580,41 @@ For each ES feature:
 
 ## Status Tracking
 
-**Current Phase:** Phase 0 (Research & Planning) ✓ COMPLETE
+**Current Phase:** Phase 0.5 (CoffeeScript 2.x Migration) - HIGH PRIORITY
 
-**Last Updated:** 2025-10-08
+**Completed Phases:**
+- ✅ Phase 0: Research & Planning
+- ✅ Phase 1: Development Environment Setup
+- ✅ Phase 2: Babel Integration Architecture
+- ✅ Phase 3: Testing Infrastructure
 
-**Next Steps:**
-1. Begin Phase 1: Development Environment Setup
-2. Add Babel dependencies
-3. Create initial Babel configuration
-4. Establish test baseline
+**Phase 1-3 Summary:**
+- Added Babel preprocessing with auto-detection
+- Created `lib/preprocessor.coffee` module
+- Integrated into `js2coffee.build()` pipeline
+- Added 18 new tests (14 ES.Next, 4 CLI) - all passing
+- Total: 325 tests passing (up from 307 baseline), 49 pending
+- No breaking changes to existing API
+
+**CLI & Distribution Issues (Resolved):**
+- Fixed CLI to use source files instead of dist bundle (Babel too large for browserify)
+- Fixed environmental sensitivity - CLI now works from any directory:
+  - `bin/js2coffee` used `__dirname` for absolute path resolution
+  - `lib/preprocessor.coffee` uses `require.resolve` with `paths` option for Babel/preset
+- Browser bundle deferred as future work (marked as `describe.skip` in tests)
+- CLI fully functional with ES.Next support via Node.js
+
+**Critical Blocker Identified:**
+- CoffeeScript 1.x → 2.x migration required for full modernization
+- Deprecated `coffee-script` package (no updates since 2017)
+- ~180 test failures when attempting direct upgrade
+- Likely reason original project was abandoned
+
+**Last Updated:** 2025-10-08 (CLI environmental sensitivity fix complete)
+
+**Next Steps (HIGH PRIORITY):**
+1. **Begin Phase 0.5: CoffeeScript 2.x Migration**
+2. Audit all `super` calls in class constructors
+3. Create automated migration tool
+4. Fix test failures incrementally
+5. Once CoffeeScript 2.x migration complete, continue with Phase 4+

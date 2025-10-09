@@ -1,5 +1,3 @@
-# FILENAME: { js2coffee/test/esnext.coffee }
-
 require 'coffee-script/register'
 require './setup'
 

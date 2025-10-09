@@ -26,6 +26,33 @@ This strategy preserves the battle-tested js2coffee transformation logic while
 enabling support for modern JavaScript features including async/await, optional
 chaining, nullish coalescing, class fields, and more.
 
+### The TypeScript Escape Hatch
+
+A powerful use case emerges from this architecture: **escaping TypeScript complexity**.
+
+The complete pipeline becomes:
+1. **TypeScript** → (tsc) → **Modern JavaScript**
+2. **Modern JavaScript** → (Babel) → **ES5**
+3. **ES5** → (js2coffee) → **CoffeeScript**
+
+This enables TypeScript users to:
+- Convert entire TypeScript codebases to CoffeeScript
+- Escape type annotation overhead and tooling complexity
+- Return to the simplicity and elegance of CoffeeScript
+- Maintain the codebase in CoffeeScript going forward
+
+**Example workflow:**
+```bash
+# Compile TypeScript to JavaScript (strip types)
+tsc --target ES2020 --module commonjs src/**/*.ts
+
+# Convert the resulting JavaScript to CoffeeScript
+js2coffee compiled.js > converted.coffee
+```
+
+The result is idiomatic CoffeeScript, freeing you from TypeScript's complexity while
+preserving your application logic.
+
 See **[TODO.md](TODO.md)** for the implementation roadmap.
 
 ### Original js2coffee 2.0
