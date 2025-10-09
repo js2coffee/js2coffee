@@ -1,4 +1,4 @@
-require 'coffee-script/register'
+require 'coffeescript/register'
 require './setup'
 { exec } = require 'child_process'
 { promisify } = require 'util'

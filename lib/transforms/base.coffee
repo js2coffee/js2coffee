@@ -264,15 +264,16 @@ class TransformerBase
 safeExtend = (dest, classes) ->
   added = {}
   classes.forEach (klass) ->
-    for key, fn of klass::
-      if klass::hasOwnProperty(key)
+    # Use Object.getOwnPropertyNames to get all properties, including non-enumerable ones
+    # (CoffeeScript 2.x makes class methods non-enumerable by default)
+    for key in Object.getOwnPropertyNames(klass::)
+      fn = klass::[key]
+      if added[key] and key isnt 'constructor'
+        dest::[key] = chain(dest::[key], fn)
+      else
+        dest::[key] = fn
 
-        if added[key] and key isnt 'constructor'
-          dest::[key] = chain(dest::[key], fn)
-        else
-          dest::[key] = fn
-
-        added[key] = true
+      added[key] = true
   dest
 
 # Chains two Visitor functions together. Returns a function that will run the

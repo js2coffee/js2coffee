@@ -28,7 +28,7 @@ module.exports =
 class Builder extends BuilderBase
 
   constructor: (ast, options={}) ->
-    super
+    super(ast, options)
     @_indent = 0
 
   ###*
@@ -225,7 +225,7 @@ class Builder extends BuilderBase
     re = [ @walk(node.id), ' = ', newline(@walk(node.init)) ]
 
     # Space out 'a = ->'
-    if node.init.type is 'FunctionExpression'
+    if node.init?.type is 'FunctionExpression'
       re = [ "\n", @indent(), re, "\n" ]
 
     re

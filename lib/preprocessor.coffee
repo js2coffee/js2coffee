@@ -31,13 +31,13 @@ module.exports = class Preprocessor
       source
 
     catch err
-      # If Babel fails, return original source and let Esprima handle it
+      # Babel parse errors get formatted nicely
       if err.code is 'BABEL_PARSE_ERROR'
         throw buildError err, source, options.filename
-      # For other Babel errors (like module not found), log and return source
-      if process.env.DEBUG_BABEL
-        console.error '[preprocessor] Babel error:', err.message
-      source
+
+      # All other Babel errors (module not found, config errors, etc.)
+      # should fail explicitly, not silently fall back to original source
+      throw new Error "Babel preprocessing failed: #{err.message}"
 
   @shouldPreprocess: (source, options) ->
     return false if options.babel is false

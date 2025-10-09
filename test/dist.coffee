@@ -1,4 +1,4 @@
-require 'coffee-script/register'
+require 'coffeescript/register'
 require './setup'
 
 describe.skip 'dist bundle (browser - future work)', ->

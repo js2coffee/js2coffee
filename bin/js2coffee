@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Register CoffeeScript for source file support
-require('coffee-script/register');
+require('coffeescript/register');
 
 var args = require('../lib/cli')
   .helpfile(__dirname+'/../Usage.txt')

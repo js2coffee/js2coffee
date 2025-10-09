@@ -1,4 +1,4 @@
-coffee = require('coffee-script')
+coffee = require('coffeescript')
 glob = require('glob')
 path = require('path')
 fs = require('fs')
