@@ -13,7 +13,6 @@ module.exports = class Preprocessor
     return source unless @shouldPreprocess source, options
 
     try
-      # Require Babel from js2coffee's node_modules, not CWD
       babelPath   = require.resolve '@babel/core', paths: [__dirname + '/..']
       babel       = require babelPath
       babelConfig = @getBabelConfig options
@@ -31,12 +30,9 @@ module.exports = class Preprocessor
       source
 
     catch err
-      # Babel parse errors get formatted nicely
       if err.code is 'BABEL_PARSE_ERROR'
         throw buildError err, source, options.filename
 
-      # All other Babel errors (module not found, config errors, etc.)
-      # should fail explicitly, not silently fall back to original source
       throw new Error "Babel preprocessing failed: #{err.message}"
 
   @shouldPreprocess: (source, options) ->
@@ -47,23 +43,26 @@ module.exports = class Preprocessor
 
   @detectModernSyntax: (source) ->
     MODERN_FEATURES = [
-      /\bconst\s+/                  # const keyword
-      /\blet\s+/                    # let keyword
-      /=>/                          # Arrow functions
-      /`[^`]*`/                     # Template literals
-      /\bclass\s+/                  # Class syntax
-      /\?\?/                        # Nullish coalescing
-      /\?\.(?!\d)/                  # Optional chaining (not decimal)
-      /\*\*/                        # Exponentiation operator
-      /\*\*=/                       # Exponentiation assignment
-      /\basync\s+/                  # Async functions
-      /\bawait\s+/                  # Await keyword
-      /\.\.\./                      # Spread/rest operator
-      /\bimport\s+/                 # ES6 imports
-      /\bexport\s+/                 # ES6 exports
-      /for\s*await/                 # Async iteration
-      /BigInt/                      # BigInt literal
-      /\d+n\b/                      # BigInt number literal
+      /// \b const         \s+ ///
+      /// \b let           \s+ ///
+      /// \b class         \s+ ///
+      /// \b async         \s+ ///
+      /// \b await         \s+ ///
+      /// \b import        \s+ ///
+      /// \b export        \s+ ///
+
+      ///    BigInt            ///
+      ///    \d+ n          \b ///
+
+      ///    for \s* await     ///
+      ///    ` [^`]* `         ///
+
+      ///    =>                ///
+      ///    \?\?              ///
+      ///    \? \. (?!\d)      ///
+      ///    \*\*              ///
+      ///    \*\*=             ///
+      ///    \.\.\.            ///
     ]
 
     MODERN_FEATURES.some (pattern) -> pattern.test source
@@ -79,7 +78,6 @@ module.exports = class Preprocessor
       presets:       @getDefaultPresets()
 
   @getDefaultPresets: ->
-    # Use absolute path to preset so it works regardless of CWD
     presetPath = require.resolve '@babel/preset-env', paths: [__dirname + '/..']
     [
       [

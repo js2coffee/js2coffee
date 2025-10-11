@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-// Register CoffeeScript for source file support
 require('coffeescript/register');
 
 var args = require('../lib/cli')
@@ -13,8 +12,7 @@ var args = require('../lib/cli')
   });
 
 var read = require('read-input');
-// Use source files directly for full Babel support
-var js2coffee = require(__dirname + '/../js2coffee.coffee');
+var js2coffee = require('../js2coffee.coffee');
 
 read(args._, function (err, res) {
   if (err) {
@@ -57,10 +55,6 @@ function inspect(data) {
   return require('util').inspect(data, { depth: null, colors: colors });
 }
 
-/*
- * removes "range" and "loc"
- */
-
 function scrub(obj) {
   if (Array.isArray(obj)) {
     return obj.map(function (item) { return scrub(item); });
@@ -78,10 +72,6 @@ function scrub(obj) {
     return obj;
   }
 }
-
-/*
- * heh
- */
 
 function printWarnings (warnings) {
   if (!warnings || warnings.length === 0)
