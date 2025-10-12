@@ -55,6 +55,10 @@ function inspect(data) {
   return require('util').inspect(data, { depth: null, colors: colors });
 }
 
+/*
+ * removes "range" and "loc"
+ */
+
 function scrub(obj) {
   if (Array.isArray(obj)) {
     return obj.map(function (item) { return scrub(item); });
@@ -73,18 +77,22 @@ function scrub(obj) {
   }
 }
 
+/*
+ * heh
+ */
+
 function printWarnings (warnings) {
   if (!warnings || warnings.length === 0)
     return;
 
   var comments = warnings.map(function (warn) {
-    var msg = warn.filename + ':';
-    if (warn.start) {
+    var msg = '' +
+      warn.filename + ':'
+    if (warn.start)
       msg += warn.start.line + ':' +
-             warn.start.column + ': ';
-    }
+        warn.start.column + ': '
     msg += c(34, '[warning] ') +
-           warn.description;
+      warn.description;
 
     console.warn(msg);
   });

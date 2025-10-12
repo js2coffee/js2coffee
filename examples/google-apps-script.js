@@ -13,7 +13,6 @@ function initEventHandlers() {
     .map((name) => 'on' + name[0].toUpperCase() + name[1..name.length - 1])
 
   for (var name of eventNames) {
-    
   }
 }
 
@@ -33,13 +32,11 @@ function getOnEditHandler(sheet, range, row, col) {
 
   if (!handlerFactories.length)
     return;
-  
-
 }
 
 function lookupHandlerFactories(eventName, sheet, row, col) {
   for (var factory in handlerFactories()) {
-    
+
   }
   //if (sheet.getName() === 'TestCases' && col === 3) { // Assuming column C
   //  showRelationDialog(row);
