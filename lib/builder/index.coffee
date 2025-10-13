@@ -166,17 +166,34 @@ class Builder extends BuilderBase
 
   ArrayExpression: (node) ->
     items = node.elements.length
-    isSingleLine = items is 1
 
     if items is 0
       [ "[]" ]
-    else if isSingleLine
-      space [ "[", node.elements.map(@walk), "]" ]
+    else if @isSimpleArray(node)
+      space [ "[", delimit(node.elements.map(@walk), ', '), "]" ]
     else
       @indent (indent) =>
         elements = node.elements.map (e) => newline @walk(e)
         contents = prependAll(elements, @indent())
         [ "[", "\n", contents, indent, "]" ]
+
+  isSimpleArray: (node) ->
+    return false if node.elements.length is 0
+    return false if node.elements.length > 10
+
+    for element in node.elements
+      continue unless element
+      type = element.type
+
+      isSimple = type in [
+        'Literal'
+        'Identifier'
+        'UnaryExpression'
+      ]
+
+      return false unless isSimple
+
+    true
 
   ObjectExpression: (node, ctx) ->
     props = node.properties.length

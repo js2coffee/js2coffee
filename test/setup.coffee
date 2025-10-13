@@ -58,6 +58,12 @@ before ->
         throw: (expected) ->
           self.throw(expected)
 
+      toBeLessThan: (expected) ->
+        assert.ok actual < expected, "Expected #{actual} to be less than #{expected}"
+
+      toBeGreaterThan: (expected) ->
+        assert.ok actual > expected, "Expected #{actual} to be greater than #{expected}"
+
     Object.defineProperty self, 'exist',
       get: -> assert.ok actual?, "Expected #{actual} to exist"
 
