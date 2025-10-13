@@ -11,7 +11,7 @@ var args = require('../lib/cli')
     alias: { h: 'help', v: 'version', V: 'verbose', i: 'indent' }
   });
 
-var read = require('read-input');
+var read = require('../lib/read-input');
 var js2coffee = require('../js2coffee.coffee');
 
 read(args._, function (err, res) {
