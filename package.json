@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thatsnice/js2coffee.git"
+    "url": "https://github.com/js2coffee/js2coffee.git"
   },
   "browser": "js2coffee.coffee",
   "bin": {
@@ -34,12 +34,12 @@
   "dependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "escodegen": "^1.6.0",
-    "esprima": "^2.5.0",
-    "estraverse": "^4.1.1",
+    "escodegen": "^2.1.0",
+    "esprima": "^4.0.1",
+    "estraverse": "^5.3.0",
     "minimist": "^1.1.0",
     "read-input": "^0.3.1",
-    "source-map": "^0.5.2"
+    "source-map": "^0.7.6"
   },
   "devDependencies": {
     "browserify": "13.3.0",

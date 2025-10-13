@@ -80,6 +80,20 @@ class Builder extends BuilderBase
     else
       [ node.raw ]
 
+  TemplateLiteral: (node) ->
+    parts = []
+    for quasi, i in node.quasis
+      if quasi.value.raw
+        parts.push quasi.value.raw
+      if i < node.expressions.length
+        expr = @walk(node.expressions[i])
+        parts.push "\#{#{expr}}"
+
+    [ '"', parts.join(''), '"' ]
+
+  TemplateElement: (node) ->
+    [ node.value.raw ]
+
   MemberExpression: (node) ->
     right = if node.computed
       [ '[', @walk(node.property), ']' ]
@@ -248,7 +262,7 @@ class Builder extends BuilderBase
     re
 
   FunctionExpression: (node, ctx) ->
-    params = @makeParams(node.params, node.defaults)
+    params = @makeParams(node.params)
 
     expr = @indent (i) =>
       [ params, "->", "\n", @walk(node.body) ]
@@ -257,6 +271,30 @@ class Builder extends BuilderBase
       [ "(", expr, @indent(), ")" ]
     else
       expr
+
+  ArrowFunctionExpression: (node, ctx) ->
+    params = @makeParams(node.params)
+    arrow = if node.async then '->' else '->'
+
+    if node.expression
+      if node.async
+        space [ 'await', params, arrow, @walk(node.body) ]
+      else
+        space [ params, arrow, @walk(node.body) ]
+    else
+      expr = @indent (i) =>
+        if node.async
+          [ params, arrow, "\n", @walk(node.body) ]
+        else
+          [ params, arrow, "\n", @walk(node.body) ]
+
+      if node._parenthesized
+        [ "(", expr, @indent(), ")" ]
+      else
+        expr
+
+  AwaitExpression: (node) ->
+    space [ 'await', @walk(node.argument) ]
 
   EmptyStatement: (node) ->
     [ ]
@@ -415,14 +453,12 @@ class Builder extends BuilderBase
   # Builds parameters for a function list.
   ###
 
-  makeParams: (params, defaults) ->
+  makeParams: (params) ->
     list = []
 
-    # Account for defaults ("function fn(a = b)")
-    for param, i in params
-      if defaults[i]
-        def = @walk(defaults[i])
-        list.push [@walk(param), ' = ', def]
+    for param in params
+      if param.type is 'AssignmentPattern'
+        list.push [@walk(param.left), ' = ', @walk(param.right)]
       else
         list.push @walk(param)
 
@@ -430,6 +466,9 @@ class Builder extends BuilderBase
       [ '(', delimit(list, ', '), ') ']
     else
       []
+
+  AssignmentPattern: (node) ->
+    [@walk(node.left), ' = ', @walk(node.right)]
 
   ###*
   # In a call expression, ensure that non-last function arguments get
