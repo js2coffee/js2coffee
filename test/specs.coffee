@@ -1,3 +1,4 @@
+{describe, it} = require 'node:test'
 require './setup'
 
 {eachGroup} = require('../lib/support/specs_iterator')
@@ -5,11 +6,11 @@ require './setup'
 eachGroup (group) ->
   nope = !! process.env.ALL
 
-  run = if (not nope and group.pending) then xdescribe else describe
+  run = if (not nope and group.pending) then describe.skip else describe
 
   run group.name, ->
     group.specs.forEach (spec) ->
-      run = if (not nope and spec.meta?.pending) then xit else if spec.meta?.only then it.only else it
+      run = if (not nope and spec.meta?.pending) then it.skip else if spec.meta?.only then it.only else it
       run spec.name, do (spec) -> ->
         options = spec.meta.options or {}
 

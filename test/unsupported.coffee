@@ -1,3 +1,4 @@
+{describe, it} = require 'node:test'
 require './setup'
 
 describe 'Unsupported', ->

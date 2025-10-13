@@ -1,4 +1,5 @@
 require 'coffeescript/register'
+{describe, it, beforeEach} = require 'node:test'
 require './setup'
 
 describe 'BuilderBase', ->

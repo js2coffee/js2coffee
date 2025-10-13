@@ -15,9 +15,8 @@
     "transpiler"
   ],
   "scripts": {
-    "test": "mocha",
-    "autotest": "mocha -R min -b --watch",
-    "prepublish": "mocha >/dev/null && make -B dist"
+    "test": "node --require coffeescript/register --test 'test/**/*.coffee'",
+    "prepublish": "npm test && make -B dist"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
@@ -44,14 +43,11 @@
   },
   "devDependencies": {
     "browserify": "13.3.0",
-    "chai": "^3.4.0",
     "coffeescript": "^2.7.0",
     "coffeeify": "^3.0.1",
     "coffeelint": "^1.6.0",
     "glob": "^7.0.0",
     "js-yaml": "^3.2.1",
-    "mocha": "^2.1.0",
-    "mocha-clean": "^1.0.0",
     "terser": "^5.36.0",
     "underscore": "^1.7.0"
   }

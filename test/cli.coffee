@@ -1,4 +1,5 @@
 require 'coffeescript/register'
+{describe, it} = require 'node:test'
 require './setup'
 { exec } = require 'child_process'
 { promisify } = require 'util'
@@ -9,31 +10,23 @@ describe 'CLI', ->
 
   describe 'ES.Next support via Babel', ->
 
-    it 'transforms arrow functions via stdin', (done) ->
+    it 'transforms arrow functions via stdin', ->
       cmd = 'echo "const fn = (x) => x * 2;" | ./bin/js2coffee'
-      execAsync(cmd).then ({stdout, stderr}) ->
-        expect(stdout).include 'fn = '
-        expect(stdout).include '->'
-        done()
-      .catch done
+      {stdout, stderr} = await execAsync(cmd)
+      expect(stdout).include 'fn = '
+      expect(stdout).include '->'
 
-    it 'transforms const to var via stdin', (done) ->
+    it 'transforms const to var via stdin', ->
       cmd = 'echo "const x = 1;" | ./bin/js2coffee'
-      execAsync(cmd).then ({stdout, stderr}) ->
-        expect(stdout).include 'x = 1'
-        done()
-      .catch done
+      {stdout, stderr} = await execAsync(cmd)
+      expect(stdout).include 'x = 1'
 
-    it 'transforms template literals via stdin', (done) ->
+    it 'transforms template literals via stdin', ->
       cmd = 'echo \'const msg = `Hello ${name}`;' + "' | ./bin/js2coffee"
-      execAsync(cmd).then ({stdout, stderr}) ->
-        expect(stdout).include 'msg = '
-        done()
-      .catch done
+      {stdout, stderr} = await execAsync(cmd)
+      expect(stdout).include 'msg = '
 
-    it 'transforms optional chaining via stdin', (done) ->
+    it 'transforms optional chaining via stdin', ->
       cmd = 'echo "const value = obj?.prop;" | ./bin/js2coffee'
-      execAsync(cmd).then ({stdout, stderr}) ->
-        expect(stdout).include 'value = '
-        done()
-      .catch done
+      {stdout, stderr} = await execAsync(cmd)
+      expect(stdout).include 'value = '

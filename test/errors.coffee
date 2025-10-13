@@ -1,3 +1,4 @@
+{describe, it, beforeEach} = require 'node:test'
 require './setup'
 
 describe 'Errors', ->

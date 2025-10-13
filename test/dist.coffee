@@ -1,4 +1,5 @@
 require 'coffeescript/register'
+{describe, it} = require 'node:test'
 require './setup'
 
 describe.skip 'dist bundle (browser - future work)', ->
