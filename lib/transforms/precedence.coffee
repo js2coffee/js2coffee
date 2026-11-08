@@ -22,6 +22,7 @@ module.exports = class extends TransformerBase
 
     # Ensure that the precedence calls for it (eg, + inside a /).
     parenthesize =
+      isIntransitiveAddition(parent, node) or
       isIntransitiveSubtraction(parent, node) or
       isIntransitiveDivision(parent, node) or
       nonTailingTernary(parent, node) or
@@ -29,6 +30,12 @@ module.exports = class extends TransformerBase
 
     if parenthesize
       node._parenthesized = true
+
+# Addition can concatenate or round, so regrouping can change its value.
+isIntransitiveAddition = (parent, node) ->
+  isOperation(parent, '+') and
+  (isOperation(node, '+') or isOperation(node, '-')) and
+  parent.right is node
 
 # special case for subtraction intransitivity (`a-(b-c)` vs `(a-b)-c`).
 isIntransitiveSubtraction = (parent, node) ->

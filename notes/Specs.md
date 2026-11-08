@@ -3010,8 +3010,8 @@ a - b + c
 a + b + c
 a - (b - c)
 a - (b + c)
-a + b - c
-a + b + c
+a + (b - c)
+a + (b + c)
 </code></pre>
 </td>
 </tr>
@@ -3077,7 +3077,7 @@ a + b + c
 </code></pre>
 </td>
 <td width='33%' valign='top'>
-<pre><code class='lang-coffee'>a + b + c + d + e
+<pre><code class='lang-coffee'>a + b + c + (d + e)
 </code></pre>
 </td>
 </tr>
